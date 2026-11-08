@@ -86,3 +86,16 @@ HTML olarak `file://` ile açılıyor (0 harici URL).
 5. README açılış cümlesini mimariyle uyumlu hâle getir (P2-1).
 6. Dashboard'u yayınla (statik barındırma) ve README'ye canlı bağlantı ekle.
 7. Ticari lisans alanlarını doldur + hukuk incelemesi → ancak ondan sonra fiyatlı tanıtım.
+
+---
+
+## 5. Yayın kaydı — 2026-11-08
+
+| Kalem | Değer |
+|---|---|
+| Depo | <https://github.com/atlantis77ut/dora-ai-package> (herkese açık, AGPL-3.0) |
+| Canlı dashboard | <https://atlantis77ut.github.io/dora-ai-package/> |
+| İlk sürüm commit'i | `ac3e565` — "DORA AI Package 0.3.0 — ilk açık kaynak sürümü" |
+| CI | `validate` ve `pages` iş akışları yeşil (push başına) |
+| Yayınlanan dosya sayısı | 81 (dev-private.pem, node_modules, .dora-onboarding hariç) |
+| Telif sahibi | ustauretim |
