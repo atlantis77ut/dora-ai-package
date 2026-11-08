@@ -30,6 +30,63 @@ function targets() {
   ];
 }
 
+
+/** Senaryo dosyaları: şema + iş kuralı (assertion sayısı, benzersiz ID, katalog referansları). */
+export function validateScenarios(root = ROOT) {
+  const dir = path.join(root, 'tests', 'synthetic-scenarios');
+  if (!fs.existsSync(dir)) return [];
+  const schemaPath = path.join(root, 'schema', 'scenario.schema.json');
+  const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+
+  const procIds = new Set();
+  const procDir = path.join(root, 'data', 'processes');
+  for (const f of fs.readdirSync(procDir).filter((x) => x.endsWith('.yaml'))) {
+    const t = fs.readFileSync(path.join(procDir, f), 'utf8');
+    for (const m of t.matchAll(/^  - id: (PRC-[A-Z]{3}-\d{2})$/gm)) procIds.add(m[1]);
+  }
+  const ctlIds = new Set(
+    [...fs.readFileSync(path.join(root, 'data', 'controls', 'controls-catalog.yaml'), 'utf8')
+      .matchAll(/^  - id: (CTL-[A-Z]{3}-\d{3})$/gm)].map((m) => m[1]),
+  );
+
+  const results = [];
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith('.yaml')).sort();
+
+  for (const f of files) {
+    const rel = 'tests/synthetic-scenarios/' + f;
+    let doc;
+    try {
+      doc = parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+    } catch (e) {
+      results.push({ file: rel, schema: 'scenario.schema.json', ok: false, errors: [{ path: '(ayrıştırma)', message: e.message }] });
+      continue;
+    }
+    const errs = validate(doc, schema, '', { doc: schema, baseDir: path.join(root, 'schema'), cache: new Map() });
+    const s = doc.scenario ?? {};
+
+    const total = doc.then?.assertions?.length ?? 0;
+    if (s.assertions_total !== total) {
+      errs.push({ path: 'scenario.assertions_total', message: 'ilan edilen ' + s.assertions_total + ', gerçek ' + total });
+    }
+    const seen = new Set();
+    for (const a of doc.then?.assertions ?? []) {
+      if (seen.has(a.id)) errs.push({ path: 'scenario.then.assertions', message: 'tekrarlanan assertion id: ' + a.id });
+      seen.add(a.id);
+      if (a.process && !procIds.has(a.process)) errs.push({ path: 'scenario.then.' + a.id + '.process', message: 'tanımsız süreç: ' + a.process });
+      if (a.control && !ctlIds.has(a.control)) errs.push({ path: 'scenario.then.' + a.id + '.control', message: 'tanımsız kontrol: ' + a.control });
+    }
+    for (const p of s.processes_exercised ?? []) {
+      if (!procIds.has(p)) errs.push({ path: 'scenario.processes_exercised', message: 'tanımsız süreç: ' + p });
+    }
+    for (const c of s.controls_checked ?? []) {
+      if (!ctlIds.has(c)) errs.push({ path: 'scenario.controls_checked', message: 'tanımsız kontrol: ' + c });
+    }
+
+    results.push({ file: rel, schema: 'scenario.schema.json', ok: errs.length === 0, errors: errs });
+  }
+  return results;
+}
+
 export function validateCatalogs(root = ROOT) {
   const results = [];
   const cache = new Map();
@@ -54,5 +111,5 @@ export function validateCatalogs(root = ROOT) {
       results.push({ file: rel, schema: t.schema, ok: errs.length === 0, errors: errs });
     }
   }
-  return results;
+  return results.concat(validateScenarios(root));
 }

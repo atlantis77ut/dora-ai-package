@@ -10,7 +10,7 @@ node bin/dora-onboard.mjs validate
 node bin/dora-onboard.mjs validate --json
 ~~~
 
-On dosya denetlenir:
+On dört dosya denetlenir:
 
 | Dosya | Şema |
 |---|---|
@@ -20,8 +20,17 @@ On dosya denetlenir:
 | data/controls/controls-catalog.yaml | controls.schema.json |
 | data/mapping/dora-articles.yaml | mapping.schema.json |
 | onboarding/corf-lifecycle.yaml | lifecycle.schema.json |
+| tests/synthetic-scenarios/*.yaml (4) | scenario.schema.json |
 
 Çıkış kodu: **0** tümü uyumlu · **1** en az bir dosya uymuyor.
+
+Senaryo dosyalarında şemaya ek olarak **iş kuralı** denetlenir:
+
+- `assertions_total` gerçek assertion sayısına eşit mi?
+- Assertion ve tuzak ID'leri benzersiz mi?
+- Anılan süreç/kontrol ID'leri katalogda tanımlı mı?
+
+Bu üç kontrol, senaryonun "çalışıyor gibi görünüp" katalogdan kopmasını engeller.
 
 ---
 

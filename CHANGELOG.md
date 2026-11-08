@@ -5,6 +5,25 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.12.0] — 2026-11-08
+
+### Eklendi
+
+**Senaryo şeması ve iş kuralı denetimi**
+- `schema/scenario.schema.json`: 4 sentetik senaryonun yapısı (başlık, given/when/then,
+  assertion'lar, tuzak testleri, timeline, beklenen kanıtlar)
+- `validate` artık **14 dosya** denetliyor; senaryolarda şemaya ek olarak:
+  - `assertions_total` = gerçek assertion sayısı
+  - benzersiz assertion/tuzak ID'leri
+  - anılan süreç ve kontrol ID'lerinin katalogda bulunması
+
+### Notlar
+
+- Senaryo YAML'larında `given/when/then` üst düzey anahtarlar; ilk şema denemesi bunları
+  `scenario` altında sandı ve dört dosyayı da reddetti. Şema gerçek yapıya göre düzeltildi.
+
+---
+
 ## [0.11.0] — 2026-11-08
 
 ### Eklendi
