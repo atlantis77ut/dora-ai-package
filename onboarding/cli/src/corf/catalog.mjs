@@ -82,6 +82,31 @@ export function validateScenarios(root = ROOT) {
       if (!ctlIds.has(c)) errs.push({ path: 'scenario.controls_checked', message: 'tanımsız kontrol: ' + c });
     }
 
+    // Timeline sırası: T-30g → T-10g → T+0 → T+4sa gibi ifadeler dakikaya çevrilip
+    // artan sırada olmalı. Metin serbest olduğu için şema bunu yakalayamaz.
+    const toMin = (at) => {
+      const m = /^T([+-])(\d+)(dk|sa|g|ay)?$/.exec(String(at ?? '').trim());
+      if (!m) return null;
+      const n = Number(m[2]);
+      const mult = m[3] === 'dk' ? 1 : m[3] === 'sa' ? 60 : m[3] === 'g' ? 1440 : m[3] === 'ay' ? 43200 : 0;
+      return (m[1] === '-' ? -1 : 1) * n * mult;
+    };
+    let prev = -Infinity;
+    let prevAt = null;
+    for (const t of doc.timeline ?? []) {
+      const m = toMin(t.at);
+      if (m === null) {
+        errs.push({ path: 'timeline', message: 'tanınmayan zaman ifadesi: ' + t.at });
+        continue;
+      }
+      if (m < prev) {
+        errs.push({ path: 'timeline', message: 'sıra bozuk: ' + t.at + ' (' + prevAt + ' sonrası)' });
+      } else {
+        prev = m;
+        prevAt = t.at;
+      }
+    }
+
     results.push({ file: rel, schema: 'scenario.schema.json', ok: errs.length === 0, errors: errs });
   }
   return results;

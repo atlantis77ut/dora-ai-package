@@ -5,6 +5,22 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.13.0] — 2026-11-08
+
+### Eklendi
+
+**Timeline sıra denetimi**
+- Senaryo timeline'ındaki `T-30g` / `T+4sa` / `T+1ay` ifadeleri dakikaya çevrilip artan sırada
+  olup olmadığı denetleniyor; tanınmayan ifade de hata sayılıyor
+- Şema bunu yakalayamaz (zaman serbest metin); kontrol katalog doğrulamasında
+
+### Düzeltildi
+
+- `SCN-04` timeline'ı sıra bozuktu: `T+1g` olayı `T+1sa` olayından önce yazılmıştı.
+  SIEM olayı `T+1sa`ya, hesapların kapatılması `T+2sa`ya alındı; sıra artık tutarlı.
+
+---
+
 ## [0.12.0] — 2026-11-08
 
 ### Eklendi

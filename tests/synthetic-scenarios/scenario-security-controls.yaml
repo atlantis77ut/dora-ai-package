@@ -122,9 +122,9 @@ negative_tests:
 
 timeline:
   - { at: "T+0", event: "Kontrol döngüsü başlar, IAM ve zafiyet verisi çekilir", process: PRC-RSK-05 }
+  - { at: "T+1sa", event: "SIEM yetkisiz erişim alarmı olay kaydına dönüşür", process: PRC-INC-01 }
   - { at: "T+2sa", event: "Pasif hesaplar kapatılır, onaysız ayrıcalıklı hesap askıya alınır", process: PRC-RSK-05 }
   - { at: "T+1g", event: "Şifreleme ve segmentasyon bulguları için düzeltme planı açılır", process: PRC-RSK-05 }
-  - { at: "T+1sa", event: "SIEM yetkisiz erişim alarmı olay kaydına dönüşür", process: PRC-INC-01 }
   - { at: "T+30g", event: "Zafiyet kapatılır veya istisna onaylanır", process: PRC-RSK-05 }
 
 evidence_expected:

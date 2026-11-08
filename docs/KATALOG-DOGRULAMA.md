@@ -29,6 +29,7 @@ Senaryo dosyalarında şemaya ek olarak **iş kuralı** denetlenir:
 - `assertions_total` gerçek assertion sayısına eşit mi?
 - Assertion ve tuzak ID'leri benzersiz mi?
 - Anılan süreç/kontrol ID'leri katalogda tanımlı mı?
+- Timeline artan sırada mı? (`T-30g → T-0 → T+4sa` gibi ifadeler dakikaya çevrilip karşılaştırılır)
 
 Bu üç kontrol, senaryonun "çalışıyor gibi görünüp" katalogdan kopmasını engeller.
 
@@ -45,6 +46,7 @@ Komut yazılır yazılmaz dört gerçek sorun çıktı — hiçbiri gözle gör�
 | 11 rolde human_oversight.required_for değerleri şema enum'unda yoktu | Enum 6 değerle genişletildi |
 | PRC-INC-06'da clock_start "publication" geçersizdi | **Veri düzeltildi**: "Paydaş güncellemesi / 24 saat / classification" |
 | C6'da promotion_gates nesne, şemada dizi bekleniyordu | Şema düzeltildi: anahtar → kriter listesi eşlemesi |
+| SCN-04 timeline'ında T+1g, T+1sa'dan önce yazılmıştı | **Veri düzeltildi**: T+1sa (SIEM olayı) T+2sa'dan öne alındı |
 
 Son satır önemli: sorun şemada değil, 0.4.0'da benim yazdığım süreçteydi. Doğrulama olmadan
 bu hata denetimde "bu SLA neye göre başlıyor" sorusuyla ortaya çıkardı.
