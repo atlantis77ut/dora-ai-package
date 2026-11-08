@@ -43,6 +43,8 @@ node docs/tools/build-dashboard.mjs                          # dashboard/index.h
 
 ## Görmek için üç yol
 
+**Canlı dashboard:** <https://atlantis77ut.github.io/dora-ai-package/>
+
 ### 1. Dashboard (tarayıcı)
 
 ```
