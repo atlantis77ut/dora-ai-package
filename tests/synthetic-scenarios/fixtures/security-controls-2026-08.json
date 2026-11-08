@@ -1,0 +1,53 @@
+{
+  "period": "2026-Q3",
+  "findings": {
+    "dormant_accounts": [
+      { "upn": "eski.kullanici1@ornekbank.com.tr", "last_login_days": 214, "active": true, "privileged": false },
+      { "upn": "eski.kullanici2@ornekbank.com.tr", "last_login_days": 152, "active": true, "privileged": false },
+      { "upn": "danisma1@ornekbank.com.tr", "last_login_days": 131, "active": true, "privileged": true }
+    ],
+    "dormant_accounts_total": 12,
+    "unapproved_privileged": {
+      "upn": "admin.temp@ornekbank.com.tr",
+      "created_at": "2026-07-28T09:12:00+03:00",
+      "approval_ref": null,
+      "active": true
+    },
+    "encryption": {
+      "asset_id": "AST-001",
+      "name": "Core Banking",
+      "at_rest": true,
+      "in_transit": false,
+      "algorithm": "AES-256 (at rest)",
+      "key_rotation_days": 365
+    },
+    "vulnerability": {
+      "id": "CVE-2026-31142",
+      "cvss": 9.4,
+      "asset_id": "AST-001",
+      "found_at": "2026-08-02T10:00:00+03:00",
+      "days_open": 0,
+      "exception_ref": null
+    },
+    "segmentation": {
+      "zone": "DMZ-01",
+      "critical_assets": ["AST-014"],
+      "allowed_flows": 47,
+      "default_deny": false,
+      "last_penetration_check": "2026-02-11"
+    }
+  },
+  "siem_event": {
+    "alert_id": "ALRT-99114",
+    "type": "unauthorized_access_attempt",
+    "target": "core-banking-admin",
+    "severity": "high",
+    "detected_at": "2026-08-04T03:41:00+03:00"
+  },
+  "context": {
+    "tier": "tier2",
+    "regulator": "BDDK",
+    "iam_source": "Entra ID",
+    "vuln_source": "Tenable"
+  }
+}

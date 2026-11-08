@@ -1,0 +1,37 @@
+success_criteria:
+  operational:
+    - metric: "Olay sınıflandırma doğruluğu"
+      target: ">= %95"
+      measurement: "Aylık örneklem"
+    - metric: "SLA ihlali sayısı"
+      target: "= 0"
+      measurement: "Sürekli"
+    - metric: "İnsan override oranı"
+      target: "<= %5"
+      measurement: "Haftalık"
+
+  compliance:
+    - metric: "Denetim izi bütünlüğü"
+      target: "= %100"
+      measurement: "Hash zinciri doğrulama"
+    - metric: "Regülatör bildirim zamanında"
+      target: "= %100"
+    - metric: "Bağımsızlık kontrolü PASS"
+      target: "= %100"
+
+  business:
+    - metric: "Uyum maliyeti azalma"
+      target: ">= %20"
+      baseline: "Pilot öncesi 12 ay ortalama"
+    - metric: "Olay müdahale süresinde azalma"
+      target: ">= %30"
+    - metric: "Denetim hazırlık süresinde azalma"
+      target: ">= %40"
+
+  user:
+    - metric: "Kullanıcı memnuniyeti"
+      target: ">= 4/5"
+    - metric: "NPS"
+      target: ">= 40"
+    - metric: "Üretime geçme niyeti"
+      target: "= Evet"

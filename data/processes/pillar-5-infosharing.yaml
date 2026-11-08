@@ -1,0 +1,102 @@
+schema_version: "1.0.0"
+generated_at: "2026-10-30"
+pillar:
+  id: info_sharing
+  name:
+    tr: "5. Sütun — Bilgi Paylaşımı"
+    en: "Pillar 5 — Information Sharing"
+  dora_ref:
+    article: "Madde 45"
+source_of_truth: "Konuşma dökümü satır 174-202 (süreç akışı) + sözlük referansları (PRC-INF-01..02)"
+
+processes:
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INF-01 — Tehdit İstihbaratı Paylaşımı
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INF-01
+    name:
+      tr: "Siber Tehdit İstihbaratı Toplama ve Paylaşımı"
+      en: "Cyber Threat Intelligence Collection and Sharing"
+    pillar: info_sharing
+    trigger: "Yeni tehdit istihbaratı, topluluk uyarısı veya olay sonrası ders çıkarma"
+    preconditions:
+      - "Güvenilir topluluk üyeliği ve gizlilik protokolü yürürlükte olmalı"
+      - "Anonimleştirme aracı hazır olmalı"
+    inputs:
+      - { name: "Tehdit beslemeleri (harici)", format: json, source_role: ROL-INF-01 }
+      - { name: "Kurum içi olay göstergeleri (IoC)", format: json, source_role: ROL-INC-01 }
+      - { name: "Paylaşım anlaşması kapsamı", format: pdf, source_role: ROL-CMP-01 }
+    outputs:
+      - { name: "threat-intel-share-report.json", format: json, retention_years: 7 }
+      - { name: "ioc-package.json", format: json, retention_years: 7 }
+    responsible_roles: [ROL-INF-01]
+    approval_roles: [ROL-CEO-01, ROL-CMP-01]
+    slas:
+      - { trigger: "Paylaşım kararı", duration: 48, unit: hours, clock_start: detection }
+      - { trigger: "Kritik tehdit uyarısı", duration: 4, unit: hours, clock_start: detection }
+    decision_rules:
+      - rule_id: INF-R1
+        condition: "paylasim_icerigi.ticari_sir == true"
+        action: "paylaşımı blokla; anonimleştirilmiş özet hazırla"
+        dora_ref: { article: "Madde 45(2)" }
+      - rule_id: INF-R2
+        condition: "kisisel_veri_var == true AND hukuki_dayanak_yok"
+        action: "paylaşımı durdur, KVKK değerlendirmesi başlat"
+        dora_ref: { article: "Madde 45(2)" }
+      - rule_id: INF-R3
+        condition: "tehdit_ilgili_sektor == true AND etki_potansiyeli == 'yuksek'"
+        action: "topluluğa öncelikli uyarı gönder"
+        dora_ref: { article: "Madde 45(1)" }
+    dependencies:
+      upstream: [PRC-INC-01, PRC-TST-02]
+      downstream: [PRC-INC-05, PRC-TST-01, PRC-RSK-02]
+    evidence_requirements:
+      - "threat-intel-share-report.json (paylaşım kapsamı + onay kaydı)"
+      - "ioc-package.json (anonimleştirme kanıtı)"
+    control_ids:
+      - CTL-INF-001
+      - CTL-INF-002
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INF-02 — Gönüllü Bildirim Protokolü
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INF-02
+    name:
+      tr: "Gönüllü Bildirim Protokolü ve Gizlilik Yönetimi"
+      en: "Voluntary Notification Protocol and Confidentiality Management"
+    pillar: info_sharing
+    trigger: "Paylaşım anlaşması imzası, yıllık protokol gözden geçirmesi veya gizlilik ihlali şüphesi"
+    preconditions:
+      - "Hukuk/uyum onayı alınmış olmalı"
+    inputs:
+      - { name: "Paylaşım anlaşmaları envanteri", format: yaml, source_role: ROL-INF-01 }
+      - { name: "Gizlilik sınıflandırma politikası", format: pdf, source_role: ROL-CMP-01 }
+    outputs:
+      - { name: "sharing-protocol-register.yaml", format: yaml, retention_years: 10 }
+      - { name: "confidentiality-incident-log.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-CMP-01, ROL-INF-01]
+    approval_roles: [ROL-CEO-01]
+    slas:
+      - { trigger: "Yıllık gözden geçirme", duration: 10, unit: days, clock_start: detection }
+      - { trigger: "Gizlilik ihlali şüphesi", duration: 24, unit: hours, clock_start: detection }
+    decision_rules:
+      - rule_id: INF-R4
+        condition: "gizlilik_ihlali_dogrulandi == true"
+        action: "paylaşımı askıya al, olay kaydı aç (PRC-INC-01), etkilenen tarafları bilgilendir"
+        dora_ref: { article: "Madde 45(2)" }
+      - rule_id: INF-R5
+        condition: "anlasma.imzali == false AND paylasim_aktif == true"
+        action: "paylaşımı durdur"
+        dora_ref: { article: "Madde 45(1)" }
+    dependencies:
+      upstream: [PRC-INF-01]
+      downstream: [PRC-INC-01]
+    evidence_requirements:
+      - "sharing-protocol-register.yaml (taraf, kapsam, geçerlilik, imza tarihi)"
+      - "confidentiality-incident-log.json (varsa ihlal kayıtları)"
+    tier_variants:
+      tier3:
+        note: "Opsiyonel; asgari olarak anlaşma envanteri tutulmalı"
+    control_ids:
+      - CTL-INF-003

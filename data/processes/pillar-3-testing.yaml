@@ -1,0 +1,147 @@
+schema_version: "1.0.0"
+generated_at: "2026-10-30"
+pillar:
+  id: testing
+  name:
+    tr: "3. Sütun — Dijital Operasyonel Dayanıklılık Testi"
+    en: "Pillar 3 — Digital Operational Resilience Testing"
+  dora_ref:
+    article: "Madde 24-27"
+    rts_its: "RTS 2024/1774 (TLPT)"
+source_of_truth: "Konuşma dökümü satır 105-136 (süreç akışı) + süreç listesi"
+
+processes:
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TST-01 — Test Programı Tasarımı
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TST-01
+    name:
+      tr: "Risk Bazlı Test Programı Tasarımı"
+      en: "Risk-Based Testing Programme Design"
+    pillar: testing
+    trigger: "Yıllık planlama dönemi veya risk değerlendirmesi sonucu"
+    preconditions:
+      - "Kritik veya önemli işlevler listesi güncel olmalı (PRC-RSK-03)"
+      - "Önceki yıl test bulguları kapatılmış olmalı"
+    inputs:
+      - { name: "Kritik işlev ve varlık listesi", format: yaml, source_role: ROL-RSK-01 }
+      - { name: "Risk kayıt defteri", format: json, source_role: ROL-CIO-01 }
+      - { name: "Önceki yıl test sonuçları", format: json, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "test-programme.yaml", format: yaml, retention_years: 7 }
+      - { name: "test-calendar.json", format: json, retention_years: 7 }
+    responsible_roles: [ROL-CTO-01]
+    approval_roles: [ROL-CEO-01, ROL-CMP-01]
+    slas:
+      - { trigger: "Yıllık planlama başlangıcı", duration: 20, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: TST-R1
+        condition: "varlik.kritiklik == 'kritik' AND yil_ici_test_yok"
+        action: "yıllık test takvimine zorunlu test ekle"
+        dora_ref: { article: "Madde 25(2)" }
+      - rule_id: TST-R2
+        condition: "kurum.tier == tier1 AND kurum.sistemik == true"
+        action: "TLPT kapsamını programa ekle (PRC-TST-03)"
+        dora_ref: { article: "Madde 26(1)" }
+    dependencies:
+      upstream: [PRC-RSK-02, PRC-RSK-03, PRC-INC-04]
+      downstream: [PRC-TST-02, PRC-TST-03]
+    evidence_requirements:
+      - "test-programme.yaml (yönetim kurulu onaylı)"
+      - "test-calendar.json (yıllık kapsam matrisi)"
+    control_ids:
+      - CTL-TST-001
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TST-02 — Yıllık Test Yürütme
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TST-02
+    name:
+      tr: "Yıllık Dayanıklılık Testlerinin Yürütülmesi"
+      en: "Annual Resilience Testing Execution"
+    pillar: testing
+    trigger: "Test takviminde planlanan tarih"
+    preconditions:
+      - "Testçi bağımsızlığı doğrulanmış olmalı"
+      - "Test ortamı veya kontrollü üretim penceresi onaylanmış olmalı"
+    inputs:
+      - { name: "Test planı ve kapsamı", format: yaml, source_role: ROL-CTO-01 }
+      - { name: "Zafiyet tarama çıktıları", format: json, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "test-findings.json", format: json, retention_years: 7 }
+      - { name: "test-report.pdf", format: pdf, retention_years: 7 }
+    responsible_roles: [ROL-CTO-01]
+    approval_roles: [ROL-CMP-01]
+    slas:
+      - { trigger: "Planlanan test tarihi", duration: 30, unit: days, clock_start: detection }
+      - { trigger: "Kritik bulgu tespiti", duration: 30, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: TST-R3
+        condition: "bulgu.seviye == 'kritik'"
+        action: "30 gün içinde kapatma planı oluştur, gecikirse yönetim kuruluna eskalasyon"
+        dora_ref: { article: "Madde 24(6)" }
+      - rule_id: TST-R4
+        condition: "testci.bagimsiz == false"
+        action: "testi geçersiz say, bağımsız testçi ata"
+        dora_ref: { article: "Madde 27" }
+    dependencies:
+      upstream: [PRC-TST-01]
+      downstream: [PRC-RSK-02, PRC-INC-01]
+    evidence_requirements:
+      - "test-report.pdf (testçi bağımsızlık beyanı ekli)"
+      - "test-findings.json (bulgu → aksiyon eşlemesi, kapanış tarihleri)"
+    tier_variants:
+      tier3:
+        note: "Yıllık zorunluluk; kapsam kritik işlevlerle sınırlandırılabilir (Madde 16)"
+    control_ids:
+      - CTL-TST-002
+      - CTL-TST-003
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TST-03 — TLPT Koordinasyonu (Tier 1)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TST-03
+    name:
+      tr: "TLPT (Tehdit Odaklı Sızma Testi) Koordinasyonu"
+      en: "TLPT (Threat-Led Penetration Testing) Coordination"
+    pillar: testing
+    trigger: "Üç yıllık TLPT döngüsü veya sistemik önem değişikliği"
+    preconditions:
+      - "Kurum sistemik öneme sahip olmalı (tier1)"
+      - "Bağımsız testçi sözleşmesi yürürlükte olmalı"
+    inputs:
+      - { name: "TLPT kapsam dokümanı", format: yaml, source_role: ROL-TLPT-01 }
+      - { name: "Tehdit istihbaratı profili", format: json, source_role: ROL-INF-01 }
+      - { name: "Üretim ortamı erişim planı", format: json, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "tlpt-scope.json", format: json, retention_years: 10 }
+      - { name: "tlpt-findings.json", format: json, retention_years: 10 }
+      - { name: "tlpt-attestation.pdf", format: pdf, retention_years: 10 }
+    responsible_roles: [ROL-TLPT-01]
+    approval_roles: [ROL-CTO-01]
+    slas:
+      - { trigger: "TLPT döngüsü başlangıcı", duration: 3, unit: months, clock_start: detection }
+      - { trigger: "Kritik TLPT bulgusu", duration: 30, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: TST-R5
+        condition: "tlpt_dongusu >= 3 yil"
+        action: "yeni TLPT planla"
+        dora_ref: { article: "Madde 26(1)" }
+      - rule_id: TST-R6
+        condition: "testci.cikar_catismasi == true"
+        action: "testçiyi reddet, alternatif ata"
+        dora_ref: { article: "Madde 27(1)(c)" }
+    dependencies:
+      upstream: [PRC-TST-01, PRC-INF-01]
+      downstream: [PRC-RSK-02, PRC-INC-04]
+    evidence_requirements:
+      - "tlpt-attestation.pdf (bağımsız testçi imzası + kapsam onayı)"
+      - "tlpt-findings.json (kapatma durumu ve süreleri)"
+    tier_variants:
+      tier2:
+        note: "TLPT zorunlu değil; gelişmiş senaryo testi ile ikame edilebilir"
+      tier3:
+        note: "Kapsam dışı"
+    control_ids:
+      - CTL-TST-004

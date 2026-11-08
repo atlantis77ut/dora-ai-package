@@ -1,0 +1,35 @@
+{
+  "provider": {
+    "id": "PRV-014",
+    "name": "Vendor X (core banking SaaS)",
+    "criticality": "critical",
+    "ctpp": true,
+    "concentration_share_pct": 42,
+    "contract_end": "2026-05-31",
+    "services": ["core_banking", "dr_backup"],
+    "data_volume_tb": 12,
+    "subcontractors": ["PRV-022", "PRV-031"],
+    "contract_clauses": {
+      "audit_right": true,
+      "data_return": true,
+      "exit_strategy": false,
+      "sla": true,
+      "subcontractor_approval": true
+    },
+    "linked_assets": ["AST-001", "AST-014", "AST-022"],
+    "open_oversight_recommendations": [
+      {
+        "id": "REC-2026-004",
+        "received_at": "2026-02-10",
+        "due_at": "2026-05-10",
+        "status": "open"
+      }
+    ]
+  },
+  "context": {
+    "tier": "tier1",
+    "regulator": "BDDK",
+    "alternative_provider": null,
+    "exit_plan_exists": false
+  }
+}

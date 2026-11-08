@@ -1,0 +1,222 @@
+schema_version: "1.0.0"
+generated_at: "2026-10-30"
+pillar:
+  id: incident
+  name:
+    tr: "2. Sütun — Olay Yönetimi ve Raporlama"
+    en: "Pillar 2 — Incident Management and Reporting"
+  dora_ref:
+    article: "Madde 17-23"
+    rts_its: "RTS 2024/1772 (Incident Reporting)"
+source_of_truth: "Konuşma dökümü satır 40-141 (süreç akışı) + satır 500-868 (şema ve SLA tanımları)"
+
+processes:
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INC-01 — Olay Tespiti ve Sınıflandırma
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INC-01
+    name:
+      tr: "ICT Olayı Tespiti ve Büyük Olay Sınıflandırması"
+      en: "ICT Incident Detection and Major Incident Classification"
+    pillar: incident
+    trigger: "SIEM alarmı, kullanıcı bildirimi veya tedarikçi bildirimi"
+    preconditions:
+      - "SIEM konnektörü aktif olmalı (onboarding adım 6)"
+      - "Sınıflandırma kriterleri KIB'de yüklü olmalı"
+    inputs:
+      - { name: "SIEM olay akışı", format: json, source_role: ROL-INC-01 }
+      - { name: "ITSM olay kaydı", format: json, source_role: ROL-INC-01 }
+      - { name: "Sınıflandırma kriterleri", format: yaml, source_role: ROL-CIO-01 }
+    outputs:
+      - { name: "incident-record.json", format: json, retention_years: 10 }
+      - { name: "classification-decision.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-INC-01]
+    approval_roles: [ROL-CIO-01]
+    slas:
+      - { trigger: "Olay tespiti", duration: 4, unit: hours, clock_start: detection }
+      - { trigger: "Sınıflandırma onayı", duration: 30, unit: minutes, clock_start: classification }
+    decision_rules:
+      - rule_id: INC-R1
+        condition: "etkilenen_musteri > 100000"
+        action: "olayı 'büyük' olarak sınıflandır"
+        dora_ref: { article: "Madde 18(1)", rts_its: "RTS 2024/1772 Art. 3(1)(a)" }
+      - rule_id: INC-R2
+        condition: "kesinti_suresi > 24 saat"
+        action: "olayı 'büyük' olarak sınıflandır"
+        dora_ref: { article: "Madde 18(1)", rts_its: "RTS 2024/1772 Art. 3(1)(b)" }
+      - rule_id: INC-R3
+        condition: "ekonomik_etki > 100000 EUR"
+        action: "olayı 'büyük' olarak sınıflandır"
+        dora_ref: { article: "Madde 18(1)", rts_its: "RTS 2024/1772 Art. 3(1)(c)" }
+      - rule_id: INC-R4
+        condition: "etkilenen_uyelik_devleti >= 2"
+        action: "olayı 'büyük' olarak sınıflandır"
+        dora_ref: { rts_its: "RTS 2024/1772 Art. 3(1)(d)" }
+      - rule_id: INC-R5
+        condition: "veri_kaybi == true OR yetkisiz_erisim == true"
+        action: "olayı 'büyük' olarak sınıflandır, KVKK bildirimini değerlendir"
+        dora_ref: { rts_its: "RTS 2024/1772 Art. 3(1)(e)" }
+    dependencies:
+      upstream: [PRC-RSK-03]
+      downstream: [PRC-INC-02, PRC-INC-04, PRC-TPP-04]
+    evidence_requirements:
+      - "classification-decision.json (kriter bazında gerekçe + insan onayı)"
+      - "incident-record.json (zaman damgaları: tespit, sınıflandırma, onay)"
+    control_ids:
+      - CTL-INC-001
+      - CTL-INC-002
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INC-02 — İlk Bildirim (4 saat)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INC-02
+    name:
+      tr: "Yetkili Otoriteye İlk Bildirim"
+      en: "Initial Notification to Competent Authority"
+    pillar: incident
+    trigger: "Olayın 'büyük' olarak sınıflandırılıp onaylanması"
+    preconditions:
+      - "PRC-INC-01 sınıflandırma kararı onaylanmış olmalı"
+      - "Regülatör bildirim kanalı erişilebilir olmalı (onboarding adım 2)"
+    inputs:
+      - { name: "Sınıflandırma kararı", format: json, source_role: ROL-INC-01 }
+      - { name: "Olay kaydı", format: json, source_role: ROL-INC-01 }
+      - { name: "Bildirim şablonu (RTS 2024/1772)", format: yaml, source_role: ROL-CIO-01 }
+    outputs:
+      - { name: "initial-notification.xml", format: xbrl, retention_years: 10 }
+      - { name: "notification-receipt.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-INC-01]
+    approval_roles: [ROL-CIO-01]
+    slas:
+      - { trigger: "Sınıflandırma onayı", duration: 4, unit: hours, clock_start: classification }
+      - { trigger: "Olay tespiti", duration: 24, unit: hours, clock_start: detection }
+    decision_rules:
+      - rule_id: INC-R6
+        condition: "ilk_bildirim_suresi > 4 saat AND sebep != 'teknik_kesinti'"
+        action: "gecikme gerekçesini kaydet, ikinci hat bildirimine ekle"
+        dora_ref: { article: "Madde 19(4)(a)" }
+    dependencies:
+      upstream: [PRC-INC-01]
+      downstream: [PRC-INC-03]
+    evidence_requirements:
+      - "initial-notification.xml (gönderim zaman damgası)"
+      - "notification-receipt.json (regülatör yanıtı / referans numarası)"
+    tier_variants:
+      tier2:
+        sla_override: "4 saat — DORA tabanı korunur (karar 2026-11-03, DR-001)"
+      tier3:
+        sla_override: "4 saat — DORA tabanı korunur; insan onayı tek imza ile"
+    control_ids:
+      - CTL-INC-003
+      - CTL-INC-004
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INC-03 — Ara Rapor (72 saat)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INC-03
+    name:
+      tr: "Ara Rapor (72 Saat)"
+      en: "Intermediate Report (72 hours)"
+    pillar: incident
+    trigger: "İlk bildirim gönderildikten sonra"
+    preconditions:
+      - "PRC-INC-02 tamamlanmış olmalı"
+    inputs:
+      - { name: "Etki analizi (kapsam, müşteri, coğrafya)", format: json, source_role: ROL-INC-01 }
+      - { name: "Geçici önlem listesi", format: json, source_role: ROL-INC-01 }
+    outputs:
+      - { name: "intermediate-report.xml", format: xbrl, retention_years: 10 }
+    responsible_roles: [ROL-INC-01]
+    approval_roles: [ROL-CIO-01]
+    slas:
+      - { trigger: "İlk bildirim gönderimi", duration: 72, unit: hours, clock_start: detection }
+    decision_rules:
+      - rule_id: INC-R7
+        condition: "etki_kapsami_genisledi == true"
+        action: "yeniden sınıflandırma değerlendirmesi başlat"
+        dora_ref: { article: "Madde 19(4)(b)" }
+    dependencies:
+      upstream: [PRC-INC-02]
+      downstream: [PRC-INC-04]
+    evidence_requirements:
+      - "intermediate-report.xml (gönderim zaman damgası + ek dosyalar)"
+    control_ids:
+      - CTL-INC-005
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INC-04 — Nihai Rapor (1 ay)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INC-04
+    name:
+      tr: "Nihai Rapor ve Kök Neden Analizi"
+      en: "Final Report and Root Cause Analysis"
+    pillar: incident
+    trigger: "Olay kapatıldıktan sonra"
+    preconditions:
+      - "Olay müdahalesi sonlanmış, hizmet restore edilmiş olmalı"
+    inputs:
+      - { name: "Olay zaman çizelgesi", format: json, source_role: ROL-INC-01 }
+      - { name: "Kök neden analizi (RCA) sonucu", format: json, source_role: ROL-INC-01 }
+      - { name: "Kurtarma etkinliği ölçümleri", format: json, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "final-report.xml", format: xbrl, retention_years: 10 }
+      - { name: "rca-report.pdf", format: pdf, retention_years: 10 }
+    responsible_roles: [ROL-INC-01]
+    approval_roles: [ROL-CIO-01, ROL-CMP-01]
+    slas:
+      - { trigger: "Olay kapanışı", duration: 1, unit: months, clock_start: detection }
+    decision_rules:
+      - rule_id: INC-R8
+        condition: "kok_neden == 'tedarikci'"
+        action: "PRC-TPP-04 bilgi kaydını güncelle, CTPP ise ESA bildirimi değerlendir"
+        dora_ref: { article: "Madde 13(2)" }
+      - rule_id: INC-R9
+        condition: "kok_neden == 'kontrol_eksikligi'"
+        action: "kontroller kataloğunda yeni kontrol aç (Modül 3) ve PRC-RSK-02'ye işle"
+        dora_ref: { article: "Madde 6(6)" }
+    dependencies:
+      upstream: [PRC-INC-03]
+      downstream: [PRC-RSK-04, PRC-TPP-04, PRC-TST-01]
+    evidence_requirements:
+      - "final-report.xml (1 ay içinde gönderim kanıtı)"
+      - "rca-report.pdf (düzeltici aksiyon planı ekli)"
+    control_ids:
+      - CTL-INC-006
+      - CTL-INC-007
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INC-05 — Gönüllü Siber Tehdit Bildirimi
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INC-05
+    name:
+      tr: "Gönüllü Siber Tehdit Bildirimi"
+      en: "Voluntary Cyber Threat Notification"
+    pillar: incident
+    trigger: "Önemli siber tehdit tespiti (henüz olaya dönüşmemiş)"
+    preconditions:
+      - "Tehdit istihbaratı doğrulanmış olmalı (PRC-INF-01)"
+    inputs:
+      - { name: "Tehdit istihbaratı kaydı", format: json, source_role: ROL-INF-01 }
+      - { name: "Etki değerlendirmesi", format: json, source_role: ROL-INC-01 }
+    outputs:
+      - { name: "voluntary-notification.json", format: json, retention_years: 7 }
+    responsible_roles: [ROL-INF-01, ROL-INC-01]
+    approval_roles: [ROL-CEO-01, ROL-CMP-01]
+    slas:
+      - { trigger: "Tehdit doğrulaması", duration: 5, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: INC-R10
+        condition: "tehdit_ilgili_sektor == true AND gizlilik_riski == 'dusuk'"
+        action: "gönüllü bildirim taslağı hazırla"
+        dora_ref: { article: "Madde 19(2)" }
+    dependencies:
+      upstream: [PRC-INF-01]
+      downstream: []
+    evidence_requirements:
+      - "voluntary-notification.json (onay kaydı + kapsam gerekçesi)"
+    tier_variants:
+      tier3:
+        note: "Opsiyonel süreç; tier 3 kurumlarda devre dışı bırakılabilir"
+    control_ids:
+      - CTL-INC-008

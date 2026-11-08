@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Süreçler — DORA AI Ajan Paketi</title><style>
+  :root { --bg:#0b1020; --panel:#131a2e; --line:#24304d; --fg:#e8edf7; --muted:#93a1c0;
+    --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --accent:#60a5fa; --accent2:#a78bfa; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:30px; background:radial-gradient(1200px 600px at 20% -10%,#1a2542 0%,var(--bg) 55%);
+    color:var(--fg); font:14px/1.55 "Segoe UI",system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  header { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:6px; }
+  h1 { font-size:22px; margin:0; letter-spacing:.2px; }
+  .sub { color:var(--muted); font-size:12.5px; }
+  nav { display:flex; gap:8px; margin:16px 0 22px; flex-wrap:wrap; }
+  nav a { text-decoration:none; color:var(--muted); border:1px solid var(--line); border-radius:999px;
+    padding:5px 13px; font-size:12.5px; }
+  nav a.on, nav a:hover { color:var(--fg); border-color:#3b4d78; background:#18213a; }
+  .badge { display:inline-block; padding:2px 8px; border:1px solid var(--line); border-radius:999px; font-size:11.5px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin:4px 0 18px; }
+  .card { background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0)); border:1px solid var(--line);
+    border-radius:12px; padding:14px 16px; }
+  .card .label { color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:.6px; }
+  .card .value { font-size:26px; font-weight:650; margin-top:6px; }
+  .card .hint { color:var(--muted); font-size:11.5px; margin-top:2px; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
+  h2 { font-size:14px; margin:0 0 14px; letter-spacing:.3px; }
+  h2 span { color:var(--muted); font-weight:400; margin-left:8px; font-size:12px; }
+  .bar { display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); }
+  .bar > i { display:block; }
+  .b-ok{background:var(--ok)} .b-warn{background:var(--warn)} .b-bad{background:var(--bad)}
+  .legend { display:flex; gap:18px; margin-top:10px; color:var(--muted); font-size:12px; }
+  .legend b { color:var(--fg); }
+  table { width:100%; border-collapse:collapse; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid rgba(36,48,77,.7); font-size:12.5px; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.7px; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .mono { font-family:ui-monospace,"Cascadia Mono",Consolas,monospace; font-size:12px; color:var(--accent); }
+  .pill { border:1px solid var(--line); border-radius:999px; padding:1px 8px; font-size:11px; color:var(--muted); white-space:nowrap; }
+  .pill.ok { color:var(--ok); border-color:#1f5142; } .pill.warn { color:var(--warn); border-color:#5a4614; }
+  .pill.bad { color:var(--bad); border-color:#5b2626; }
+  .two { display:grid; grid-template-columns:1.35fr 1fr; gap:16px; }
+  .list { margin:0; padding-left:18px; color:var(--muted); font-size:12.5px; }
+  .list li { margin:6px 0; }
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+  details { border-top:1px solid rgba(36,48,77,.6); padding:8px 0; }
+  details summary { cursor:pointer; color:var(--muted); font-size:12px; }
+  details summary:hover { color:var(--fg); }
+  .kv { display:grid; grid-template-columns:130px 1fr; gap:4px 12px; margin:10px 0 4px; font-size:12.5px; }
+  .kv dt { color:var(--muted); } .kv dd { margin:0; }
+  footer { color:var(--muted); font-size:11.5px; text-align:center; margin-top:8px; }
+</style></head>
+<body><div class="wrap">
+  <header>
+    <div><h1>Süreç Kütüphanesi</h1><div class="sub">21 süreç · 32 kontrol · CORF 6 fazı</div></div>
+    <span class="badge">08.11.2026 18:01:09</span>
+  </header>
+  
+  <nav>
+    <a href="index.html" class="">Genel bakış</a>
+    <a href="processes.html" class="on">Süreçler (21)</a>
+    <a href="controls.html" class="">Kontroller (32)</a>
+  </nav>
+  <section>
+    <h2>Sütun dağılımı <span>DORA 5 sütun</span></h2>
+    <table><thead><tr><th>Süreç</th><th>Ad</th><th>Sütun</th><th class="num">Kural</th><th class="num">SLA</th><th class="num">Kontrol</th></tr></thead>
+    <tbody><tr><td class="mono">PRC-RSK-01</td><td>ICT Risk Yönetim Çerçevesi Oluşturma ve Gözden Geçirme</td>
+        <td><span class="pill">ICT Risk Yönetimi</span></td>
+        <td class="num">2</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-RSK-02</td><td>Yıllık ICT Risk Değerlendirmesi</td>
+        <td><span class="pill">ICT Risk Yönetimi</span></td>
+        <td class="num">2</td><td class="num">1</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-RSK-03</td><td>ICT Varlık Envanteri ve Kritiklik Sınıflandırması</td>
+        <td><span class="pill">ICT Risk Yönetimi</span></td>
+        <td class="num">2</td><td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-RSK-04</td><td>İş Sürekliliği (BCP) ve Kurtarma (DRP) Planı Yönetimi</td>
+        <td><span class="pill">ICT Risk Yönetimi</span></td>
+        <td class="num">1</td><td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-RSK-05</td><td>Siber Güvenlik Kontrolleri Yönetimi (erişim, şifreleme, ağ)</td>
+        <td><span class="pill">ICT Risk Yönetimi</span></td>
+        <td class="num">4</td><td class="num">4</td>
+        <td class="num">4</td></tr><tr><td class="mono">PRC-INC-01</td><td>ICT Olayı Tespiti ve Büyük Olay Sınıflandırması</td>
+        <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
+        <td class="num">5</td><td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-INC-02</td><td>Yetkili Otoriteye İlk Bildirim</td>
+        <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
+        <td class="num">1</td><td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-INC-03</td><td>Ara Rapor (72 Saat)</td>
+        <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
+        <td class="num">1</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-INC-04</td><td>Nihai Rapor ve Kök Neden Analizi</td>
+        <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
+        <td class="num">2</td><td class="num">1</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-INC-05</td><td>Gönüllü Siber Tehdit Bildirimi</td>
+        <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
+        <td class="num">1</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-TST-01</td><td>Risk Bazlı Test Programı Tasarımı</td>
+        <td><span class="pill">Dijital Operasyonel Dayanıklılık Testi</span></td>
+        <td class="num">2</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-TST-02</td><td>Yıllık Dayanıklılık Testlerinin Yürütülmesi</td>
+        <td><span class="pill">Dijital Operasyonel Dayanıklılık Testi</span></td>
+        <td class="num">2</td><td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-TST-03</td><td>TLPT (Tehdit Odaklı Sızma Testi) Koordinasyonu</td>
+        <td><span class="pill">Dijital Operasyonel Dayanıklılık Testi</span></td>
+        <td class="num">2</td><td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-TPP-01</td><td>Tedarikçi Durum Tespiti (Due Diligence)</td>
+        <td><span class="pill">Üçüncü Taraf ICT Riski Yönetimi</span></td>
+        <td class="num">2</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-TPP-02</td><td>Tedarikçi Kritiklik Analizi</td>
+        <td><span class="pill">Üçüncü Taraf ICT Riski Yönetimi</span></td>
+        <td class="num">2</td><td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-TPP-03</td><td>Sözleşme Uyum Kontrolü (Madde 30)</td>
+        <td><span class="pill">Üçüncü Taraf ICT Riski Yönetimi</span></td>
+        <td class="num">2</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-TPP-04</td><td>Bilgi Kaydı (RoI) Yönetimi ve Yıllık Sunum</td>
+        <td><span class="pill">Üçüncü Taraf ICT Riski Yönetimi</span></td>
+        <td class="num">1</td><td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-TPP-05</td><td>Kritik Tedarikçi (CTPP) Gözetim Takibi</td>
+        <td><span class="pill">Üçüncü Taraf ICT Riski Yönetimi</span></td>
+        <td class="num">1</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-TPP-06</td><td>Tedarikçiden Çıkış Stratejisi</td>
+        <td><span class="pill">Üçüncü Taraf ICT Riski Yönetimi</span></td>
+        <td class="num">1</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-INF-01</td><td>Siber Tehdit İstihbaratı Toplama ve Paylaşımı</td>
+        <td><span class="pill">Bilgi Paylaşımı</span></td>
+        <td class="num">3</td><td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-INF-02</td><td>Gönüllü Bildirim Protokolü ve Gizlilik Yönetimi</td>
+        <td><span class="pill">Bilgi Paylaşımı</span></td>
+        <td class="num">2</td><td class="num">2</td>
+        <td class="num">1</td></tr></tbody></table>
+  </section>
+  <section>
+    <h2>Ayrıntılar <span>satıra tıklayın</span></h2>
+    
+  <details>
+    <summary><span class="mono">PRC-RSK-01</span> &nbsp;<b>ICT Risk Yönetim Çerçevesi Oluşturma ve Gözden Geçirme</b> &nbsp;
+      <span class="pill">1. Sütun — ICT Risk Yönetimi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yıllık gözden geçirme takvimi veya düzenleyici değişiklik</dd>
+      <dt>Sorumlu</dt><dd>ROL-CIO-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01, ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>DORA ve RTS/ITS metinleri <span class="pill">pdf</span> · Kurum içi ICT politikaları <span class="pill">pdf</span> · Önceki yıl denetim bulguları <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>ict-risk-framework-policy.pdf <span class="pill">pdf</span> · framework-review-record.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Yıllık gözden geçirme: <b>1 months</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">RSK-R1</span> çerçeve_yasi >= 12 ay → gözden geçirme görevi aç<br><span class="mono">RSK-R2</span> yeni_rts_its_yayinlandi == true → etki analizi başlat, 30 gün içinde çerçeveyi güncelle</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-001</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-RSK-03 · ↓ PRC-RSK-02, PRC-TST-01, PRC-RSK-04</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-RSK-02</span> &nbsp;<b>Yıllık ICT Risk Değerlendirmesi</b> &nbsp;
+      <span class="pill">1. Sütun — ICT Risk Yönetimi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yıllık risk takvimi veya önemli mimari değişiklik</dd>
+      <dt>Sorumlu</dt><dd>ROL-CIO-01, ROL-RSK-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01</dd>
+      <dt>Girdi</dt><dd>Güncel ICT varlık envanteri <span class="pill">yaml</span> · Tehdit istihbaratı özeti <span class="pill">json</span> · Test ve denetim bulguları <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>risk-register.json <span class="pill">json</span> · annual-risk-assessment.pdf <span class="pill">pdf</span></dd>
+      <dt>SLA</dt><dd>Yıllık değerlendirme başlangıcı: <b>45 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">RSK-R3</span> risk_skoru > risk_istahi → risk iştahı aşımı olarak işaretle, yönetim kuruluna sun<br><span class="mono">RSK-R4</span> kritik_varlik_riski == 'kabul edilemez' → düzeltici aksiyon planı oluştur, 30 gün içinde kapat</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-002</span> · <span class="mono">CTL-RSK-006</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-RSK-01, PRC-RSK-03, PRC-TST-02 · ↓ PRC-RSK-04, PRC-TST-01, PRC-TPP-02</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-RSK-03</span> &nbsp;<b>ICT Varlık Envanteri ve Kritiklik Sınıflandırması</b> &nbsp;
+      <span class="pill">1. Sütun — ICT Risk Yönetimi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yeni varlık, değişiklik kaydı (RFC) veya üç aylık envanter uzlaştırması</dd>
+      <dt>Sorumlu</dt><dd>ROL-RSK-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CIO-01</dd>
+      <dt>Girdi</dt><dd>CMDB kayıtları <span class="pill">json</span> · İş hizmetleri kataloğu <span class="pill">yaml</span> · Tedarikçi listesi <span class="pill">yaml</span></dd>
+      <dt>Çıktı</dt><dd>ict-inventory.yaml <span class="pill">yaml</span> · criticality-classification.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Değişiklik kaydı (RFC) onayı: <b>24 hours</b><br>Üç aylık uzlaştırma: <b>5 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">RSK-R5</span> varlik.bagimlilik_sayisi == 0 AND varlik.etki_toleransi_asimi == true → varlığı 'kritik veya önemli işlev' olarak işaretle<br><span class="mono">RSK-R6</span> envanter_kaydi_yok AND varlik_aktif → kayıt dışı varlık alarmı üret, 48 saat içinde envantere ekle</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-003</span> · <span class="mono">CTL-RSK-004</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ — · ↓ PRC-RSK-01, PRC-RSK-02, PRC-RSK-04, PRC-TPP-02</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-RSK-04</span> &nbsp;<b>İş Sürekliliği (BCP) ve Kurtarma (DRP) Planı Yönetimi</b> &nbsp;
+      <span class="pill">1. Sütun — ICT Risk Yönetimi</span>
+      <span class="pill">1 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yıllık plan gözden geçirmesi, test sonucu veya büyük olay sonrası</dd>
+      <dt>Sorumlu</dt><dd>ROL-CIO-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01</dd>
+      <dt>Girdi</dt><dd>İş etki analizi (BIA) <span class="pill">json</span> · Kritik varlık listesi <span class="pill">yaml</span> · Test sonuçları <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>bcp-drp-plan.pdf <span class="pill">pdf</span> · plan-test-evidence.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Yıllık gözden geçirme: <b>1 months</b><br>Başarısız test sonucu: <b>30 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">RSK-R7</span> test_sonucu == 'RTO asildi' → plan revizyonu + kök neden analizi başlat</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-005</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-RSK-02, PRC-RSK-03 · ↓ PRC-INC-04</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-RSK-05</span> &nbsp;<b>Siber Güvenlik Kontrolleri Yönetimi (erişim, şifreleme, ağ)</b> &nbsp;
+      <span class="pill">1. Sütun — ICT Risk Yönetimi</span>
+      <span class="pill">4 kural</span>
+      <span class="pill">4 SLA</span>
+      <span class="pill">4 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yeni sistem/hesap açılışı, üç aylık kontrol gözden geçirmesi veya zafiyet bulgusu</dd>
+      <dt>Sorumlu</dt><dd>ROL-CTO-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CIO-01, ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>IAM hesap ve rol listesi <span class="pill">json</span> · Şifreleme envanteri (at-rest/in-transit) <span class="pill">yaml</span> · Ağ segmentasyonu ve akış kuralları <span class="pill">json</span> · Zafiyet tarama sonuçları <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>access-review-record.json <span class="pill">json</span> · crypto-inventory.yaml <span class="pill">yaml</span> · segmentation-evidence.json <span class="pill">json</span> · vulnerability-closure.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Üç aylık erişim gözden geçirmesi: <b>10 days</b><br>Yeni ayrıcalıklı hesap: <b>1 days</b><br>Kritik zafiyet (CVSS >= 9.0): <b>30 days</b><br>Yüksek zafiyet (CVSS 7.0-8.9): <b>60 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">SEC-R1</span> hesap.son_erisim > 90 gun AND hesap.aktif → hesabı devre dışı bırak, gerekçeyi kaydet<br><span class="mono">SEC-R2</span> varlik.kritik == true AND sifreleme.in_transit == false → 30 gün içinde şifreleme planı aç; kapatılmazsa risk kaydına işle<br><span class="mono">SEC-R3</span> segment.default_deny == false AND kritik_varlik_iceren_zone == true → segmentasyon ihlali aç, PRC-RSK-02 risk kaydına ekle<br><span class="mono">SEC-R4</span> zafiyet.cvss >= 9.0 AND zafiyet.yas_gun > 30 AND istisna_yok → yönetim kuruluna eskalasyon; istisna varsa gerekçeli kayıt zorunlu</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-007</span> · <span class="mono">CTL-RSK-008</span> · <span class="mono">CTL-RSK-009</span> · <span class="mono">CTL-RSK-010</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-RSK-03 · ↓ PRC-INC-01, PRC-TST-02, PRC-RSK-02</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INC-01</span> &nbsp;<b>ICT Olayı Tespiti ve Büyük Olay Sınıflandırması</b> &nbsp;
+      <span class="pill">2. Sütun — Olay Yönetimi ve Raporlama</span>
+      <span class="pill">5 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>SIEM alarmı, kullanıcı bildirimi veya tedarikçi bildirimi</dd>
+      <dt>Sorumlu</dt><dd>ROL-INC-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CIO-01</dd>
+      <dt>Girdi</dt><dd>SIEM olay akışı <span class="pill">json</span> · ITSM olay kaydı <span class="pill">json</span> · Sınıflandırma kriterleri <span class="pill">yaml</span></dd>
+      <dt>Çıktı</dt><dd>incident-record.json <span class="pill">json</span> · classification-decision.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Olay tespiti: <b>4 hours</b><br>Sınıflandırma onayı: <b>30 minutes</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INC-R1</span> etkilenen_musteri > 100000 → olayı 'büyük' olarak sınıflandır<br><span class="mono">INC-R2</span> kesinti_suresi > 24 saat → olayı 'büyük' olarak sınıflandır<br><span class="mono">INC-R3</span> ekonomik_etki > 100000 EUR → olayı 'büyük' olarak sınıflandır<br><span class="mono">INC-R4</span> etkilenen_uyelik_devleti >= 2 → olayı 'büyük' olarak sınıflandır<br><span class="mono">INC-R5</span> veri_kaybi == true OR yetkisiz_erisim == true → olayı 'büyük' olarak sınıflandır, KVKK bildirimini değerlendir</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INC-001</span> · <span class="mono">CTL-INC-002</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-RSK-03 · ↓ PRC-INC-02, PRC-INC-04, PRC-TPP-04</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INC-02</span> &nbsp;<b>Yetkili Otoriteye İlk Bildirim</b> &nbsp;
+      <span class="pill">2. Sütun — Olay Yönetimi ve Raporlama</span>
+      <span class="pill">1 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Olayın 'büyük' olarak sınıflandırılıp onaylanması</dd>
+      <dt>Sorumlu</dt><dd>ROL-INC-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CIO-01</dd>
+      <dt>Girdi</dt><dd>Sınıflandırma kararı <span class="pill">json</span> · Olay kaydı <span class="pill">json</span> · Bildirim şablonu (RTS 2024/1772) <span class="pill">yaml</span></dd>
+      <dt>Çıktı</dt><dd>initial-notification.xml <span class="pill">xbrl</span> · notification-receipt.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Sınıflandırma onayı: <b>4 hours</b><br>Olay tespiti: <b>24 hours</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INC-R6</span> ilk_bildirim_suresi > 4 saat AND sebep != 'teknik_kesinti' → gecikme gerekçesini kaydet, ikinci hat bildirimine ekle</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INC-003</span> · <span class="mono">CTL-INC-004</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INC-01 · ↓ PRC-INC-03</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INC-03</span> &nbsp;<b>Ara Rapor (72 Saat)</b> &nbsp;
+      <span class="pill">2. Sütun — Olay Yönetimi ve Raporlama</span>
+      <span class="pill">1 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>İlk bildirim gönderildikten sonra</dd>
+      <dt>Sorumlu</dt><dd>ROL-INC-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CIO-01</dd>
+      <dt>Girdi</dt><dd>Etki analizi (kapsam, müşteri, coğrafya) <span class="pill">json</span> · Geçici önlem listesi <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>intermediate-report.xml <span class="pill">xbrl</span></dd>
+      <dt>SLA</dt><dd>İlk bildirim gönderimi: <b>72 hours</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INC-R7</span> etki_kapsami_genisledi == true → yeniden sınıflandırma değerlendirmesi başlat</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INC-005</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INC-02 · ↓ PRC-INC-04</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INC-04</span> &nbsp;<b>Nihai Rapor ve Kök Neden Analizi</b> &nbsp;
+      <span class="pill">2. Sütun — Olay Yönetimi ve Raporlama</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Olay kapatıldıktan sonra</dd>
+      <dt>Sorumlu</dt><dd>ROL-INC-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CIO-01, ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>Olay zaman çizelgesi <span class="pill">json</span> · Kök neden analizi (RCA) sonucu <span class="pill">json</span> · Kurtarma etkinliği ölçümleri <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>final-report.xml <span class="pill">xbrl</span> · rca-report.pdf <span class="pill">pdf</span></dd>
+      <dt>SLA</dt><dd>Olay kapanışı: <b>1 months</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INC-R8</span> kok_neden == 'tedarikci' → PRC-TPP-04 bilgi kaydını güncelle, CTPP ise ESA bildirimi değerlendir<br><span class="mono">INC-R9</span> kok_neden == 'kontrol_eksikligi' → kontroller kataloğunda yeni kontrol aç (Modül 3) ve PRC-RSK-02'ye işle</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INC-006</span> · <span class="mono">CTL-INC-007</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INC-03 · ↓ PRC-RSK-04, PRC-TPP-04, PRC-TST-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INC-05</span> &nbsp;<b>Gönüllü Siber Tehdit Bildirimi</b> &nbsp;
+      <span class="pill">2. Sütun — Olay Yönetimi ve Raporlama</span>
+      <span class="pill">1 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Önemli siber tehdit tespiti (henüz olaya dönüşmemiş)</dd>
+      <dt>Sorumlu</dt><dd>ROL-INF-01, ROL-INC-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01, ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>Tehdit istihbaratı kaydı <span class="pill">json</span> · Etki değerlendirmesi <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>voluntary-notification.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Tehdit doğrulaması: <b>5 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INC-R10</span> tehdit_ilgili_sektor == true AND gizlilik_riski == 'dusuk' → gönüllü bildirim taslağı hazırla</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INC-008</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INF-01 · ↓ —</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TST-01</span> &nbsp;<b>Risk Bazlı Test Programı Tasarımı</b> &nbsp;
+      <span class="pill">3. Sütun — Dijital Operasyonel Dayanıklılık Testi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yıllık planlama dönemi veya risk değerlendirmesi sonucu</dd>
+      <dt>Sorumlu</dt><dd>ROL-CTO-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01, ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>Kritik işlev ve varlık listesi <span class="pill">yaml</span> · Risk kayıt defteri <span class="pill">json</span> · Önceki yıl test sonuçları <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>test-programme.yaml <span class="pill">yaml</span> · test-calendar.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Yıllık planlama başlangıcı: <b>20 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TST-R1</span> varlik.kritiklik == 'kritik' AND yil_ici_test_yok → yıllık test takvimine zorunlu test ekle<br><span class="mono">TST-R2</span> kurum.tier == tier1 AND kurum.sistemik == true → TLPT kapsamını programa ekle (PRC-TST-03)</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TST-001</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-RSK-02, PRC-RSK-03, PRC-INC-04 · ↓ PRC-TST-02, PRC-TST-03</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TST-02</span> &nbsp;<b>Yıllık Dayanıklılık Testlerinin Yürütülmesi</b> &nbsp;
+      <span class="pill">3. Sütun — Dijital Operasyonel Dayanıklılık Testi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Test takviminde planlanan tarih</dd>
+      <dt>Sorumlu</dt><dd>ROL-CTO-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>Test planı ve kapsamı <span class="pill">yaml</span> · Zafiyet tarama çıktıları <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>test-findings.json <span class="pill">json</span> · test-report.pdf <span class="pill">pdf</span></dd>
+      <dt>SLA</dt><dd>Planlanan test tarihi: <b>30 days</b><br>Kritik bulgu tespiti: <b>30 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TST-R3</span> bulgu.seviye == 'kritik' → 30 gün içinde kapatma planı oluştur, gecikirse yönetim kuruluna eskalasyon<br><span class="mono">TST-R4</span> testci.bagimsiz == false → testi geçersiz say, bağımsız testçi ata</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TST-002</span> · <span class="mono">CTL-TST-003</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-TST-01 · ↓ PRC-RSK-02, PRC-INC-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TST-03</span> &nbsp;<b>TLPT (Tehdit Odaklı Sızma Testi) Koordinasyonu</b> &nbsp;
+      <span class="pill">3. Sütun — Dijital Operasyonel Dayanıklılık Testi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Üç yıllık TLPT döngüsü veya sistemik önem değişikliği</dd>
+      <dt>Sorumlu</dt><dd>ROL-TLPT-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CTO-01</dd>
+      <dt>Girdi</dt><dd>TLPT kapsam dokümanı <span class="pill">yaml</span> · Tehdit istihbaratı profili <span class="pill">json</span> · Üretim ortamı erişim planı <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>tlpt-scope.json <span class="pill">json</span> · tlpt-findings.json <span class="pill">json</span> · tlpt-attestation.pdf <span class="pill">pdf</span></dd>
+      <dt>SLA</dt><dd>TLPT döngüsü başlangıcı: <b>3 months</b><br>Kritik TLPT bulgusu: <b>30 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TST-R5</span> tlpt_dongusu >= 3 yil → yeni TLPT planla<br><span class="mono">TST-R6</span> testci.cikar_catismasi == true → testçiyi reddet, alternatif ata</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TST-004</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-TST-01, PRC-INF-01 · ↓ PRC-RSK-02, PRC-INC-04</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TPP-01</span> &nbsp;<b>Tedarikçi Durum Tespiti (Due Diligence)</b> &nbsp;
+      <span class="pill">4. Sütun — Üçüncü Taraf ICT Riski Yönetimi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yeni tedarikçi adayı veya sözleşme yenileme</dd>
+      <dt>Sorumlu</dt><dd>ROL-TPP-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CTO-01</dd>
+      <dt>Girdi</dt><dd>Tedarikçi teklif ve profil bilgileri <span class="pill">pdf</span> · Güvenlik anketi yanıtları <span class="pill">json</span> · Bağımsız sertifikalar (ISO 27001, SOC 2) <span class="pill">pdf</span></dd>
+      <dt>Çıktı</dt><dd>due-diligence-report.pdf <span class="pill">pdf</span> · provider-risk-score.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Aday tedarikçi kaydı: <b>15 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TPP-R1</span> risk_skoru > esik OR sertifika_yok → tedarikçiyi reddet veya ek kontrol şartıyla koşullu onayla<br><span class="mono">TPP-R2</span> alt_yuklenici_var == true → alt yüklenici zincirini değerlendirmeye ekle</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TPP-001</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-RSK-03 · ↓ PRC-TPP-02, PRC-TPP-03</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TPP-02</span> &nbsp;<b>Tedarikçi Kritiklik Analizi</b> &nbsp;
+      <span class="pill">4. Sütun — Üçüncü Taraf ICT Riski Yönetimi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Durum tespiti tamamlandığında veya desteklediği işlev değiştiğinde</dd>
+      <dt>Sorumlu</dt><dd>ROL-TPP-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CTO-01, ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>Durum tespiti raporu <span class="pill">pdf</span> · Desteklenen kritik işlev eşlemesi <span class="pill">yaml</span> · Yoğunlaşma verisi (tedarikçi payı) <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>criticality-assessment.yaml <span class="pill">yaml</span></dd>
+      <dt>SLA</dt><dd>Durum tespiti tamamlanması: <b>5 days</b><br>Yıllık yeniden değerlendirme: <b>10 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TPP-R3</span> hizmet_kritik_veya_onemli_islev == true → tedarikçiyi 'kritik' sınıflandır, Madde 30 ek şartlarını uygula<br><span class="mono">TPP-R4</span> tedarikci_payi > %30 AND alternatif_yok → yoğunlaşma riski kaydı aç, çıkış stratejisi zorunlu kıl</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TPP-002</span> · <span class="mono">CTL-TPP-003</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-TPP-01, PRC-RSK-02 · ↓ PRC-TPP-03, PRC-TPP-05, PRC-TPP-06</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TPP-03</span> &nbsp;<b>Sözleşme Uyum Kontrolü (Madde 30)</b> &nbsp;
+      <span class="pill">4. Sütun — Üçüncü Taraf ICT Riski Yönetimi</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yeni sözleşme, yenileme veya tadilat</dd>
+      <dt>Sorumlu</dt><dd>ROL-TPP-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CMP-01, ROL-CTO-01</dd>
+      <dt>Girdi</dt><dd>Sözleşme taslağı <span class="pill">pdf</span> · Madde 30 kontrol listesi <span class="pill">yaml</span></dd>
+      <dt>Çıktı</dt><dd>contract-compliance.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Sözleşme taslağı alımı: <b>10 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TPP-R5</span> eksik_madde IN ['denetim_hakki','veri_iadesi','cikis_stratejisi','sla','alt_yuklenici_onayi'] → sözleşmeyi onaylama; eksik madde listesi ile iade et<br><span class="mono">TPP-R6</span> tedarikci.kritik == true AND denetim_hakki.sinirli == true → denetim hakkını genişlet, aksi halde onaylama</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TPP-004</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-TPP-02 · ↓ PRC-TPP-04</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TPP-04</span> &nbsp;<b>Bilgi Kaydı (RoI) Yönetimi ve Yıllık Sunum</b> &nbsp;
+      <span class="pill">4. Sütun — Üçüncü Taraf ICT Riski Yönetimi</span>
+      <span class="pill">1 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Sözleşme değişikliği, yeni tedarikçi veya yıllık sunum takvimi</dd>
+      <dt>Sorumlu</dt><dd>ROL-TPP-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CIO-01</dd>
+      <dt>Girdi</dt><dd>Sözleşme uyum kaydı <span class="pill">json</span> · Kritiklik sınıfları <span class="pill">yaml</span> · XBRL-CSV şablonu (RTS 2024/1774) <span class="pill">xbrl</span></dd>
+      <dt>Çıktı</dt><dd>register-of-information.xbrl <span class="pill">xbrl</span> · roi-change-log.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Sözleşme değişikliği: <b>5 days</b><br>Yıllık sunum tarihi: <b>30 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TPP-R7</span> sozlesme.kritik == true AND roi_kaydi_yok → kaydı oluştur, sunum öncesi ikinci hat onayı al</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TPP-005</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-TPP-03, PRC-INC-04 · ↓ PRC-TPP-05</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TPP-05</span> &nbsp;<b>Kritik Tedarikçi (CTPP) Gözetim Takibi</b> &nbsp;
+      <span class="pill">4. Sütun — Üçüncü Taraf ICT Riski Yönetimi</span>
+      <span class="pill">1 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>ESA CTPP listesi güncellemesi veya gözetim önerisi</dd>
+      <dt>Sorumlu</dt><dd>ROL-CTPP-01, ROL-TPP-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CTO-01</dd>
+      <dt>Girdi</dt><dd>ESA CTPP listesi <span class="pill">json</span> · Gözetim önerileri <span class="pill">pdf</span></dd>
+      <dt>Çıktı</dt><dd>ctpp-oversight-status.yaml <span class="pill">yaml</span></dd>
+      <dt>SLA</dt><dd>Yeni öneri yayını: <b>30 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TPP-R8</span> onerinin_uygulanmasi_yok AND oneri_suresi > 30 gun → uyumsuzluk kaydı aç, ESA'ya gerekçe bildir</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TPP-006</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-TPP-02, PRC-TPP-04 · ↓ PRC-TPP-06</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-TPP-06</span> &nbsp;<b>Tedarikçiden Çıkış Stratejisi</b> &nbsp;
+      <span class="pill">4. Sütun — Üçüncü Taraf ICT Riski Yönetimi</span>
+      <span class="pill">1 kural</span>
+      <span class="pill">1 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Sözleşme sonu, kritik bulgu veya yoğunlaşma riski kararı</dd>
+      <dt>Sorumlu</dt><dd>ROL-TPP-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CTO-01, ROL-CEO-01</dd>
+      <dt>Girdi</dt><dd>Sözleşme sona erme koşulları <span class="pill">pdf</span> · Veri iadesi taahhüdü <span class="pill">json</span> · Geçiş planı taslağı <span class="pill">yaml</span></dd>
+      <dt>Çıktı</dt><dd>exit-strategy.pdf <span class="pill">pdf</span> · exit-test-evidence.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Çıkış kararı: <b>90 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">TPP-R9</span> hizmet_kritik == true AND gecis_testi_yapilmadi → çıkışı onaylama; paralel çalışma (dual-run) zorunlu</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-TPP-007</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-TPP-05 · ↓ PRC-RSK-03</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INF-01</span> &nbsp;<b>Siber Tehdit İstihbaratı Toplama ve Paylaşımı</b> &nbsp;
+      <span class="pill">5. Sütun — Bilgi Paylaşımı</span>
+      <span class="pill">3 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Yeni tehdit istihbaratı, topluluk uyarısı veya olay sonrası ders çıkarma</dd>
+      <dt>Sorumlu</dt><dd>ROL-INF-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01, ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>Tehdit beslemeleri (harici) <span class="pill">json</span> · Kurum içi olay göstergeleri (IoC) <span class="pill">json</span> · Paylaşım anlaşması kapsamı <span class="pill">pdf</span></dd>
+      <dt>Çıktı</dt><dd>threat-intel-share-report.json <span class="pill">json</span> · ioc-package.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Paylaşım kararı: <b>48 hours</b><br>Kritik tehdit uyarısı: <b>4 hours</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INF-R1</span> paylasim_icerigi.ticari_sir == true → paylaşımı blokla; anonimleştirilmiş özet hazırla<br><span class="mono">INF-R2</span> kisisel_veri_var == true AND hukuki_dayanak_yok → paylaşımı durdur, KVKK değerlendirmesi başlat<br><span class="mono">INF-R3</span> tehdit_ilgili_sektor == true AND etki_potansiyeli == 'yuksek' → topluluğa öncelikli uyarı gönder</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INF-001</span> · <span class="mono">CTL-INF-002</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INC-01, PRC-TST-02 · ↓ PRC-INC-05, PRC-TST-01, PRC-RSK-02</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INF-02</span> &nbsp;<b>Gönüllü Bildirim Protokolü ve Gizlilik Yönetimi</b> &nbsp;
+      <span class="pill">5. Sütun — Bilgi Paylaşımı</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Paylaşım anlaşması imzası, yıllık protokol gözden geçirmesi veya gizlilik ihlali şüphesi</dd>
+      <dt>Sorumlu</dt><dd>ROL-CMP-01, ROL-INF-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01</dd>
+      <dt>Girdi</dt><dd>Paylaşım anlaşmaları envanteri <span class="pill">yaml</span> · Gizlilik sınıflandırma politikası <span class="pill">pdf</span></dd>
+      <dt>Çıktı</dt><dd>sharing-protocol-register.yaml <span class="pill">yaml</span> · confidentiality-incident-log.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Yıllık gözden geçirme: <b>10 days</b><br>Gizlilik ihlali şüphesi: <b>24 hours</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INF-R4</span> gizlilik_ihlali_dogrulandi == true → paylaşımı askıya al, olay kaydı aç (PRC-INC-01), etkilenen tarafları bilgilendir<br><span class="mono">INF-R5</span> anlasma.imzali == false AND paylasim_aktif == true → paylaşımı durdur</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INF-003</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INF-01 · ↓ PRC-INC-01</dd>
+    </dl>
+  </details>
+  </section>
+  <footer>Depodaki YAML dosyalarından üretildi · <span class="mono">node docs/tools/build-dashboard.mjs</span></footer>
+</div></body></html>

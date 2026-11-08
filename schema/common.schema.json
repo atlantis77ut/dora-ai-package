@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dora-package.org/schema/common.schema.json",
+  "title": "DORA Ortak Tipler",
+  "$defs": {
+    "Version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0", "2.3.1"]
+    },
+    "DoraReference": {
+      "type": "object",
+      "required": ["article"],
+      "description": "paragraph ve rts_its opsiyonel: veri dosyalarında çoğu referans yalnızca madde düzeyinde tutuluyor",
+      "properties": {
+        "article": { "type": "string", "examples": ["Madde 5", "Article 18"] },
+        "paragraph": { "type": "string", "examples": ["1(a)", "3"] },
+        "rts_its": { "type": "string", "examples": ["RTS 2024/1774"] },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "Tier": {
+      "type": "string",
+      "enum": ["tier1", "tier2", "tier3"],
+      "description": "tier1=büyük/sistemik, tier2=orta, tier3=küçük/kamu"
+    },
+    "DefenceLine": {
+      "type": "integer",
+      "enum": [1, 2, 3],
+      "description": "1=operasyon, 2=kontrol, 3=denetim"
+    },
+    "SLA": {
+      "type": "object",
+      "required": ["trigger", "duration", "unit"],
+      "properties": {
+        "trigger": { "type": "string" },
+        "duration": { "type": "number" },
+        "unit": { "type": "string", "enum": ["minutes", "hours", "days", "months"] },
+        "clock_start": { "type": "string", "enum": ["detection", "classification", "approval"] }
+      }
+    },
+    "Regulator": {
+      "type": "string",
+      "examples": ["BDDK", "TCMB", "EBA", "ESMA", "EIOPA", "FCA", "BaFin"]
+    },
+    "I18nText": {
+      "type": "object",
+      "required": ["tr", "en"],
+      "properties": {
+        "tr": { "type": "string" },
+        "en": { "type": "string" }
+      }
+    }
+  }
+}

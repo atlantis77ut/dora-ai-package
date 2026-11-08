@@ -1,0 +1,225 @@
+schema_version: "1.0.0"
+generated_at: "2025-01-15"
+source_frameworks:
+  - "DORA (EU) 2022/2554"
+  - "TACAS CORF Process Model"
+  - "TACAS GOLDENHORN ONERESILIENCE Modules"
+integration_purpose: >
+  Bu dosya, DORA AI Ajan Paketimizdeki 11 rolün, TACAS CORF yaşam döngüsü 
+  süreçlerini (OR.*) nasıl yürüteceğini ve GOLDENHORN platformunun hangi 
+  modüllerini kullanacağını tanımlar.
+
+# ═══════════════════════════════════════════════════════════════
+# AJAN -> CORF SÜREÇ EŞLEŞTİRMESİ
+# ═══════════════════════════════════════════════════════════════
+
+agent_process_mappings:
+
+  - agent_id: ROL-RSK-01
+    agent_name: "ICT Risk Analisti (ICT-Risk-Ajanı)"
+    dora_pillar: "1. ICT Risk Yönetimi"
+    corf_lifecycle_phase: "Identify & Plan"
+    goldenhorn_modules: [ITA, RRM, KIB]
+    owned_corf_processes:
+      - process_code: OR.RIA
+        process_name: "Resilience Risk and Impact Analysis (Dayanıklılık Riski ve Etki Analizi)"
+        interaction: "Varlıkları ve iş süreçlerini envanterler, etki toleranslarını hesaplar."
+      - process_code: OR.KIB.BSACM
+        process_name: "Business Service Asset Catalogue Management"
+        interaction: "İş Hizmetleri Varlık Kataloğunu (BSACM) sürekli günceller."
+    human_oversight_required: true
+    output_artifact: "ict-inventory.yaml & risk-register.json"
+
+  - agent_id: ROL-INC-01
+    agent_name: "Olay Müdahale Operatörü (Incident-Ajanı)"
+    dora_pillar: "2. Olay Yönetimi ve Raporlama"
+    corf_lifecycle_phase: "Detect, Respond & Recover"
+    goldenhorn_modules: [IRM, RRCM]
+    owned_corf_processes:
+      - process_code: OR.EVNTM
+        process_name: "Resilience Event Management (Olay Yönetimi)"
+        interaction: "SIEM'den gelen olayları izler ve sınıflandırır."
+      - process_code: OR.INCRM
+        process_name: "Resilience Incident Response Management (Olay Müdahale Yönetimi)"
+        interaction: "Büyük olay bildirim süreçlerini (4s/24s/72s) başlatır."
+      - process_code: OR.PRBLM
+        process_name: "Resilience Problem Management (Problem Yönetimi)"
+        interaction: "Kök neden analizini (RCA) koordine eder."
+      - process_code: OR.CRSIS
+        process_name: "Resilience Crisis Management (Kriz Yönetimi)"
+        interaction: "Kriz seviyesine ulaşan olaylarda acil durum protokollerini devreye alır."
+    human_oversight_required: true # Sınıflandırma ve bildirim onayı
+    output_artifact: "incident-report.json & regulator-notification.xml"
+
+  - agent_id: ROL-CIO-01
+    agent_name: "Bilgi ve Raporlama Lideri (CIO-Ajanı)"
+    dora_pillar: "1. ICT Risk Yönetimi & 2. Olay Yönetimi"
+    corf_lifecycle_phase: "Govern & Plan"
+    goldenhorn_modules: [RSM, RCM]
+    owned_corf_processes:
+      - process_code: OR.STRAM
+        process_name: "Resilience Strategy Management (Dayanıklılık Stratejisi Yönetimi)"
+        interaction: "DORA stratejisini belirler ve yıllık hedefleri koyar."
+      - process_code: OR.PLAN
+        process_name: "Resilience Management Planning (Dayanıklılık Yönetim Planlaması)"
+        interaction: "İş sürekliliği (BCP) ve kurtarma (DRP) planlarını onaylar."
+      - process_code: OR.KIB.ARCH
+        process_name: "Resilience Architecture Management (Mimari Yönetimi)"
+        interaction: "ICT mimari kayıtlarını KIB'de tutar; C1 fazında iş hizmetleri kataloğuyla eşler."
+    human_oversight_required: true
+    output_artifact: "ict-framework-policy.pdf & bcp-drp-plan.docx & kib-architecture.yaml"
+
+  - agent_id: ROL-CTO-01
+    agent_name: "Teknoloji ve Test Lideri (CTO-Ajanı)"
+    dora_pillar: "3. Dijital Dayanıklılık Testleri"
+    corf_lifecycle_phase: "Conduct & Protect"
+    goldenhorn_modules: [RCM, KIB]
+    owned_corf_processes:
+      - process_code: OR.CT
+        process_name: "Resilience Control Testing (Dayanıklılık Kontrol Testi)"
+        interaction: "Sızma testleri, zafiyet taramaları ve senaryo testlerini planlar."
+      - process_code: OR.ESM
+        process_name: "Resilience Evaluation and Scoring Monitoring (Değerlendirme ve Skorlama)"
+        interaction: "Test sonuçlarını skorlar ve zafiyet haritasını çıkarır."
+    human_oversight_required: true
+    output_artifact: "test-program-schedule.json & pentest-report.pdf"
+
+  - agent_id: ROL-TPP-01
+    agent_name: "Tedarikçi Risk Yöneticisi (ThirdParty-Ajanı)"
+    dora_pillar: "4. Üçüncü Taraf Riski Yönetimi"
+    corf_lifecycle_phase: "Identify & Plan"
+    goldenhorn_modules: [RRM, KIB]
+    owned_corf_processes:
+      - process_code: OR.KIB.RMDM
+        process_name: "Resilience Master Data Management (Ana Veri Yönetimi)"
+        interaction: "Tedarikçi sözleşmelerini ve Bilgi Kaydını (Register of Information) tutar."
+      - process_code: OR.RIA
+        process_name: "Resilience Risk and Impact Analysis"
+        interaction: "Yoğunlaşma riskini (Concentration Risk) ve CTPP etkilerini analiz eder."
+    human_oversight_required: true
+    output_artifact: "register-of-information.xbrl & contract-compliance.json"
+
+  - agent_id: ROL-CMP-01
+    agent_name: "DORA Uyum Görevlisi (Compliance-Ajanı)"
+    dora_pillar: "Tüm Sütunlar (Bağımsız Kontrol)"
+    corf_lifecycle_phase: "Govern & Improve"
+    goldenhorn_modules: [RIM, RSM]
+    owned_corf_processes:
+      - process_code: OR.IRR
+        process_name: "Resilience Internal Rules and Regulations (İç Kurallar ve Yönetmelikler)"
+        interaction: "DORA mevzuat değişikliklerini takip eder, iç politikalara yansıtır."
+      - process_code: OR.NC
+        process_name: "Resilience Non-Conformity (Uygunsuzluk Yönetimi)"
+        interaction: "Tespit edilen uyumsuzlukları (non-conformity) raporlar ve düzeltici aksiyon açar."
+      - process_code: OR.CSI
+        process_name: "Resilience Continual Systemic Improvement (Sürekli İyileştirme)"
+        interaction: "Denetim ve test bulgularına göre süreç iyileştirme önerileri sunar."
+    human_oversight_required: true
+    output_artifact: "compliance-gap-analysis.pdf & regulatory-change-log.json"
+
+  - agent_id: ROL-AUD-01
+    agent_name: "İç Denetim Ajanı (Audit-Ajanı)"
+    dora_pillar: "Tüm Sütunlar (3. Savunma Hattı)"
+    corf_lifecycle_phase: "Improve"
+    goldenhorn_modules: [RIM, KIB]
+    owned_corf_processes:
+      - process_code: OR.OVERS
+        process_name: "Resilience Oversight Management (Gözetim Yönetimi)"
+        interaction: "Bağımsız denetim yapar, Yönetim Kuruluna doğrudan raporlar."
+      - process_code: OR.FND.AR
+        process_name: "Resilience Test Finding Action Request (Test Bulgusu Aksiyon Talebi)"
+        interaction: "Testlerden çıkan kritik bulguların kapatıldığını doğrular."
+    human_oversight_required: true
+    output_artifact: "internal-audit-report.pdf"
+
+  - agent_id: ROL-TLPT-01
+    agent_name: "TLPT Koordinatörü (TLPT-Ajanı)"
+    dora_pillar: "3. Dijital Dayanıklılık Testleri"
+    corf_lifecycle_phase: "Conduct"
+    goldenhorn_modules: [RCM]
+    owned_corf_processes:
+      - process_code: OR.CEP
+        process_name: "Change Resilience Evaluation Project (Değişim ve Değerlendirme Projesi)"
+        interaction: "Tehdit odaklı sızma testi (TLPT) projelerini koordine eder."
+    human_oversight_required: false # Koordinasyon otonom yapılabilir
+    output_artifact: "tlpt-scope-and-findings.json"
+
+  - agent_id: ROL-CTPP-01
+    agent_name: "CTPP Gözetim Ajanı"
+    dora_pillar: "4. Üçüncü Taraf Riski Yönetimi"
+    corf_lifecycle_phase: "Govern & Improve"
+    goldenhorn_modules: [RSM, RRM]
+    owned_corf_processes:
+      - process_code: OR.REL
+        process_name: "Resilience Relationship Management (İlişki Yönetimi)"
+        interaction: "ESA (Avrupa Denetim Otoriteleri) ile CTPP gözetim ilişkilerini yönetir."
+    human_oversight_required: true
+    output_artifact: "ctpp-oversight-status.yaml"
+
+  - agent_id: ROL-INF-01
+    agent_name: "Bilgi Paylaşım Ajanı (InfoSharing-Ajanı)"
+    dora_pillar: "5. Bilgi Paylaşımı"
+    corf_lifecycle_phase: "Protect & Improve"
+    goldenhorn_modules: [RRM]
+    owned_corf_processes:
+      - process_code: OR.INTEL
+        process_name: "Resilience Intelligence Monitoring (İstihbarat İzleme)"
+        interaction: "Siber tehdit istihbaratını toplar, güvenilir topluluklarla paylaşır."
+    human_oversight_required: true
+    output_artifact: "threat-intel-share-report.json"
+
+  - agent_id: ROL-CEO-01
+    agent_name: "DORA Uyum Lideri (CEO-Ajanı)"
+    dora_pillar: "Stratejik Yönetim"
+    corf_lifecycle_phase: "Govern"
+    goldenhorn_modules: [RSM]
+    owned_corf_processes:
+      - process_code: OR.OVERS
+        process_name: "Resilience Oversight Management (Gözetim Yönetimi)"
+        interaction: "Nihai hesap verebilirliği taşır, Yönetim Kurulu onaylarını yönetir."
+      - process_code: OR.PERFM
+        process_name: "Resilience Performance Management (Performans Yönetimi)"
+        interaction: "Kurumun genel DORA olgunluk seviyesini ve KPI'ları izler."
+    human_oversight_required: true # Her zaman insan onayı
+    output_artifact: "board-dora-dashboard.pdf"
+
+# ═══════════════════════════════════════════════════════════════
+# ÖZET MATRİS: Hangi Ajan, Hangi CORF Aşamasında?
+# ═══════════════════════════════════════════════════════════════
+
+corf_lifecycle_summary:
+  Govern:
+    - ROL-CEO-01 (Oversight, Performance)
+    - ROL-CIO-01 (Strategy)
+    - ROL-CMP-01 (Internal Rules)
+    - ROL-CTPP-01 (Relationship)
+  
+  Identify:
+    - ROL-RSK-01 (Master Data, BSACM)
+    - ROL-TPP-01 (Master Data)
+  
+  Plan:
+    - ROL-CIO-01 (Planning, Investment)
+    - ROL-RSK-01 (Risk & Impact Analysis)
+  
+  Conduct:
+    - ROL-CTO-01 (Control Projects)
+    - ROL-TLPT-01 (Evaluation Projects)
+  
+  Protect:
+    - ROL-CTO-01 (Control Testing)
+    - ROL-INF-01 (Intelligence Monitoring)
+  
+  Detect:
+    - ROL-INC-01 (Event Detection, Non-Conformity)
+  
+  Respond:
+    - ROL-INC-01 (Incident Response, Problem Mgmt)
+  
+  Recover:
+    - ROL-INC-01 (Crisis Management, Restore)
+  
+  Improve:
+    - ROL-CMP-01 (Continual Systemic Improvement)
+    - ROL-AUD-01 (Independent Audit)
+    - ROL-INF-01 (Relationship Mgmt)

@@ -1,0 +1,143 @@
+{
+  "generated_at": "2026-11-08T15:01:09.338Z",
+  "package": {
+    "name": "DORA AI Ajan Paketi",
+    "version": "0.3.0",
+    "license": "AGPL-3.0 + ticari"
+  },
+  "kpis": {
+    "processes": 21,
+    "controls": 32,
+    "roles": 11,
+    "terms": 60,
+    "scenarios": 4,
+    "assertions": 27,
+    "orCodes": 21,
+    "coverage": 86
+  },
+  "coverage": {
+    "total": 28,
+    "covered": 24,
+    "partial": 3,
+    "gap": 1
+  },
+  "control_families": {
+    "RSK": 10,
+    "INC": 8,
+    "TST": 4,
+    "TPP": 7,
+    "INF": 3
+  },
+  "phases": [
+    {
+      "id": "C1",
+      "name": "Faz 1 — Önemli İş Hizmetlerinin Belirlenmesi (Identify)",
+      "corf": "Identify",
+      "steps": 4,
+      "gates": 4,
+      "days": 10,
+      "level": "observe"
+    },
+    {
+      "id": "C2",
+      "name": "Faz 2 — Etki Toleranslarının Belirlenmesi (Set Tolerances)",
+      "corf": "Set tolerances",
+      "steps": 4,
+      "gates": 4,
+      "days": 8,
+      "level": "observe"
+    },
+    {
+      "id": "C3",
+      "name": "Faz 3 — Kaynakların Haritalanması ve Ajan Aktivasyonu (Map Resources)",
+      "corf": "Map resources",
+      "steps": 7,
+      "gates": 7,
+      "days": 20,
+      "level": "observe"
+    },
+    {
+      "id": "C4",
+      "name": "Faz 4 — Senaryo Testleri (Scenario Tests)",
+      "corf": "Scenario tests",
+      "steps": 5,
+      "gates": 4,
+      "days": 12,
+      "level": "recommend"
+    },
+    {
+      "id": "C5",
+      "name": "Faz 5 — Öz Değerlendirme (Self-Assessment)",
+      "corf": "Self-assessment",
+      "steps": 4,
+      "gates": 4,
+      "days": 10,
+      "level": "recommend"
+    },
+    {
+      "id": "C6",
+      "name": "Faz 6 — Yönetim İşletim Sisteminin Devreye Alınması (MOS)",
+      "corf": "Implement MOS",
+      "steps": 6,
+      "gates": 4,
+      "days": 45,
+      "level": "act_with_approval"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "Art-12",
+      "title": "Yedekleme politikaları, prosedürleri ve yöntemleri",
+      "status": "partial"
+    },
+    {
+      "id": "Art-14",
+      "title": "İletişim",
+      "status": "gap"
+    },
+    {
+      "id": "Art-20",
+      "title": "Raporlama şablonlarının uyumlaştırılması",
+      "status": "partial"
+    },
+    {
+      "id": "Art-23",
+      "title": "Ödeme ile ilgili operasyonel/güvenlik olayları",
+      "status": "partial"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "SCN-01",
+      "name": "500.000 müşteriyi etkileyen 6 saatlik kesinti",
+      "assertions": 8,
+      "severity": "critical"
+    },
+    {
+      "id": "SCN-02",
+      "name": "Kritik tedarikçinin sözleşmesinin sona ermesi",
+      "assertions": 7,
+      "severity": "high"
+    },
+    {
+      "id": "SCN-03",
+      "name": "Regülatörün 24 saat içinde bilgi talebi",
+      "assertions": 6,
+      "severity": "high"
+    },
+    {
+      "id": "SCN-04",
+      "name": "Yetkisiz erişim denemesi ve şifreleme kanıtı",
+      "assertions": 6,
+      "severity": "critical"
+    }
+  ],
+  "health": {
+    "ok": true,
+    "issues": []
+  },
+  "changelog": {
+    "version": "0.3.0",
+    "date": "2026-11-04"
+  }
+}

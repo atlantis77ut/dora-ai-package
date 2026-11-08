@@ -1,0 +1,45 @@
+# glossary-seed.yaml
+schema_version: "1.0.0"
+terms:
+  - id: TERM-ICT-001
+    name: { tr: "ICT Riski", en: "ICT Risk" }
+    dora_ref: { article: "Madde 3(8)" }
+    definition:
+      source: DORA
+      source_quote: "Bilgi ve iletişim teknolojilerinin kullanımından kaynaklanan, dijital operasyonel dayanıklılığı tehlikeye atabilecek her türlü makul tanımlanabilir durum."
+    category: risk
+    related_roles: [ROL-CIO-01, ROL-RSK-01]
+    related_processes: [PRC-RSK-01, PRC-RSK-02]
+
+  - id: TERM-INC-001
+    name: { tr: "ICT Olayı", en: "ICT Incident" }
+    dora_ref: { article: "Madde 3(8)" }
+    definition:
+      source: DORA
+      source_quote: "Bir finansal kuruluşun ağ ve bilgi sistemlerinde, güvenlik politikalarını, güvenlik prosedürlerini veya kabul edilebilir kullanım politikalarını ihlal eden tek veya bir dizi bağlantılı olay."
+    category: incident
+    related_roles: [ROL-INC-01, ROL-CIO-01]
+    related_processes: [PRC-INC-01]
+
+  - id: TERM-INC-002
+    name: { tr: "Büyük ICT Olayı", en: "Major ICT Incident" }
+    dora_ref: { article: "Madde 18(1)", rts_its: "RTS 2024/1772" }
+    definition:
+      source: DORA
+      source_quote: "Önemli olumsuz etkisi olan ve kritik veya önemli işlevleri etkileyen bir ICT olayı."
+    category: incident
+    classification_criteria:
+      - "100.000'den fazla etkilenen müşteri"
+      - "24 saatten uzun süren kesinti"
+      - "100.000 € üzeri ekonomik etki"
+      - "İki veya daha fazla AB üye devletini etkileme"
+      - "Veri kaybı veya yetkisiz erişim"
+    related_roles: [ROL-INC-01, ROL-CIO-01]
+    related_processes: [PRC-INC-02, PRC-INC-03, PRC-INC-04]
+
+  # ... (18 terim daha: ICT Üçüncü Taraf Hizmet Sağlayıcı, CTPP, TLPT,
+  #      Kritik veya Önemli İşlev, Bilgi Kaydı, Dijital Operasyonel
+  #      Dayanıklılık, Yetkili Otorite, ESA, JET, Gelişmiş Test, Sızma
+  #      Testi, Zafiyet Değerlendirmesi, Bilgi Paylaşımı, Siber Tehdit
+  #      İstihbaratı, Gönüllü Bildirim, Çıkış Stratejisi, SLA, Denetim İzi, 
+  #      Üç Savunma Hattı)

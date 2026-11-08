@@ -1,0 +1,683 @@
+schema_version: "1.0.0"
+generated_at: "2026-11-03"
+source: "Konuşma dökümü satır 488-524 (uyum kanıtı üretimi) + 20 süreç tanımı"
+purpose: >
+  Her süreç için denetimde kanıt olarak sunulacak kontrolleri tanımlar.
+  Her kontrol, bir süreç kimliğine bağlıdır ve kanıt şartnamesi (format,
+  değiştirilemezlik, zorunlu alanlar) ile birlikte gelir.
+
+# Kanıt formatı ↔ değiştirilemezlik kuralı:
+#   hash_chain  -> her kayıt bir öncekinin özetini taşır (değiştirilemez)
+#   append_only -> yalnızca ekleme; düzeltme yeni kayıtla yapılır
+#   worm_storage-> WORM depolama (silinemez, süre dolunca arşiv)
+
+control_families:
+  CTL-RSK: { pillar: risk_mgmt, process_prefix: PRC-RSK }
+  CTL-INC: { pillar: incident, process_prefix: PRC-INC }
+  CTL-TST: { pillar: testing, process_prefix: PRC-TST }
+  CTL-TPP: { pillar: third_party, process_prefix: PRC-TPP }
+  CTL-INF: { pillar: info_sharing, process_prefix: PRC-INF }
+
+controls:
+
+  # ═══════════════════════════════════════════════════════════════
+  # SÜTUN 1 — ICT RİSK YÖNETİMİ
+  # ═══════════════════════════════════════════════════════════════
+
+  - id: CTL-RSK-001
+    name:
+      tr: "Yıllık çerçeve gözden geçirme kanıtı"
+      en: "Annual framework review evidence"
+    process_id: PRC-RSK-01
+    type: preventive
+    owner_role: ROL-CIO-01
+    frequency: annual
+    evidence_spec:
+      format: pdf
+      immutability: worm_storage
+      fields:
+        - { name: review_date, type: date, required: true }
+        - { name: participants, type: array<string>, required: true }
+        - { name: changes_summary, type: string, required: true }
+        - { name: board_approval_ref, type: string, required: true }
+    dora_ref: { article: "Madde 6(1)" }
+    test_procedure: "Son gözden geçirme tarihi 12 aydan eski mi? Onay referansı dosyada var mı?"
+
+  - id: CTL-RSK-002
+    name:
+      tr: "Risk iştahı aşım kontrolü"
+      en: "Risk appetite breach detection"
+    process_id: PRC-RSK-02
+    type: detective
+    owner_role: ROL-RSK-01
+    frequency: continuous
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: risk_id, type: string, required: true }
+        - { name: score, type: number, required: true }
+        - { name: appetite_threshold, type: number, required: true }
+        - { name: breach_flag, type: boolean, required: true }
+        - { name: detected_at, type: datetime, required: true }
+        - { name: notified_to, type: string, required: false }
+    dora_ref: { article: "Madde 6(5)" }
+    test_procedure: "Eşiği aşan bir test riski enjekte et; 24 saat içinde breach_flag ve bildirim kaydı oluştu mu?"
+
+  - id: CTL-RSK-003
+    name:
+      tr: "Envanter uzlaştırma kontrolü"
+      en: "Inventory reconciliation"
+    process_id: PRC-RSK-03
+    type: detective
+    owner_role: ROL-RSK-01
+    frequency: monthly
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: cmdb_count, type: integer, required: true }
+        - { name: inventory_count, type: integer, required: true }
+        - { name: delta, type: integer, required: true }
+        - { name: reconciled_at, type: datetime, required: true }
+        - { name: unreconciled_items, type: array<string>, required: false }
+    dora_ref: { article: "Madde 8(1)" }
+    test_procedure: "CMDB'den bir varlık sil, uzlaştırmayı çalıştır; delta=-1 ve varlık listede mi?"
+
+  - id: CTL-RSK-004
+    name:
+      tr: "Kayıt dışı varlık tespiti"
+      en: "Unregistered asset detection"
+    process_id: PRC-RSK-03
+    type: detective
+    owner_role: ROL-RSK-01
+    frequency: daily
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: asset_id, type: string, required: true }
+        - { name: detected_by, type: string, required: true }
+        - { name: detected_at, type: datetime, required: true }
+        - { name: remediation_deadline, type: datetime, required: true }
+        - { name: closed_at, type: datetime, required: false }
+    dora_ref: { article: "Madde 8(1)" }
+    test_procedure: "48 saatten eski kapatılmamış kayıt sayısı = 0 mı?"
+
+  - id: CTL-RSK-005
+    name:
+      tr: "BCP/DRP test kanıtı"
+      en: "BCP/DRP test evidence"
+    process_id: PRC-RSK-04
+    type: corrective
+    owner_role: ROL-CIO-01
+    frequency: annual
+    evidence_spec:
+      format: pdf
+      immutability: worm_storage
+      fields:
+        - { name: test_date, type: date, required: true }
+        - { name: scenario, type: string, required: true }
+        - { name: rto_measured_minutes, type: integer, required: true }
+        - { name: rpo_measured_minutes, type: integer, required: true }
+        - { name: result, type: string, required: true }
+        - { name: remediation_actions, type: array<string>, required: false }
+    dora_ref: { article: "Madde 11(6)" }
+    test_procedure: "Ölçülen RTO/RPO, tolerans dosyasındaki değerlerin altında mı?"
+
+  - id: CTL-RSK-006
+    name:
+      tr: "Değişiklik yönetimi risk kapısı"
+      en: "Change management risk gate"
+    process_id: PRC-RSK-02
+    type: directive
+    owner_role: ROL-RSK-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: change_id, type: string, required: true }
+        - { name: risk_assessed, type: boolean, required: true }
+        - { name: risk_level, type: string, required: true }
+        - { name: approver, type: string, required: true }
+        - { name: approved_at, type: datetime, required: true }
+    dora_ref: { article: "Madde 8(4)" }
+    test_procedure: "Risk değerlendirmesi olmadan onaylanmış değişiklik var mı? (0 olmalı)"
+
+  - id: CTL-RSK-007
+    name:
+      tr: "Erişim yetkisi gözden geçirmesi (en az yetki ilkesi)"
+      en: "Access rights review (least privilege)"
+    process_id: PRC-RSK-05
+    type: preventive
+    owner_role: ROL-CTO-01
+    frequency: quarterly
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: review_id, type: string, required: true }
+        - { name: accounts_total, type: integer, required: true }
+        - { name: privileged_accounts, type: integer, required: true }
+        - { name: revoked_count, type: integer, required: true }
+        - { name: dormant_accounts_closed, type: integer, required: true }
+        - { name: reviewer, type: string, required: true }
+        - { name: signed_at, type: datetime, required: true }
+    dora_ref: { article: "Madde 9(2)" }
+    test_procedure: "90 günden uzun süredir kullanılmayan aktif hesap var mı? (0 olmalı)"
+
+  - id: CTL-RSK-008
+    name:
+      tr: "Şifreleme ve anahtar yönetimi"
+      en: "Encryption and key management"
+    process_id: PRC-RSK-05
+    type: preventive
+    owner_role: ROL-CTO-01
+    frequency: quarterly
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: asset_id, type: string, required: true }
+        - { name: at_rest, type: boolean, required: true }
+        - { name: in_transit, type: boolean, required: true }
+        - { name: algorithm, type: string, required: true }
+        - { name: key_rotation_days, type: integer, required: true }
+        - { name: owner, type: string, required: true }
+    dora_ref: { article: "Madde 9(3)" }
+    test_procedure: "Kritik varlıklardan şifrelemesi eksik olan var mı? Anahtar döndürme periyodu politika ile uyumlu mu?"
+
+  - id: CTL-RSK-009
+    name:
+      tr: "Ağ segmentasyonu ve sıkılaştırma"
+      en: "Network segmentation and hardening"
+    process_id: PRC-RSK-05
+    type: preventive
+    owner_role: ROL-CTO-01
+    frequency: quarterly
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: zone_id, type: string, required: true }
+        - { name: critical_assets, type: array<string>, required: true }
+        - { name: allowed_flows, type: integer, required: true }
+        - { name: default_deny, type: boolean, required: true }
+        - { name: last_penetration_check, type: date, required: false }
+    dora_ref: { article: "Madde 9(4)" }
+    test_procedure: "Kritik varlık içeren her zone'da default_deny=true mu? İzinli akış sayısı gerekçeli mi?"
+
+  - id: CTL-RSK-010
+    name:
+      tr: "Kritik zafiyet kapatma takibi"
+      en: "Critical vulnerability remediation tracking"
+    process_id: PRC-RSK-05
+    type: corrective
+    owner_role: ROL-CTO-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: vuln_id, type: string, required: true }
+        - { name: cvss, type: number, required: true }
+        - { name: asset_id, type: string, required: true }
+        - { name: found_at, type: datetime, required: true }
+        - { name: closed_at, type: datetime, required: false }
+        - { name: days_open, type: integer, required: true }
+        - { name: exception_ref, type: string, required: false }
+    dora_ref: { article: "Madde 9(4)(c)" }
+    test_procedure: "CVSS >= 9.0 ve 30 günü aşmış, istisnası olmayan kayıt var mı? (0 olmalı)"
+
+  # ═══════════════════════════════════════════════════════════════
+  # SÜTUN 2 — OLAY YÖNETİMİ VE RAPORLAMA
+  # ═══════════════════════════════════════════════════════════════
+
+  - id: CTL-INC-001
+    name:
+      tr: "SIEM olay korelasyonu ve alarm üretimi"
+      en: "SIEM event correlation and alerting"
+    process_id: PRC-INC-01
+    type: detective
+    owner_role: ROL-INC-01
+    frequency: continuous
+    evidence_spec:
+      format: log
+      immutability: append_only
+      fields:
+        - { name: alert_id, type: string, required: true }
+        - { name: source_system, type: string, required: true }
+        - { name: severity, type: string, required: true }
+        - { name: detected_at, type: datetime, required: true }
+        - { name: correlated_events, type: integer, required: false }
+    dora_ref: { article: "Madde 10(1)" }
+    test_procedure: "Sahte bir kritik alarm gönder; incident kaydı 15 dakika içinde açıldı mı?"
+
+  - id: CTL-INC-002
+    name:
+      tr: "Sınıflandırma ikinci göz kontrolü"
+      en: "Classification four-eyes check"
+    process_id: PRC-INC-01
+    type: preventive
+    owner_role: ROL-CIO-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: incident_id, type: string, required: true }
+        - { name: agent_decision, type: string, required: true }
+        - { name: human_decision, type: string, required: true }
+        - { name: agrees, type: boolean, required: true }
+        - { name: approved_by, type: string, required: true }
+        - { name: approved_at, type: datetime, required: true }
+    dora_ref: { article: "Madde 18(2)" }
+    test_procedure: "Ajanın 'büyük' dediği olayda insan onayı olmadan bildirim gitti mi? (0 olmalı)"
+
+  - id: CTL-INC-003
+    name:
+      tr: "4 saat ilk bildirim SLA sayacı"
+      en: "4-hour initial notification SLA timer"
+    process_id: PRC-INC-02
+    type: detective
+    owner_role: ROL-INC-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: incident_id, type: string, required: true }
+        - { name: classified_at, type: datetime, required: true }
+        - { name: notified_at, type: datetime, required: true }
+        - { name: elapsed_minutes, type: integer, required: true }
+        - { name: within_sla, type: boolean, required: true }
+    dora_ref: { article: "Madde 19(4)(a)", rts_its: "RTS 2024/1772 Art. 5" }
+    test_procedure: "Geçen ayın tüm büyük olaylarında within_sla=true mu?"
+
+  - id: CTL-INC-004
+    name:
+      tr: "Bildirim insan onayı kaydı"
+      en: "Notification human approval record"
+    process_id: PRC-INC-02
+    type: preventive
+    owner_role: ROL-CIO-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: notification_id, type: string, required: true }
+        - { name: approver_role, type: string, required: true }
+        - { name: approved_at, type: datetime, required: true }
+        - { name: payload_hash, type: string, required: true }
+    dora_ref: { article: "Madde 19" }
+    test_procedure: "Her gönderilen bildirimin öncesinde onay kaydı var mı?"
+
+  - id: CTL-INC-005
+    name:
+      tr: "72 saat ara rapor takibi"
+      en: "72-hour intermediate report tracking"
+    process_id: PRC-INC-03
+    type: detective
+    owner_role: ROL-INC-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: incident_id, type: string, required: true }
+        - { name: initial_notified_at, type: datetime, required: true }
+        - { name: intermediate_sent_at, type: datetime, required: true }
+        - { name: elapsed_hours, type: integer, required: true }
+    dora_ref: { article: "Madde 19(4)(b)" }
+    test_procedure: "72 saati aşan ara rapor var mı? varsa gerekçe kaydı var mı?"
+
+  - id: CTL-INC-006
+    name:
+      tr: "Nihai rapor ve RCA kapanış kontrolü"
+      en: "Final report and RCA closure check"
+    process_id: PRC-INC-04
+    type: corrective
+    owner_role: ROL-CIO-01
+    frequency: event_driven
+    evidence_spec:
+      format: pdf
+      immutability: worm_storage
+      fields:
+        - { name: incident_id, type: string, required: true }
+        - { name: closed_at, type: datetime, required: true }
+        - { name: final_report_sent_at, type: datetime, required: true }
+        - { name: root_cause, type: string, required: true }
+        - { name: actions_total, type: integer, required: true }
+        - { name: actions_closed, type: integer, required: true }
+    dora_ref: { article: "Madde 19(4)(c)" }
+    test_procedure: "Kapanıştan 1 ay içinde nihai rapor gönderilmeyen olay var mı?"
+
+  - id: CTL-INC-007
+    name:
+      tr: "Kök neden → kontrol güncelleme döngüsü"
+      en: "Root cause to control update loop"
+    process_id: PRC-INC-04
+    type: corrective
+    owner_role: ROL-CMP-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: incident_id, type: string, required: true }
+        - { name: root_cause_category, type: string, required: true }
+        - { name: new_or_updated_control, type: string, required: true }
+        - { name: updated_at, type: datetime, required: true }
+        - { name: verified_by_audit, type: boolean, required: false }
+    dora_ref: { article: "Madde 13(2)" }
+    test_procedure: "'kontrol_eksikligi' kategorisindeki her olay için kontrol güncellemesi var mı?"
+
+  - id: CTL-INC-008
+    name:
+      tr: "Gönüllü bildirim gizlilik kontrolü"
+      en: "Voluntary notification confidentiality check"
+    process_id: PRC-INC-05
+    type: preventive
+    owner_role: ROL-INF-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: threat_id, type: string, required: true }
+        - { name: contains_trade_secret, type: boolean, required: true }
+        - { name: anonymized, type: boolean, required: true }
+        - { name: cleared_by, type: string, required: true }
+    dora_ref: { article: "Madde 45(2)" }
+    test_procedure: "Anonimleştirilmeden paylaşılmış kayıt var mı? (0 olmalı)"
+
+  # ═══════════════════════════════════════════════════════════════
+  # SÜTUN 3 — DAYANIKLILIK TESTLERİ
+  # ═══════════════════════════════════════════════════════════════
+
+  - id: CTL-TST-001
+    name:
+      tr: "Yıllık test kapsam kontrolü"
+      en: "Annual test coverage check"
+    process_id: PRC-TST-01
+    type: directive
+    owner_role: ROL-CTO-01
+    frequency: annual
+    evidence_spec:
+      format: json
+      immutability: worm_storage
+      fields:
+        - { name: critical_functions_total, type: integer, required: true }
+        - { name: tested_count, type: integer, required: true }
+        - { name: coverage_pct, type: number, required: true }
+        - { name: exemptions, type: array<string>, required: false }
+    dora_ref: { article: "Madde 25(2)" }
+    test_procedure: "coverage_pct = 100 mü? Değilse her istisna gerekçeli mi?"
+
+  - id: CTL-TST-002
+    name:
+      tr: "Testçi bağımsızlık doğrulaması"
+      en: "Tester independence verification"
+    process_id: PRC-TST-02
+    type: preventive
+    owner_role: ROL-CMP-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: test_id, type: string, required: true }
+        - { name: tester_name, type: string, required: true }
+        - { name: conflict_declared, type: boolean, required: true }
+        - { name: independence_approved_by, type: string, required: true }
+    dora_ref: { article: "Madde 27" }
+    test_procedure: "Çıkar çatışması beyan edilmiş testçiyle yapılmış test var mı?"
+
+  - id: CTL-TST-003
+    name:
+      tr: "Kritik bulgu 30 gün kapatma takibi"
+      en: "Critical finding 30-day closure tracking"
+    process_id: PRC-TST-02
+    type: corrective
+    owner_role: ROL-CTO-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: finding_id, type: string, required: true }
+        - { name: severity, type: string, required: true }
+        - { name: found_at, type: datetime, required: true }
+        - { name: closed_at, type: datetime, required: false }
+        - { name: days_open, type: integer, required: true }
+        - { name: escalated, type: boolean, required: false }
+    dora_ref: { article: "Madde 24(6)" }
+    test_procedure: "30 günü aşmış açık kritik bulgu var mı? Varsa eskalasyon kaydı var mı?"
+
+  - id: CTL-TST-004
+    name:
+      tr: "TLPT üç yıllık döngü sayacı"
+      en: "TLPT three-year cycle counter"
+    process_id: PRC-TST-03
+    type: directive
+    owner_role: ROL-TLPT-01
+    frequency: annual
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: last_tlpt_date, type: date, required: true }
+        - { name: next_due_date, type: date, required: true }
+        - { name: days_remaining, type: integer, required: true }
+        - { name: scope_changed, type: boolean, required: false }
+    dora_ref: { article: "Madde 26(1)" }
+    test_procedure: "days_remaining < 0 mı? (TLPT gecikmiş demektir)"
+
+  # ═══════════════════════════════════════════════════════════════
+  # SÜTUN 4 — ÜÇÜNCÜ TARAF RİSKİ
+  # ═══════════════════════════════════════════════════════════════
+
+  - id: CTL-TPP-001
+    name:
+      tr: "Durum tespiti tamlık kontrolü"
+      en: "Due diligence completeness check"
+    process_id: PRC-TPP-01
+    type: preventive
+    owner_role: ROL-TPP-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: provider_id, type: string, required: true }
+        - { name: sections_completed, type: array<string>, required: true }
+        - { name: score, type: number, required: true }
+        - { name: decision, type: string, required: true }
+        - { name: approved_by, type: string, required: true }
+    dora_ref: { article: "Madde 28(4)" }
+    test_procedure: "Sözleşme imzalanmış ama durum tespiti kaydı olmayan tedarikçi var mı?"
+
+  - id: CTL-TPP-002
+    name:
+      tr: "Kritiklik yeniden değerlendirme"
+      en: "Annual criticality re-assessment"
+    process_id: PRC-TPP-02
+    type: detective
+    owner_role: ROL-TPP-01
+    frequency: annual
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: provider_id, type: string, required: true }
+        - { name: criticality, type: string, required: true }
+        - { name: assessed_at, type: datetime, required: true }
+        - { name: previous_criticality, type: string, required: false }
+        - { name: change_reason, type: string, required: false }
+    dora_ref: { article: "Madde 28(2)" }
+    test_procedure: "12 aydan eski değerlendirmesi olan kritik tedarikçi var mı?"
+
+  - id: CTL-TPP-003
+    name:
+      tr: "Yoğunlaşma riski eşik kontrolü"
+      en: "Concentration risk threshold check"
+    process_id: PRC-TPP-02
+    type: detective
+    owner_role: ROL-TPP-01
+    frequency: quarterly
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: provider_id, type: string, required: true }
+        - { name: share_pct, type: number, required: true }
+        - { name: threshold_pct, type: number, required: true }
+        - { name: breach, type: boolean, required: true }
+        - { name: mitigation_ref, type: string, required: false }
+    dora_ref: { article: "Madde 29" }
+    test_procedure: "breach=true olan her kayıt için çıkış stratejisi var mı?"
+
+  - id: CTL-TPP-004
+    name:
+      tr: "Madde 30 sözleşme maddeleri kontrolü"
+      en: "Article 30 contract clause check"
+    process_id: PRC-TPP-03
+    type: preventive
+    owner_role: ROL-TPP-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: contract_id, type: string, required: true }
+        - { name: clauses_present, type: array<string>, required: true }
+        - { name: missing_clauses, type: array<string>, required: true }
+        - { name: verdict, type: string, required: true }
+        - { name: reviewed_by, type: string, required: true }
+    dora_ref: { article: "Madde 30" }
+    test_procedure: "missing_clauses boş olmayan sözleşme onaylanmış mı? (olmamalı)"
+
+  - id: CTL-TPP-005
+    name:
+      tr: "Bilgi kaydı (RoI) bütünlük kontrolü"
+      en: "Register of Information integrity check"
+    process_id: PRC-TPP-04
+    type: detective
+    owner_role: ROL-TPP-01
+    frequency: monthly
+    evidence_spec:
+      format: xbrl
+      immutability: hash_chain
+      fields:
+        - { name: contracts_in_roi, type: integer, required: true }
+        - { name: contracts_in_inventory, type: integer, required: true }
+        - { name: delta, type: integer, required: true }
+        - { name: generated_at, type: datetime, required: true }
+        - { name: hash_of_previous, type: string, required: true }
+    dora_ref: { article: "Madde 28(3)", rts_its: "RTS 2024/1774" }
+    test_procedure: "delta != 0 mı? Yıllık sunum, son kaydın hash'i ile mi üretildi?"
+
+  - id: CTL-TPP-006
+    name:
+      tr: "CTPP gözetim önerisi takibi"
+      en: "CTPP oversight recommendation tracking"
+    process_id: PRC-TPP-05
+    type: corrective
+    owner_role: ROL-CTPP-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: recommendation_id, type: string, required: true }
+        - { name: received_at, type: datetime, required: true }
+        - { name: due_at, type: datetime, required: true }
+        - { name: status, type: string, required: true }
+        - { name: evidence_ref, type: string, required: false }
+    dora_ref: { article: "Madde 35" }
+    test_procedure: "due_at geçmiş ve status != 'closed' kayıt var mı?"
+
+  - id: CTL-TPP-007
+    name:
+      tr: "Çıkış planı tatbikatı"
+      en: "Exit plan dry run"
+    process_id: PRC-TPP-06
+    type: corrective
+    owner_role: ROL-TPP-01
+    frequency: annual
+    evidence_spec:
+      format: pdf
+      immutability: worm_storage
+      fields:
+        - { name: provider_id, type: string, required: true }
+        - { name: dry_run_date, type: date, required: true }
+        - { name: data_return_verified, type: boolean, required: true }
+        - { name: service_continuity_verified, type: boolean, required: true }
+        - { name: findings, type: array<string>, required: false }
+    dora_ref: { article: "Madde 28(8)" }
+    test_procedure: "Kritik tedarikçilerin kaçında son 12 ayda tatbikat yapıldı?"
+
+  # ═══════════════════════════════════════════════════════════════
+  # SÜTUN 5 — BİLGİ PAYLAŞIMI
+  # ═══════════════════════════════════════════════════════════════
+
+  - id: CTL-INF-001
+    name:
+      tr: "Paylaşım öncesi gizlilik taraması"
+      en: "Pre-sharing confidentiality screening"
+    process_id: PRC-INF-01
+    type: preventive
+    owner_role: ROL-INF-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: package_id, type: string, required: true }
+        - { name: trade_secret_flag, type: boolean, required: true }
+        - { name: personal_data_flag, type: boolean, required: true }
+        - { name: legal_basis, type: string, required: false }
+        - { name: approved_by, type: string, required: true }
+    dora_ref: { article: "Madde 45(2)" }
+    test_procedure: "trade_secret_flag=true olup onaylanmış paket var mı? (olmamalı)"
+
+  - id: CTL-INF-002
+    name:
+      tr: "Anonimleştirme doğrulaması"
+      en: "Anonymization verification"
+    process_id: PRC-INF-01
+    type: preventive
+    owner_role: ROL-INF-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: package_id, type: string, required: true }
+        - { name: identifiers_removed, type: array<string>, required: true }
+        - { name: residual_risk_score, type: number, required: true }
+        - { name: verified_at, type: datetime, required: true }
+    dora_ref: { article: "Madde 45(2)" }
+    test_procedure: "residual_risk_score eşiğin üstünde olan paket paylaşılmış mı?"
+
+  - id: CTL-INF-003
+    name:
+      tr: "Paylaşım anlaşması geçerlilik kontrolü"
+      en: "Sharing agreement validity check"
+    process_id: PRC-INF-02
+    type: detective
+    owner_role: ROL-CMP-01
+    frequency: monthly
+    evidence_spec:
+      format: json
+      immutability: append_only
+      fields:
+        - { name: agreement_id, type: string, required: true }
+        - { name: counterparty, type: string, required: true }
+        - { name: valid_until, type: date, required: true }
+        - { name: status, type: string, required: true }
+        - { name: last_shared_at, type: datetime, required: false }
+    dora_ref: { article: "Madde 45(1)" }
+    test_procedure: "valid_until geçmiş ama status='active' kayıt var mı?"

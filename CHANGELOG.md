@@ -1,0 +1,137 @@
+# Changelog
+
+Bu dosya, paketin sürüm geçmişini tutar. Biçim: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/),
+sürümleme: [SemVer](https://semver.org/lang/tr/).
+
+---
+
+## [0.3.0] — 2026-11-04
+
+### Eklendi
+
+**Siber güvenlik kontrolleri (DORA Madde 9) — uçtan uca**
+- `PRC-RSK-05` süreci: erişim (en az yetki), şifreleme/anahtar yönetimi, ağ segmentasyonu,
+  zafiyet kapatma; 4 karar kuralı (SEC-R1…R4), 4 SLA, tier varyantı
+- 4 yeni kontrol: `CTL-RSK-007` (erişim gözden geçirme), `CTL-RSK-008` (şifreleme),
+  `CTL-RSK-009` (segmentasyon), `CTL-RSK-010` (zafiyet kapatma)
+- `tests/synthetic-scenarios/scenario-security-controls.yaml` (SCN-04): 6 assertion,
+  4 tuzak testi, 5 kanıt dosyası — "kontrol var" ile "kontrol kanıtlanıyor" farkını sınar
+- Fixture: `fixtures/security-controls-2026-08.json`
+
+**Dashboard**
+- `docs/tools/build-dashboard.mjs` → `dashboard/index.html` + `dashboard/data.json`
+  (depodaki YAML'lardan üretilir, elle düzenlenmez)
+- `docs/tools/render_dashboard.py` → `dashboard/dashboard.png` (tarayıcısız, Pillow)
+- Kutucuklar: süreç/kontrol/ajan/terim/senaryo/kapsama; CORF faz tablosu, açık noktalar,
+  senaryo listesi, referans sağlığı
+
+### Değişti
+
+- DORA kapsaması **%79 → %86**: Art-07 (sıkılaştırma) ve **Art-09** (koruma/şifreleme)
+  artık `covered`; kalan tek boşluk Art-14 (kriz iletişimi)
+- Kontrol sayısı 28 → **32**; süreç 20 → **21**; senaryo 3 → **4** (27 assertion)
+- `package.json` sürümü 0.3.0
+
+### Notlar
+
+- Art-09 kapatılırken paketin "ISO 27001 setine bırakılmış" varsayımı kaldırıldı: dört kontrol
+  artık paketin içinde, kanıt şartnamesiyle tanımlı.
+- Dashboard, `render-mapping` gibi **üretilen** bir artefakt; CI'da `--check` benzeri kullanım
+  için `build-dashboard.mjs` sarkan referans bulursa çıkış kodu 1 döner.
+
+---
+
+## [0.2.0] — 2026-11-03
+
+Bu sürüm, konuşma dökümündeki taslakları **çalışan ve doğrulanmış** bir depoya çevirir.
+
+### Eklendi
+
+**Süreç kütüphanesi (Modül 2)**
+- `data/processes/pillar-{1..5}.yaml` — 20 süreç: PRC-RSK-01..04, PRC-INC-01..05,
+  PRC-TST-01..03, PRC-TPP-01..06, PRC-INF-01..02
+- Her süreçte tetikleyici, girdi/çıktı (saklama süresiyle), SLA, karar kuralları (DORA madde
+  referanslı), bağımlılıklar, `control_ids`, tier varyantları
+
+**Kontrol kataloğu (Modül 3)**
+- `data/controls/controls-catalog.yaml` — 28 kontrol (RSK 6, INC 8, TST 4, TPP 7, INF 3)
+- Her kontrolde kanıt şartnamesi (format + değiştirilemezlik + zorunlu alanlar) ve `test_procedure`
+
+**Sentetik senaryolar (Modül 5)**
+- `tests/synthetic-scenarios/` — SCN-01 (8 assertion), SCN-02 (7), SCN-03 (6) + 3 fixture
+- `tests/README.md` — senaryo formatı ve kapı kuralı
+
+**Onboarding (Modül 4)**
+- `onboarding/corf-lifecycle.yaml` — CORF 6 fazı, kapı kriterleri, otonomi merdiveni
+- `onboarding/wizard-spec.md` — tasarım gerekçesi, eski 8 adım → 6 faz eşlemesi
+- `onboarding/cli/bin/dora-onboard.mjs` — **bağımlılıksız** çalışan CLI (`init`, `phase`, `gate`,
+  `status`, `phases`, `rollback`); bağımlılık eklemeden kendi mini YAML okuyucusu
+- `onboarding/cli/src/corf/{yaml,lifecycle,checks,session,license}.mjs`
+
+**DORA eşlemesi (Modül 6)**
+- `data/mapping/dora-articles.yaml` — 28 yükümlülük maddesi → süreç/kontrol/rol
+- `docs/dora-mapping.md` — **üretilen** doküman (22 covered, 4 partial, 2 gap = %79)
+- `docs/local-equivalents-TR.md` — BDDK/TCMB/SEDDK/SPK/KVKK eşlemesi, süre farkları
+- `docs/tools/render-mapping.mjs`, `docs/tools/build-coverage.mjs`
+
+**Mimari ve süreç dokümanları (Modül 7)**
+- `docs/architecture.md` — katman modeli, ajan çalışma modeli, denetim izi, bilinçli sınırlar
+- `docs/decisions.md` — DR-001…DR-008 karar kaydı
+
+**Pilot (Modül 8)**
+- `pilots/case-study-template.md` — ölçüm odaklı vaka çalışması şablonu
+
+**Lisanslama**
+- `LICENSE` — AGPL-3.0 tam metni
+- `LICENSE-COMMERCIAL.md` — ticari lisans şablonu
+- `docs/licensing.md` — hangi durumda hangi lisans (karar tablosu + SSS)
+- `docs/pricing.md` — fiyatlandırma çerçevesi (katman aralıkları, indirim politikası)
+- `CLA.md`, `CONTRIBUTING.md` — katkı süreci
+- `docs/license-keys.md` — Ed25519 imzalı anahtar mekanizması
+- Lisans kapısı: `C1-0` (imza + süre + tier), `C6-0` (üretime geçişte ticari lisans);
+  anahtarsız 30 gün deneme modu
+
+### Değişti
+
+- `PRC-INC-02` ilk bildirim SLA'sı **4 saat** (DR-001) — tier2/tier3 varyantları da 4 saat
+- `common.schema.json` → `DoraReference.required` yalnız `article` (DR-003)
+- `roles.schema.json` → rol ID deseni 3-4 harf (`ROL-TLPT-01`, `ROL-CTPP-01` için) (DR-003)
+- `data/roles/roles-catalog.yaml` → her role `corf_process_codes` eklendi (21 kod)
+- `onboarding/cli/package.json` → `"license": "AGPL-3.0-only"`
+- `README.md` → lisans bölümü, çift lisans açıklaması, güncel CLI kullanımı
+
+### Düzeltildi
+
+- `OR.KIB.ARCH` sahipsiz koddu → `ROL-CIO-01`e atandı (mapping ↔ rol paritesi 21 = 21)
+- `glossary-full.yaml` içindeki 17 süreç referansı çözüldü (sarkan referans yok)
+- Rol deseni hatası: katalog kendi şemasına uymuyordu
+- `DoraReference` hatası: şema kendi verisinin %100'ünü reddediyordu
+
+### Güvenlik
+
+- Lisans anahtarı Ed25519 ile imzalanır, çevrimdışı doğrulanır (`node:crypto`, ek bağımlılık yok)
+- `onboarding/license/dev-private.pem` `.gitignore`'da; üretim anahtarı depoda tutulmaz
+
+---
+
+## [0.1.0] — 2025-01-15
+
+### Eklendi
+- İlk sözlük şeması (common, glossary, roles, processes, controls)
+- 60 terimlik DORA sözlüğü (6 kategori)
+- 11 ajan rolü kataloğu
+- 5 sütun süreç kütüphanesi
+- 8 adımlı onboarding wizard iskeleti
+- Pilot seçim modeli ve dokümanları
+- Yerel muadil eşleme (TR)
+
+---
+
+## Yol Haritası
+
+- [x] v0.2.0 — Çalışan CORF wizard, süreç/kontrol katalogları, DORA eşlemesi
+- [ ] v0.3.0 — Wizard web arayüzü
+- [ ] v0.4.0 — Entegrasyon konnektörleri (Splunk, ServiceNow, Archer)
+- [ ] v0.5.0 — GOLDENHORN API adaptörü + MOS panosu
+- [ ] v0.6.0 — Deterministik kural motoru (CEL/Rego) — `condition` alanları yürütülebilir olur
+- [ ] v1.0.0 — Üretim sürümü

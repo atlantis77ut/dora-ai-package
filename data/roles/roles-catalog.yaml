@@ -1,0 +1,1225 @@
+schema_version: "1.0.0"
+generated_at: "2025-01-15"
+dora_reference: "Regulation (EU) 2022/2554"
+defence_model: "Three Lines of Defence (DORA Madde 6(4))"
+
+# ═══════════════════════════════════════════════════════════════
+# KATMAN 0: STRATEJİK YÖNETİM (C-Düzeyi)
+# ═══════════════════════════════════════════════════════════════
+
+roles:
+
+  - id: ROL-CEO-01
+    name:
+      tr: "DORA Uyum Lideri (CEO-Ajan)"
+      en: "DORA Compliance Leader (CEO Agent)"
+    defence_line: null
+    layer: strategic
+    reports_to: "Yönetim Kurulu"
+    subordinates:
+      - ROL-CIO-01
+      - ROL-CTO-01
+    human_equivalent:
+      tr: "Genel Müdür / CEO"
+      en: "Chief Executive Officer"
+    purpose:
+      tr: "DORA kapsamında nihai hesap verebilirliği taşır, stratejik yön belirler ve yönetim kuruluna raporlar."
+      en: "Holds ultimate accountability under DORA, sets strategic direction and reports to the management body."
+    responsibilities:
+      - desc:
+          tr: "DORA stratejisini onaylamak ve yıllık gözden geçirmek"
+          en: "Approve and annually review DORA strategy"
+        dora_ref: { article: "Madde 5(1)" }
+      - desc:
+          tr: "ICT risk iştahını belirlemek ve yönetim kuruluna sunmak"
+          en: "Define ICT risk appetite and present to management body"
+        dora_ref: { article: "Madde 6(5)" }
+      - desc:
+          tr: "Kritik veya önemli işlevlerin belirlenmesini onaylamak"
+          en: "Approve determination of critical or important functions"
+        dora_ref: { article: "Madde 3(22)" }
+      - desc:
+          tr: "Üçüncü taraf stratejisini ve yoğunlaşma risk politikasını onaylamak"
+          en: "Approve third-party strategy and concentration risk policy"
+        dora_ref: { article: "Madde 29(2)" }
+      - desc:
+          tr: "Yıllık DORA uyum raporunu yönetim kuruluna sunmak"
+          en: "Present annual DORA compliance report to the management body"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "Büyük olay sonrası yönetim kurulu bilgilendirmesi"
+          en: "Inform management body after major incidents"
+        dora_ref: { article: "Madde 19(1)" }
+    authorities:
+      - "Stratejik kararları onaylama"
+      - "Risk iştahı belirleme"
+      - "Bütçe tahsisi"
+      - "Kriz durumunda nihai eskalasyon noktası"
+    skills:
+      - skill_id: SKL-STRAT-01
+        name: "Stratejik planlama"
+        autonomy_level: recommend
+      - skill_id: SKL-STRAT-02
+        name: "Yönetim kurulu raporlaması"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-STRAT-03
+        name: "Kriz iletişimi"
+        autonomy_level: recommend
+    tools:
+      - "board_reporting_api"
+      - "risk_appetite_dashboard"
+      - "strategy_repository"
+    knowledge_base:
+      vector_store: "dora_kb_shared"
+      collections:
+        - dora_regulation
+        - rts_its_2024
+        - board_decisions
+        - internal_strategy
+    kpis:
+      - name: "Yıllık DORA stratejisi güncelliği"
+        target: 1
+        unit: "kez/yıl"
+        measurement_window: "annual"
+      - name: "Yönetim kurulu raporlama tamlığı"
+        target: 100
+        unit: "%"
+        measurement_window: "quarterly"
+      - name: "Büyük olay bilgilendirme süresi"
+        target: 24
+        unit: "saat"
+        measurement_window: "event_driven"
+    human_oversight:
+      required_for:
+        - "strategy_approval"
+        - "risk_appetite_change"
+        - "crisis_declaration"
+      approver_role: "Yönetim Kurulu Başkanı"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Govern
+      - OR.OVERS
+      - OR.PERFM
+    tier_activation:
+      - tier1
+      - tier2
+    independence_constraints: []
+    regulator_mapping:
+      TR: "BDDK - Genel Müdür"
+      EU: "EBA - Management Body"
+    notes:
+      tr: "CEO-Ajan, hiçbir zaman tek başına stratejik karar almaz; her karar insan onayı gerektirir. Yalnızca hazırlık ve analiz yapar."
+      en: "CEO Agent never makes strategic decisions alone; every decision requires human approval. Only prepares and analyzes."
+
+# ═══════════════════════════════════════════════════════════════
+# KATMAN 1: BİRİNCİ SAVUNMA HATTI — OPERASYON
+# ═══════════════════════════════════════════════════════════════
+
+  - id: ROL-INC-01
+    name:
+      tr: "Olay Müdahale Operatörü (Incident-Ajanı)"
+      en: "Incident Response Operator (Incident Agent)"
+    defence_line: 1
+    layer: operational
+    reports_to: ROL-CIO-01
+    subordinates: []
+    human_equivalent:
+      tr: "ICT Olay Yöneticisi"
+      en: "ICT Incident Manager"
+    purpose:
+      tr: "ICT olaylarını tespit eder, sınıflandırır, ilk müdahaleyi başlatır ve regülatör bildirimlerini hazırlar."
+      en: "Detects, classifies ICT incidents, initiates first response and prepares regulatory notifications."
+    responsibilities:
+      - desc:
+          tr: "ICT olaylarını sürekli izleme ve tespit"
+          en: "Continuous monitoring and detection of ICT incidents"
+        dora_ref: { article: "Madde 10(1)" }
+      - desc:
+          tr: "Olayı DORA kriterlerine göre sınıflandırma (büyük / büyük değil)"
+          en: "Classify incident per DORA criteria (major / non-major)"
+        dora_ref: { article: "Madde 18(1)", rts_its: "RTS 2024/1772 Art. 3" }
+      - desc:
+          tr: "İlk bildirimi 4 saat içinde hazırlamak ve onaya sunmak"
+          en: "Prepare initial notification within 4 hours and submit for approval"
+        dora_ref: { article: "Madde 19(4)(a)" }
+      - desc:
+          tr: "Ara raporu 72 saat içinde hazırlamak"
+          en: "Prepare intermediate report within 72 hours"
+        dora_ref: { article: "Madde 19(4)(b)" }
+      - desc:
+          tr: "Nihai raporu 1 ay içinde hazırlamak"
+          en: "Prepare final report within 1 month"
+        dora_ref: { article: "Madde 19(4)(c)" }
+      - desc:
+          tr: "Gönüllü siber tehdit bildirimlerini değerlendirmek"
+          en: "Assess voluntary cyber threat notifications"
+        dora_ref: { article: "Madde 19(2)" }
+      - desc:
+          tr: "Kök neden analizini koordine etmek"
+          en: "Coordinate root cause analysis"
+        dora_ref: { article: "Madde 13(2)" }
+    authorities:
+      - "Olay sınıflandırması yapma (insan onayı ile)"
+      - "İlk müdahale ekibini aktive etme"
+      - "İç iletişim başlatma"
+      - "Eskalasyon önerme"
+    skills:
+      - skill_id: SKL-INC-01
+        name: "Olay tespiti ve izleme"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-INC-02
+        name: "Sınıflandırma (DORA kriterleri)"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-INC-03
+        name: "Regülatör bildirimi hazırlama"
+        autonomy_level: recommend
+      - skill_id: SKL-INC-04
+        name: "Kök neden analizi"
+        autonomy_level: recommend
+      - skill_id: SKL-INC-05
+        name: "Kriz iletişimi taslağı"
+        autonomy_level: recommend
+    tools:
+      - "siem_connector"
+      - "itsm_connector"
+      - "notification_api"
+      - "regulator_portal_bddk"
+      - "evidence_vault"
+      - "incident_classifier_model"
+    knowledge_base:
+      vector_store: "dora_kb_incident"
+      collections:
+        - dora_incident_rules
+        - rts_2024_1772
+        - historical_incidents
+        - classification_criteria
+        - past_regulator_feedback
+    kpis:
+      - name: "Sınıflandırma doğruluğu"
+        target: 95
+        unit: "%"
+        measurement_window: "monthly"
+      - name: "İlk bildirim SLA uyumu"
+        target: 100
+        unit: "%"
+        measurement_window: "event_driven"
+      - name: "Yanlış pozitif oranı"
+        target: 5
+        unit: "%"
+        measurement_window: "monthly"
+      - name: "Ortalama tespit süresi"
+        target: 15
+        unit: "dakika"
+        measurement_window: "monthly"
+    human_oversight:
+      required_for:
+        - "classification"
+        - "notification"
+        - "closure"
+        - "escalation"
+      approver_role: "ROL-CIO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Detect, Respond & Recover
+      - OR.EVNTM
+      - OR.INCRM
+      - OR.PRBLM
+      - OR.CRSIS
+    tier_activation:
+      - tier1
+      - tier2
+      - tier3
+    independence_constraints:
+      - "ROL-CMP-01"
+      - "ROL-AUD-01"
+    regulator_mapping:
+      TR: "BDDK - Bildirim Usul ve Esasları"
+      EU: "EBA - Incident Reporting"
+    notes:
+      tr: "Incident-Ajanı hiçbir zaman tek başına regülatöre bildirim göndermez. Her bildirim CIO-Ajanı'nın onayından geçer. Sınıflandırma kararı daima insan onayı gerektirir."
+      en: "Incident Agent never sends regulatory notification on its own. Every notification goes through CIO Agent approval. Classification decision always requires human approval."
+
+  - id: ROL-RSK-01
+    name:
+      tr: "ICT Risk Analisti (ICT-Risk-Ajanı)"
+      en: "ICT Risk Analyst (ICT-Risk Agent)"
+    defence_line: 1
+    layer: operational
+    reports_to: ROL-CIO-01
+    subordinates: []
+    human_equivalent:
+      tr: "ICT Risk Yöneticisi"
+      en: "ICT Risk Manager"
+    purpose:
+      tr: "ICT varlıklarını envanterler, riskleri sürekli izler, günlük risk değerlendirmesi yapar."
+      en: "Inventories ICT assets, continuously monitors risks, performs daily risk assessment."
+    responsibilities:
+      - desc:
+          tr: "ICT varlık envanterini güncel tutmak"
+          en: "Keep ICT asset inventory up to date"
+        dora_ref: { article: "Madde 8(1)" }
+      - desc:
+          tr: "Kritik veya önemli işlevleri belirlemek ve güncellemek"
+          en: "Determine and update critical or important functions"
+        dora_ref: { article: "Madde 8(2)" }
+      - desc:
+          tr: "Günlük risk izleme ve anormallik tespiti"
+          en: "Daily risk monitoring and anomaly detection"
+        dora_ref: { article: "Madde 6(6)" }
+      - desc:
+          tr: "Risk kayıt defterini (risk register) güncel tutmak"
+          en: "Maintain risk register"
+        dora_ref: { article: "Madde 6(2)" }
+      - desc:
+          tr: "Yıllık ICT risk değerlendirmesine katkı sağlamak"
+          en: "Contribute to annual ICT risk assessment"
+        dora_ref: { article: "Madde 6(6)" }
+      - desc:
+          tr: "Değişiklik yönetimi risklerini değerlendirmek"
+          en: "Assess change management risks"
+        dora_ref: { article: "Madde 8(4)" }
+    authorities:
+      - "Varlık sınıflandırması önerme"
+      - "Risk skoru hesaplama"
+      - "Anormallik alarmı üretme"
+      - "Envanter güncelleme (düşük riskli)"
+    skills:
+      - skill_id: SKL-RSK-01
+        name: "Varlık envanterleme"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-RSK-02
+        name: "Risk skorlama"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-RSK-03
+        name: "Anormallik tespiti"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-RSK-04
+        name: "Kritiklik değerlendirmesi"
+        autonomy_level: act_with_approval
+    tools:
+      - "cmdb_connector"
+      - "risk_engine"
+      - "vulnerability_scanner"
+      - "inventory_api"
+      - "anomaly_detector"
+    knowledge_base:
+      vector_store: "dora_kb_risk"
+      collections:
+        - dora_risk_framework
+        - rts_2024_1773
+        - asset_taxonomy
+        - risk_scoring_methodology
+    kpis:
+      - name: "Envanter güncelliği"
+        target: 100
+        unit: "%"
+        measurement_window: "daily"
+      - name: "Anormallik tespit süresi"
+        target: 5
+        unit: "dakika"
+        measurement_window: "continuous"
+      - name: "Risk kaydı kapsamı"
+        target: 100
+        unit: "%"
+        measurement_window: "monthly"
+    human_oversight:
+      required_for:
+        - "classification"
+      approver_role: "ROL-CIO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Identify & Plan
+      - OR.RIA
+      - OR.KIB.BSACM
+    tier_activation:
+      - tier1
+      - tier2
+      - tier3
+    independence_constraints:
+      - "ROL-CMP-01"
+      - "ROL-AUD-01"
+    regulator_mapping:
+      TR: "BDDK - Bilgi Sistemleri Yönetmeliği"
+      EU: "EBA - ICT Risk Management"
+
+# ═══════════════════════════════════════════════════════════════
+# KATMAN 2: İKİNCİ SAVUNMA HATTI — KONTROL VE UYUM
+# ═══════════════════════════════════════════════════════════════
+
+  - id: ROL-CIO-01
+    name:
+      tr: "Bilgi ve Raporlama Lideri (CIO-Ajan)"
+      en: "Information & Reporting Leader (CIO Agent)"
+    defence_line: 2
+    layer: control
+    reports_to: ROL-CEO-01
+    subordinates:
+      - ROL-INC-01
+      - ROL-RSK-01
+    human_equivalent:
+      tr: "Bilgi İşlem Direktörü / CIO"
+      en: "Chief Information Officer"
+    purpose:
+      tr: "ICT risk yönetim çerçevesinin sahibidir, olay raporlamasını onaylar, ICT operasyonlarını yönetir."
+      en: "Owns ICT risk management framework, approves incident reporting, manages ICT operations."
+    responsibilities:
+      - desc:
+          tr: "ICT risk yönetim çerçevesini dokümante etmek ve yılda en az bir kez gözden geçirmek"
+          en: "Document and review ICT risk management framework at least annually"
+        dora_ref: { article: "Madde 6(1)" }
+      - desc:
+          tr: "Büyük olay sınıflandırmasını onaylamak"
+          en: "Approve major incident classification"
+        dora_ref: { article: "Madde 18(2)" }
+      - desc:
+          tr: "Regülatör bildirimlerini onaylamak ve göndermek"
+          en: "Approve and send regulatory notifications"
+        dora_ref: { article: "Madde 19" }
+      - desc:
+          tr: "İş sürekliliği ve kurtarma planlarını onaylamak"
+          en: "Approve business continuity and recovery plans"
+        dora_ref: { article: "Madde 11" }
+      - desc:
+          tr: "Yıllık ICT risk değerlendirmesini yürütmek"
+          en: "Conduct annual ICT risk assessment"
+        dora_ref: { article: "Madde 6(6)" }
+      - desc:
+          tr: "Olay müdahale ve risk izleme ajanlarını yönetmek"
+          en: "Manage incident response and risk monitoring agents"
+        dora_ref: { article: "Madde 6(4)" }
+    authorities:
+      - "Büyük olay sınıflandırmasını onaylama"
+      - "Regülatör bildirimi gönderme"
+      - "Kaynak tahsisi"
+      - "Eskalasyon başlatma"
+      - "BCP/DRP aktivasyonu"
+    skills:
+      - skill_id: SKL-CIO-01
+        name: "ICT risk çerçevesi yönetimi"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-CIO-02
+        name: "Olay sınıflandırma onayı"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-CIO-03
+        name: "Regülatör iletişimi"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-CIO-04
+        name: "BCP/DRP onayı"
+        autonomy_level: act_with_approval
+    tools:
+      - "framework_repository"
+      - "approval_engine"
+      - "regulator_portal"
+      - "bcp_drp_console"
+      - "board_reporting_api"
+    knowledge_base:
+      vector_store: "dora_kb_core"
+      collections:
+        - dora_regulation
+        - rts_its_2024
+        - internal_policies
+        - past_notifications
+        - regulator_guidance
+    kpis:
+      - name: "Çerçeve güncelliği"
+        target: 1
+        unit: "kez/yıl"
+        measurement_window: "annual"
+      - name: "Onay süresi (olay)"
+        target: 30
+        unit: "dakika"
+        measurement_window: "event_driven"
+      - name: "Bildirim doğruluğu"
+        target: 100
+        unit: "%"
+        measurement_window: "event_driven"
+    human_oversight:
+      required_for:
+        - "notification"
+        - "escalation"
+        - "strategy_approval"
+      approver_role: "ROL-CEO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Govern & Plan
+      - OR.STRAM
+      - OR.PLAN
+      - OR.KIB.ARCH
+    tier_activation:
+      - tier1
+      - tier2
+      - tier3
+    independence_constraints:
+      - "ROL-CMP-01"
+      - "ROL-AUD-01"
+    regulator_mapping:
+      TR: "BDDK - Bilgi Sistemleri"
+      EU: "EBA - ICT Risk Management"
+
+  - id: ROL-CTO-01
+    name:
+      tr: "Teknoloji ve Test Lideri (CTO-Ajan)"
+      en: "Technology & Testing Leader (CTO Agent)"
+    defence_line: 2
+    layer: control
+    reports_to: ROL-CEO-01
+    subordinates:
+      - ROL-TST-01
+    human_equivalent:
+      tr: "Teknoloji Direktörü / CTO"
+      en: "Chief Technology Officer"
+    purpose:
+      tr: "ICT sistem güvenliğini ve test programlarını yönetir, TLPT koordinasyonunu sağlar."
+      en: "Manages ICT system security and testing programs, coordinates TLPT."
+    responsibilities:
+      - desc:
+          tr: "Risk bazlı test programını oluşturmak ve yürütmek"
+          en: "Establish and execute risk-based testing program"
+        dora_ref: { article: "Madde 24" }
+      - desc:
+          tr: "Yıllık test takvimini oluşturmak"
+          en: "Create annual testing calendar"
+        dora_ref: { article: "Madde 25(2)" }
+      - desc:
+          tr: "TLPT kapsamındaki kuruluşlar için gelişmiş test koordinasyonu"
+          en: "Coordinate advanced testing for TLPT-scope entities"
+        dora_ref: { article: "Madde 26" }
+      - desc:
+          tr: "Test bulgularının takibini ve kapatılmasını sağlamak"
+          en: "Track and close testing findings"
+        dora_ref: { article: "Madde 24(6)" }
+      - desc:
+          tr: "Bağımsız testçilerin seçimini yapmak"
+          en: "Select independent testers"
+        dora_ref: { article: "Madde 27" }
+      - desc:
+          tr: "Siber güvenlik yapılandırmasını izlemek"
+          en: "Monitor cybersecurity configuration"
+        dora_ref: { article: "Madde 9" }
+    authorities:
+      - "Test programı onayı"
+      - "Bağımsız testçi seçimi"
+      - "Test bulguları önceliklendirmesi"
+      - "Teknik mimari kararları"
+    skills:
+      - skill_id: SKL-CTO-01
+        name: "Test programı tasarımı"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-CTO-02
+        name: "Test koordinasyonu"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-CTO-03
+        name: "Bulgu takibi"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-CTO-04
+        name: "TLPT planlaması"
+        autonomy_level: recommend
+    tools:
+      - "testing_platform"
+      - "vulnerability_management"
+      - "tlpt_coordination_tool"
+      - "pentest_report_analyzer"
+    knowledge_base:
+      vector_store: "dora_kb_testing"
+      collections:
+        - dora_testing_requirements
+        - rts_2024_1774
+        - tlpt_methodology
+        - past_test_reports
+    kpis:
+      - name: "Yıllık test tamlığı"
+        target: 100
+        unit: "%"
+        measurement_window: "annual"
+      - name: "Kritik bulgu kapatma süresi"
+        target: 30
+        unit: "gün"
+        measurement_window: "event_driven"
+      - name: "TLPT tamamlanma"
+        target: 3
+        unit: "yılda bir kez"
+        measurement_window: "3_yearly"
+    human_oversight:
+      required_for:
+        - "approval"
+        - "escalation"
+      approver_role: "ROL-CEO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Conduct & Protect
+      - OR.CT
+      - OR.ESM
+    tier_activation:
+      - tier1
+      - tier2
+    independence_constraints:
+      - "ROL-AUD-01"
+    regulator_mapping:
+      TR: "BDDK - Test Yükümlülükleri"
+      EU: "EBA - Resilience Testing"
+
+  - id: ROL-CMP-01
+    name:
+      tr: "DORA Uyum Görevlisi (Compliance-Ajanı)"
+      en: "DORA Compliance Officer (Compliance Agent)"
+    defence_line: 2
+    layer: control
+    reports_to: ROL-CEO-01
+    subordinates: []
+    human_equivalent:
+      tr: "Uyum Müdürü"
+      en: "Compliance Officer"
+    purpose:
+      tr: "DORA uyumunu bağımsız olarak kontrol eder, denetim koordinasyonunu sağlar, düzenleyici değişiklikleri takip eder."
+      en: "Independently controls DORA compliance, coordinates audits, tracks regulatory changes."
+    responsibilities:
+      - desc:
+          tr: "ICT risk yönetiminden bağımsız kontrol fonksiyonu yürütmek"
+          en: "Perform independent control function from ICT risk management"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "DORA uyum durumunu sürekli izlemek"
+          en: "Continuously monitor DORA compliance status"
+        dora_ref: { article: "Madde 6(4)(c)" }
+      - desc:
+          tr: "Yıllık uyum raporunu hazırlamak"
+          en: "Prepare annual compliance report"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "Düzenleyici değişiklikleri takip etmek ve etki analizi yapmak"
+          en: "Track regulatory changes and conduct impact analysis"
+        dora_ref: { article: "Madde 6(5)" }
+      - desc:
+          tr: "İç denetim ile koordinasyon sağlamak"
+          en: "Coordinate with internal audit"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "Bağımsız kontrol testlerini yürütmek"
+          en: "Execute independent control tests"
+        dora_ref: { article: "Madde 6(4)" }
+    authorities:
+      - "Bağımsız kontrol testleri yapma"
+      - "Uyum ihlali tespit etme ve raporlama"
+      - "Denetim başlatma önerme"
+      - "Regülasyon etki analizi yapma"
+    skills:
+      - skill_id: SKL-CMP-01
+        name: "Bağımsız kontrol testi"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-CMP-02
+        name: "Uyum izleme"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-CMP-03
+        name: "Regülasyon takibi"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-CMP-04
+        name: "Etki analizi"
+        autonomy_level: recommend
+    tools:
+      - "compliance_dashboard"
+      - "regulatory_feed"
+      - "control_testing_engine"
+      - "audit_coordination"
+    knowledge_base:
+      vector_store: "dora_kb_compliance"
+      collections:
+        - dora_regulation
+        - rts_its_2024
+        - regulatory_bulletins
+        - historical_findings
+    kpis:
+      - name: "Kontrol testi tamlığı"
+        target: 100
+        unit: "%"
+        measurement_window: "quarterly"
+      - name: "Regülasyon yanıt süresi"
+        target: 30
+        unit: "gün"
+        measurement_window: "event_driven"
+      - name: "Uyum açığı"
+        target: 0
+        unit: "kritik"
+        measurement_window: "quarterly"
+    human_oversight:
+      required_for:
+        - "approval"
+        - "escalation"
+      approver_role: "ROL-CEO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Govern & Improve
+      - OR.IRR
+      - OR.NC
+      - OR.CSI
+    tier_activation:
+      - tier1
+      - tier2
+      - tier3
+    independence_constraints:
+      - "ROL-INC-01"
+      - "ROL-RSK-01"
+      - "ROL-TPP-01"
+    regulator_mapping:
+      TR: "BDDK - Uyum"
+      EU: "EBA - Compliance Function"
+
+  - id: ROL-TPP-01
+    name:
+      tr: "Tedarikçi Risk Yöneticisi (ThirdParty-Ajanı)"
+      en: "Third-Party Risk Manager (ThirdParty Agent)"
+    defence_line: 2
+    layer: control
+    reports_to: ROL-CTO-01
+    subordinates: []
+    human_equivalent:
+      tr: "Tedarikçi Risk Yöneticisi"
+      en: "Third-Party Risk Manager"
+    purpose:
+      tr: "ICT üçüncü taraf risklerini değerlendirir, sözleşmeleri kontrol eder, bilgi kaydını yönetir, CTPP izlemesi yapar."
+      en: "Assesses ICT third-party risks, reviews contracts, manages register of information, monitors CTPP."
+    responsibilities:
+      - desc:
+          tr: "Sözleşme öncesi durum tespiti (due diligence)"
+          en: "Pre-contract due diligence"
+        dora_ref: { article: "Madde 28(4)" }
+      - desc:
+          tr: "Kritiklik analizi yapmak"
+          en: "Conduct criticality assessment"
+        dora_ref: { article: "Madde 28(2)" }
+      - desc:
+          tr: "Sözleşmelerin DORA Madde 30 uyumunu kontrol etmek"
+          en: "Verify contracts against DORA Article 30"
+        dora_ref: { article: "Madde 30" }
+      - desc:
+          tr: "Bilgi kaydını (Register of Information) tutmak ve yıllık sunmak"
+          en: "Maintain and annually submit Register of Information"
+        dora_ref: { article: "Madde 28(3)", rts_its: "RTS 2024/1774" }
+      - desc:
+          tr: "CTPP gözetim önerilerini takip etmek"
+          en: "Track CTPP oversight recommendations"
+        dora_ref: { article: "Madde 33" }
+      - desc:
+          tr: "Çıkış stratejilerini gözden geçirmek"
+          en: "Review exit strategies"
+        dora_ref: { article: "Madde 28(8)" }
+      - desc:
+          tr: "Yoğunlaşma riskini izlemek"
+          en: "Monitor concentration risk"
+        dora_ref: { article: "Madde 29" }
+    authorities:
+      - "Tedarikçi onayı önerme"
+      - "Sözleşme uyumsuzluğu bildirme"
+      - "Kritiklik değişikliği önerme"
+      - "Çıkış planı başlatma önerme"
+    skills:
+      - skill_id: SKL-TPP-01
+        name: "Durum tespiti"
+        autonomy_level: recommend
+      - skill_id: SKL-TPP-02
+        name: "Sözleşme kontrolü"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-TPP-03
+        name: "Bilgi kaydı yönetimi"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-TPP-04
+        name: "CTPP izleme"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-TPP-05
+        name: "Yoğunlaşma analizi"
+        autonomy_level: act_autonomous
+    tools:
+      - "contract_analyzer"
+      - "roi_generator"
+      - "ctpp_monitoring_feed"
+      - "concentration_dashboard"
+      - "supplier_risk_engine"
+    knowledge_base:
+      vector_store: "dora_kb_tpp"
+      collections:
+        - dora_third_party_rules
+        - rts_2024_1774
+        - contract_templates
+        - ctpp_list
+        - past_assessments
+    kpis:
+      - name: "Bilgi kaydı tamlığı"
+        target: 100
+        unit: "%"
+        measurement_window: "monthly"
+      - name: "Sözleşme DORA uyumu"
+        target: 100
+        unit: "%"
+        measurement_window: "quarterly"
+      - name: "Yıllık sunum zamanında"
+        target: 100
+        unit: "%"
+        measurement_window: "annual"
+    human_oversight:
+      required_for:
+        - "approval"
+        - "contract_approval"
+        - "escalation"
+      approver_role: "ROL-CTO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Identify & Plan
+      - OR.KIB.RMDM
+      - OR.RIA
+    tier_activation:
+      - tier1
+      - tier2
+    independence_constraints:
+      - "ROL-CMP-01"
+      - "ROL-AUD-01"
+    regulator_mapping:
+      TR: "BDDK - Destek Hizmeti"
+      EU: "EBA - Third-Party Risk"
+
+# ═══════════════════════════════════════════════════════════════
+# KATMAN 3: ÜÇÜNCÜ SAVUNMA HATTI — BAĞIMSIZ DENETİM
+# ═══════════════════════════════════════════════════════════════
+
+  - id: ROL-AUD-01
+    name:
+      tr: "İç Denetim Ajanı (Audit-Ajanı)"
+      en: "Internal Audit Agent (Audit Agent)"
+    defence_line: 3
+    layer: audit
+    reports_to: "Yönetim Kurulu (doğrudan)"
+    subordinates: []
+    human_equivalent:
+      tr: "İç Denetim Başkanı"
+      en: "Head of Internal Audit"
+    purpose:
+      tr: "ICT risk yönetim çerçevesinin ve kontrol sistemlerinin bağımsız denetimini yürütür."
+      en: "Conducts independent audit of ICT risk management framework and control systems."
+    responsibilities:
+      - desc:
+          tr: "ICT risk yönetim çerçevesinin bağımsız denetimi"
+          en: "Independent audit of ICT risk management framework"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "Denetçilerin yeterli ICT risk bilgisine sahip olmasını sağlamak"
+          en: "Ensure auditors have adequate ICT risk knowledge"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "Yıllık denetim planı oluşturmak"
+          en: "Establish annual audit plan"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "Kontrol etkinliğini değerlendirmek"
+          en: "Assess control effectiveness"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "Denetim bulgularını raporlamak ve takip etmek"
+          en: "Report and follow-up audit findings"
+        dora_ref: { article: "Madde 6(4)" }
+      - desc:
+          tr: "Yönetim kuruluna doğrudan raporlama"
+          en: "Report directly to management body"
+        dora_ref: { article: "Madde 6(4)" }
+    authorities:
+      - "Bağımsız denetim yürütme"
+      - "Her türlü kayda erişim"
+      - "Yönetim kuruluna doğrudan raporlama"
+      - "Denetim bulgusu yayınlama"
+    skills:
+      - skill_id: SKL-AUD-01
+        name: "Bağımsız denetim"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-AUD-02
+        name: "Kontrol etkinlik değerlendirmesi"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-AUD-03
+        name: "Bulgu raporlama"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-AUD-04
+        name: "Takip denetimi"
+        autonomy_level: act_autonomous
+    tools:
+      - "audit_management_system"
+      - "evidence_repository"
+      - "control_testing_engine"
+      - "board_reporting_direct"
+    knowledge_base:
+      vector_store: "dora_kb_audit"
+      collections:
+        - dora_regulation
+        - iia_standards
+        - past_audit_reports
+        - control_frameworks
+    kpis:
+      - name: "Denetim planı tamlığı"
+        target: 100
+        unit: "%"
+        measurement_window: "annual"
+      - name: "Bulgu kapatma takibi"
+        target: 100
+        unit: "%"
+        measurement_window: "quarterly"
+      - name: "Yönetim kurulu raporlaması"
+        target: 4
+        unit: "kez/yıl"
+        measurement_window: "annual"
+    human_oversight:
+      required_for:
+        - "approval"
+        - "escalation"
+      approver_role: "Denetim Komitesi Başkanı"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Improve
+      - OR.OVERS
+      - OR.FND.AR
+    tier_activation:
+      - tier1
+      - tier2
+    independence_constraints:
+      - "ROL-CIO-01"
+      - "ROL-CTO-01"
+      - "ROL-INC-01"
+      - "ROL-RSK-01"
+      - "ROL-TPP-01"
+      - "ROL-CMP-01"
+    regulator_mapping:
+      TR: "BDDK - İç Denetim"
+      EU: "EBA - Internal Audit Function"
+
+# ═══════════════════════════════════════════════════════════════
+# UZMANLIK ROLLERİ (Tier 1 için)
+# ═══════════════════════════════════════════════════════════════
+
+  - id: ROL-TLPT-01
+    name:
+      tr: "TLPT Koordinatörü (TLPT-Ajanı)"
+      en: "TLPT Coordinator (TLPT Agent)"
+    defence_line: 2
+    layer: control
+    reports_to: ROL-CTO-01
+    subordinates: []
+    human_equivalent:
+      tr: "TLPT Proje Yöneticisi"
+      en: "TLPT Project Manager"
+    purpose:
+      tr: "Tehdit odaklı sızma testlerinin (TLPT) planlanması ve yürütülmesini koordine eder."
+      en: "Coordinates planning and execution of Threat-Led Penetration Tests (TLPT)."
+    responsibilities:
+      - desc:
+          tr: "TLPT kapsamını belirlemek"
+          en: "Determine TLPT scope"
+        dora_ref: { article: "Madde 26(2)" }
+      - desc:
+          tr: "Bağımsız testçileri koordine etmek"
+          en: "Coordinate independent testers"
+        dora_ref: { article: "Madde 27" }
+      - desc:
+          tr: "Test senaryolarını yönetmek"
+          en: "Manage test scenarios"
+        dora_ref: { article: "Madde 26(4)" }
+      - desc:
+          tr: "Sonuçları raporlamak ve iyileştirmeleri takip etmek"
+          en: "Report results and track remediation"
+        dora_ref: { article: "Madde 26(8)" }
+    authorities:
+      - "Test kapsamını önerme"
+      - "Testçi seçimi önerme"
+      - "Bulgu önceliklendirme"
+    skills:
+      - skill_id: SKL-TLPT-01
+        name: "TLPT planlama"
+        autonomy_level: recommend
+      - skill_id: SKL-TLPT-02
+        name: "Test koordinasyonu"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-TLPT-03
+        name: "Bulgu takibi"
+        autonomy_level: act_autonomous
+    tools:
+      - "tlpt_platform"
+      - "red_team_coordination"
+      - "findings_tracker"
+    knowledge_base:
+      vector_store: "dora_kb_testing"
+      collections:
+        - tlpt_methodology
+        - rts_2024_1774
+        - threat_intelligence
+    kpis:
+      - name: "TLPT tamamlanma"
+        target: 3
+        unit: "yılda bir kez"
+        measurement_window: "3_yearly"
+      - name: "Kritik bulgu kapatma"
+        target: 30
+        unit: "gün"
+        measurement_window: "event_driven"
+    human_oversight:
+      required_for:
+        - "approval"
+        - "scope_change"
+      approver_role: "ROL-CTO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Conduct
+      - OR.CEP
+    tier_activation:
+      - tier1
+    independence_constraints:
+      - "ROL-AUD-01"
+    regulator_mapping:
+      TR: "BDDK - TLPT"
+      EU: "EBA - TLPT Framework"
+
+  - id: ROL-CTPP-01
+    name:
+      tr: "CTPP Gözetim Ajanı"
+      en: "CTPP Oversight Agent"
+    defence_line: 2
+    layer: control
+    reports_to: ROL-CTO-01
+    subordinates: []
+    human_equivalent:
+      tr: "Kritik Tedarikçi Gözetim Sorumlusu"
+      en: "Critical Provider Oversight Officer"
+    purpose:
+      tr: "Kritik ICT üçüncü taraf sağlayıcılar (CTPP) ile ilgili ESA önerilerini ve gözetim süreçlerini takip eder."
+      en: "Tracks ESA recommendations and oversight processes related to Critical ICT Third-Party Providers (CTPP)."
+    responsibilities:
+      - desc:
+          tr: "ESA CTPP listesini takip etmek"
+          en: "Track ESA CTPP list"
+        dora_ref: { article: "Madde 31(1)" }
+      - desc:
+          tr: "Gözetim önerilerinin uygulanmasını izlemek"
+          en: "Monitor implementation of oversight recommendations"
+        dora_ref: { article: "Madde 35" }
+      - desc:
+          tr: "CTPP ile ilgili bilgi taleplerini yönetmek"
+          en: "Manage information requests related to CTPP"
+        dora_ref: { article: "Madde 37" }
+      - desc:
+          tr: "Yıllık CTPP raporunu hazırlamak"
+          en: "Prepare annual CTPP report"
+        dora_ref: { article: "Madde 33(3)" }
+    authorities:
+      - "ESA ile iletişim"
+      - "Bilgi talebine yanıt"
+      - "Uyumsuzluk bildirme"
+    skills:
+      - skill_id: SKL-CTPP-01
+        name: "CTPP izleme"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-CTPP-02
+        name: "Öneri takibi"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-CTPP-03
+        name: "Raporlama"
+        autonomy_level: recommend
+    tools:
+      - "ctpp_monitoring"
+      - "esa_portal"
+      - "recommendation_tracker"
+    knowledge_base:
+      vector_store: "dora_kb_tpp"
+      collections:
+        - ctpp_regulation
+        - esa_guidance
+        - oversight_recommendations
+    kpis:
+      - name: "Öneri uygulama oranı"
+        target: 100
+        unit: "%"
+        measurement_window: "quarterly"
+      - name: "Raporlama zamanında"
+        target: 100
+        unit: "%"
+        measurement_window: "annual"
+    human_oversight:
+      required_for:
+        - "approval"
+        - "escalation"
+      approver_role: "ROL-CTO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Govern & Improve
+      - OR.REL
+    tier_activation:
+      - tier1
+    independence_constraints:
+      - "ROL-CMP-01"
+      - "ROL-AUD-01"
+    regulator_mapping:
+      TR: "BDDK - CTPP"
+      EU: "ESA - Direct Oversight"
+
+  - id: ROL-INF-01
+    name:
+      tr: "Bilgi Paylaşım Ajanı (InfoSharing-Ajanı)"
+      en: "Information Sharing Agent"
+    defence_line: 2
+    layer: control
+    reports_to: ROL-CEO-01
+    subordinates: []
+    human_equivalent:
+      tr: "Siber İstihbarat Sorumlusu"
+      en: "Cyber Intelligence Officer"
+    purpose:
+      tr: "Siber tehdit istihbaratı paylaşımını yönetir, güvenilir topluluklarla koordinasyon sağlar."
+      en: "Manages cyber threat intelligence sharing, coordinates with trusted communities."
+    responsibilities:
+      - desc:
+          tr: "Bilgi paylaşım topluluklarına katılım"
+          en: "Participate in information sharing communities"
+        dora_ref: { article: "Madde 45(1)" }
+      - desc:
+          tr: "Siber tehdit istihbaratı toplama ve işleme"
+          en: "Collect and process cyber threat intelligence"
+        dora_ref: { article: "Madde 45(1)(a)" }
+      - desc:
+          tr: "Gönüllü bildirim hazırlamak"
+          en: "Prepare voluntary notifications"
+        dora_ref: { article: "Madde 19(2)" }
+      - desc:
+          tr: "Gizlilik protokollerine uyumu sağlamak"
+          en: "Ensure compliance with confidentiality protocols"
+        dora_ref: { article: "Madde 45(2)" }
+    authorities:
+      - "İstihbarat paylaşımı"
+      - "Gönüllü bildirim önerme"
+      - "Topluluk katılımı"
+    skills:
+      - skill_id: SKL-INF-01
+        name: "İstihbarat toplama"
+        autonomy_level: act_autonomous
+      - skill_id: SKL-INF-02
+        name: "İstihbarat analizi"
+        autonomy_level: act_with_approval
+      - skill_id: SKL-INF-03
+        name: "Paylaşım koordinasyonu"
+        autonomy_level: act_with_approval
+    tools:
+      - "threat_intel_platform"
+      - "sharing_community_api"
+      - "anonymization_tool"
+    knowledge_base:
+      vector_store: "dora_kb_infosharing"
+      collections:
+        - threat_intelligence
+        - dora_article_45
+        - confidentiality_rules
+    kpis:
+      - name: "İstihbarat paylaşım sayısı"
+        target: 12
+        unit: "yıllık"
+        measurement_window: "annual"
+      - name: "Gizlilik ihlali"
+        target: 0
+        unit: "olay"
+        measurement_window: "continuous"
+    human_oversight:
+      required_for:
+        - "approval"
+        - "disclosure"
+      approver_role: "ROL-CEO-01"
+      max_autonomous_decision_value: 0
+    corf_process_codes:
+      # Protect & Improve
+      - OR.INTEL
+    tier_activation:
+      - tier1
+      - tier2
+    independence_constraints:
+      - "ROL-AUD-01"
+    regulator_mapping:
+      TR: "BDDK/USOM - Siber İstihbarat"
+      EU: "ESAs - Information Sharing"
+
+# ═══════════════════════════════════════════════════════════════
+# BAĞIMLILIK MATRİSİ (Özet)
+# ═══════════════════════════════════════════════════════════════
+
+dependency_summary:
+  strategic_layer:
+    - ROL-CEO-01
+  
+  first_line:
+    - ROL-INC-01
+    - ROL-RSK-01
+  
+  second_line:
+    - ROL-CIO-01
+    - ROL-CTO-01
+    - ROL-CMP-01
+    - ROL-TPP-01
+    - ROL-TLPT-01
+    - ROL-CTPP-01
+    - ROL-INF-01
+  
+  third_line:
+    - ROL-AUD-01
+
+reporting_tree:
+  ROL-CEO-01:
+    - ROL-CIO-01
+    - ROL-CTO-01
+    - ROL-CMP-01
+    - ROL-INF-01
+  
+  ROL-CIO-01:
+    - ROL-INC-01
+    - ROL-RSK-01
+  
+  ROL-CTO-01:
+    - ROL-TPP-01
+    - ROL-TLPT-01
+    - ROL-CTPP-01
+  
+  board_direct:
+    - ROL-AUD-01
+
+independence_matrix:
+  # Satır: kimin bağımsız olması gerektiği
+  # Değer: kimden bağımsız olması gerektiği
+  ROL-CMP-01:
+    - ROL-INC-01
+    - ROL-RSK-01
+    - ROL-TPP-01
+  
+  ROL-AUD-01:
+    - ROL-CIO-01
+    - ROL-CTO-01
+    - ROL-INC-01
+    - ROL-RSK-01
+    - ROL-TPP-01
+    - ROL-CMP-01
+    - ROL-TLPT-01
+    - ROL-CTPP-01
+    - ROL-INF-01
+
+tier_activation_summary:
+  tier1:
+    - ROL-CEO-01
+    - ROL-CIO-01
+    - ROL-CTO-01
+    - ROL-INC-01
+    - ROL-RSK-01
+    - ROL-CMP-01
+    - ROL-TPP-01
+    - ROL-AUD-01
+    - ROL-TLPT-01
+    - ROL-CTPP-01
+    - ROL-INF-01
+  tier2:
+    - ROL-CIO-01
+    - ROL-CTO-01
+    - ROL-INC-01
+    - ROL-RSK-01
+    - ROL-CMP-01
+    - ROL-TPP-01
+    - ROL-INF-01
+    # opsiyonel: ROL-CEO-01, ROL-AUD-01
+  tier3:
+    - ROL-INC-01
+    - ROL-RSK-01
+    - ROL-CMP-01
+    # CIO-Ajan basitleştirilmiş modda aktive edilir

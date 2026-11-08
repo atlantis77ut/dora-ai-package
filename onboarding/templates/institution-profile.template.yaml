@@ -1,0 +1,12 @@
+# Kurum Profili Şablonu
+# Bu dosya onboarding sırasında otomatik doldurulur
+institution: ""
+tier: ""                       # tier1 | tier2 | tier3
+tier_justification: ""
+licenses: []                   # ["mevduat", "sigorta", "ödeme"]
+regulator: ""                  # BDDK | TCMB | SEDDK | EBA | ...
+jurisdiction: ""               # TR | DE | FR | ...
+systemic: false
+balance_eur: 0
+employees: 0
+determined_at: ""

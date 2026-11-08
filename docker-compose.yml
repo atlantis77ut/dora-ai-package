@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  dora-onboard:
+    build: ./onboarding/cli
+    volumes:
+      - ./data:/app/data
+      - ./schema:/app/schema
+      - ./.dora-onboarding:/app/.dora-onboarding
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: ["node", "bin/dora-onboard.js", "--help"]
+
+  schema-validator:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./schema:/app/schema
+      - ./data:/app/data
+    command: sh -c "npm install -g ajv-cli && ajv validate -s 'schema/*.json' -d 'data/**/*.yaml' --strict=false"

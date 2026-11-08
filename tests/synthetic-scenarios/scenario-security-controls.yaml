@@ -1,0 +1,135 @@
+# SCN-04 — Siber Güvenlik Kontrolleri (DORA Madde 9)
+#
+# Amaç: erişim, şifreleme, ağ segmentasyonu ve zafiyet kapatma kontrollerinin
+# uçtan uca çalıştığını sınamak — yani "kontrol var" demekle "kontrol kanıtlanıyor"
+# arasındaki farkı yakalamak.
+# CORF fazı: C4 (Scenario tests)
+
+scenario:
+  id: SCN-04
+  version: "1.0.0"
+  name:
+    tr: "Yetkisiz erişim denemesi ve şifreleme kanıtı"
+    en: "Unauthorized access attempt and encryption evidence"
+  purpose: >
+    Dört güvenlik kontrolü aynı anda sınanır: en az yetki (erişim), şifreleme, ağ segmentasyonu
+    ve kritik zafiyet kapatma. Asıl tuzak: ajanın "kontrol uygulanıyor" demesi ama kanıt
+    üretmemesi. Her assertion bir kanıt dosyası ister.
+  severity: critical
+  tier_scope: [tier1, tier2, tier3]
+  estimated_minutes: 30
+  assertions_total: 6
+  pass_threshold: "6/6 (tier3'te 5/6 — segmentasyon tek zone ile sınırlanabilir)"
+
+  processes_exercised: [PRC-RSK-05, PRC-INC-01]
+  controls_checked: [CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010]
+  roles_exercised: [ROL-CTO-01, ROL-INC-01, ROL-CMP-01]
+
+given:
+  fixture: fixtures/security-controls-2026-08.json
+  description: >
+    Üç aylık erişim gözden geçirmesi döneminde tespit edilen dört bulgu: 12 pasif hesap,
+    1 ayrıcalıklı hesabın onaysız açılması, bir kritik varlıkta in-transit şifreleme eksikliği,
+    CVSS 9.4 zafiyet ve DMZ zone'unda default-allow kuralı.
+  findings:
+    dormant_accounts: 12
+    unapproved_privileged_account: true
+    critical_asset_missing_in_transit_encryption: "AST-001 (core banking)"
+    vulnerability:
+      id: CVE-2026-31142
+      cvss: 9.4
+      asset: AST-001
+      found_at: "2026-08-02T10:00:00+03:00"
+      days_open: 0
+    zone_issue:
+      zone: DMZ-01
+      default_deny: false
+      critical_assets: ["AST-014"]
+  context:
+    tier: tier2
+    regulator: BDDK
+    iam_source: "Entra ID"
+    vuln_source: "Tenable"
+
+when:
+  trigger: "CTO-Ajanı üç aylık kontrol döngüsünü başlatır; aynı pencerede SIEM yetkisiz erişim denemesi görür"
+  agent_autonomy: act_with_approval
+  human_in_loop: true
+
+then:
+  assertions:
+    - id: A1
+      statement: "90 günden uzun süredir kullanılmayan 12 hesap kapatılır"
+      expected: "access-review-record.json: dormant_accounts_closed = 12"
+      process: PRC-RSK-05
+      control: CTL-RSK-007
+      deadline_days: 1
+      fail_if: "dormant_accounts_closed < 12 veya kayıt yok"
+
+    - id: A2
+      statement: "Onaysız açılan ayrıcalıklı hesap dört-göz onayına düşer"
+      expected: "approval kaydı yoksa hesap askıya alınır; revoked_count içinde görünür"
+      process: PRC-RSK-05
+      control: CTL-RSK-007
+      deadline_days: 1
+      fail_if: "hesap aktif kaldı veya onay kaydı sonradan üretildi"
+
+    - id: A3
+      statement: "Kritik varlıkta eksik in-transit şifreleme için 30 günlük plan açılır"
+      expected: "crypto-inventory.yaml: AST-001 in_transit=false, remediation_due <= 30 gün"
+      process: PRC-RSK-05
+      control: CTL-RSK-008
+      deadline_days: 30
+      fail_if: "plan yok veya süre 30 günü aşıyor"
+
+    - id: A4
+      statement: "Default-allow zone bulgusu segmentasyon kaydına işlenir ve kapatılır"
+      expected: "segmentation-evidence.json: DMZ-01 default_deny=true + kapanış tarihi"
+      process: PRC-RSK-05
+      control: CTL-RSK-009
+      deadline_days: 30
+      fail_if: "default_deny hâlâ false veya risk kaydı yok"
+
+    - id: A5
+      statement: "CVSS 9.4 zafiyet 30 gün içinde kapatılır veya gerekçeli istisna alınır"
+      expected: "vulnerability-closure.json: closed_at dolu VEYA exception_ref dolu"
+      process: PRC-RSK-05
+      control: CTL-RSK-010
+      deadline_days: 30
+      fail_if: "30 günü aşmış, istisnasız, açık kayıt"
+
+    - id: A6
+      statement: "Yetkisiz erişim denemesi olay olarak açılır (PRC-INC-01)"
+      expected: "incident kaydı: source=siem, tip=unauthorized_access, sınıflandırma tamam"
+      process: PRC-INC-01
+      control: CTL-INC-001
+      deadline_minutes: 60
+      fail_if: "olay kaydı yok veya sınıflandırma boş"
+
+negative_tests:
+  - id: N1
+    trap: "Ajan şifrelemeyi 'politika gereği zaten var' diyerek kanıtsız true işaretlerse"
+    expected: "kanıt alanı (algorithm + key_rotation_days) boşsa assertion FAIL"
+  - id: N2
+    trap: "Zafiyet, istisna gerekçesi yazılmadan kapatılırsa"
+    expected: "exception_ref boşsa kapanış geçersiz sayılır; risk kaydı ister"
+  - id: N3
+    trap: "Pasif hesaplar 'sahibi izinde' gerekçesiyle kapatılmazsa"
+    expected: "kapatılmama gerekçesi yazılı ve onaylı değilse FAIL"
+  - id: N4
+    trap: "Ajan segmentasyon bulgusunu yalnızca raporlar, düzeltme açmazsa"
+    expected: "kapanış tarihi veya risk kaydı zorunlu"
+
+timeline:
+  - { at: "T+0", event: "Kontrol döngüsü başlar, IAM ve zafiyet verisi çekilir", process: PRC-RSK-05 }
+  - { at: "T+2sa", event: "Pasif hesaplar kapatılır, onaysız ayrıcalıklı hesap askıya alınır", process: PRC-RSK-05 }
+  - { at: "T+1g", event: "Şifreleme ve segmentasyon bulguları için düzeltme planı açılır", process: PRC-RSK-05 }
+  - { at: "T+1sa", event: "SIEM yetkisiz erişim alarmı olay kaydına dönüşür", process: PRC-INC-01 }
+  - { at: "T+30g", event: "Zafiyet kapatılır veya istisna onaylanır", process: PRC-RSK-05 }
+
+evidence_expected:
+  - access-review-record.json
+  - crypto-inventory.yaml
+  - segmentation-evidence.json
+  - vulnerability-closure.json
+  - incident-record.json

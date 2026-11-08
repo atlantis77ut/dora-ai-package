@@ -1,0 +1,333 @@
+# DORA madde → süreç / kontrol eşlemesi
+#
+# Amaç: C5 (öz değerlendirme) fazının kapsama matrisini beslemek.
+# Her madde için: yükümlülük özeti, hangi süreçle karşılandığı, hangi kontrolle
+# kanıtlandığı, sahibi ve kapsama durumu.
+#
+# status: covered (tam) | partial (kısmi — not alanı nedenini yazar) | gap (kapsanmıyor)
+
+mapping:
+  version: "1.0.0"
+  generated_at: "2026-11-03"
+  source: "Regulation (EU) 2022/2554 (DORA)"
+  scope_note: >
+    Yalnızca yükümlülük doğuran maddeler eşlendi; tanım maddeleri (3) ve
+    kurumsal/yaptırım maddeleri kapsam dışı. Madde numaraları DORA resmi metnine göredir.
+
+articles:
+
+  - id: Art-05
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "Yönetişim ve organizasyon"
+    obligations:
+      - "Yönetim organı ICT riskinden nihai sorumludur"
+      - "ICT risk çerçevesi onaylanır ve yılda gözden geçirilir"
+      - "Yeterli dijital operasyonel dayanıklılık uzmanlığı sağlanır"
+    processes: [PRC-RSK-01]
+    controls: [CTL-RSK-001]
+    roles: [ROL-CEO-01, ROL-CIO-01]
+    status: covered
+
+  - id: Art-06
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "ICT risk yönetim çerçevesi"
+    obligations:
+      - "Sağlam, kapsamlı ve iyi belgelenmiş ICT risk çerçevesi kurulur"
+      - "Strateji, politika, prosedür, protokol ve araçlar tanımlanır"
+      - "Çerçeve en az yılda bir gözden geçirilir"
+    processes: [PRC-RSK-01, PRC-RSK-02]
+    controls: [CTL-RSK-001, CTL-RSK-002]
+    roles: [ROL-CIO-01, ROL-CMP-01]
+    status: covered
+
+  - id: Art-07
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "ICT sistemleri, protokoller ve araçlar"
+    obligations:
+      - "Güvenilir, kapasitesi yeterli ve güncel ICT sistemleri kullanılır"
+      - "Sistem yapılandırması ve sıkılaştırma standartları uygulanır"
+    processes: [PRC-RSK-03, PRC-RSK-05]
+    controls: [CTL-RSK-003, CTL-RSK-009]
+    roles: [ROL-CTO-01, ROL-RSK-01]
+    status: covered
+
+  - id: Art-08
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "Tanımlama"
+    obligations:
+      - "ICT varlıkları ve bağımlılıkları envanterlenir"
+      - "Kritik veya önemli işlevler belirlenir"
+      - "Kayıt dışı varlık bırakılmaz"
+    processes: [PRC-RSK-03]
+    controls: [CTL-RSK-003, CTL-RSK-004]
+    roles: [ROL-RSK-01]
+    status: covered
+
+  - id: Art-09
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "Koruma ve önleme"
+    obligations:
+      - "Erişim kontrolü, kimlik doğrulama ve şifreleme uygulanır"
+      - "Ağ güvenliği ve segmentasyonu sağlanır"
+      - "Veri ve sistemlerin bütünlüğü korunur"
+    processes: [PRC-RSK-05]
+    controls: [CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010]
+    roles: [ROL-CTO-01, ROL-CMP-01]
+    status: covered
+    tier_note: "tier3: yıllık tek gözden geçirme yeterli (corf-lifecycle tier_variants)"
+
+  - id: Art-10
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "Tespit"
+    obligations:
+      - "Anormallikleri ve olayları zamanında tespit eden mekanizmalar kurulur"
+      - "Tespit için izleme ve uyarı üretimi yapılır"
+    processes: [PRC-INC-01]
+    controls: [CTL-INC-001]
+    roles: [ROL-INC-01]
+    status: covered
+
+  - id: Art-11
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "İş sürekliliği politikası ve kurtarma planları"
+    obligations:
+      - "BCP ve DRP dokümante edilir ve test edilir"
+      - "Kritik işlevler için RTO/RPO tanımlanır"
+    processes: [PRC-RSK-04, PRC-RSK-02]
+    controls: [CTL-RSK-005]
+    roles: [ROL-CIO-01]
+    status: covered
+
+  - id: Art-12
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "Yedekleme politikaları, prosedürleri ve yöntemleri"
+    obligations:
+      - "Yedekleme ve geri yükleme test edilir"
+      - "Yedekler kritik verileri kapsar ve ayrı konumda tutulur"
+    processes: [PRC-RSK-04]
+    controls: [CTL-RSK-005]
+    roles: [ROL-CTO-01]
+    status: partial
+    note: "Geri yükleme testi BCP/DRP kanıtı içinde izleniyor; ayrı yedekleme kontrolü yok."
+
+  - id: Art-13
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "Öğrenme ve gelişme"
+    obligations:
+      - "Olay sonrası kök neden analizi yapılır"
+      - "Bulgular kontrol ve süreçlere geri beslenir"
+    processes: [PRC-INC-04]
+    controls: [CTL-INC-006, CTL-INC-007]
+    roles: [ROL-CMP-01, ROL-INC-01]
+    status: covered
+
+  - id: Art-14
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "İletişim"
+    obligations:
+      - "Kriz iletişimi planı ve sorumluları tanımlanır"
+      - "Paydaşlara ve kamuya iletişim protokolü kurulur"
+    processes: [PRC-INC-04]
+    controls: []
+    roles: [ROL-CEO-01, ROL-INC-01]
+    status: gap
+    note: "Kriz iletişimi planı bu pakette yok; CEO ajanı yalnızca yönetim kurulu raporlamasını kapsıyor."
+
+  - id: Art-15
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "Küçük kuruluşlar için basitleştirilmiş çerçeve"
+    obligations:
+      - "Madde 16 kriterlerini karşılayan kuruluşlar basitleştirilmiş çerçeve uygulayabilir"
+    processes: [PRC-RSK-01, PRC-RSK-04]
+    controls: [CTL-RSK-001]
+    roles: [ROL-CIO-01]
+    status: covered
+    tier_note: "tier3 profillerinde uygulanır (corf-lifecycle.yaml tier_variants)."
+
+  - id: Art-16
+    chapter: "Bölüm II — ICT Risk Yönetimi"
+    title: "Orantılılık ilkesi"
+    obligations:
+      - "Gereklilikler kuruluşun büyüklüğü, risk profili ve karmaşıklığına göre uygulanır"
+    processes: [PRC-RSK-01]
+    controls: [CTL-RSK-001]
+    roles: [ROL-CIO-01, ROL-CMP-01]
+    status: covered
+    tier_note: "Tier seçimi ve faz uyarlaması wizard'da zorunlu adım (C1, C2)."
+
+  - id: Art-17
+    chapter: "Bölüm III — Olay Yönetimi"
+    title: "ICT olay yönetimi süreci"
+    obligations:
+      - "Olayları tespit, yönet, kaydet ve raporla"
+      - "Erken uyarı göstergeleri tanımlanır"
+    processes: [PRC-INC-01, PRC-INC-02, PRC-INC-03, PRC-INC-04]
+    controls: [CTL-INC-001, CTL-INC-002]
+    roles: [ROL-INC-01]
+    status: covered
+
+  - id: Art-18
+    chapter: "Bölüm III — Olay Yönetimi"
+    title: "Olay sınıflandırması"
+    obligations:
+      - "Olaylar büyük/küçük olarak sınıflandırılır"
+      - "Kriterler RTS ile uyumlu uygulanır"
+    processes: [PRC-INC-01]
+    controls: [CTL-INC-002]
+    roles: [ROL-INC-01, ROL-CIO-01]
+    status: covered
+
+  - id: Art-19
+    chapter: "Bölüm III — Olay Yönetimi"
+    title: "Büyük olayların raporlanması"
+    obligations:
+      - "İlk bildirim: sınıflandırmadan sonra 4 saat, tespitten en geç 24 saat"
+      - "Ara rapor: 72 saat"
+      - "Nihai rapor: 1 ay"
+    processes: [PRC-INC-02, PRC-INC-03, PRC-INC-04]
+    controls: [CTL-INC-003, CTL-INC-004, CTL-INC-005, CTL-INC-006]
+    roles: [ROL-INC-01, ROL-CIO-01]
+    status: covered
+
+  - id: Art-20
+    chapter: "Bölüm III — Olay Yönetimi"
+    title: "Raporlama şablonlarının uyumlaştırılması"
+    obligations:
+      - "Bildirimler RTS/ITS şablonlarına uygun üretilir"
+    processes: [PRC-INC-02, PRC-INC-03, PRC-INC-04]
+    controls: [CTL-INC-004]
+    roles: [ROL-CMP-01]
+    status: partial
+    note: "Şablon alanları tanımlı; ITS 2024/2956 alan eşlemesi bu pakette ayrıntılandırılmadı."
+
+  - id: Art-23
+    chapter: "Bölüm III — Olay Yönetimi"
+    title: "Ödeme ile ilgili operasyonel/güvenlik olayları"
+    obligations:
+      - "Ödeme işlemlerine ilişkin olaylar ayrıca raporlanır"
+    processes: [PRC-INC-02]
+    controls: [CTL-INC-003]
+    roles: [ROL-INC-01, ROL-CMP-01]
+    status: partial
+    note: "Ödeme kuruluşları için TCMB kanalı tanımlı (local-equivalents-TR.md), ancak madde bazlı ayrım süreçte yok."
+
+  - id: Art-24
+    chapter: "Bölüm IV — Test"
+    title: "Dijital operasyonel dayanıklılık testi"
+    obligations:
+      - "Risk bazlı test programı kurulur ve sürdürülür"
+      - "Testler bağımsız yürütülür"
+    processes: [PRC-TST-01, PRC-TST-02]
+    controls: [CTL-TST-001, CTL-TST-002]
+    roles: [ROL-CTO-01, ROL-AUD-01]
+    status: covered
+
+  - id: Art-25
+    chapter: "Bölüm IV — Test"
+    title: "Test araç ve sistemlerinin kullanımı"
+    obligations:
+      - "Kritik işlevleri destekleyen sistemler yılda en az bir kez test edilir"
+      - "Test kapsamı dokümante edilir"
+    processes: [PRC-TST-02]
+    controls: [CTL-TST-001, CTL-TST-003]
+    roles: [ROL-CTO-01]
+    status: covered
+
+  - id: Art-26
+    chapter: "Bölüm IV — Test"
+    title: "TLPT — gelişmiş test"
+    obligations:
+      - "Sistemik öneme sahip kuruluşlar 3 yılda bir TLPT yapar"
+      - "TLPT gerçek üretim ortamında, tehdit odaklı yürütülür"
+    processes: [PRC-TST-03]
+    controls: [CTL-TST-004]
+    roles: [ROL-TLPT-01]
+    status: covered
+    tier_note: "Yalnız tier1 kapsamında zorunlu."
+
+  - id: Art-27
+    chapter: "Bölüm IV — Test"
+    title: "Test eden tarafların gereklilikleri"
+    obligations:
+      - "Testçiler bağımsız ve yeterli yetkinlikte olur"
+      - "Çıkar çatışması önlenir"
+    processes: [PRC-TST-02, PRC-TST-03]
+    controls: [CTL-TST-002]
+    roles: [ROL-CMP-01, ROL-AUD-01]
+    status: covered
+
+  - id: Art-28
+    chapter: "Bölüm V — Üçüncü taraf riski"
+    title: "Üçüncü taraf ICT hizmet sağlayıcılarına ilişkin genel ilkeler"
+    obligations:
+      - "Sözleşme öncesi durum tespiti yapılır"
+      - "Kritiklik değerlendirmesi yapılır"
+      - "Bilgi kaydı (RoI) tutulur ve yıllık sunulur"
+    processes: [PRC-TPP-01, PRC-TPP-02, PRC-TPP-04]
+    controls: [CTL-TPP-001, CTL-TPP-002, CTL-TPP-005]
+    roles: [ROL-TPP-01]
+    status: covered
+
+  - id: Art-29
+    chapter: "Bölüm V — Üçüncü taraf riski"
+    title: "Yoğunlaşma riski"
+    obligations:
+      - "Tek tedarikçiye aşırı bağımlılık ölçülür ve yönetilir"
+      - "Çıkış stratejisi hazır tutulur"
+    processes: [PRC-TPP-02, PRC-TPP-06]
+    controls: [CTL-TPP-003, CTL-TPP-007]
+    roles: [ROL-TPP-01, ROL-CIO-01]
+    status: covered
+
+  - id: Art-30
+    chapter: "Bölüm V — Üçüncü taraf riski"
+    title: "Sözleşmesel düzenlemelerin temel unsurları"
+    obligations:
+      - "Hizmet tanımı, SLA, denetim hakkı, veri iadesi ve çıkış hükümleri bulunur"
+      - "Alt yüklenici koşulları düzenlenir"
+    processes: [PRC-TPP-03]
+    controls: [CTL-TPP-004]
+    roles: [ROL-TPP-01, ROL-CMP-01]
+    status: covered
+
+  - id: Art-31
+    chapter: "Bölüm V — Üçüncü taraf riski"
+    title: "Kritik tedarikçilerin (CTPP) belirlenmesi"
+    obligations:
+      - "CTPP olarak belirlenen sağlayıcılar izlenir"
+    processes: [PRC-TPP-05]
+    controls: [CTL-TPP-006]
+    roles: [ROL-CTPP-01]
+    status: covered
+    tier_note: "ESA CTPP listesi kapsamında; tier1-2 için anlamlı."
+
+  - id: Art-33
+    chapter: "Bölüm V — Üçüncü taraf riski"
+    title: "Gözetim çerçevesi"
+    obligations:
+      - "ESA gözetim önerileri takip edilir ve uygulanır"
+    processes: [PRC-TPP-05]
+    controls: [CTL-TPP-006]
+    roles: [ROL-CTPP-01]
+    status: covered
+
+  - id: Art-35
+    chapter: "Bölüm V — Üçüncü taraf riski"
+    title: "Gözetim makamlarının önerileri"
+    obligations:
+      - "Önerilere uyum süresi ve gerekçelendirme yönetilir"
+    processes: [PRC-TPP-05]
+    controls: [CTL-TPP-006]
+    roles: [ROL-CTPP-01, ROL-CMP-01]
+    status: covered
+
+  - id: Art-45
+    chapter: "Bölüm VII — Bilgi paylaşımı"
+    title: "Siber tehdit bilgisi ve istihbarat paylaşımı"
+    obligations:
+      - "Güvenilir topluluklar içinde tehdit istihbaratı paylaşılır"
+      - "Ticari sır ve kişisel veri korunur"
+    processes: [PRC-INF-01, PRC-INF-02]
+    controls: [CTL-INF-001, CTL-INF-002, CTL-INF-003]
+    roles: [ROL-INF-01, ROL-CMP-01]
+    status: covered

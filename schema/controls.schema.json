@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dora-package.org/schema/controls.schema.json",
+  "title": "DORA Kontrolleri ve Kanıtları",
+  "type": "object",
+  "required": ["schema_version", "controls"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/Version" },
+    "controls": { "type": "array", "items": { "$ref": "#/$defs/Control" } }
+  },
+  "$defs": {
+    "Control": {
+      "type": "object",
+      "required": ["id", "name", "process_id", "type", "evidence_spec"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^CTL-[A-Z]{3}-\\d{3}$" },
+        "name": { "$ref": "common.schema.json#/$defs/I18nText" },
+        "process_id": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["preventive", "detective", "corrective", "directive"]
+        },
+        "owner_role": { "type": "string" },
+        "frequency": { "type": "string", "enum": ["continuous", "daily", "weekly", "monthly", "quarterly", "annual", "event_driven"] },
+        "evidence_spec": {
+          "type": "object",
+          "required": ["format", "immutability", "fields"],
+          "properties": {
+            "format": { "type": "string", "enum": ["json", "pdf", "log", "hash_chain", "xbrl"] },
+            "immutability": { "type": "string", "enum": ["append_only", "hash_chain", "worm_storage"] },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "type"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "type": { "type": "string" },
+                  "required": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "dora_ref": { "$ref": "common.schema.json#/$defs/DoraReference" },
+        "test_procedure": { "type": "string" }
+      }
+    }
+  }
+}

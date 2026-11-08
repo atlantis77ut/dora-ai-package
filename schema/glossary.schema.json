@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dora-package.org/schema/glossary.schema.json",
+  "title": "DORA Kavram Sözlüğü",
+  "type": "object",
+  "required": ["schema_version", "terms"],
+  "properties": {
+    "schema_version": { "$ref": "common.schema.json#/$defs/Version" },
+    "terms": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Term" }
+    }
+  },
+  "$defs": {
+    "Term": {
+      "type": "object",
+      "required": ["id", "name", "dora_ref", "definition", "category"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^TERM-[A-Z]{3}-\\d{3}$",
+          "examples": ["TERM-ICT-001", "TERM-INC-002"]
+        },
+        "name": { "$ref": "common.schema.json#/$defs/I18nText" },
+        "dora_ref": { "$ref": "common.schema.json#/$defs/DoraReference" },
+        "definition": {
+          "type": "object",
+          "description": "Kaynak metin + kurum içi uyarlama",
+          "required": ["source", "source_quote"],
+          "properties": {
+            "source": { "type": "string", "enum": ["DORA", "RTS", "ITS", "internal"] },
+            "source_quote": { "type": "string" },
+            "internal_adaptation": { "$ref": "common.schema.json#/$defs/I18nText" }
+          }
+        },
+        "category": {
+          "type": "string",
+          "enum": ["risk", "incident", "testing", "third_party", "info_sharing", "governance"]
+        },
+        "classification_criteria": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "related_roles": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^ROL-[A-Z]{3}-\\d{2}$" }
+        },
+        "related_processes": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^PRC-[A-Z]{3}-\\d{2}$" }
+        },
+        "synonyms": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

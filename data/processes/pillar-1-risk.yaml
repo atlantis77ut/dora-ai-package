@@ -1,0 +1,245 @@
+schema_version: "1.0.0"
+generated_at: "2026-10-30"
+pillar:
+  id: risk_mgmt
+  name:
+    tr: "1. Sütun — ICT Risk Yönetimi"
+    en: "Pillar 1 — ICT Risk Management"
+  dora_ref:
+    article: "Madde 5-16"
+    rts_its: "RTS 2024/1773 (ICT Risk Management)"
+source_of_truth: "Konuşma dökümü satır 303-374 (süreç listesi) + satır 1569 (sözlük referansları)"
+
+processes:
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-RSK-01 — ICT Risk Yönetim Çerçevesi
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-RSK-01
+    name:
+      tr: "ICT Risk Yönetim Çerçevesi Oluşturma ve Gözden Geçirme"
+      en: "ICT Risk Management Framework Creation and Review"
+    pillar: risk_mgmt
+    trigger: "Yıllık gözden geçirme takvimi veya düzenleyici değişiklik"
+    preconditions:
+      - "Kurum profili ve tier seçimi tamamlanmış olmalı (onboarding adım 1)"
+      - "Yönetim kurulu DORA stratejisi onaylanmış olmalı"
+    inputs:
+      - { name: "DORA ve RTS/ITS metinleri", format: pdf, source_role: ROL-CMP-01 }
+      - { name: "Kurum içi ICT politikaları", format: pdf, source_role: ROL-CIO-01 }
+      - { name: "Önceki yıl denetim bulguları", format: json, source_role: ROL-AUD-01 }
+    outputs:
+      - { name: "ict-risk-framework-policy.pdf", format: pdf, retention_years: 10 }
+      - { name: "framework-review-record.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-CIO-01]
+    approval_roles: [ROL-CEO-01, ROL-CMP-01]
+    slas:
+      - { trigger: "Yıllık gözden geçirme", duration: 1, unit: months, clock_start: detection }
+    decision_rules:
+      - rule_id: RSK-R1
+        condition: "çerçeve_yasi >= 12 ay"
+        action: "gözden geçirme görevi aç"
+        dora_ref: { article: "Madde 6(6)" }
+      - rule_id: RSK-R2
+        condition: "yeni_rts_its_yayinlandi == true"
+        action: "etki analizi başlat, 30 gün içinde çerçeveyi güncelle"
+        dora_ref: { article: "Madde 6(5)" }
+    dependencies:
+      upstream: [PRC-RSK-03]
+      downstream: [PRC-RSK-02, PRC-TST-01, PRC-RSK-04]
+    evidence_requirements:
+      - "ict-risk-framework-policy.pdf (yönetim kurulu onay imzalı)"
+      - "framework-review-record.json (gözden geçirme tarihi + katılımcılar)"
+    tier_variants:
+      tier3:
+        note: "Madde 16 orantılılık: asgari çerçeve, yıllık yerine iki yılda bir gözden geçirme kabul edilebilir"
+    control_ids:
+      - CTL-RSK-001
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-RSK-02 — Yıllık ICT Risk Değerlendirmesi
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-RSK-02
+    name:
+      tr: "Yıllık ICT Risk Değerlendirmesi"
+      en: "Annual ICT Risk Assessment"
+    pillar: risk_mgmt
+    trigger: "Yıllık risk takvimi veya önemli mimari değişiklik"
+    preconditions:
+      - "PRC-RSK-01 çerçevesi güncel olmalı"
+      - "Varlık envanteri tam olmalı (PRC-RSK-03)"
+    inputs:
+      - { name: "Güncel ICT varlık envanteri", format: yaml, source_role: ROL-RSK-01 }
+      - { name: "Tehdit istihbaratı özeti", format: json, source_role: ROL-INF-01 }
+      - { name: "Test ve denetim bulguları", format: json, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "risk-register.json", format: json, retention_years: 10 }
+      - { name: "annual-risk-assessment.pdf", format: pdf, retention_years: 10 }
+    responsible_roles: [ROL-CIO-01, ROL-RSK-01]
+    approval_roles: [ROL-CEO-01]
+    slas:
+      - { trigger: "Yıllık değerlendirme başlangıcı", duration: 45, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: RSK-R3
+        condition: "risk_skoru > risk_istahi"
+        action: "risk iştahı aşımı olarak işaretle, yönetim kuruluna sun"
+        dora_ref: { article: "Madde 6(5)" }
+      - rule_id: RSK-R4
+        condition: "kritik_varlik_riski == 'kabul edilemez'"
+        action: "düzeltici aksiyon planı oluştur, 30 gün içinde kapat"
+        dora_ref: { article: "Madde 6(6)" }
+    dependencies:
+      upstream: [PRC-RSK-01, PRC-RSK-03, PRC-TST-02]
+      downstream: [PRC-RSK-04, PRC-TST-01, PRC-TPP-02]
+    evidence_requirements:
+      - "risk-register.json (sürüm geçmişli, değiştirilemez log)"
+      - "annual-risk-assessment.pdf (bağımsız kontrol onaylı — ROL-CMP-01)"
+    control_ids:
+      - CTL-RSK-002
+      - CTL-RSK-006
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-RSK-03 — Envanter ve Sınıflandırma
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-RSK-03
+    name:
+      tr: "ICT Varlık Envanteri ve Kritiklik Sınıflandırması"
+      en: "ICT Asset Inventory and Criticality Classification"
+    pillar: risk_mgmt
+    trigger: "Yeni varlık, değişiklik kaydı (RFC) veya üç aylık envanter uzlaştırması"
+    preconditions:
+      - "CMDB erişimi aktif olmalı (onboarding adım 6)"
+    inputs:
+      - { name: "CMDB kayıtları", format: json, source_role: ROL-RSK-01 }
+      - { name: "İş hizmetleri kataloğu", format: yaml, source_role: ROL-RSK-01 }
+      - { name: "Tedarikçi listesi", format: yaml, source_role: ROL-TPP-01 }
+    outputs:
+      - { name: "ict-inventory.yaml", format: yaml, retention_years: 7 }
+      - { name: "criticality-classification.json", format: json, retention_years: 7 }
+    responsible_roles: [ROL-RSK-01]
+    approval_roles: [ROL-CIO-01]
+    slas:
+      - { trigger: "Değişiklik kaydı (RFC) onayı", duration: 24, unit: hours, clock_start: detection }
+      - { trigger: "Üç aylık uzlaştırma", duration: 5, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: RSK-R5
+        condition: "varlik.bagimlilik_sayisi == 0 AND varlik.etki_toleransi_asimi == true"
+        action: "varlığı 'kritik veya önemli işlev' olarak işaretle"
+        dora_ref: { article: "Madde 3(22)" }
+      - rule_id: RSK-R6
+        condition: "envanter_kaydi_yok AND varlik_aktif"
+        action: "kayıt dışı varlık alarmı üret, 48 saat içinde envantere ekle"
+        dora_ref: { article: "Madde 8(1)" }
+    dependencies:
+      upstream: []
+      downstream: [PRC-RSK-01, PRC-RSK-02, PRC-RSK-04, PRC-TPP-02]
+    evidence_requirements:
+      - "ict-inventory.yaml (zaman damgalı sürüm)"
+      - "criticality-classification.json (gerekçe alanı dolu)"
+    control_ids:
+      - CTL-RSK-003
+      - CTL-RSK-004
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-RSK-04 — İş Sürekliliği ve Kurtarma Planları
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-RSK-04
+    name:
+      tr: "İş Sürekliliği (BCP) ve Kurtarma (DRP) Planı Yönetimi"
+      en: "Business Continuity (BCP) and Disaster Recovery (DRP) Plan Management"
+    pillar: risk_mgmt
+    trigger: "Yıllık plan gözden geçirmesi, test sonucu veya büyük olay sonrası"
+    preconditions:
+      - "Etki toleransları tanımlı olmalı"
+    inputs:
+      - { name: "İş etki analizi (BIA)", format: json, source_role: ROL-RSK-01 }
+      - { name: "Kritik varlık listesi", format: yaml, source_role: ROL-RSK-01 }
+      - { name: "Test sonuçları", format: json, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "bcp-drp-plan.pdf", format: pdf, retention_years: 10 }
+      - { name: "plan-test-evidence.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-CIO-01]
+    approval_roles: [ROL-CEO-01]
+    slas:
+      - { trigger: "Yıllık gözden geçirme", duration: 1, unit: months, clock_start: detection }
+      - { trigger: "Başarısız test sonucu", duration: 30, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: RSK-R7
+        condition: "test_sonucu == 'RTO asildi'"
+        action: "plan revizyonu + kök neden analizi başlat"
+        dora_ref: { article: "Madde 11(6)" }
+    dependencies:
+      upstream: [PRC-RSK-02, PRC-RSK-03]
+      downstream: [PRC-INC-04]
+    evidence_requirements:
+      - "bcp-drp-plan.pdf (sürüm + onay sayfası)"
+      - "plan-test-evidence.json (RTO/RPO ölçüm sonuçları)"
+    tier_variants:
+      tier3:
+        note: "Basitleştirilmiş BCP; yıllık test yerine iki yılda bir masa başı tatbikat"
+    control_ids:
+      - CTL-RSK-005
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-RSK-05 — Siber Güvenlik Kontrolleri (DORA Madde 9)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-RSK-05
+    name:
+      tr: "Siber Güvenlik Kontrolleri Yönetimi (erişim, şifreleme, ağ)"
+      en: "Cybersecurity Controls Management (access, encryption, network)"
+    pillar: risk_mgmt
+    trigger: "Yeni sistem/hesap açılışı, üç aylık kontrol gözden geçirmesi veya zafiyet bulgusu"
+    preconditions:
+      - "ICT varlık envanteri güncel olmalı (PRC-RSK-03)"
+      - "Kimlik dizini (IAM) ve ağ topolojisi erişilebilir olmalı"
+    inputs:
+      - { name: "IAM hesap ve rol listesi", format: json, source_role: ROL-CTO-01 }
+      - { name: "Şifreleme envanteri (at-rest/in-transit)", format: yaml, source_role: ROL-CTO-01 }
+      - { name: "Ağ segmentasyonu ve akış kuralları", format: json, source_role: ROL-CTO-01 }
+      - { name: "Zafiyet tarama sonuçları", format: json, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "access-review-record.json", format: json, retention_years: 10 }
+      - { name: "crypto-inventory.yaml", format: yaml, retention_years: 10 }
+      - { name: "segmentation-evidence.json", format: json, retention_years: 10 }
+      - { name: "vulnerability-closure.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-CTO-01]
+    approval_roles: [ROL-CIO-01, ROL-CMP-01]
+    slas:
+      - { trigger: "Üç aylık erişim gözden geçirmesi", duration: 10, unit: days, clock_start: detection }
+      - { trigger: "Yeni ayrıcalıklı hesap", duration: 1, unit: days, clock_start: detection }
+      - { trigger: "Kritik zafiyet (CVSS >= 9.0)", duration: 30, unit: days, clock_start: detection }
+      - { trigger: "Yüksek zafiyet (CVSS 7.0-8.9)", duration: 60, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: SEC-R1
+        condition: "hesap.son_erisim > 90 gun AND hesap.aktif"
+        action: "hesabı devre dışı bırak, gerekçeyi kaydet"
+        dora_ref: { article: "Madde 9(2)" }
+      - rule_id: SEC-R2
+        condition: "varlik.kritik == true AND sifreleme.in_transit == false"
+        action: "30 gün içinde şifreleme planı aç; kapatılmazsa risk kaydına işle"
+        dora_ref: { article: "Madde 9(3)" }
+      - rule_id: SEC-R3
+        condition: "segment.default_deny == false AND kritik_varlik_iceren_zone == true"
+        action: "segmentasyon ihlali aç, PRC-RSK-02 risk kaydına ekle"
+        dora_ref: { article: "Madde 9(4)" }
+      - rule_id: SEC-R4
+        condition: "zafiyet.cvss >= 9.0 AND zafiyet.yas_gun > 30 AND istisna_yok"
+        action: "yönetim kuruluna eskalasyon; istisna varsa gerekçeli kayıt zorunlu"
+        dora_ref: { article: "Madde 9(4)(c)" }
+    dependencies:
+      upstream: [PRC-RSK-03]
+      downstream: [PRC-INC-01, PRC-TST-02, PRC-RSK-02]
+    evidence_requirements:
+      - "access-review-record.json (kim onayladı, kaç hesap kapatıldı)"
+      - "crypto-inventory.yaml (algoritma + anahtar döndürme periyodu)"
+      - "segmentation-evidence.json (zone başına default-deny kanıtı)"
+      - "vulnerability-closure.json (CVSS + kapanış süresi + istisna referansı)"
+    tier_variants:
+      tier3:
+        note: "Yıllık tek gözden geçirme yeterli; segmentasyon kanıtı tek zone ile sınırlanabilir"
+    control_ids:
+      - CTL-RSK-007
+      - CTL-RSK-008
+      - CTL-RSK-009
+      - CTL-RSK-010
+

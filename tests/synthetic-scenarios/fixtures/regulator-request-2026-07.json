@@ -1,0 +1,29 @@
+{
+  "request": {
+    "id": "REQ-2026-07-11",
+    "authority": "BDDK",
+    "received_at": "2026-07-11T09:30:00+03:00",
+    "deadline_hours": 24,
+    "subject_incident": "INC-2026-0412",
+    "format": "e-posta + BDDK ONLINE",
+    "asked_items": [
+      "Olayın sınıflandırma gerekçesi",
+      "Bildirim zaman çizelgesi",
+      "Kök neden analizi özeti",
+      "Etkilenen tedarikçi bilgisi",
+      "Alınan düzeltici aksiyonlar"
+    ]
+  },
+  "context": {
+    "tier": "tier2",
+    "contains_personal_data_in_source": true,
+    "trade_secret_in_source": true,
+    "available_sources": [
+      "incident-record.json",
+      "classification-decision.json",
+      "notification-receipt.json",
+      "rca-report.pdf",
+      "register-of-information.xbrl"
+    ]
+  }
+}

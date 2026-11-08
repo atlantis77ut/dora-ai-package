@@ -1,0 +1,39 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: DORA eşlemesi ve referans bütünlüğü
+        run: node docs/tools/render-mapping.mjs --check
+
+      - name: Dashboard üretimi (sarkan referans kontrolü)
+        run: node docs/tools/build-dashboard.mjs
+
+      - name: Dashboard commit edilmiş hâliyle aynı mı
+        run: |
+          if ! git diff --quiet -- dashboard; then
+            echo "::error::dashboard/ güncel değil. 'node docs/tools/build-dashboard.mjs' çalıştırıp sonucu commit edin."
+            git --no-pager diff --stat -- dashboard
+            exit 1
+          fi
+
+      - name: Faz tanımı
+        run: node onboarding/cli/bin/dora-onboard.mjs phases
+
+      - name: Demo için geçici geliştirme anahtarı
+        run: node onboarding/cli/tools/license-gen.mjs --init-dev-keys --force
+
+      - name: Uçtan uca demo (6 faz)
+        working-directory: onboarding/cli
+        run: node tools/demo.mjs

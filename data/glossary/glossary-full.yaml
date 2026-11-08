@@ -1,0 +1,560 @@
+schema_version: "1.0.0"
+generated_at: "2025-01-15"
+source_primary: "Regulation (EU) 2022/2554 (DORA)"
+source_secondary:
+  - "RTS 2024/1772 (Incident Reporting)"
+  - "RTS 2024/1773 (ICT Risk Management)"
+  - "RTS 2024/1774 (Register of Information)"
+  - "ITS 2024/2956 (Reporting Templates)"
+
+terms:
+
+# ═══════════════════════════════════════════════════════
+# KATEGORİ 1: RİSK (RISK) — 10 terim
+# ═══════════════════════════════════════════════════════
+
+  - id: TERM-RSK-001
+    name: { tr: "ICT Riski", en: "ICT Risk" }
+    dora_ref: { article: "Madde 3(8)" }
+    definition:
+      source: DORA
+      source_quote: "Bilgi ve iletişim teknolojilerinin kullanımından kaynaklanan, dijital operasyonel dayanıklılığı tehlikeye atabilecek her türlü makul tanımlanabilir durum."
+    category: risk
+    related_roles: [ROL-CIO-01, ROL-RSK-01]
+    related_processes: [PRC-RSK-01, PRC-RSK-02]
+
+  - id: TERM-RSK-002
+    name: { tr: "Dijital Operasyonel Dayanıklılık", en: "Digital Operational Resilience" }
+    dora_ref: { article: "Madde 3(1)" }
+    definition:
+      source: DORA
+      source_quote: "Bir finansal kuruluşun, ICT ile ilgili kesintilere ve tehditlere dayanma, bunlara yanıt verme, bunlardan kurtulma ve bunları uyarlama kapasitesi."
+    category: governance
+    related_roles: [ROL-CEO-01, ROL-CIO-01]
+
+  - id: TERM-RSK-003
+    name: { tr: "Kritik veya Önemli İşlev", en: "Critical or Important Function" }
+    dora_ref: { article: "Madde 3(22)" }
+    definition:
+      source: DORA
+      source_quote: "Bir finansal kuruluşun finansal performansını, hizmet sürekliliğini veya uyumluluğunu önemli ölçüde etkileyebilecek işlev."
+    category: governance
+    related_roles: [ROL-RSK-01, ROL-CIO-01]
+    related_processes: [PRC-RSK-03]
+
+  - id: TERM-RSK-004
+    name: { tr: "ICT Risk Yönetim Çerçevesi", en: "ICT Risk Management Framework" }
+    dora_ref: { article: "Madde 6", rts_its: "RTS 2024/1773" }
+    definition:
+      source: DORA
+      source_quote: "Kuruluşun ICT risklerini yönetmek için kullandığı strateji, politika, prosedür, protokol ve araçlar bütünü."
+    category: risk
+    related_roles: [ROL-CIO-01, ROL-CMP-01]
+    related_processes: [PRC-RSK-01]
+
+  - id: TERM-RSK-005
+    name: { tr: "ICT Varlık Envanteri", en: "ICT Asset Inventory" }
+    dora_ref: { article: "Madde 8(1)" }
+    definition:
+      source: DORA
+      source_quote: "ICT sistemleri, ağları, donanım, yazılım, veri ve hizmetlerin güncel kaydı."
+    category: risk
+    related_processes: [PRC-RSK-03]
+
+  - id: TERM-RSK-006
+    name: { tr: "Risk İştahı", en: "Risk Appetite" }
+    dora_ref: { article: "Madde 6(5)" }
+    definition:
+      source: DORA
+      source_quote: "Kuruluşun ICT riski kapsamında kabul etmeye hazır olduğu risk düzeyi."
+    category: risk
+    related_roles: [ROL-CEO-01]
+
+  - id: TERM-RSK-007
+    name: { tr: "İş Sürekliliği Planı", en: "Business Continuity Plan" }
+    dora_ref: { article: "Madde 11" }
+    definition:
+      source: DORA
+      source_quote: "Kesintiler sırasında kritik işlevlerin sürekliliğini sağlamak için hazırlanan plan."
+    category: risk
+    related_processes: [PRC-RSK-02]
+
+  - id: TERM-RSK-008
+    name: { tr: "Kurtarma Planı", en: "Disaster Recovery Plan" }
+    dora_ref: { article: "Madde 11(6)" }
+    definition:
+      source: DORA
+      source_quote: "ICT sistemlerinin ve verilerinin kesinti sonrası restore edilmesi için hazırlanan plan."
+    category: risk
+    related_processes: [PRC-RSK-02]
+
+  - id: TERM-RSK-009
+    name: { tr: "Kök Neden Analizi", en: "Root Cause Analysis" }
+    dora_ref: { article: "Madde 13(2)" }
+    definition:
+      source: DORA
+      source_quote: "ICT olaylarının temel nedenlerini belirlemeye yönelik sistematik analiz."
+    category: risk
+    related_processes: [PRC-INC-04]
+
+  - id: TERM-RSK-010
+    name: { tr: "Sürekli İyileştirme", en: "Continuous Improvement" }
+    dora_ref: { article: "Madde 6(6)" }
+    definition:
+      source: DORA
+      source_quote: "ICT risk yönetim çerçevesinin düzenli gözden geçirilmesi ve iyileştirilmesi."
+    category: governance
+
+# ═══════════════════════════════════════════════════════
+# KATEGORİ 2: OLAY (INCIDENT) — 12 terim
+# ═══════════════════════════════════════════════════════
+
+  - id: TERM-INC-001
+    name: { tr: "ICT Olayı", en: "ICT Incident" }
+    dora_ref: { article: "Madde 3(8)" }
+    definition:
+      source: DORA
+      source_quote: "Bir finansal kuruluşun ağ ve bilgi sistemlerinde, güvenlik politikalarını, prosedürlerini veya kabul edilebilir kullanım politikalarını ihlal eden tek veya bağlantılı olay."
+    category: incident
+    related_roles: [ROL-INC-01, ROL-CIO-01]
+    related_processes: [PRC-INC-01]
+
+  - id: TERM-INC-002
+    name: { tr: "Büyük ICT Olayı", en: "Major ICT Incident" }
+    dora_ref: { article: "Madde 18(1)", rts_its: "RTS 2024/1772" }
+    definition:
+      source: DORA
+      source_quote: "Önemli olumsuz etkisi olan ve kritik veya önemli işlevleri etkileyen ICT olayı."
+    category: incident
+    classification_criteria:
+      - "100.000'den fazla etkilenen müşteri"
+      - "24 saatten uzun süren kesinti"
+      - "100.000 € üzeri ekonomik etki"
+      - "İki veya daha fazla üye devleti etkileme"
+      - "Veri kaybı veya yetkisiz erişim"
+    related_processes: [PRC-INC-02, PRC-INC-03, PRC-INC-04]
+
+  - id: TERM-INC-003
+    name: { tr: "İlk Bildirim", en: "Initial Notification" }
+    dora_ref: { article: "Madde 19(4)(a)", rts_its: "RTS 2024/1772 Art. 5" }
+    definition:
+      source: RTS
+      source_quote: "Büyük olayın sınıflandırılmasından sonra 4 saat içinde ve tespitten en geç 24 saat içinde yapılan bildirim."
+    category: incident
+    related_processes: [PRC-INC-02]
+
+  - id: TERM-INC-004
+    name: { tr: "Ara Rapor", en: "Intermediate Report" }
+    dora_ref: { article: "Madde 19(4)(b)" }
+    definition:
+      source: DORA
+      source_quote: "İlk bildirimden sonraki 72 saat içinde sunulan, etki ve geçici önlemleri içeren rapor."
+    category: incident
+    related_processes: [PRC-INC-03]
+
+  - id: TERM-INC-005
+    name: { tr: "Nihai Rapor", en: "Final Report" }
+    dora_ref: { article: "Madde 19(4)(c)" }
+    definition:
+      source: DORA
+      source_quote: "Olayın kök nedeni, kurtarma ve önleyici tedbirleri içeren, bir ay içinde sunulan rapor."
+    category: incident
+    related_processes: [PRC-INC-04]
+
+  - id: TERM-INC-006
+    name: { tr: "Gönüllü Bildirim", en: "Voluntary Notification" }
+    dora_ref: { article: "Madde 19(2)" }
+    definition:
+      source: DORA
+      source_quote: "Önemli siber tehditlerin yetkili otoriteye gönüllü olarak bildirilmesi."
+    category: incident
+    related_processes: [PRC-INC-05]
+
+  - id: TERM-INC-007
+    name: { tr: "Sınıflandırma Kriteri", en: "Classification Criterion" }
+    dora_ref: { rts_its: "RTS 2024/1772 Art. 3" }
+    definition:
+      source: RTS
+      source_quote: "Bir olayın büyük olarak sınıflandırılması için kullanılan ölçütler."
+    category: incident
+
+  - id: TERM-INC-008
+    name: { tr: "Müşteri Etkisi", en: "Client Impact" }
+    dora_ref: { rts_its: "RTS 2024/1772 Art. 3(1)(a)" }
+    definition:
+      source: RTS
+      source_quote: "Olaydan etkilenen müşteri veya karşı taraf sayısı."
+    category: incident
+
+  - id: TERM-INC-009
+    name: { tr: "Ekonomik Etki", en: "Economic Impact" }
+    dora_ref: { rts_its: "RTS 2024/1772 Art. 3(1)(c)" }
+    definition:
+      source: RTS
+      source_quote: "Olayın kuruluşa doğrudan ve dolaylı maliyeti."
+    category: incident
+
+  - id: TERM-INC-010
+    name: { tr: "Coğrafi Yayılım", en: "Geographical Spread" }
+    dora_ref: { rts_its: "RTS 2024/1772 Art. 3(1)(d)" }
+    definition:
+      source: RTS
+      source_quote: "Olayın etkilediği üye devlet sayısı."
+    category: incident
+
+  - id: TERM-INC-011
+    name: { tr: "Hizmet Kesintisi Süresi", en: "Downtime" }
+    dora_ref: { rts_its: "RTS 2024/1772 Art. 3(1)(b)" }
+    definition:
+      source: RTS
+      source_quote: "Kritik hizmetin kesintiye uğradığı toplam süre."
+    category: incident
+
+  - id: TERM-INC-012
+    name: { tr: "Veri Kaybı", en: "Data Loss" }
+    dora_ref: { rts_its: "RTS 2024/1772 Art. 3(1)(e)" }
+    definition:
+      source: RTS
+      source_quote: "Olay nedeniyle verinin bütünlüğünün, gizliliğinin veya erişilebilirliğinin kaybı."
+    category: incident
+
+# ═══════════════════════════════════════════════════════
+# KATEGORİ 3: TEST (TESTING) — 10 terim
+# ═══════════════════════════════════════════════════════
+
+  - id: TERM-TST-001
+    name: { tr: "Dijital Operasyonel Dayanıklılık Testi", en: "Digital Operational Resilience Testing" }
+    dora_ref: { article: "Madde 24" }
+    definition:
+      source: DORA
+      source_quote: "ICT sistemlerinin dayanıklılığını doğrulamak için yapılan risk bazlı test programı."
+    category: testing
+    related_roles: [ROL-CTO-01, ROL-AUD-01]
+    related_processes: [PRC-TST-01]
+
+  - id: TERM-TST-002
+    name: { tr: "TLPT — Tehdit Odaklı Sızma Testi", en: "Threat-Led Penetration Testing" }
+    dora_ref: { article: "Madde 26-27", rts_its: "RTS 2024/1774" }
+    definition:
+      source: DORA
+      source_quote: "Gerçek saldırgan taktiklerini kullanan, üretim ortamında yapılan gelişmiş sızma testi."
+    category: testing
+    related_processes: [PRC-TST-03]
+
+  - id: TERM-TST-003
+    name: { tr: "Zafiyet Değerlendirmesi", en: "Vulnerability Assessment" }
+    dora_ref: { article: "Madde 25(1)" }
+    definition:
+      source: DORA
+      source_quote: "ICT sistemlerindeki bilinen zafiyetlerin sistematik taranması."
+    category: testing
+    related_processes: [PRC-TST-02]
+
+  - id: TERM-TST-004
+    name: { tr: "Sızma Testi", en: "Penetration Testing" }
+    dora_ref: { article: "Madde 25(1)" }
+    definition:
+      source: DORA
+      source_quote: "Sistemlere yetkisiz erişim denemesiyle güvenlik kontrollerinin test edilmesi."
+    category: testing
+
+  - id: TERM-TST-005
+    name: { tr: "Ağ Güvenliği Değerlendirmesi", en: "Network Security Assessment" }
+    dora_ref: { article: "Madde 25(1)" }
+    definition:
+      source: DORA
+      source_quote: "Ağ altyapısının güvenlik yapılandırmasının değerlendirilmesi."
+    category: testing
+
+  - id: TERM-TST-006
+    name: { tr: "Fiziksel Güvenlik İncelemesi", en: "Physical Security Review" }
+    dora_ref: { article: "Madde 25(1)" }
+    definition:
+      source: DORA
+      source_quote: "Veri merkezleri ve fiziksel altyapının güvenlik incelemesi."
+    category: testing
+
+  - id: TERM-TST-007
+    name: { tr: "Kaynak Kod İncelemesi", en: "Source Code Review" }
+    dora_ref: { article: "Madde 25(1)" }
+    definition:
+      source: DORA
+      source_quote: "Kritik yazılım bileşenlerinin kaynak kodunun güvenlik incelemesi."
+    category: testing
+
+  - id: TERM-TST-008
+    name: { tr: "Senaryo Bazlı Test", en: "Scenario-Based Test" }
+    dora_ref: { article: "Madde 25(1)" }
+    definition:
+      source: DORA
+      source_quote: "Kritik iş senaryolarının dayanıklılığının test edilmesi."
+    category: testing
+
+  - id: TERM-TST-009
+    name: { tr: "Uyumluluk Testi", en: "Compatibility Test" }
+    dora_ref: { article: "Madde 25(1)" }
+    definition:
+      source: DORA
+      source_quote: "Sistemlerin ve bileşenlerin birlikte çalışabilirliğinin test edilmesi."
+    category: testing
+
+  - id: TERM-TST-010
+    name: { tr: "Performans Testi", en: "Performance Test" }
+    dora_ref: { article: "Madde 25(1)" }
+    definition:
+      source: DORA
+      source_quote: "Sistemlerin yük altında performansının test edilmesi."
+    category: testing
+
+# ═══════════════════════════════════════════════════════
+# KATEGORİ 4: ÜÇÜNCÜ TARAF (THIRD PARTY) — 14 terim
+# ═══════════════════════════════════════════════════════
+
+  - id: TERM-TPP-001
+    name: { tr: "ICT Üçüncü Taraf Hizmet Sağlayıcı", en: "ICT Third-Party Service Provider" }
+    dora_ref: { article: "Madde 3(19)" }
+    definition:
+      source: DORA
+      source_quote: "ICT hizmetleri sunan işletme."
+    category: third_party
+    related_roles: [ROL-TPP-01, ROL-CTO-01]
+    related_processes: [PRC-TPP-01, PRC-TPP-02]
+
+  - id: TERM-TPP-002
+    name: { tr: "Kritik ICT Üçüncü Taraf Hizmet Sağlayıcı (CTPP)", en: "Critical ICT Third-Party Service Provider" }
+    dora_ref: { article: "Madde 31" }
+    definition:
+      source: DORA
+      source_quote: "Sistemik öneme sahip, ESA'lar tarafından doğrudan gözetim altına alınan ICT hizmet sağlayıcısı."
+    category: third_party
+    related_processes: [PRC-TPP-05]
+
+  - id: TERM-TPP-003
+    name: { tr: "Bilgi Kaydı", en: "Register of Information" }
+    dora_ref: { article: "Madde 28(3)", rts_its: "RTS 2024/1774" }
+    definition:
+      source: DORA
+      source_quote: "Tüm ICT üçüncü taraf sözleşmelerini içeren, yetkili otoriteye sunulan kayıt."
+    category: third_party
+    related_processes: [PRC-TPP-04]
+
+  - id: TERM-TPP-004
+    name: { tr: "Durum Tespiti", en: "Due Diligence" }
+    dora_ref: { article: "Madde 28(4)" }
+    definition:
+      source: DORA
+      source_quote: "Sözleşme öncesi tedarikçinin değerlendirilmesi süreci."
+    category: third_party
+    related_processes: [PRC-TPP-01]
+
+  - id: TERM-TPP-005
+    name: { tr: "Çıkış Stratejisi", en: "Exit Strategy" }
+    dora_ref: { article: "Madde 28(8)" }
+    definition:
+      source: DORA
+      source_quote: "Tedarikçiden ayrılma durumunda hizmet sürekliliğini sağlayan plan."
+    category: third_party
+    related_processes: [PRC-TPP-06]
+
+  - id: TERM-TPP-006
+    name: { tr: "Alt Yüklenici", en: "Subcontractor" }
+    dora_ref: { article: "Madde 30(2)(a)" }
+    definition:
+      source: DORA
+      source_quote: "Tedarikçinin hizmetin bir kısmını devrettiği üçüncü taraf."
+    category: third_party
+
+  - id: TERM-TPP-007
+    name: { tr: "Hizmet Seviyesi Anlaşması (SLA)", en: "Service Level Agreement" }
+    dora_ref: { article: "Madde 30(2)(b)" }
+    definition:
+      source: DORA
+      source_quote: "Hizmet kalitesi ve erişilebilirlik taahhütlerini içeren sözleşme eki."
+    category: third_party
+
+  - id: TERM-TPP-008
+    name: { tr: "Denetim Hakkı", en: "Audit Right" }
+    dora_ref: { article: "Madde 30(3)(e)" }
+    definition:
+      source: DORA
+      source_quote: "Kuruluşun ve denetçilerinin tedarikçiyi denetleme hakkı."
+    category: third_party
+
+  - id: TERM-TPP-009
+    name: { tr: "Veri İadesi", en: "Data Return" }
+    dora_ref: { article: "Madde 30(3)(f)" }
+    definition:
+      source: DORA
+      source_quote: "Sözleşme sonunda verinin kuruluşa iade edilmesi yükümlülüğü."
+    category: third_party
+
+  - id: TERM-TPP-010
+    name: { tr: "Kritiklik Değerlendirmesi", en: "Criticality Assessment" }
+    dora_ref: { article: "Madde 28(2)" }
+    definition:
+      source: DORA
+      source_quote: "Tedarikçinin kritik veya önemli işlevlere etkisinin değerlendirilmesi."
+    category: third_party
+    related_processes: [PRC-TPP-02]
+
+  - id: TERM-TPP-011
+    name: { tr: "Yedeklilik", en: "Redundancy" }
+    dora_ref: { article: "Madde 28(8)" }
+    definition:
+      source: DORA
+      source_quote: "Tek tedarikçiye bağımlılığı azaltmak için alternatif çözüm."
+    category: third_party
+
+  - id: TERM-TPP-012
+    name: { tr: "Yoğunlaşma Riski", en: "Concentration Risk" }
+    dora_ref: { article: "Madde 29" }
+    definition:
+      source: DORA
+      source_quote: "Az sayıda tedarikçiye aşırı bağımlılıktan kaynaklanan risk."
+    category: third_party
+
+  - id: TERM-TPP-013
+    name: { tr: "Doğrudan Gözetim", en: "Direct Oversight" }
+    dora_ref: { article: "Madde 33-34" }
+    definition:
+      source: DORA
+      source_quote: "ESA'ların CTPP üzerindeki gözetim çerçevesi."
+    category: third_party
+
+  - id: TERM-TPP-014
+    name: { tr: "Tedarikçi Değişiklik Yönetimi", en: "Provider Change Management" }
+    dora_ref: { article: "Madde 28(7)" }
+    definition:
+      source: DORA
+      source_quote: "Tedarikçi değişikliğinin kontrollü yönetimi süreci."
+    category: third_party
+
+# ═══════════════════════════════════════════════════════
+# KATEGORİ 5: BİLGİ PAYLAŞIMI (INFO SHARING) — 4 terim
+# ═══════════════════════════════════════════════════════
+
+  - id: TERM-INF-001
+    name: { tr: "Siber Tehdit İstihbaratı", en: "Cyber Threat Intelligence" }
+    dora_ref: { article: "Madde 45" }
+    definition:
+      source: DORA
+      source_quote: "Siber tehditler hakkında toplanan, işlenen ve paylaşılan bilgi."
+    category: info_sharing
+    related_roles: [ROL-CEO-01, ROL-CMP-01]
+    related_processes: [PRC-INF-01]
+
+  - id: TERM-INF-002
+    name: { tr: "Bilgi Paylaşımı Anlaşması", en: "Information Sharing Arrangement" }
+    dora_ref: { article: "Madde 45(1)" }
+    definition:
+      source: DORA
+      source_quote: "Kuruluşlar arasında siber tehdit bilgisi paylaşımı için yapılan anlaşma."
+    category: info_sharing
+
+  - id: TERM-INF-003
+    name: { tr: "Güvenilir Topluluk", en: "Trusted Community" }
+    dora_ref: { article: "Madde 45(1)" }
+    definition:
+      source: DORA
+      source_quote: "Bilgi paylaşımı için oluşturulan güvenilir kuruluş grubu."
+    category: info_sharing
+
+  - id: TERM-INF-004
+    name: { tr: "Gizlilik Protokolü", en: "Confidentiality Protocol" }
+    dora_ref: { article: "Madde 45(2)" }
+    definition:
+      source: DORA
+      source_quote: "Bilgi paylaşımında ticari sır ve kişisel veri koruması."
+    category: info_sharing
+
+# ═══════════════════════════════════════════════════════
+# KATEGORİ 6: YÖNETİŞİM (GOVERNANCE) — 10 terim
+# ═══════════════════════════════════════════════════════
+
+  - id: TERM-GOV-001
+    name: { tr: "Yönetim Organı", en: "Management Body" }
+    dora_ref: { article: "Madde 5" }
+    definition:
+      source: DORA
+      source_quote: "ICT risk yönetiminden nihai sorumlu olan yönetim kurulu veya eşdeğeri organ."
+    category: governance
+    related_roles: [ROL-CEO-01]
+
+  - id: TERM-GOV-002
+    name: { tr: "Üç Savunma Hattı", en: "Three Lines of Defence" }
+    dora_ref: { article: "Madde 6(4)" }
+    definition:
+      source: DORA
+      source_quote: "Operasyon, kontrol ve denetim fonksiyonlarının birbirinden bağımsız yapılandırılması."
+    category: governance
+    related_roles: [ROL-INC-01, ROL-CMP-01, ROL-AUD-01]
+
+  - id: TERM-GOV-003
+    name: { tr: "Bağımsız Kontrol Fonksiyonu", en: "Independent Control Function" }
+    dora_ref: { article: "Madde 6(4)" }
+    definition:
+      source: DORA
+      source_quote: "ICT risk yönetiminden bağımsız olarak uyumu kontrol eden fonksiyon."
+    category: governance
+    related_roles: [ROL-CMP-01]
+
+  - id: TERM-GOV-004
+    name: { tr: "İç Denetim Fonksiyonu", en: "Internal Audit Function" }
+    dora_ref: { article: "Madde 6(4)" }
+    definition:
+      source: DORA
+      source_quote: "ICT risk yönetim çerçevesinin bağımsız denetimini yapan fonksiyon."
+    category: governance
+    related_roles: [ROL-AUD-01]
+
+  - id: TERM-GOV-005
+    name: { tr: "Yetkili Otorite", en: "Competent Authority" }
+    dora_ref: { article: "Madde 3(35)" }
+    definition:
+      source: DORA
+      source_quote: "DORA kapsamında kuruluşu denetleyen ulusal otorite."
+    category: governance
+
+  - id: TERM-GOV-006
+    name: { tr: "ESA — Avrupa Denetim Otoriteleri", en: "European Supervisory Authorities" }
+    dora_ref: { article: "Madde 3(36)" }
+    definition:
+      source: DORA
+      source_quote: "EBA, ESMA ve EIOPA'nın ortak adı."
+    category: governance
+
+  - id: TERM-GOV-007
+    name: { tr: "JET — Ortak Denetim Ekibi", en: "Joint Examination Team" }
+    dora_ref: { article: "Madde 34" }
+    definition:
+      source: DORA
+      source_quote: "CTPP gözetiminde yer alan ESA ve ulusal otorite temsilcileri ekibi."
+    category: governance
+
+  - id: TERM-GOV-008
+    name: { tr: "Orantılılık İlkesi", en: "Proportionality Principle" }
+    dora_ref: { article: "Madde 16" }
+    definition:
+      source: DORA
+      source_quote: "Gerekliliklerin kuruluşun büyüklüğü, risk profili ve karmaşıklığına göre uygulanması."
+    category: governance
+
+  - id: TERM-GOV-009
+    name: { tr: "Denetim İzi", en: "Audit Trail" }
+    dora_ref: { article: "Madde 8(3)" }
+    definition:
+      source: DORA
+      source_quote: "Tüm ICT faaliyetlerinin değiştirilemez kaydı."
+    category: governance
+
+  - id: TERM-GOV-010
+    name: { tr: "Siber Güvenlik Farkındalığı", en: "Cyber Security Awareness" }
+    dora_ref: { article: "Madde 13(6)" }
+    definition:
+      source: DORA
+      source_quote: "Personelin siber güvenlik eğitimi ve farkındalığı."
+    category: governance
+
+# ═══════════════════════════════════════════════════════
+# TOPLAM: 10 + 12 + 10 + 14 + 4 + 10 = 60 terim
+# ═══════════════════════════════════════════════════════

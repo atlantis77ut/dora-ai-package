@@ -1,0 +1,64 @@
+scoring_model:
+  version: "1.0.0"
+  scale: 5                    # 1-5 arası puan
+  minimum_total: 3.5
+  minimum_per_criterion: 2.0
+  
+  weights:
+    strategic_fit: 0.25
+    operational_readiness: 0.20
+    technical_infrastructure: 0.15
+    collaboration_commitment: 0.15
+    risk_compliance_history: 0.10
+    scale_complexity: 0.10
+    sustainability: 0.05
+
+  veto_criteria:
+    - "Aktif düzenleyici yaptırım (son 3 yıl)"
+    - "Üst yönetim sponsorluğu yok"
+    - "ICT envanteri dokümante değil"
+    - "Veri paylaşım sözleşmesi reddi"
+
+  criteria_detail:
+    strategic_fit:
+      - { id: SF-1, desc: "Hedef segmentte mi", weight: 0.4 }
+      - { id: SF-2, desc: "Referans olma potansiyeli", weight: 0.3 }
+      - { id: SF-3, desc: "Sektör görünürlüğü", weight: 0.2 }
+      - { id: SF-4, desc: "Yönetim desteği", weight: 0.1 }
+
+    operational_readiness:
+      - { id: OR-1, desc: "DORA farkındalığı", weight: 0.25 }
+      - { id: OR-2, desc: "ICT envanteri var", weight: 0.30 }
+      - { id: OR-3, desc: "Temiz denetim geçmişi", weight: 0.20 }
+      - { id: OR-4, desc: "Proje yönetimi kapasitesi", weight: 0.15 }
+      - { id: OR-5, desc: "Veri paylaşımına açık", weight: 0.10 }
+
+    technical_infrastructure:
+      - { id: TI-1, desc: "API erişimi", weight: 0.30 }
+      - { id: TI-2, desc: "Modern SIEM/ITSM", weight: 0.25 }
+      - { id: TI-3, desc: "Kimlik doğrulama altyapısı", weight: 0.20 }
+      - { id: TI-4, desc: "Veri ambarı", weight: 0.15 }
+      - { id: TI-5, desc: "Bulut/on-prem esnekliği", weight: 0.10 }
+
+    collaboration_commitment:
+      - { id: CC-1, desc: "Haftalık toplantı taahhüdü", weight: 0.25 }
+      - { id: CC-2, desc: "Tam zamanlı proje sahibi", weight: 0.30 }
+      - { id: CC-3, desc: "Üst yönetim sponsorluğu", weight: 0.25 }
+      - { id: CC-4, desc: "Geri bildirim açıklığı", weight: 0.10 }
+      - { id: CC-5, desc: "Vaka yayın izni", weight: 0.10 }
+
+    risk_compliance_history:
+      - { id: RC-1, desc: "Son 3 yıl yaptırım yok", weight: 0.40 }
+      - { id: RC-2, desc: "Aktif DORA projesi", weight: 0.30 }
+      - { id: RC-3, desc: "Bulgular kapatılmış", weight: 0.20 }
+      - { id: RC-4, desc: "Denetim ekibi işbirlikçi", weight: 0.10 }
+
+    scale_complexity:
+      - { id: SC-1, desc: "Portföyde çeşitlilik", weight: 0.50 }
+      - { id: SC-2, desc: "Tedarikçi sayısı 5-50", weight: 0.30 }
+      - { id: SC-3, desc: "Karmaşıklık dengeli", weight: 0.20 }
+
+    sustainability:
+      - { id: SU-1, desc: "Üretim geçiş niyeti", weight: 0.40 }
+      - { id: SU-2, desc: "Lisans ödeme kapasitesi", weight: 0.35 }
+      - { id: SU-3, desc: "Uzun vadeli ortaklık", weight: 0.25 }

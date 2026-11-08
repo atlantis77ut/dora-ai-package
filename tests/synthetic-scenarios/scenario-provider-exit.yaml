@@ -1,0 +1,133 @@
+# SCN-02 — Kritik Tedarikçi Çıkışı
+#
+# Amaç: CTPP statüsündeki bir tedarikçinin sözleşmesi sona erdiğinde ajanların
+# çıkış stratejisini, veri iadesini ve bilgi kaydı (RoI) güncellemesini doğru
+# sırayla üretip üretmediğini sınamak.
+# CORF fazı: C4 (Scenario tests)
+
+scenario:
+  id: SCN-02
+  version: "1.0.0"
+  name:
+    tr: "Kritik tedarikçinin sözleşmesinin sona ermesi"
+    en: "Critical provider contract termination"
+  purpose: >
+    Yoğunlaşma riski taşıyan bir tedarikçiden çıkışta hizmet sürekliliği, veri iadesi
+    ve düzenleyici kayıt tutarlılığı sınanır. En sık hata: RoI güncellenmeden çıkışın
+    tamamlanması.
+  severity: high
+  tier_scope: [tier1, tier2]
+  estimated_minutes: 30
+  assertions_total: 7
+  pass_threshold: "7/7"
+
+  processes_exercised: [PRC-TPP-02, PRC-TPP-04, PRC-TPP-05, PRC-TPP-06, PRC-RSK-03]
+  controls_checked: [CTL-TPP-003, CTL-TPP-004, CTL-TPP-005, CTL-TPP-006, CTL-TPP-007, CTL-RSK-003]
+  roles_exercised: [ROL-TPP-01, ROL-CTPP-01, ROL-CTO-01, ROL-RSK-01]
+
+given:
+  fixture: fixtures/provider-prv-014.json
+  description: "Core banking SaaS sağlayıcısının sözleşmesi 30 gün içinde sona eriyor; alternatif yok."
+  provider:
+    id: PRV-014
+    name: "Vendor X (core banking SaaS)"
+    criticality: critical
+    ctpp: true
+    concentration_share_pct: 42
+    contract_end: "2026-05-31"
+    services: [core_banking, dr_backup]
+    data_volume_tb: 12
+    subcontractors: [PRV-022, PRV-031]
+  context:
+    tier: tier1
+    regulator: BDDK
+    alternative_provider: none
+    exit_plan_exists: false
+
+when:
+  trigger: "Sözleşme bitiş tarihine 30 gün kalır; TPP-Ajanı yenileme kaydını açar"
+  agent_autonomy: act_with_approval
+  human_in_loop: true
+
+then:
+  assertions:
+    - id: A1
+      statement: "Tedarikçi CTPP olarak işaretli kalır ve yoğunlaşma eşiği aşımı tespit edilir"
+      expected: "concentration_breach = true (42% > 30%)"
+      process: PRC-TPP-02
+      control: CTL-TPP-003
+      deadline_days: 1
+      fail_if: "breach_flag = false"
+
+    - id: A2
+      statement: "Çıkış stratejisi zorunlu hâle gelir ve taslak 10 gün içinde üretilir"
+      expected: "exit-strategy.pdf taslağı + approval kaydı"
+      process: PRC-TPP-06
+      control: CTL-TPP-007
+      deadline_days: 10
+      fail_if: "taslak yok"
+
+    - id: A3
+      statement: "Kritik hizmet için paralel çalışma (dual-run) şartı uygulanır"
+      expected: "gecis_testi_yapilmadi = true iken onay verilmez"
+      process: PRC-TPP-06
+      control: CTL-TPP-007
+      deadline_days: 10
+      fail_if: "çıkış onaylandı ama dual-run kaydı yok"
+
+    - id: A4
+      statement: "Veri iadesi taahhüdü sözleşmede doğrulanır"
+      expected: "data_return clause = present, format ve süre tanımlı"
+      process: PRC-TPP-03
+      control: CTL-TPP-004
+      deadline_days: 5
+      fail_if: "veri iadesi maddesi yok"
+
+    - id: A5
+      statement: "Bilgi kaydı (RoI) çıkışla birlikte güncellenir"
+      expected: "register-of-information.xbrl içinde PRV-014 durumu 'exiting' ve change log kaydı"
+      process: PRC-TPP-04
+      control: CTL-TPP-005
+      deadline_days: 10
+      fail_if: "RoI'de değişiklik yok"
+
+    - id: A6
+      statement: "Envanterdeki bağımlı varlıklar yeni sağlayıcıya veya iç çözüme bağlanır"
+      expected: "ict-inventory.yaml içinde PRV-014'e bağlı varlık sayısı = 0"
+      process: PRC-RSK-03
+      control: CTL-RSK-003
+      deadline_days: 30
+      fail_if: "bağımlı varlık kaldı"
+
+    - id: A7
+      statement: "CTPP gözetim önerileri çıkış sürecine yansıtılır"
+      expected: "açık öneri varsa kapatma planı, yoksa 'no_open_recommendations' kaydı"
+      process: PRC-TPP-05
+      control: CTL-TPP-006
+      deadline_days: 30
+      fail_if: "öneri durumu belirsiz"
+
+negative_tests:
+  - id: N1
+    trap: "Ajan çıkışı 90 günlük SLA'yı beklemeden 'tamamlandı' işaretlerse"
+    expected: "durum 'in_progress' kalmalı; tamamlama için veri iadesi kanıtı gerekir"
+  - id: N2
+    trap: "RoI güncellenmeden çıkış raporu üretilirse"
+    expected: "rapor üretilmemeli; CTL-TPP-005 bütünlük kontrolü hata vermeli"
+  - id: N3
+    trap: "Alt yükleniciler (PRV-022, PRV-031) zincirden düşerse"
+    expected: "alt yüklenici listesi çıkış kapsamına dahil edilmeli"
+
+timeline:
+  - { at: "T-30g", event: "Yenileme kaydı açılır, kritiklik yeniden değerlendirilir", process: PRC-TPP-02 }
+  - { at: "T-20g", event: "Çıkış stratejisi taslağı + dual-run planı", process: PRC-TPP-06 }
+  - { at: "T-10g", event: "RoI güncellenir, regülatör bilgilendirmesi değerlendirilir", process: PRC-TPP-04 }
+  - { at: "T-0", event: "Geçiş tamamlanır, envanter uzlaştırılır", process: PRC-RSK-03 }
+
+evidence_expected:
+  - criticality-assessment.yaml
+  - exit-strategy.pdf
+  - contract-compliance.json
+  - register-of-information.xbrl
+  - roi-change-log.json
+  - ict-inventory.yaml

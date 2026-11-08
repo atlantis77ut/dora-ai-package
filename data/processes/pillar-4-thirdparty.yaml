@@ -1,0 +1,228 @@
+schema_version: "1.0.0"
+generated_at: "2026-10-30"
+pillar:
+  id: third_party
+  name:
+    tr: "4. Sütun — Üçüncü Taraf ICT Riski Yönetimi"
+    en: "Pillar 4 — ICT Third-Party Risk Management"
+  dora_ref:
+    article: "Madde 28-30, 31-44"
+    rts_its: "RTS 2024/1774 (Register of Information)"
+source_of_truth: "Konuşma dökümü satır 137-173 (süreç akışı) + sözlük referansları (PRC-TPP-01..06)"
+
+processes:
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TPP-01 — Tedarikçi Durum Tespiti
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TPP-01
+    name:
+      tr: "Tedarikçi Durum Tespiti (Due Diligence)"
+      en: "Provider Due Diligence"
+    pillar: third_party
+    trigger: "Yeni tedarikçi adayı veya sözleşme yenileme"
+    preconditions:
+      - "Hizmet kapsamı ve kritiklik ön değerlendirmesi yapılmış olmalı"
+    inputs:
+      - { name: "Tedarikçi teklif ve profil bilgileri", format: pdf, source_role: ROL-TPP-01 }
+      - { name: "Güvenlik anketi yanıtları", format: json, source_role: ROL-TPP-01 }
+      - { name: "Bağımsız sertifikalar (ISO 27001, SOC 2)", format: pdf, source_role: ROL-TPP-01 }
+    outputs:
+      - { name: "due-diligence-report.pdf", format: pdf, retention_years: 10 }
+      - { name: "provider-risk-score.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-TPP-01]
+    approval_roles: [ROL-CTO-01]
+    slas:
+      - { trigger: "Aday tedarikçi kaydı", duration: 15, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: TPP-R1
+        condition: "risk_skoru > esik OR sertifika_yok"
+        action: "tedarikçiyi reddet veya ek kontrol şartıyla koşullu onayla"
+        dora_ref: { article: "Madde 28(4)" }
+      - rule_id: TPP-R2
+        condition: "alt_yuklenici_var == true"
+        action: "alt yüklenici zincirini değerlendirmeye ekle"
+        dora_ref: { article: "Madde 30(2)(a)" }
+    dependencies:
+      upstream: [PRC-RSK-03]
+      downstream: [PRC-TPP-02, PRC-TPP-03]
+    control_ids:
+      - CTL-TPP-001
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TPP-02 — Kritiklik Analizi
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TPP-02
+    name:
+      tr: "Tedarikçi Kritiklik Analizi"
+      en: "Provider Criticality Assessment"
+    pillar: third_party
+    trigger: "Durum tespiti tamamlandığında veya desteklediği işlev değiştiğinde"
+    preconditions:
+      - "PRC-TPP-01 tamamlanmış olmalı"
+      - "İş hizmetleri kataloğu güncel olmalı"
+    inputs:
+      - { name: "Durum tespiti raporu", format: pdf, source_role: ROL-TPP-01 }
+      - { name: "Desteklenen kritik işlev eşlemesi", format: yaml, source_role: ROL-RSK-01 }
+      - { name: "Yoğunlaşma verisi (tedarikçi payı)", format: json, source_role: ROL-TPP-01 }
+    outputs:
+      - { name: "criticality-assessment.yaml", format: yaml, retention_years: 10 }
+    responsible_roles: [ROL-TPP-01]
+    approval_roles: [ROL-CTO-01, ROL-CMP-01]
+    slas:
+      - { trigger: "Durum tespiti tamamlanması", duration: 5, unit: days, clock_start: detection }
+      - { trigger: "Yıllık yeniden değerlendirme", duration: 10, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: TPP-R3
+        condition: "hizmet_kritik_veya_onemli_islev == true"
+        action: "tedarikçiyi 'kritik' sınıflandır, Madde 30 ek şartlarını uygula"
+        dora_ref: { article: "Madde 28(2)" }
+      - rule_id: TPP-R4
+        condition: "tedarikci_payi > %30 AND alternatif_yok"
+        action: "yoğunlaşma riski kaydı aç, çıkış stratejisi zorunlu kıl"
+        dora_ref: { article: "Madde 29(2)" }
+    dependencies:
+      upstream: [PRC-TPP-01, PRC-RSK-02]
+      downstream: [PRC-TPP-03, PRC-TPP-05, PRC-TPP-06]
+    control_ids:
+      - CTL-TPP-002
+      - CTL-TPP-003
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TPP-03 — Sözleşme Uyum Kontrolü
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TPP-03
+    name:
+      tr: "Sözleşme Uyum Kontrolü (Madde 30)"
+      en: "Contract Compliance Review (Article 30)"
+    pillar: third_party
+    trigger: "Yeni sözleşme, yenileme veya tadilat"
+    preconditions:
+      - "Kritiklik analizi tamamlanmış olmalı"
+    inputs:
+      - { name: "Sözleşme taslağı", format: pdf, source_role: ROL-TPP-01 }
+      - { name: "Madde 30 kontrol listesi", format: yaml, source_role: ROL-CMP-01 }
+    outputs:
+      - { name: "contract-compliance.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-TPP-01]
+    approval_roles: [ROL-CMP-01, ROL-CTO-01]
+    slas:
+      - { trigger: "Sözleşme taslağı alımı", duration: 10, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: TPP-R5
+        condition: "eksik_madde IN ['denetim_hakki','veri_iadesi','cikis_stratejisi','sla','alt_yuklenici_onayi']"
+        action: "sözleşmeyi onaylama; eksik madde listesi ile iade et"
+        dora_ref: { article: "Madde 30(2)-(3)" }
+      - rule_id: TPP-R6
+        condition: "tedarikci.kritik == true AND denetim_hakki.sinirli == true"
+        action: "denetim hakkını genişlet, aksi halde onaylama"
+        dora_ref: { article: "Madde 30(3)(e)" }
+    dependencies:
+      upstream: [PRC-TPP-02]
+      downstream: [PRC-TPP-04]
+    control_ids:
+      - CTL-TPP-004
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TPP-04 — Bilgi Kaydı (Register of Information)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TPP-04
+    name:
+      tr: "Bilgi Kaydı (RoI) Yönetimi ve Yıllık Sunum"
+      en: "Register of Information Management and Annual Submission"
+    pillar: third_party
+    trigger: "Sözleşme değişikliği, yeni tedarikçi veya yıllık sunum takvimi"
+    preconditions:
+      - "Tedarikçi kayıtları ve sözleşme envanteri erişilebilir olmalı"
+    inputs:
+      - { name: "Sözleşme uyum kaydı", format: json, source_role: ROL-TPP-01 }
+      - { name: "Kritiklik sınıfları", format: yaml, source_role: ROL-TPP-01 }
+      - { name: "XBRL-CSV şablonu (RTS 2024/1774)", format: xbrl, source_role: ROL-CMP-01 }
+    outputs:
+      - { name: "register-of-information.xbrl", format: xbrl, retention_years: 10 }
+      - { name: "roi-change-log.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-TPP-01]
+    approval_roles: [ROL-CIO-01]
+    slas:
+      - { trigger: "Sözleşme değişikliği", duration: 5, unit: days, clock_start: detection }
+      - { trigger: "Yıllık sunum tarihi", duration: 30, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: TPP-R7
+        condition: "sozlesme.kritik == true AND roi_kaydi_yok"
+        action: "kaydı oluştur, sunum öncesi ikinci hat onayı al"
+        dora_ref: { article: "Madde 28(3)", rts_its: "RTS 2024/1774" }
+    dependencies:
+      upstream: [PRC-TPP-03, PRC-INC-04]
+      downstream: [PRC-TPP-05]
+    evidence_requirements:
+      - "register-of-information.xbrl (yıllık sunum kanıtı + regülatör referansı)"
+      - "roi-change-log.json (her değişikliğin zaman damgası ve onayı)"
+    control_ids:
+      - CTL-TPP-005
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TPP-05 — CTPP Gözetim Takibi
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TPP-05
+    name:
+      tr: "Kritik Tedarikçi (CTPP) Gözetim Takibi"
+      en: "Critical Provider (CTPP) Oversight Tracking"
+    pillar: third_party
+    trigger: "ESA CTPP listesi güncellemesi veya gözetim önerisi"
+    preconditions:
+      - "Tedarikçi CTPP olarak belirlenmiş olmalı"
+    inputs:
+      - { name: "ESA CTPP listesi", format: json, source_role: ROL-CTPP-01 }
+      - { name: "Gözetim önerileri", format: pdf, source_role: ROL-CTPP-01 }
+    outputs:
+      - { name: "ctpp-oversight-status.yaml", format: yaml, retention_years: 7 }
+    responsible_roles: [ROL-CTPP-01, ROL-TPP-01]
+    approval_roles: [ROL-CTO-01]
+    slas:
+      - { trigger: "Yeni öneri yayını", duration: 30, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: TPP-R8
+        condition: "onerinin_uygulanmasi_yok AND oneri_suresi > 30 gun"
+        action: "uyumsuzluk kaydı aç, ESA'ya gerekçe bildir"
+        dora_ref: { article: "Madde 35" }
+    dependencies:
+      upstream: [PRC-TPP-02, PRC-TPP-04]
+      downstream: [PRC-TPP-06]
+    control_ids:
+      - CTL-TPP-006
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-TPP-06 — Çıkış Stratejisi
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-TPP-06
+    name:
+      tr: "Tedarikçiden Çıkış Stratejisi"
+      en: "Provider Exit Strategy"
+    pillar: third_party
+    trigger: "Sözleşme sonu, kritik bulgu veya yoğunlaşma riski kararı"
+    preconditions:
+      - "Alternatif tedarikçi veya iç çözüm değerlendirilmiş olmalı"
+    inputs:
+      - { name: "Sözleşme sona erme koşulları", format: pdf, source_role: ROL-TPP-01 }
+      - { name: "Veri iadesi taahhüdü", format: json, source_role: ROL-TPP-01 }
+      - { name: "Geçiş planı taslağı", format: yaml, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "exit-strategy.pdf", format: pdf, retention_years: 10 }
+      - { name: "exit-test-evidence.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-TPP-01]
+    approval_roles: [ROL-CTO-01, ROL-CEO-01]
+    slas:
+      - { trigger: "Çıkış kararı", duration: 90, unit: days, clock_start: approval }
+    decision_rules:
+      - rule_id: TPP-R9
+        condition: "hizmet_kritik == true AND gecis_testi_yapilmadi"
+        action: "çıkışı onaylama; paralel çalışma (dual-run) zorunlu"
+        dora_ref: { article: "Madde 28(8)" }
+    dependencies:
+      upstream: [PRC-TPP-05]
+      downstream: [PRC-RSK-03]
+    evidence_requirements:
+      - "exit-strategy.pdf (veri iadesi ve hizmet sürekliliği kanıtı)"
+      - "exit-test-evidence.json (geçiş testi sonuçları)"
+    control_ids:
+      - CTL-TPP-007

@@ -1,0 +1,17 @@
+{
+  "name": "@dora-package/onboard-cli",
+  "version": "0.3.0",
+  "description": "DORA AI Package — CORF 6 fazlı onboarding sihirbazı (bağımlılıksız)",
+  "license": "AGPL-3.0-only",
+  "private": true,
+  "bin": {
+    "dora-onboard": "./bin/dora-onboard.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node tools/demo.mjs",
+    "phases": "node bin/dora-onboard.mjs phases"
+  }
+}

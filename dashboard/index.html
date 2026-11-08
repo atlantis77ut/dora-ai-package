@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DORA AI Ajan Paketi — Dashboard</title><style>
+  :root { --bg:#0b1020; --panel:#131a2e; --line:#24304d; --fg:#e8edf7; --muted:#93a1c0;
+    --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --accent:#60a5fa; --accent2:#a78bfa; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:30px; background:radial-gradient(1200px 600px at 20% -10%,#1a2542 0%,var(--bg) 55%);
+    color:var(--fg); font:14px/1.55 "Segoe UI",system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  header { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:6px; }
+  h1 { font-size:22px; margin:0; letter-spacing:.2px; }
+  .sub { color:var(--muted); font-size:12.5px; }
+  nav { display:flex; gap:8px; margin:16px 0 22px; flex-wrap:wrap; }
+  nav a { text-decoration:none; color:var(--muted); border:1px solid var(--line); border-radius:999px;
+    padding:5px 13px; font-size:12.5px; }
+  nav a.on, nav a:hover { color:var(--fg); border-color:#3b4d78; background:#18213a; }
+  .badge { display:inline-block; padding:2px 8px; border:1px solid var(--line); border-radius:999px; font-size:11.5px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin:4px 0 18px; }
+  .card { background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0)); border:1px solid var(--line);
+    border-radius:12px; padding:14px 16px; }
+  .card .label { color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:.6px; }
+  .card .value { font-size:26px; font-weight:650; margin-top:6px; }
+  .card .hint { color:var(--muted); font-size:11.5px; margin-top:2px; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
+  h2 { font-size:14px; margin:0 0 14px; letter-spacing:.3px; }
+  h2 span { color:var(--muted); font-weight:400; margin-left:8px; font-size:12px; }
+  .bar { display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); }
+  .bar > i { display:block; }
+  .b-ok{background:var(--ok)} .b-warn{background:var(--warn)} .b-bad{background:var(--bad)}
+  .legend { display:flex; gap:18px; margin-top:10px; color:var(--muted); font-size:12px; }
+  .legend b { color:var(--fg); }
+  table { width:100%; border-collapse:collapse; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid rgba(36,48,77,.7); font-size:12.5px; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.7px; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .mono { font-family:ui-monospace,"Cascadia Mono",Consolas,monospace; font-size:12px; color:var(--accent); }
+  .pill { border:1px solid var(--line); border-radius:999px; padding:1px 8px; font-size:11px; color:var(--muted); white-space:nowrap; }
+  .pill.ok { color:var(--ok); border-color:#1f5142; } .pill.warn { color:var(--warn); border-color:#5a4614; }
+  .pill.bad { color:var(--bad); border-color:#5b2626; }
+  .two { display:grid; grid-template-columns:1.35fr 1fr; gap:16px; }
+  .list { margin:0; padding-left:18px; color:var(--muted); font-size:12.5px; }
+  .list li { margin:6px 0; }
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+  details { border-top:1px solid rgba(36,48,77,.6); padding:8px 0; }
+  details summary { cursor:pointer; color:var(--muted); font-size:12px; }
+  details summary:hover { color:var(--fg); }
+  .kv { display:grid; grid-template-columns:130px 1fr; gap:4px 12px; margin:10px 0 4px; font-size:12.5px; }
+  .kv dt { color:var(--muted); } .kv dd { margin:0; }
+  footer { color:var(--muted); font-size:11.5px; text-align:center; margin-top:8px; }
+</style></head>
+<body><div class="wrap">
+  <header>
+    <div><h1>DORA AI Ajan Paketi</h1><div class="sub">v0.3.0 · AGPL-3.0 + ticari · 6 CORF fazı · <span class="ok">sağlık: temiz</span></div></div>
+    <span class="badge">08.11.2026 18:01:09</span>
+  </header>
+  
+  <nav>
+    <a href="index.html" class="on">Genel bakış</a>
+    <a href="processes.html" class="">Süreçler (21)</a>
+    <a href="controls.html" class="">Kontroller (32)</a>
+  </nav>
+  <div class="grid">
+    
+      <div class="card"><div class="label">Süreç</div><div class="value">21</div>
+      <div class="hint">5 sütun</div></div>
+    
+      <div class="card"><div class="label">Kontrol</div><div class="value">32</div>
+      <div class="hint">RSK 10 · INC 8 · TST 4 · TPP 7 · INF 3</div></div>
+    
+      <div class="card"><div class="label">Ajan</div><div class="value">11</div>
+      <div class="hint">21 CORF kodu</div></div>
+    
+      <div class="card"><div class="label">Terim</div><div class="value">60</div>
+      <div class="hint">DORA + RTS/ITS</div></div>
+    
+      <div class="card"><div class="label">Senaryo</div><div class="value">4</div>
+      <div class="hint">27 assertion</div></div>
+    
+      <div class="card"><div class="label">DORA kapsama</div><div class="value">86%</div>
+      <div class="hint">24/28 madde</div></div>
+  </div>
+  <section>
+    <h2>DORA kapsama <span>madde bazında</span></h2>
+    <div class="bar">
+      <i class="b-ok" style="width:86%"></i>
+      <i class="b-warn" style="width:11%"></i>
+      <i class="b-bad" style="width:4%"></i>
+    </div>
+    <div class="legend"><span><b>24</b> kapsandı</span><span><b>3</b> kısmi</span>
+      <span><b>1</b> boşluk</span><span>toplam <b>28</b></span></div>
+  </section>
+  <div class="two">
+    <section>
+      <h2>CORF uygulama fazları <span>geçiş kapıları</span></h2>
+      <table><thead><tr><th>Faz</th><th>Adım</th><th>CORF</th><th class="num">Adım</th><th class="num">Kapı</th><th class="num">Gün</th><th>Ajan modu</th></tr></thead>
+      <tbody><tr><td class="mono">C1</td><td>Önemli İş Hizmetlerinin Belirlenmesi (Identify)</td>
+          <td class="mono">Identify</td><td class="num">4</td><td class="num">4</td>
+          <td class="num">10</td><td><span class="pill">observe</span></td></tr><tr><td class="mono">C2</td><td>Etki Toleranslarının Belirlenmesi (Set Tolerances)</td>
+          <td class="mono">Set tolerances</td><td class="num">4</td><td class="num">4</td>
+          <td class="num">8</td><td><span class="pill">observe</span></td></tr><tr><td class="mono">C3</td><td>Kaynakların Haritalanması ve Ajan Aktivasyonu (Map Resources)</td>
+          <td class="mono">Map resources</td><td class="num">7</td><td class="num">7</td>
+          <td class="num">20</td><td><span class="pill">observe</span></td></tr><tr><td class="mono">C4</td><td>Senaryo Testleri (Scenario Tests)</td>
+          <td class="mono">Scenario tests</td><td class="num">5</td><td class="num">4</td>
+          <td class="num">12</td><td><span class="pill">recommend</span></td></tr><tr><td class="mono">C5</td><td>Öz Değerlendirme (Self-Assessment)</td>
+          <td class="mono">Self-assessment</td><td class="num">4</td><td class="num">4</td>
+          <td class="num">10</td><td><span class="pill">recommend</span></td></tr><tr><td class="mono">C6</td><td>Yönetim İşletim Sisteminin Devreye Alınması (MOS)</td>
+          <td class="mono">Implement MOS</td><td class="num">6</td><td class="num">4</td>
+          <td class="num">45</td><td><span class="pill">act with approval</span></td></tr></tbody></table>
+    </section>
+    <section>
+      <h2>Açık noktalar <span>kapatılmadan C5 geçmez</span></h2>
+      <ul class="list"><li><b class="warn">Art-12</b> — Yedekleme politikaları, prosedürleri ve yöntemleri <span class="pill warn">partial</span></li><li><b class="bad">Art-14</b> — İletişim <span class="pill bad">gap</span></li><li><b class="warn">Art-20</b> — Raporlama şablonlarının uyumlaştırılması <span class="pill warn">partial</span></li><li><b class="warn">Art-23</b> — Ödeme ile ilgili operasyonel/güvenlik olayları <span class="pill warn">partial</span></li></ul>
+    </section>
+  </div>
+  <section>
+    <h2>Kabul senaryoları <span>sentetik testler</span></h2>
+    <table><thead><tr><th>Senaryo</th><th>Ad</th><th class="num">Assertion</th></tr></thead>
+    <tbody><tr><td class="mono">SCN-01</td><td>500.000 müşteriyi etkileyen 6 saatlik kesinti</td><td class="num">8</td></tr><tr><td class="mono">SCN-02</td><td>Kritik tedarikçinin sözleşmesinin sona ermesi</td><td class="num">7</td></tr><tr><td class="mono">SCN-03</td><td>Regülatörün 24 saat içinde bilgi talebi</td><td class="num">6</td></tr><tr><td class="mono">SCN-04</td><td>Yetkisiz erişim denemesi ve şifreleme kanıtı</td><td class="num">6</td></tr></tbody></table>
+  </section>
+  <footer>Depodaki YAML dosyalarından üretildi · <span class="mono">node docs/tools/build-dashboard.mjs</span></footer>
+</div></body></html>

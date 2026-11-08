@@ -1,0 +1,30 @@
+{
+  "incident": {
+    "id": "INC-2026-0412",
+    "detected_at": "2026-04-12T02:14:00+03:00",
+    "source": "siem",
+    "title": "Core banking kesintisi — ödeme ve mevduat işlevleri durdu",
+    "affected_systems": ["core-banking", "payment-gateway"],
+    "affected_services": ["FNC-PAY-001", "FNC-DEP-001"],
+    "affected_customers": 512000,
+    "outage_minutes": 372,
+    "data_loss": false,
+    "unauthorized_access": false,
+    "affected_member_states": ["TR"],
+    "economic_impact_eur": 2400000,
+    "detection": {
+      "tool": "siem",
+      "alert_id": "ALRT-88213",
+      "severity": "critical"
+    },
+    "suspected_cause": "veritabanı yedekleme işi ile üretim trafiği çakışması"
+  },
+  "context": {
+    "tier": "tier2",
+    "regulator": "BDDK",
+    "on_call": {
+      "cio_human": "Z. Kaya",
+      "compliance_human": "A. Şahin"
+    }
+  }
+}
