@@ -1,0 +1,43 @@
+{
+  "title": "Olay kaydı",
+  "type": "object",
+  "required": [
+    "incident_id",
+    "detected_at",
+    "classification"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "pattern": "^INC-"
+    },
+    "detected_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "closed_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "classification": {
+      "enum": [
+        "major",
+        "significant",
+        "minor"
+      ]
+    },
+    "mitigations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "eta": {
+      "type": "string"
+    },
+    "recurring_risk": {
+      "type": "string"
+    }
+  }
+}

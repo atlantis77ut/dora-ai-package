@@ -1,0 +1,34 @@
+{
+  "title": "Sınıflandırma kararı",
+  "type": "object",
+  "required": [
+    "incident_id",
+    "decision"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "pattern": "^INC-"
+    },
+    "decision": {
+      "enum": [
+        "major",
+        "significant",
+        "minor"
+      ]
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approved_by": {
+      "type": "string"
+    },
+    "approved_at": {
+      "type": "string"
+    }
+  }
+}

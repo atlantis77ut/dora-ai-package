@@ -5,6 +5,28 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.9.0] — 2026-11-08
+
+### Eklendi
+
+**Artefakt şema doğrulaması**
+- `schema/artifacts/` altında 7 şema: incident-record, classification-decision, impact-assessment,
+  notification-receipt, gap-analysis, go-live, register-of-information
+- `src/corf/jsonschema.mjs`: bağımlılıksız, draft alt kümesi (type, required, properties,
+  additionalProperties, enum, pattern, min/max, items)
+- `ingest` artık şemayı çalıştırıyor: uyuşmazsa dosyayı **reddediyor**, gerekçeyi yol bazında yazıyor
+- `--lenient`: şema uyuşmazlığını reddetme, "şema uyarısı" olarak kaydet
+- `ingest-log.json` her dosya için `schema` alanı taşıyor ("şema uyumlu", "şema uyarısı: ...", "şema yok")
+
+**Test**
+- `demo-ingest.mjs`: geçersiz sınıflandırma reddi, lenient kabulü ve kayıt içeriği doğrulanıyor
+
+### Değişti
+
+- `docs/KONNEKTOR.md`: artefakt şeması tablosu ve kısmi doğrulama sınırı
+
+---
+
 ## [0.8.0] — 2026-11-08
 
 ### Eklendi

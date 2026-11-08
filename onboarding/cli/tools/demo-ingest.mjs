@@ -66,6 +66,24 @@ const log = JSON.parse(fs.readFileSync(path.join(dir, 'ingest-log.json'), 'utf8'
 check(log.length === 2 && log.every((e) => e.sha256?.length === 64), 'her dosya için sha256 kaydı var');
 check(log.every((e) => e.ingested_at && e.source), 'kaynak ve zaman damgası kayıtlı');
 
+check(log.some((e) => e.schema?.startsWith('şema uyumlu')), 'şema uyumu kayda geçti');
+
+console.log('\n--- şema doğrulaması');
+const BAD = path.join(CWD, '.ingest-bad');
+fs.rmSync(BAD, { recursive: true, force: true });
+fs.mkdirSync(BAD, { recursive: true });
+fs.writeFileSync(
+  path.join(BAD, 'incident-record.json'),
+  JSON.stringify({ incident_id: 'INC-2026-9', classification: 'huge', detected_at: '2026-11-08' }),
+);
+const badRun = ingest({ dir, from: BAD });
+check(badRun.rejected.length === 1, 'geçersiz olay reddedildi');
+check(/şema:/.test(badRun.rejected[0]?.reason ?? ''), 'ret gerekçesi şema hatası: ' + (badRun.rejected[0]?.reason ?? '').slice(0, 60));
+const len = ingest({ dir, from: BAD, lenient: true });
+check(len.ingested.length === 1, 'lenient modda kabul edildi');
+check(len.ingested[0].schema?.startsWith('şema uyarısı'), 'uyarı kayda geçti');
+fs.rmSync(BAD, { recursive: true, force: true });
+
 // izin verilen bilinmeyen tür
 const r2 = ingest({ dir, from: DROP, allowUnknown: true });
 check(

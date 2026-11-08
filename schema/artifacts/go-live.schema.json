@@ -1,0 +1,29 @@
+{
+  "title": "Üretime geçiş kaydı",
+  "type": "object",
+  "required": [
+    "shadow_days",
+    "semi_auto_days"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "shadow_days": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "semi_auto_days": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mos_dashboard": {
+      "type": "boolean"
+    },
+    "regwatch_agent": {
+      "type": "boolean"
+    },
+    "annual_review_date": {
+      "type": "string",
+      "minLength": 10
+    }
+  }
+}

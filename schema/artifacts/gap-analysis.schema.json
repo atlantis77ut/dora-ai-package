@@ -1,0 +1,23 @@
+{
+  "title": "Boşluk analizi",
+  "type": "object",
+  "required": [
+    "high_severity"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "high_severity": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "risk_acceptance": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "independent_review_signed_by": {
+      "type": "string"
+    }
+  }
+}

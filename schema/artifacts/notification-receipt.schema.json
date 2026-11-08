@@ -1,0 +1,29 @@
+{
+  "title": "Bildirim makbuzu",
+  "type": "object",
+  "required": [
+    "incident_id",
+    "within_sla",
+    "sent_at"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "pattern": "^INC-"
+    },
+    "channel": {
+      "type": "string"
+    },
+    "sent_at": {
+      "type": "string",
+      "minLength": 10
+    },
+    "within_sla": {
+      "type": "boolean"
+    },
+    "reference": {
+      "type": "string"
+    }
+  }
+}

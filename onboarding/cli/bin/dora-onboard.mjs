@@ -75,6 +75,7 @@ ${color.bold}Komutlar${color.reset}
     --session <id>               Oturum kimliği (zorunlu)
     --from <dizin>               Kaynak dizin (zorunlu)
     --allow-unknown              Bilinmeyen uzantıları da al
+    --lenient                    Şema uyuşmazlığını reddetme, uyarı olarak kaydet
 
   calendar                    Düzenleyici yükümlülük takvimi
     --frequency <tür>            event_driven | monthly | quarterly | annual | every_3_years
@@ -160,6 +161,7 @@ const { values: opts } = parseArgs({
     next: { type: 'string' },
     from: { type: 'string' },
     'allow-unknown': { type: 'boolean' },
+    lenient: { type: 'boolean' },
   },
   allowPositionals: true,
 });
@@ -417,9 +419,13 @@ try {
       dir: store.sessionDir(session.session_id),
       from: opts.from,
       allowUnknown: !!opts['allow-unknown'],
+      lenient: !!opts.lenient,
     });
     line(`${color.bold}Alım tamam${color.reset} — ${r.ingested.length} dosya, ${r.rejected.length} ret`);
-    for (const i of r.ingested) line(`  ${color.green}✔${color.reset} ${i.file.padEnd(34)} ${i.sha256.slice(0, 12)}…`);
+    for (const i of r.ingested) {
+      const note = i.schema && i.schema !== 'şema yok' ? ` ${color.dim}${i.schema.slice(0, 46)}${color.reset}` : '';
+      line(`  ${color.green}✔${color.reset} ${i.file.padEnd(30)} ${i.sha256.slice(0, 12)}…${note}`);
+    }
     for (const j of r.rejected) line(`  ${color.red}✘${color.reset} ${j.file.padEnd(34)} ${j.reason}`);
     line(`\n${color.dim}kayıt: ${path.relative(process.cwd(), r.logFile)}${color.reset}`);
     process.exit(r.rejected.length ? 2 : 0);

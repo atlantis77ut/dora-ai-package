@@ -34,11 +34,32 @@ node bin/dora-onboard.mjs ingest --session ob-2026-xxxxx --from ./drop
 
 | Tür | Kural | Örnek |
 |---|---|---|
-| JSON | Geçerli JSON olmalı (BOM tolere edilir) | incident-record.json, gap-analysis.json |
+| JSON | Geçerli JSON + artefakt şeması (varsa) | incident-record.json, gap-analysis.json |
 | Opak | Uzantı yeterli; içerik doğrulanmaz | rca-report.pdf, initial-notification.xml, register-of-information.xbrl |
 
 Bilinmeyen uzantılar reddedilir (çıkış 2). JSON bozuksa dosya **alınmaz** — yarım veriyle
 rapor üretmek, veri olmamasından daha kötüdür.
+
+### 2.1 Artefakt şemaları
+
+schema/artifacts/ altında 7 şema var ve alım sırasında çalışır:
+
+| Şema | Zorunlu alanlar |
+|---|---|
+| incident-record | incident_id, detected_at, classification |
+| classification-decision | incident_id, decision |
+| impact-assessment | affected_clients |
+| notification-receipt | incident_id, within_sla, sent_at |
+| gap-analysis | high_severity |
+| go-live | shadow_days, semi_auto_days |
+| register-of-information | concentration_breaches |
+
+Şema bulunamazsa dosya yine alınır (kayıt: "şema yok"). Şema varsa ve uyuşmazsa dosya reddedilir;
+--lenient ile uyarı olarak kaydedilip kabul edilir.
+
+~~~bash
+node bin/dora-onboard.mjs ingest --session ob-2026-xxxxx --from ./drop --lenient
+~~~
 
 ---
 
@@ -80,7 +101,8 @@ Konnektörün tek işi dosyayı yazmak; paket doğrulama ve kayıt işini yapar.
 
 ## 5. Sınırlar
 
-- **Şema doğrulaması yok.** JSON’un geçerli olduğu denetlenir, süreç/control şemasına uyumu denetlenmez.
+- **Şema doğrulaması kısmi.** Yalnızca schema/artifacts/ altındaki 7 artefakt için çalışır;
+  katalog dosyalarının (süreç/kontrol) şemaları bu yolda denetlenmez.
 - **Zamanlama yok.** Paket dizini kendiliğinden izlemez; zamanlamayı cron/systemd yapar.
 - **Kimlik doğrulama yok.** Dizine kimin yazabildiği kurumun dosya sistemi politikasıdır.
 - **Dönüşüm yok.** Kaynak sistemin alan adları paketin kanonik adlarına konnektörde çevrilir.

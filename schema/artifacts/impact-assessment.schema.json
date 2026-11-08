@@ -1,0 +1,30 @@
+{
+  "title": "Etki değerlendirmesi",
+  "type": "object",
+  "required": [
+    "affected_clients"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "affected_clients": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "affected_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "duration_minutes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "geography": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

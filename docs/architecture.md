@@ -3,7 +3,7 @@
 Bu belge, DORA AI Ajan Paketi'nin nasıl çalıştığını anlatır: katmanlar, veri akışı,
 ajan çalışma modeli, denetim izi ve genişleme noktaları.
 
-Son güncelleme: 2026-11-08 · Sürüm 0.8.0
+Son güncelleme: 2026-11-08 · Sürüm 0.9.0
 
 ---
 

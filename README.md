@@ -122,7 +122,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **0.8.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **0.9.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

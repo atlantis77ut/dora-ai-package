@@ -1,0 +1,14 @@
+{
+  "title": "Bilgi kaydı göstergeleri",
+  "type": "object",
+  "required": [
+    "concentration_breaches"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "concentration_breaches": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}
