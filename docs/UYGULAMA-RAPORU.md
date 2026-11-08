@@ -1,6 +1,6 @@
 # DORA AI Ajan Paketi — Uygulama Raporu
 
-**Sürüm:** 0.4.1 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
+**Sürüm:** 0.6.0 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
 **Depo:** https://github.com/atlantis77ut/dora-ai-package · **Canlı dashboard:** https://atlantis77ut.github.io/dora-ai-package/
 
 ---
@@ -166,6 +166,9 @@ node bin/dora-onboard.mjs rollback --session ob-2026-xxxxx --to-phase C1
 | `status` | Faz/faz durum, kapı sonucu ve artefakt sayısı |
 | `phases` | Lifecycle dosyasını doğrular ve özetler |
 | `rollback` | Belirtilen faza döner, sonraki fazların çıktısını temizler |
+| `export` | Kanıt paketi üretir: ZIP + manifest + hash zinciri + Ed25519 imza |
+| `verify` | Paketin dosya özetlerini, zincirini ve imzasını doğrular |
+| `notify` | ITS 2024/2956 bildirim formunu doldurur (json/md/html), eksik alanı işaretler |
 
 Oturum verisi `.dora-onboarding/<oturum-id>/` altında JSON olarak tutulur: kurum profili,
 yargı alanı, iş hizmetleri kataloğu, etki toleransları, risk iştahı, envanter, ajan aktivasyonu,
@@ -215,6 +218,7 @@ Dört kontrol her push'ta GitHub Actions'ta çalışır:
 | `build-dashboard.mjs` | YAML'lardan siteyi üretir; sarkan referansta kırılır |
 | `dora-onboard.mjs phases` | Lifecycle dosyasının yapısal geçerliliğini denetler |
 | `demo.mjs` | Altı fazı örnek veriyle uçtan uca çalıştırır |
+| `demo-export.mjs` | Kanıt paketi + doğrulama + kurcalama testi + üç bildirim formu |
 
 Ek olarak `build-coverage-summary.mjs` kapsam tablosunu (`docs/KAPSAM-OZETI.md`) üretir.
 
@@ -288,7 +292,8 @@ Dürüst bir rapor, sınırları da yazmalı:
 4. **Hukuki görüş değildir.** BDDK/SPK/KVKK eşlemesi bilgi amaçlıdır; avukat onayı gerekir.
 5. **ITS XBRL taksonomi bağlaması açık.** Alan sözlüğü var, resmi taksonomi kodlarının bağlanması
    uygulama adımıdır.
-6. **Kanıt paketi ihracı ve bildirim formu üretimi yok.**
+6. **Kanıt paketi şifrelenmez ve PKI yok.** Bütünlük (hash zinciri + imza) kanıtlanır; gizlilik
+   ve anahtar sahipliği kanıtlanmaz. Bildirim formu resmi XBRL taksonomisine bağlanmaz.
 7. **Yönetim kurulu MI paketi tanımlı değil.**
 
 ---
@@ -297,8 +302,8 @@ Dürüst bir rapor, sınırları da yazmalı:
 
 | Sürüm | İş |
 |---|---|
-| 0.5 | Yönetim kurulu MI paketi + düzenleyici takvim + RoI yıllık sunum formatı |
-| 0.6 | Kanıt paketi ihracı (`dora-onboard export --evidence`) + bildirim formu üretimi |
+| 0.5 (ertelendi) | Yönetim kurulu MI paketi + düzenleyici takvim + RoI yıllık sunum formatı |
+| ~~0.6~~ | **Tamamlandı** — kanıt paketi (export/verify) + bildirim formu (notify) |
 | 0.7 | Splunk / ServiceNow / Archer konnektörleri, GOLDENHORN adaptörü |
 | 1.0 | Deterministik kural motoru (CEL/Rego), üretim sertleştirmesi |
 

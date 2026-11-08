@@ -114,8 +114,8 @@ templates:
         description: "Etkilenen müşteri sayısı (Kişisel Veri içermez)"
       - name: recurring_risk
         required: true
-        source: "gap-analysis.json"
-        description: "Benzer olayın tekrar riski ve mevcut kontroller"
+        source: "incident-record.json#recurring_risk"
+        description: "RCA sonucu tekrar riski (düşük/orta/yüksek) ve mevcut kontroller"
       - name: corrective_actions
         required: true
         source: "rca-report.pdf#actions"

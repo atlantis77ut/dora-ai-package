@@ -5,6 +5,39 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.6.0] — 2026-11-08
+
+> Not: 0.5 (yönetim kurulu MI paketi) atlandı; sıra kanıt ve bildirim araçlarına verildi.
+
+### Eklendi
+
+**Kanıt paketi (export / verify)**
+- `onboarding/cli/src/corf/evidence.mjs`: bağımlılıksız ZIP yazıcı/okuyucu (`store` yöntemi),
+  sha256 hash zinciri, Ed25519 imza, manifest üretimi
+- `dora-onboard export` — oturum artefaktlarını `evidence-out/<oturum>-evidence.zip` olarak paketler
+- `dora-onboard verify` — dosya özetlerini, zinciri ve imzayı doğrular; kurcalamada çıkış 1
+
+**Bildirim formu (notify)**
+- `onboarding/cli/src/corf/notify.mjs`: ITS 2024/2956 alan sözlüğünü oturum artefaktlarıyla doldurur
+- `dora-onboard notify --phase initial|intermediate|final` — JSON + Markdown + yazdırılabilir HTML
+- Eksik zorunlu alan varsa form üretilir ama `complete:false` işaretlenir ve çıkış kodu 2 olur
+- `--check` ile dosya yazmadan doğrulama
+
+**Test**
+- `onboarding/cli/tools/demo-export.mjs`: uçtan uca demo — paket, doğrulama, kurcalama testi,
+  üç bildirim formu, eksik alan testi. CI'da her push'ta çalışır.
+
+**Belge**
+- `docs/KANIT-PAKETI.md`: paket yapısı, zincir formülü, imza, garanti sınırları, kullanım
+
+### Değişti
+
+- Sürüm 0.6.0
+- `.gitignore`: `.demo-export/`, `notifications/`, `evidence-out/`
+- ITS alan sözlüğünde `recurring_risk` kaynağı `incident-record.json#recurring_risk` olarak netleştirildi
+
+---
+
 ## [0.4.1] — 2026-11-08
 
 ### Eklendi

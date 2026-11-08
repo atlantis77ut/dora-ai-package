@@ -1,5 +1,8 @@
 node_modules/
 .dora-onboarding/
+.demo-export/
+notifications/
+evidence-out/
 *.log
 .env
 .env.local

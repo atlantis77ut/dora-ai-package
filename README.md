@@ -13,6 +13,7 @@ yapay zeka ajanları ile otomatikleştiren modüler paket.
 - 28 DORA maddesi → süreç/kontrol eşlemesi (üretilen doküman)
 - 3 sentetik kabul senaryosu (21 assertion + tuzak testleri)
 - Denetim izi (hash-chain / WORM), insan gözetimi noktaları
+- Kanıt paketi (ZIP + hash zinciri + Ed25519 imza) ve ITS 2024/2956 bildirim formu üretimi
 - Lisans anahtarı (Ed25519, çevrimdışı doğrulama)
 
 ## Hızlı Başlangıç
@@ -28,6 +29,8 @@ node bin/dora-onboard.mjs init --tier tier2 --regulator BDDK
 node bin/dora-onboard.mjs phase C1 --session ob-2026-xxxxx --demo
 node bin/dora-onboard.mjs gate  C1 --session ob-2026-xxxxx   # geçmezse çıkış kodu 2
 node bin/dora-onboard.mjs status --session ob-2026-xxxxx
+node bin/dora-onboard.mjs export --session ob-2026-xxxxx       # kanıt paketi (ZIP)
+node bin/dora-onboard.mjs notify --session ob-2026-xxxxx --phase initial   # bildirim formu
 ```
 
 Lisans anahtarı olmadan **30 gün deneme modu** çalışır (C1-C5); üretime geçiş (C6) ticari
@@ -41,7 +44,7 @@ node docs/tools/build-coverage.mjs --session ob-2026-xxxxx   # C5 kapsama matris
 node docs/tools/build-dashboard.mjs                          # dashboard/index.html üret
 ```
 
-## Görmek için üç yol
+## Görmek için dört yol
 
 **Canlı dashboard:** <https://atlantis77ut.github.io/dora-ai-package/>
 
@@ -56,7 +59,7 @@ veya doğrudan `dashboard\index.html` dosyasını çift tıklayın. Üç sayfa v
 | Sayfa | Ne gösterir |
 |---|---|
 | `dashboard/index.html` | KPI'lar, DORA kapsama çubuğu, 6 CORF fazı, açık noktalar, senaryolar |
-| `dashboard/processes.html` | **21 sürecin tamamı** — tetikleyici, SLA, karar kuralları, kontroller, bağımlılıklar |
+| `dashboard/processes.html` | **23 sürecin tamamı** — tetikleyici, SLA, karar kuralları, kontroller, bağımlılıklar |
 | `dashboard/controls.html` | **35 kontrol** — kanıt alanları, değiştirilemezlik, test prosedürü |
 
 Sayfalar depodaki YAML'lardan üretilir; elle düzenlenmez. Yeniden üretmek:
@@ -71,7 +74,23 @@ scripts\demo.cmd
 Örnek veriyle C1→C6 fazlarını çalıştırır, her kapı kontrolünü tek tek yazar.
 Sonuç: `6/6 faz geçildi`. Gerçek kuruluma dokunmaz, kendi geçici oturumunu açar ve siler.
 
-### 3. Doğrulama
+### 3. Kanıt paketi ve bildirim formu
+
+```
+node onboarding\cli\tools\demo-export.mjs
+```
+
+Oturum açar, örnek olayla kanıt paketini üretir, doğrular, kurcalanmış kopyayı reddettiğini
+gösterir ve üç bildirim formunu (initial / intermediate / final) çıkarır. Ayrıntı:
+[`docs/KANIT-PAKETI.md`](docs/KANIT-PAKETI.md).
+
+```bash
+node bin/dora-onboard.mjs export --session ob-2026-xxxxx          # ZIP + imza
+node bin/dora-onboard.mjs verify --bundle evidence-out/....
+node bin/dora-onboard.mjs notify --session ob-2026-xxxxx --phase initial
+```
+
+### 4. Doğrulama
 
 ```
 scripts\validate.cmd
@@ -98,7 +117,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **0.4.1**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **0.6.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

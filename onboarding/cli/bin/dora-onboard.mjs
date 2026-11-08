@@ -4,12 +4,19 @@
 // DORA AI Package — CORF 6 fazlı onboarding CLI (bağımlılıksız, ESM).
 // Kullanım: node bin/dora-onboard.mjs <komut> [seçenekler]
 
+import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import * as store from '../src/corf/session.mjs';
 import { loadLifecycle, validateLifecycle, phaseById, nextPhase, runPhase } from '../src/corf/lifecycle.mjs';
 import { evaluatePhase, describeArtifacts } from '../src/corf/checks.mjs';
 import { verify, loadPublicKey, describe as describeLicense, REASON_TEXT } from '../src/corf/license.mjs';
+import { buildBundle, verifyBundle } from '../src/corf/evidence.mjs';
+import { buildNotification, PHASES as NOTIFY_PHASES } from '../src/corf/notify.mjs';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const DEV_KEY = path.resolve(HERE, '../../license/dev-private.pem');
 
 const C = {
   reset: '\u001b[0m',
@@ -51,6 +58,21 @@ ${color.bold}Komutlar${color.reset}
   rollback                    Belirtilen faza geri dön
     --session <id>
     --to-phase <C1..C6>
+
+  export                      Kanıt paketi üret (ZIP: manifest + hash zinciri + imza)
+    --session <id>               Oturum kimliği (zorunlu)
+    --out <dosya.zip>            Çıktı yolu (varsayılan evidence-out/<oturum>-evidence.zip)
+    --key <private.pem>          İmza anahtarı (varsayılan: varsa geliştirme anahtarı)
+
+  verify                      Kanıt paketini doğrula
+    --bundle <dosya.zip>         Paket yolu (zorunlu)
+    --pubkey <public.pem>        Açık anahtar (varsayılan: kurulumun açık anahtarı)
+
+  notify                      ITS 2024/2956 bildirim formu üret
+    --session <id>               Oturum kimliği (zorunlu)
+    --phase <initial|intermediate|final>
+    --out <dizin>                Çıktı dizini (varsayılan notifications/<oturum>)
+    --check                      Yalnızca doğrula, dosya yazma
 
 ${color.dim}Lisans: deneme modunda C1-C5 çalışır, C6 (üretime geçiş) ticari lisans ister.${color.reset}
 `);
@@ -104,6 +126,12 @@ const { values: opts } = parseArgs({
     'to-phase': { type: 'string' },
     license: { type: 'string' },
     demo: { type: 'boolean' },
+    out: { type: 'string' },
+    key: { type: 'string' },
+    bundle: { type: 'string' },
+    pubkey: { type: 'string' },
+    phase: { type: 'string' },
+    check: { type: 'boolean' },
   },
   allowPositionals: true,
 });
@@ -280,6 +308,70 @@ try {
     const s = store.rollback(session, opts['to-phase']);
     line(`${color.green}Geri alındı${color.reset} — aktif faz: ${s.current_phase}`);
     process.exit(0);
+  }
+
+  if (cmd === 'export') {
+    const session = requireSession(opts);
+    const dir = store.sessionDir(session.session_id);
+    const out = opts.out ?? path.join('evidence-out', session.session_id + '-evidence.zip');
+    const keyFile = opts.key ?? DEV_KEY;
+    const r = buildBundle({ dir, session, outFile: out, keyFile });
+    line(`${color.green}Kanıt paketi hazır:${color.reset} ${r.outFile}`);
+    line(`  dosya      : ${r.files}`);
+    line(`  zincir başı: ${r.chainHead.slice(0, 24)}…`);
+    line(`  imza       : ${r.signed ? 'Ed25519 (geliştirme/satıcı anahtarı)' : 'yok — özel anahtar verilmedi'}`);
+    line(`\nDoğrula: dora-onboard verify --bundle ${r.outFile}`);
+    process.exit(0);
+  }
+
+  if (cmd === 'verify') {
+    if (!opts.bundle) {
+      line(`${color.red}--bundle zorunlu${color.reset}`);
+      process.exit(1);
+    }
+    const pub = opts.pubkey ? fs.readFileSync(opts.pubkey, 'utf8') : loadPublicKey();
+    const r = verifyBundle(opts.bundle, pub);
+    line(`${color.bold}Kanıt paketi doğrulaması${color.reset} ${opts.bundle}`);
+    line(`  oturum : ${r.session?.session_id ?? '-'}`);
+    line(`  dosya  : ${r.files ?? '-'}`);
+    line(`  imza   : ${r.signature}`);
+    if (r.ok) {
+      line(`\n${color.green}✓ PAKET GEÇERLİ${color.reset} — içerik ve zincir tutarlı`);
+      process.exit(0);
+    }
+    for (const pr of r.problems) line(`  ${color.red}✘${color.reset} ${pr}`);
+    line(`\n${color.red}PAKET GEÇERSİZ${color.reset}`);
+    process.exit(1);
+  }
+
+  if (cmd === 'notify') {
+    const session = requireSession(opts);
+    const phase = opts.phase;
+    if (!phase) {
+      line(`${color.red}--phase zorunlu (${NOTIFY_PHASES.join('|')})${color.reset}`);
+      process.exit(1);
+    }
+    const outDir = opts.out ?? path.join('notifications', session.session_id);
+    const r = buildNotification({
+      dir: store.sessionDir(session.session_id),
+      session,
+      phase,
+      outDir,
+      write: !opts.check,
+    });
+    line(`${color.bold}${r.payload.phase_name}${color.reset} — ${r.payload.template}`);
+    for (const f of r.payload.fields) {
+      const mark = f.present ? color.green + '✔' + color.reset : color.red + '✘' + color.reset;
+      const val = f.present ? String(f.value).slice(0, 46) : color.dim + f.status + color.reset;
+      line(`  ${mark} ${f.name.padEnd(22)} ${val}`);
+    }
+    if (r.payload.complete) {
+      line(`\n${color.green}FORM TAM${color.reset} — ${opts.check ? 'kontrol edildi (dosya yazılmadı)' : 'yazıldı: ' + r.outDir}`);
+      process.exit(0);
+    }
+    line(`\n${color.red}FORM EKSİK${color.reset} — zorunlu alanlar: ${r.payload.missing.join(', ')}`);
+    line(`${color.dim}Eksik alanlar doldurulmadan bildirim gönderilmemeli.${color.reset}`);
+    process.exit(2);
   }
 
   line(`${color.red}Bilinmeyen komut:${color.reset} ${cmd}`);
