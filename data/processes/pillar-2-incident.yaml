@@ -220,3 +220,96 @@ processes:
         note: "Opsiyonel süreç; tier 3 kurumlarda devre dışı bırakılabilir"
     control_ids:
       - CTL-INC-008
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INC-06 — Kriz İletişimi (Madde 14)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INC-06
+    name:
+      tr: "Kriz İletişimi ve Paydaş Bildirimi"
+      en: "Crisis Communication and Stakeholder Notification"
+    pillar: incident
+    trigger: "Olayın 'büyük' olarak onaylanması veya kamuya görünür hizmet kesintisi"
+    preconditions:
+      - "PRC-INC-01 sınıflandırma kararı onaylanmış olmalı"
+      - "Sözcü matrisi ve onaylı açıklama şablonu güncel olmalı"
+    inputs:
+      - { name: "Sınıflandırma kararı", format: json, source_role: ROL-INC-01 }
+      - { name: "Olay kaydı ve etki kapsamı", format: json, source_role: ROL-INC-01 }
+      - { name: "Kriz iletişimi planı ve şablonları", format: yaml, source_role: ROL-CEO-01 }
+    outputs:
+      - { name: "holding-statement.pdf", format: pdf, retention_years: 10 }
+      - { name: "stakeholder-notification.json", format: json, retention_years: 10 }
+      - { name: "press-log.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-CEO-01, ROL-INC-01]
+    approval_roles: [ROL-CEO-01, ROL-CMP-01]
+    slas:
+      - { trigger: "Sınıflandırma onayı", duration: 4, unit: hours, clock_start: classification }
+      - { trigger: "İlk açıklama", duration: 24, unit: hours, clock_start: publication }
+    decision_rules:
+      - rule_id: INC-R11
+        condition: "etkilenen_musteri > 0"
+        action: "müşteri kanalı bildirimi yayınla (şablon CM-CUSTOMER)"
+        dora_ref: { article: "Madde 14(2)" }
+      - rule_id: INC-R12
+        condition: "basin_ilgisi == true OR sosyal_medya_yayilimi == true"
+        action: "holding statement yayınla, sözcüyü ata (şablon CM-PRESS)"
+        dora_ref: { article: "Madde 14(3)" }
+      - rule_id: INC-R13
+        condition: "yanlis_bilgi_yayildi == true"
+        action: "2 saat içinde düzeltme açıklaması yayınla"
+        dora_ref: { article: "Madde 14(2)" }
+    dependencies:
+      upstream: [PRC-INC-01]
+      downstream: [PRC-INC-04]
+    evidence_requirements:
+      - "holding-statement.pdf (yayın zaman damgası + onaylayan)"
+      - "stakeholder-notification.json (kanal, hedef kitle, gönderim zamanı)"
+      - "press-log.json (soru-cevap kaydı, düzeltmeler)"
+    tier_variants:
+      tier3:
+        sla_override: "İlk açıklama 8 saat — tek sözcü, tek kanal"
+    control_ids:
+      - CTL-INC-009
+
+  # ═══════════════════════════════════════════════════════════
+  # PRC-INC-07 — Ödeme Olayı Ayrımı (Madde 23)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-INC-07
+    name:
+      tr: "Ödeme ile İlgili Olayların Ayrı Bildirimi"
+      en: "Payment-related Incident Segregation and Notification"
+    pillar: incident
+    trigger: "Olayın ödeme zincirini veya kart işlemlerini etkilediğinin tespiti"
+    preconditions:
+      - "PRC-INC-02 ilk bildirimi hazırlanmış olmalı"
+      - "TCMB bildirim kanalı tanımlı olmalı (local-equivalents-TR.md)"
+    inputs:
+      - { name: "Olay kaydı", format: json, source_role: ROL-INC-01 }
+      - { name: "Ödeme etki değerlendirmesi", format: json, source_role: ROL-INC-01 }
+      - { name: "TCMB kanal bilgisi", format: yaml, source_role: ROL-CMP-01 }
+    outputs:
+      - { name: "payment-incident-record.json", format: json, retention_years: 10 }
+      - { name: "dual-channel-receipt.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-INC-01]
+    approval_roles: [ROL-CMP-01]
+    slas:
+      - { trigger: "Olay tespiti", duration: 1, unit: hours, clock_start: detection }
+      - { trigger: "Ödeme etkisi onayı", duration: 4, unit: hours, clock_start: detection }
+    decision_rules:
+      - rule_id: INC-R14
+        condition: "odeme_zinciri_etkisi == true"
+        action: "çift kanal bildirimi zorunlu: DORA kanalı + TCMB kanalı"
+        dora_ref: { article: "Madde 23(1)" }
+      - rule_id: INC-R15
+        condition: "kart_islem_etkisi == true OR odeme_senaryosu_kesintisi == true"
+        action: "ödeme olayı olarak sınıflandır, ek bildirim alanlarını doldur"
+        dora_ref: { article: "Madde 23(2)" }
+    dependencies:
+      upstream: [PRC-INC-01, PRC-INC-02]
+      downstream: [PRC-INC-04]
+    evidence_requirements:
+      - "payment-incident-record.json (ödeme etkisi gerekçesi + etkilenen işlem sayısı)"
+      - "dual-channel-receipt.json (her iki kanalın gönderim ve yanıt kaydı)"
+    control_ids:
+      - CTL-INC-010

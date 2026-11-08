@@ -7,8 +7,8 @@
 # status: covered (tam) | partial (kısmi — not alanı nedenini yazar) | gap (kapsanmıyor)
 
 mapping:
-  version: "1.0.0"
-  generated_at: "2026-11-03"
+  version: "1.1.0"
+  generated_at: "2026-11-08"
   source: "Regulation (EU) 2022/2554 (DORA)"
   scope_note: >
     Yalnızca yükümlülük doğuran maddeler eşlendi; tanım maddeleri (3) ve
@@ -58,10 +58,11 @@ articles:
       - "ICT varlıkları ve bağımlılıkları envanterlenir"
       - "Kritik veya önemli işlevler belirlenir"
       - "Kayıt dışı varlık bırakılmaz"
-    processes: [PRC-RSK-03]
-    controls: [CTL-RSK-003, CTL-RSK-004]
+    processes: [PRC-RSK-02, PRC-RSK-03]
+    controls: [CTL-RSK-003, CTL-RSK-004, CTL-RSK-006]
     roles: [ROL-RSK-01]
     status: covered
+    note: "Değişiklik risk kapısı (CTL-RSK-006) Madde 8(4) kapsamında buraya bağlandı."
 
   - id: Art-09
     chapter: "Bölüm II — ICT Risk Yönetimi"
@@ -127,11 +128,11 @@ articles:
     obligations:
       - "Kriz iletişimi planı ve sorumluları tanımlanır"
       - "Paydaşlara ve kamuya iletişim protokolü kurulur"
-    processes: [PRC-INC-04]
-    controls: []
+    processes: [PRC-INC-06]
+    controls: [CTL-INC-009]
     roles: [ROL-CEO-01, ROL-INC-01]
-    status: gap
-    note: "Kriz iletişimi planı bu pakette yok; CEO ajanı yalnızca yönetim kurulu raporlamasını kapsıyor."
+    status: covered
+    note: "PRC-INC-06 sözcü matrisi, 4 saatlik ilk açıklama ve düzeltme kuralını tanımlar; şablon CM-PRESS / CM-CUSTOMER."
 
   - id: Art-15
     chapter: "Bölüm II — ICT Risk Yönetimi"
@@ -184,10 +185,11 @@ articles:
       - "İlk bildirim: sınıflandırmadan sonra 4 saat, tespitten en geç 24 saat"
       - "Ara rapor: 72 saat"
       - "Nihai rapor: 1 ay"
-    processes: [PRC-INC-02, PRC-INC-03, PRC-INC-04]
-    controls: [CTL-INC-003, CTL-INC-004, CTL-INC-005, CTL-INC-006]
+    processes: [PRC-INC-02, PRC-INC-03, PRC-INC-04, PRC-INC-05]
+    controls: [CTL-INC-003, CTL-INC-004, CTL-INC-005, CTL-INC-006, CTL-INC-008]
     roles: [ROL-INC-01, ROL-CIO-01]
     status: covered
+    note: "Gönüllü tehdit bildirimi PRC-INC-05 + gizlilik kontrolü CTL-INC-008 ile kapsanır."
 
   - id: Art-20
     chapter: "Bölüm III — Olay Yönetimi"
@@ -197,19 +199,19 @@ articles:
     processes: [PRC-INC-02, PRC-INC-03, PRC-INC-04]
     controls: [CTL-INC-004]
     roles: [ROL-CMP-01]
-    status: partial
-    note: "Şablon alanları tanımlı; ITS 2024/2956 alan eşlemesi bu pakette ayrıntılandırılmadı."
+    status: covered
+    note: "Alan sözlüğü data/mapping/its-2024-2956.yaml içinde: ilk/ara/nihai bildirim alanları ve her alanın kanıt kaynağı. Resmi XBRL taksonomi kodlarının bağlanması uygulama adımıdır."
 
   - id: Art-23
     chapter: "Bölüm III — Olay Yönetimi"
     title: "Ödeme ile ilgili operasyonel/güvenlik olayları"
     obligations:
       - "Ödeme işlemlerine ilişkin olaylar ayrıca raporlanır"
-    processes: [PRC-INC-02]
-    controls: [CTL-INC-003]
+    processes: [PRC-INC-02, PRC-INC-07]
+    controls: [CTL-INC-003, CTL-INC-010]
     roles: [ROL-INC-01, ROL-CMP-01]
-    status: partial
-    note: "Ödeme kuruluşları için TCMB kanalı tanımlı (local-equivalents-TR.md), ancak madde bazlı ayrım süreçte yok."
+    status: covered
+    note: "PRC-INC-07 ödeme zinciri etkisini ayrı süreçte ele alır; çift kanal (DORA + TCMB) zorunluluğu INC-R14 kuralıyla bağlanır."
 
   - id: Art-24
     chapter: "Bölüm IV — Test"

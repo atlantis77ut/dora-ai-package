@@ -398,7 +398,7 @@ başarısız sayıyor.
 | `docs/tools/build-dashboard.mjs` | YAML'lardan üretir; sarkan referans bulursa çıkış 1 |
 | `docs/tools/render_dashboard.py` | PNG üretimi |
 
-Gösterilen: 21 süreç · 32 kontrol · 11 ajan · 60 terim · 4 senaryo (27 assertion) · %86 kapsama ·
+Gösterilen: 23 süreç · 34 kontrol · 11 ajan · 60 terim · 4 senaryo (27 assertion) · %96 kapsama ·
 6 CORF fazı (adım/kapı/süre/ajan modu) · açık noktalar · referans sağlığı.
 
 Dashboard elle düzenlenmez; `node docs/tools/build-dashboard.mjs` ile yeniden üretilir.
@@ -413,9 +413,9 @@ Dashboard elle düzenlenmez; `node docs/tools/build-dashboard.mjs` ile yeniden �
 
 | Sayfa | İçerik |
 |---|---|
-| `index.html` | KPI kartları (21 süreç · 32 kontrol · 11 ajan · 60 terim · 4 senaryo · %86 kapsama), kapsama çubuğu, CORF faz tablosu, açık noktalar, senaryo listesi |
-| `processes.html` | 21 sürecin tablosu + her süreç için açılır ayrıntı (tetikleyici, girdi/çıktı, SLA, karar kuralları, kontroller, bağımlılıklar) |
-| `controls.html` | 32 kontrolün tablosu + kanıt alanları, değiştirilemezlik, DORA maddesi, test prosedürü |
+| `index.html` | KPI kartları (23 süreç · 34 kontrol · 11 ajan · 60 terim · 4 senaryo · %96 kapsama), kapsama çubuğu, CORF faz tablosu, açık noktalar, senaryo listesi |
+| `processes.html` | 23 sürecin tablosu + her süreç için açılır ayrıntı (tetikleyici, girdi/çıktı, SLA, karar kuralları, kontroller, bağımlılıklar) |
+| `controls.html` | 34 kontrolün tablosu + kanıt alanları, değiştirilemezlik, DORA maddesi, test prosedürü |
 
 Üretici: `docs/tools/build-dashboard.mjs` (YAML → HTML/JSON; sarkan referans bulursa çıkış 1).
 PNG kopyası: `docs/tools/render_dashboard.py` → `dashboard/dashboard.png`.
@@ -430,3 +430,25 @@ PNG kopyası: `docs/tools/render_dashboard.py` → `dashboard/dashboard.png`.
 
 `onboarding/cli/tools/demo.mjs`: demo lisansı geliştirme anahtarıyla imzalanır (varsa), böylece
 C6 dahil 6/6 geçer; anahtar yoksa deneme modunda C6'da durur — iki davranış da tasarım gereği.
+
+---
+
+## 18. Raporlama boşluklarının kapatılması (2026-11-08) — sürüm 0.4.0
+
+Kapsam analizinde çıkan tek boşluk (Art-14) ve iki kısmi madde (Art-20, Art-23) kapatıldı.
+
+| Ne | Dosya | Etki |
+|---|---|---|
+| Kriz iletişimi süreci + kontrolü | `PRC-INC-06`, `CTL-INC-009` | Art-14: gap → covered |
+| Ödeme olayı ayrımı | `PRC-INC-07`, `CTL-INC-010` | Art-23: partial → covered |
+| ITS bildirim alan sözlüğü | `data/mapping/its-2024-2956.yaml` | Art-20: partial → covered |
+| Gönüllü tehdit bildirimi eşlemesi | `dora-articles.yaml` Art-19 | süreç vardı, eşlemede yoktu — düzeltildi |
+
+**Kapsam:** 27 covered · 1 partial (Art-12 yedekleme) · 0 gap · **%96**.
+
+Kalan tek kısmi maddenin gerekçesi: geri yükleme testi BCP/DRP kanıtı içinde izleniyor,
+ayrı yedekleme kontrolü yok. İstenirse `CTL-RSK-012` ile ayrı kontrol açılabilir.
+
+Raporlama tarafında kalan işler (paket dışı): kanıt paketi ihracı, bildirim formu üretimi,
+dashboard'da açık olay/SLA görünümü — ayrıntı: [RAPORLAMA-ANALIZI.md](RAPORLAMA-ANALIZI.md) §3.
+

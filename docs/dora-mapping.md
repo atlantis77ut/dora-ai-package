@@ -4,20 +4,20 @@
 > Yeniden üretmek için: `node docs/tools/render-mapping.mjs`
 > Doğrulamak için (yazmadan): `node docs/tools/render-mapping.mjs --check`
 
-- **Sürüm:** 1.0.0
-- **Tarih:** 2026-11-03
+- **Sürüm:** 1.1.0
+- **Tarih:** 2026-11-08
 - **Kaynak:** Regulation (EU) 2022/2554 (DORA)
 
 ## Özet
 
 | Durum | Madde |
 |---|---|
-| covered | 24 |
-| partial | 3 |
-| gap | 1 |
+| covered | 27 |
+| partial | 1 |
+| gap | 0 |
 | **toplam** | **28** |
 
-Tam kapsama oranı: **%86**. `partial` ve `gap` maddeleri C5 öz değerlendirmesinde
+Tam kapsama oranı: **%96**. `partial` ve `gap` maddeleri C5 öz değerlendirmesinde
 boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 
 ## Tablo
@@ -27,20 +27,20 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 | Art-05 | Yönetişim ve organizasyon | PRC-RSK-01 | CTL-RSK-001 | covered |
 | Art-06 | ICT risk yönetim çerçevesi | PRC-RSK-01, PRC-RSK-02 | CTL-RSK-001, CTL-RSK-002 | covered |
 | Art-07 | ICT sistemleri, protokoller ve araçlar | PRC-RSK-03, PRC-RSK-05 | CTL-RSK-003, CTL-RSK-009 | covered |
-| Art-08 | Tanımlama | PRC-RSK-03 | CTL-RSK-003, CTL-RSK-004 | covered |
+| Art-08 | Tanımlama | PRC-RSK-02, PRC-RSK-03 | CTL-RSK-003, CTL-RSK-004, CTL-RSK-006 | covered |
 | Art-09 | Koruma ve önleme | PRC-RSK-05 | CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010 | covered |
 | Art-10 | Tespit | PRC-INC-01 | CTL-INC-001 | covered |
 | Art-11 | İş sürekliliği politikası ve kurtarma planları | PRC-RSK-04, PRC-RSK-02 | CTL-RSK-005 | covered |
 | Art-12 | Yedekleme politikaları, prosedürleri ve yöntemleri | PRC-RSK-04 | CTL-RSK-005 | partial |
 | Art-13 | Öğrenme ve gelişme | PRC-INC-04 | CTL-INC-006, CTL-INC-007 | covered |
-| Art-14 | İletişim | PRC-INC-04 | — | gap |
+| Art-14 | İletişim | PRC-INC-06 | CTL-INC-009 | covered |
 | Art-15 | Küçük kuruluşlar için basitleştirilmiş çerçeve | PRC-RSK-01, PRC-RSK-04 | CTL-RSK-001 | covered |
 | Art-16 | Orantılılık ilkesi | PRC-RSK-01 | CTL-RSK-001 | covered |
 | Art-17 | ICT olay yönetimi süreci | PRC-INC-01, PRC-INC-02, PRC-INC-03, PRC-INC-04 | CTL-INC-001, CTL-INC-002 | covered |
 | Art-18 | Olay sınıflandırması | PRC-INC-01 | CTL-INC-002 | covered |
-| Art-19 | Büyük olayların raporlanması | PRC-INC-02, PRC-INC-03, PRC-INC-04 | CTL-INC-003, CTL-INC-004, CTL-INC-005, CTL-INC-006 | covered |
-| Art-20 | Raporlama şablonlarının uyumlaştırılması | PRC-INC-02, PRC-INC-03, PRC-INC-04 | CTL-INC-004 | partial |
-| Art-23 | Ödeme ile ilgili operasyonel/güvenlik olayları | PRC-INC-02 | CTL-INC-003 | partial |
+| Art-19 | Büyük olayların raporlanması | PRC-INC-02, PRC-INC-03, PRC-INC-04, PRC-INC-05 | CTL-INC-003, CTL-INC-004, CTL-INC-005, CTL-INC-006, CTL-INC-008 | covered |
+| Art-20 | Raporlama şablonlarının uyumlaştırılması | PRC-INC-02, PRC-INC-03, PRC-INC-04 | CTL-INC-004 | covered |
+| Art-23 | Ödeme ile ilgili operasyonel/güvenlik olayları | PRC-INC-02, PRC-INC-07 | CTL-INC-003, CTL-INC-010 | covered |
 | Art-24 | Dijital operasyonel dayanıklılık testi | PRC-TST-01, PRC-TST-02 | CTL-TST-001, CTL-TST-002 | covered |
 | Art-25 | Test araç ve sistemlerinin kullanımı | PRC-TST-02 | CTL-TST-001, CTL-TST-003 | covered |
 | Art-26 | TLPT — gelişmiş test | PRC-TST-03 | CTL-TST-004 | covered |
@@ -101,10 +101,11 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - Kritik veya önemli işlevler belirlenir
 - Kayıt dışı varlık bırakılmaz
 
-- **Süreçler:** PRC-RSK-03
-- **Kontroller:** CTL-RSK-003, CTL-RSK-004
+- **Süreçler:** PRC-RSK-02, PRC-RSK-03
+- **Kontroller:** CTL-RSK-003, CTL-RSK-004, CTL-RSK-006
 - **Sahip roller:** ROL-RSK-01
 - **Durum:** covered
+- **Not:** Değişiklik risk kapısı (CTL-RSK-006) Madde 8(4) kapsamında buraya bağlandı.
 
 ### Art-09 — Koruma ve önleme
 
@@ -176,11 +177,11 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - Kriz iletişimi planı ve sorumluları tanımlanır
 - Paydaşlara ve kamuya iletişim protokolü kurulur
 
-- **Süreçler:** PRC-INC-04
-- **Kontroller:** —
+- **Süreçler:** PRC-INC-06
+- **Kontroller:** CTL-INC-009
 - **Sahip roller:** ROL-CEO-01, ROL-INC-01
-- **Durum:** gap
-- **Not:** Kriz iletişimi planı bu pakette yok; CEO ajanı yalnızca yönetim kurulu raporlamasını kapsıyor.
+- **Durum:** covered
+- **Not:** PRC-INC-06 sözcü matrisi, 4 saatlik ilk açıklama ve düzeltme kuralını tanımlar; şablon CM-PRESS / CM-CUSTOMER.
 
 ### Art-15 — Küçük kuruluşlar için basitleştirilmiş çerçeve
 
@@ -238,10 +239,11 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - Ara rapor: 72 saat
 - Nihai rapor: 1 ay
 
-- **Süreçler:** PRC-INC-02, PRC-INC-03, PRC-INC-04
-- **Kontroller:** CTL-INC-003, CTL-INC-004, CTL-INC-005, CTL-INC-006
+- **Süreçler:** PRC-INC-02, PRC-INC-03, PRC-INC-04, PRC-INC-05
+- **Kontroller:** CTL-INC-003, CTL-INC-004, CTL-INC-005, CTL-INC-006, CTL-INC-008
 - **Sahip roller:** ROL-INC-01, ROL-CIO-01
 - **Durum:** covered
+- **Not:** Gönüllü tehdit bildirimi PRC-INC-05 + gizlilik kontrolü CTL-INC-008 ile kapsanır.
 
 ### Art-20 — Raporlama şablonlarının uyumlaştırılması
 
@@ -252,8 +254,8 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - **Süreçler:** PRC-INC-02, PRC-INC-03, PRC-INC-04
 - **Kontroller:** CTL-INC-004
 - **Sahip roller:** ROL-CMP-01
-- **Durum:** partial
-- **Not:** Şablon alanları tanımlı; ITS 2024/2956 alan eşlemesi bu pakette ayrıntılandırılmadı.
+- **Durum:** covered
+- **Not:** Alan sözlüğü data/mapping/its-2024-2956.yaml içinde: ilk/ara/nihai bildirim alanları ve her alanın kanıt kaynağı. Resmi XBRL taksonomi kodlarının bağlanması uygulama adımıdır.
 
 ### Art-23 — Ödeme ile ilgili operasyonel/güvenlik olayları
 
@@ -261,11 +263,11 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 
 - Ödeme işlemlerine ilişkin olaylar ayrıca raporlanır
 
-- **Süreçler:** PRC-INC-02
-- **Kontroller:** CTL-INC-003
+- **Süreçler:** PRC-INC-02, PRC-INC-07
+- **Kontroller:** CTL-INC-003, CTL-INC-010
 - **Sahip roller:** ROL-INC-01, ROL-CMP-01
-- **Durum:** partial
-- **Not:** Ödeme kuruluşları için TCMB kanalı tanımlı (local-equivalents-TR.md), ancak madde bazlı ayrım süreçte yok.
+- **Durum:** covered
+- **Not:** PRC-INC-07 ödeme zinciri etkisini ayrı süreçte ele alır; çift kanal (DORA + TCMB) zorunluluğu INC-R14 kuralıyla bağlanır.
 
 ### Art-24 — Dijital operasyonel dayanıklılık testi
 

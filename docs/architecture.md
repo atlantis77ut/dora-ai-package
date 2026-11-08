@@ -3,7 +3,7 @@
 Bu belge, DORA AI Ajan Paketi'nin nasıl çalıştığını anlatır: katmanlar, veri akışı,
 ajan çalışma modeli, denetim izi ve genişleme noktaları.
 
-Son güncelleme: 2026-11-08 · Sürüm 0.3.0
+Son güncelleme: 2026-11-08 · Sürüm 0.4.0
 
 ---
 
@@ -22,7 +22,7 @@ her adımı **geçiş kapılarıyla** doğrulayan bir referans mimarisidir.
 │     GOLDENHORN / CORF platformuna API ile bağlanır           │
 ├─────────────────────────────────────────────────────────────┤
 │  2. SÜREÇ KATMANI                                            │
-│     21 süreç, 32 kontrol, 5 sütun, CORF 6 fazı               │
+│     23 süreç, 34 kontrol, 5 sütun, CORF 6 fazı               │
 │     Her süreç: tetikleyici → girdi → SLA → kural → kanıt     │
 ├─────────────────────────────────────────────────────────────┤
 │  1. VERİ KATMANI                                             │
@@ -44,8 +44,8 @@ bir tanımı var" demenin tek yolu.
 | `schema/` | 5 JSON Schema (common, glossary, roles, processes, controls) | `ajv` / `json.loads` |
 | `data/glossary/` | 60 terim, DORA/RTS/ITS referanslı | glossary.schema.json |
 | `data/roles/` | 11 ajan: sorumluluk, beceri, KPI, otonomi, CORF kodları | roles.schema.json |
-| `data/processes/` | 21 süreç × 5 sütun | processes.schema.json |
-| `data/controls/` | 32 kontrol + kanıt şartnamesi | controls.schema.json |
+| `data/processes/` | 23 süreç × 5 sütun | processes.schema.json |
+| `data/controls/` | 34 kontrol + kanıt şartnamesi | controls.schema.json |
 | `data/mapping/` | 28 DORA maddesi → süreç/kontrol/rol | render-mapping `--check` |
 | `data/corf-integration/` | ajan → CORF süreç kodu → GOLDENHORN modülü | — |
 

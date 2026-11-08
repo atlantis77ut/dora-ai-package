@@ -5,6 +5,44 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.4.0] — 2026-11-08
+
+### Eklendi
+
+**Kriz iletişimi (Madde 14) — kapsamdaki son boşluk kapandı**
+- `PRC-INC-06` Kriz İletişimi ve Paydaş Bildirimi: sözcü matrisi, 4 saatlik ilk açıklama,
+  müşteri/basın kanal kuralları, yanlış bilgi düzeltme (2 saat)
+- `CTL-INC-009` hazırlık ve onay kontrolü (şablon sürümü, onaylayan, yayın zamanı, SLA uyumu)
+
+**Ödeme olaylarının ayrı bildirimi (Madde 23)**
+- `PRC-INC-07` Ödeme ile İlgili Olayların Ayrı Bildirimi: ödeme zinciri etkisi, çift kanal
+  (DORA + TCMB) zorunluluğu, INC-R14/INC-R15 kuralları
+- `CTL-INC-010` ödeme etkisi ve çift kanal kayıt kontrolü
+
+**Bildirim şablonu alan sözlüğü (Madde 20)**
+- `data/mapping/its-2024-2956.yaml`: ilk / ara / nihai bildirim alanları, her alanın zorunluluğu
+  ve beslendiği kanıt dosyası. Resmi XBRL taksonomi kodlarının bağlanması uygulama adımıdır.
+
+**Raporlama görünürlüğü**
+- `docs/tools/build-coverage-summary.mjs` → `docs/KAPSAM-OZETI.md` (üretilen kapsam tablosu)
+- `docs/RAPORLAMA-ANALIZI.md`: raporlama yükümlülükleri matrisi, kalan boşluklar, öneriler
+
+### Değişti
+
+- Süreç **21 → 23**, kontrol **32 → 34**
+- DORA kapsaması **%86 → %96**: 27 covered, 1 partial (Art-12), 0 gap
+- `dora-articles.yaml` **1.1.0**: Art-14 gap → covered; Art-20 ve Art-23 partial → covered;
+  Art-19 artık gönüllü tehdit bildirimini (PRC-INC-05) de gösteriyor
+- `docs/dora-mapping.md`, `dashboard/` ve `docs/KAPSAM-OZETI.md` yeniden üretildi
+
+### Düzeltildi
+
+- Art-19 eşlemesi `PRC-INC-05` + `CTL-INC-008`'i göstermiyordu: süreç pakette vardı ama
+  eşlemede görünmüyordu, bu yüzden "gönüllü bildirim yok" gibi okunuyordu
+- `docs/DURUM.md` başlık tarihi ve dashboard sayaçları güncel değildi
+
+---
+
 ## [0.3.0] — 2026-11-04
 
 ### Eklendi

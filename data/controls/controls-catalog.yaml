@@ -393,6 +393,51 @@ controls:
     dora_ref: { article: "Madde 45(2)" }
     test_procedure: "Anonimleştirilmeden paylaşılmış kayıt var mı? (0 olmalı)"
 
+  - id: CTL-INC-009
+    name:
+      tr: "Kriz iletişimi hazırlık ve onay kontrolü"
+      en: "Crisis communication readiness and approval check"
+    process_id: PRC-INC-06
+    type: preventive
+    owner_role: ROL-CEO-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: incident_id, type: string, required: true }
+        - { name: template_version, type: string, required: true }
+        - { name: audience, type: string, required: true }
+        - { name: channel, type: string, required: true }
+        - { name: approved_by, type: string, required: true }
+        - { name: approved_at, type: datetime, required: true }
+        - { name: published_at, type: datetime, required: true }
+        - { name: within_sla, type: boolean, required: true }
+    dora_ref: { article: "Madde 14" }
+    test_procedure: "Tatbikatta ilk açıklama 4 saat içinde yayınlandı mı? Onaysız yayın var mı? (0 olmalı)"
+
+  - id: CTL-INC-010
+    name:
+      tr: "Ödeme olayı ayrımı ve çift kanal bildirimi"
+      en: "Payment incident segregation and dual-channel notification"
+    process_id: PRC-INC-07
+    type: detective
+    owner_role: ROL-INC-01
+    frequency: event_driven
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: incident_id, type: string, required: true }
+        - { name: payment_impact, type: boolean, required: true }
+        - { name: payment_chain, type: string, required: false }
+        - { name: affected_transactions, type: integer, required: false }
+        - { name: dora_channel_sent_at, type: datetime, required: true }
+        - { name: cb_channel_sent_at, type: datetime, required: false }
+        - { name: dual_report_complete, type: boolean, required: true }
+    dora_ref: { article: "Madde 23" }
+    test_procedure: "Ödeme zincirini etkileyen her olayda payment_impact=true ve iki kanal kaydı var mı?"
+
   # ═══════════════════════════════════════════════════════════════
   # SÜTUN 3 — DAYANIKLILIK TESTLERİ
   # ═══════════════════════════════════════════════════════════════

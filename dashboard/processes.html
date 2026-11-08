@@ -50,14 +50,14 @@
 </style></head>
 <body><div class="wrap">
   <header>
-    <div><h1>Süreç Kütüphanesi</h1><div class="sub">21 süreç · 32 kontrol · CORF 6 fazı</div></div>
-    <span class="badge">08.11.2026 18:01:09</span>
+    <div><h1>Süreç Kütüphanesi</h1><div class="sub">23 süreç · 34 kontrol · CORF 6 fazı</div></div>
+    <span class="badge">08.11.2026 20:56:46</span>
   </header>
   
   <nav>
     <a href="index.html" class="">Genel bakış</a>
-    <a href="processes.html" class="on">Süreçler (21)</a>
-    <a href="controls.html" class="">Kontroller (32)</a>
+    <a href="processes.html" class="on">Süreçler (23)</a>
+    <a href="controls.html" class="">Kontroller (34)</a>
   </nav>
   <section>
     <h2>Sütun dağılımı <span>DORA 5 sütun</span></h2>
@@ -92,6 +92,12 @@
         <td class="num">2</td></tr><tr><td class="mono">PRC-INC-05</td><td>Gönüllü Siber Tehdit Bildirimi</td>
         <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
         <td class="num">1</td><td class="num">1</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-INC-06</td><td>Kriz İletişimi ve Paydaş Bildirimi</td>
+        <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
+        <td class="num">3</td><td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">PRC-INC-07</td><td>Ödeme ile İlgili Olayların Ayrı Bildirimi</td>
+        <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
+        <td class="num">2</td><td class="num">2</td>
         <td class="num">1</td></tr><tr><td class="mono">PRC-TST-01</td><td>Risk Bazlı Test Programı Tasarımı</td>
         <td><span class="pill">Dijital Operasyonel Dayanıklılık Testi</span></td>
         <td class="num">2</td><td class="num">1</td>
@@ -308,6 +314,42 @@
       <dt>Karar kuralları</dt><dd><span class="mono">INC-R10</span> tehdit_ilgili_sektor == true AND gizlilik_riski == 'dusuk' → gönüllü bildirim taslağı hazırla</dd>
       <dt>Kontroller</dt><dd><span class="mono">CTL-INC-008</span></dd>
       <dt>Bağımlılık</dt><dd>↑ PRC-INF-01 · ↓ —</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INC-06</span> &nbsp;<b>Kriz İletişimi ve Paydaş Bildirimi</b> &nbsp;
+      <span class="pill">2. Sütun — Olay Yönetimi ve Raporlama</span>
+      <span class="pill">3 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Olayın 'büyük' olarak onaylanması veya kamuya görünür hizmet kesintisi</dd>
+      <dt>Sorumlu</dt><dd>ROL-CEO-01, ROL-INC-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01, ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>Sınıflandırma kararı <span class="pill">json</span> · Olay kaydı ve etki kapsamı <span class="pill">json</span> · Kriz iletişimi planı ve şablonları <span class="pill">yaml</span></dd>
+      <dt>Çıktı</dt><dd>holding-statement.pdf <span class="pill">pdf</span> · stakeholder-notification.json <span class="pill">json</span> · press-log.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Sınıflandırma onayı: <b>4 hours</b><br>İlk açıklama: <b>24 hours</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INC-R11</span> etkilenen_musteri > 0 → müşteri kanalı bildirimi yayınla (şablon CM-CUSTOMER)<br><span class="mono">INC-R12</span> basin_ilgisi == true OR sosyal_medya_yayilimi == true → holding statement yayınla, sözcüyü ata (şablon CM-PRESS)<br><span class="mono">INC-R13</span> yanlis_bilgi_yayildi == true → 2 saat içinde düzeltme açıklaması yayınla</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INC-009</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INC-01 · ↓ PRC-INC-04</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-INC-07</span> &nbsp;<b>Ödeme ile İlgili Olayların Ayrı Bildirimi</b> &nbsp;
+      <span class="pill">2. Sütun — Olay Yönetimi ve Raporlama</span>
+      <span class="pill">2 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">1 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Olayın ödeme zincirini veya kart işlemlerini etkilediğinin tespiti</dd>
+      <dt>Sorumlu</dt><dd>ROL-INC-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CMP-01</dd>
+      <dt>Girdi</dt><dd>Olay kaydı <span class="pill">json</span> · Ödeme etki değerlendirmesi <span class="pill">json</span> · TCMB kanal bilgisi <span class="pill">yaml</span></dd>
+      <dt>Çıktı</dt><dd>payment-incident-record.json <span class="pill">json</span> · dual-channel-receipt.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Olay tespiti: <b>1 hours</b><br>Ödeme etkisi onayı: <b>4 hours</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">INC-R14</span> odeme_zinciri_etkisi == true → çift kanal bildirimi zorunlu: DORA kanalı + TCMB kanalı<br><span class="mono">INC-R15</span> kart_islem_etkisi == true OR odeme_senaryosu_kesintisi == true → ödeme olayı olarak sınıflandır, ek bildirim alanlarını doldur</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-INC-010</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INC-01, PRC-INC-02 · ↓ PRC-INC-04</dd>
     </dl>
   </details>
   <details>

@@ -44,6 +44,13 @@ for (const a of articles) {
   if (a.status === 'gap' && !a.note) problems.push(`${a.id}: gap ama gerekçe (note) yok`);
 }
 
+// Ters yön: katalogda olup hiçbir maddeye bağlanmayan süreç/kontrol, eşlemede görünmeyen
+// bir yetenek demektir (0.4.0'da PRC-INC-05/CTL-INC-008 bu şekilde gözden kaçmıştı).
+const referencedProcesses = new Set(articles.flatMap((a) => a.processes ?? []));
+const referencedControls = new Set(articles.flatMap((a) => a.controls ?? []));
+for (const p of processIds) if (!referencedProcesses.has(p)) problems.push(`eşlemede görünmeyen süreç: ${p}`);
+for (const c of controlIds) if (!referencedControls.has(c)) problems.push(`eşlemede görünmeyen kontrol: ${c}`);
+
 const byStatus = { covered: 0, partial: 0, gap: 0 };
 for (const a of articles) byStatus[a.status] = (byStatus[a.status] ?? 0) + 1;
 const pct = articles.length ? Math.round((byStatus.covered / articles.length) * 100) : 0;

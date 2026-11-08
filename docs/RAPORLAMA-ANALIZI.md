@@ -1,103 +1,92 @@
 # Raporlama Analizi — DORA AI Package
 
-Tarih: **2026-11-08** · Kapsam: DORA raporlama yükümlülükleri ve paketin bunları karşılama düzeyi
-Veri kaynağı: [`data/mapping/dora-articles.yaml`](../data/mapping/dora-articles.yaml) · özet tablo: [KAPSAM-OZETI.md](KAPSAM-OZETI.md)
+Tarih: **2026-11-08** · Sürüm: **0.4.0** · Kapsam: DORA raporlama yükümlülükleri
+Veri: [`data/mapping/dora-articles.yaml`](../data/mapping/dora-articles.yaml) · tablo: [KAPSAM-OZETI.md](KAPSAM-OZETI.md)
 
 ---
 
-## 1. Bugün nerede duruyoruz
+## 1. Bugünkü durum
 
-Paket 28 yükümlülük maddesinin 24'ünü tam, 3'ünü kısmi karşılıyor; 1 madde açık.
-**Raporlama tarafı, kapsamın en zayıf halkası**: raporlamayla ilgili 5 maddenin yalnızca 1'i tam.
+**27 madde tam · 1 kısmi · 0 boşluk · %96.** Raporlamayla ilgili maddelerin tamamı kapandı;
+tek kısmi madde yedekleme (Art-12) ve raporlamayla ilgili değil.
 
 | Yükümlülük | Madde | Süreç | Kontrol | Durum |
 |---|---|---|---|---|
-| Büyük olay bildirimi (4 saat / 72 saat / 1 ay) | Art-19 | PRC-INC-02, -03, -04 | CTL-INC-003, -004, -005, -006 | ✅ Tam |
-| Bildirim şablonu uyumu (ITS 2024/2956) | Art-20 | PRC-INC-02, -03, -04 | CTL-INC-004 | 🟡 Kısmi — alan eşlemesi yok |
-| Ödeme olaylarının ayrı raporlanması | Art-23 | PRC-INC-02 | CTL-INC-003 | 🟡 Kısmi — ayrım kuralı yok |
-| Bilgi kaydının (RoI) yıllık sunumu | Art-28 | PRC-TPP-04 | CTL-TPP-005 | 🟡 Kısmi — format ve takvim yok* |
-| Yönetim organına düzenli raporlama (MI) | Art-05 / Art-06 | PRC-RSK-01 | CTL-RSK-001 | 🟡 Kısmi — MI paketi tanımlı değil* |
-| Gönüllü siber tehdit bildirimi | Art-19(3) | — | — | 🔴 Yok* |
-| Kriz iletişimi | Art-14 | (PRC-INC-04'e bağlı) | — | 🔴 Boşluk |
-| Tehdit istihbaratı paylaşımı | Art-45 | PRC-INF-01, -02 | CTL-INF-001, -002, -003 | ✅ Tam |
+| Büyük olay bildirimi (4 saat / 72 saat / 1 ay) | Art-19 | PRC-INC-02, -03, -04 | CTL-INC-003…006 | ✅ Tam |
+| Gönüllü siber tehdit bildirimi | Art-19 | PRC-INC-05 | CTL-INC-008 | ✅ Tam |
+| Bildirim şablonu alanları | Art-20 | PRC-INC-02, -03, -04 | CTL-INC-004 | ✅ Tam |
+| Ödeme olaylarının ayrı raporlanması | Art-23 | PRC-INC-02, -07 | CTL-INC-003, -010 | ✅ Tam |
+| Kriz iletişimi | Art-14 | PRC-INC-06 | CTL-INC-009 | ✅ Tam |
+| Bilgi kaydı (RoI) yıllık sunumu | Art-28 | PRC-TPP-04 | CTL-TPP-005 | 🟡 Format/takvim açık* |
+| Yönetim organına düzenli raporlama (MI) | Art-05 / 06 | PRC-RSK-01 | CTL-RSK-001 | 🟡 MI paketi tanımlı değil* |
+| Tehdit istihbaratı paylaşımı | Art-45 | PRC-INF-01, -02 | CTL-INF-001…003 | ✅ Tam |
 
-\* Eşleme dosyasında "partial/gap" olarak işaretli değil; bu satırlar paketin kendi verisinden
-değil, yükümlülük metniyle karşılaştırmadan çıkan değerlendirmedir. Eşlemeye işlenmeleri gerekir.
-
----
-
-## 2. Kapatma önerileri
-
-Her öneri mevcut şemalara uyacak şekilde tasarlandı: yeni süreç → `pillar-*.yaml`, yeni kontrol →
-`controls-catalog.yaml`, eşleme → `dora-articles.yaml`, kapı → `corf-lifecycle.yaml`.
-
-### Ö-1 · Kriz iletişimi (Art-14) — tek gerçek boşluk
-
-- **Ne:** `PRC-INC-06` kriz iletişimi süreci + `CTL-INC-009` kontrolü.
-- **İçerik:** sözcü matrisi (CEO / CISO / kurumsal iletişim), 4 saat içinde yayınlanacak "holding statement"
-  şablonu, düzenleyici–müşteri–basın için ayrı kanal kuralları, onay akışı, yanlış bilgi düzeltme prosedürü.
-- **Kanıt:** onaylı şablon sürümü, tatbikat kaydı, yayın zaman damgası.
-- **Etki:** kapsam %86 → %89. **Efor:** 1 gün (şablon + 2 kural + 1 kontrol).
-
-### Ö-2 · ITS 2024/2956 alan eşlemesi (Art-20) — kısmiyi kapatır
-
-- **Ne:** `data/mapping/its-2024-2956.yaml` — her bildirim alanı (initial / intermediate / final) → süreç
-  çıktısı → kanıt alanı eşlemesi; `CTL-INC-004` kanıt şartnamesi bu dosyaya bağlanır.
-- **Neden:** Banka denetiminde ilk soru "şablonunuz hangi ITS alanını dolduruyor" olur. Şu an yalnızca
-  "alanlar tanımlı" deniyor.
-- **Etki:** Art-20 partial → covered. **Efor:** 1–2 gün (alan listesi + eşleme + doğrulama betiği).
-
-### Ö-3 · Ödeme olayı ayrımı (Art-23) — kısmiyi kapatır
-
-- **Ne:** `PRC-INC-02` içine ödeme olayı sınıflandırma kuralı (ödeme zinciri kesintisi, kart işlem
-  etkisi, TCMB kanalı) + `CTL-INC-010` kontrolü; `docs/local-equivalents-TR.md` ile çift yönlü referans.
-- **Etki:** Art-23 partial → covered. **Efor:** 0,5 gün.
-
-### Ö-4 · Gönüllü siber tehdit bildirimi (Art-19(3)) — hiç yok
-
-- **Ne:** `PRC-INF-03` + `CTL-INF-004`: eşik (henüz olaylaşmamış tehdit), gizlilik kontrolü, bildirim
-  kararı, geri çekme prosedürü.
-- **Neden:** Büyük olay eşiğini geçmeyen ama kurumu tehdit eden sinyaller bugün hiçbir sürece düşmüyor.
-- **Etki:** yeni yükümlülük kapsaması. **Efor:** 0,5 gün.
-
-### Ö-5 · Yönetim kurulu MI paketi (Art-05/06) — eksik raporlama
-
-- **Ne:** `PRC-RSK-06` + `CTL-RSK-011`: aylık/çeyreklik tek sayfalık paket — açık büyük olay sayısı,
-  4/72 saat SLA uyumu, kapsam yüzdesi, açık yüksek bulgu, tedarikçi yoğunlaşma eşiği, TLPT durumu.
-- **Neden:** Paket şu an "olay olduğunda rapor" diyor; "her ay yönetim ne görüyor" tanımlı değil.
-  Art-14 notundaki "CEO ajanı yalnızca yönetim kurulu raporlamasını kapsıyor" ifadesi de bunu doğruluyor.
-- **Etki:** Art-05/06 güçlenir, denetimde "yönetim gözetimi" kanıtı oluşur. **Efor:** 1 gün.
-
-### Ö-6 · Düzenleyici takvim (raporlama altyapısı)
-
-- **Ne:** `data/regulatory-calendar.yaml` — 4 saat / 72 saat / 1 ay, yıllık RoI sunumu, 3 yılda TLPT,
-  yıllık çerçeve gözden geçirmesi; dashboard'a "yaklaşan yükümlülükler" kartı.
-- **Neden:** Süreler süreçlerin içinde dağınık; tek bakışta "bu ay ne sunulacak" görünmüyor.
-- **Efor:** 0,5 gün.
+\* Bu iki satır eşlemede "covered" görünüyor; eksik olan raporlama **artefaktı**, yükümlülüğün
+kendisi değil. Aşağıda ayrı ele alındı.
 
 ---
 
-## 3. Paket dışı ama müşterinin soracağı üç şey
+## 2. Bu turda kapatılanlar
 
-1. **Kanıt paketi ihracı** — olay dosyası + hash zinciri + imza tek zip olarak çıkmıyor. CLI'da
-   `dora-onboard export --session ... --evidence` komutu yok.
-2. **Bildirim formu üretimi** — JSON olay kaydından ITS alanlarına otomatik doldurulmuş PDF/XBRL üretimi yok.
-   (Ajan çalıştırıcısı bilinçli olarak kapsam dışı; bu yüzden şablon üretimi deterministik araç olmalı.)
-3. **Dashboard'da raporlama görünümü** — mevcut dashboard statik kapsam gösteriyor; açık olaylar,
-   yaklaşan SLA'lar ve yıllık takvim yok. Satış demosunda en çok sorulan ekran bu olur.
+| # | İş | Ne eklendi | Eşleme etkisi |
+|---|---|---|---|
+| Ö-1 | Kriz iletişimi | `PRC-INC-06` (sözcü matrisi, 4 saatlik ilk açıklama, 2 saatlik düzeltme), `CTL-INC-009` | Art-14: gap → covered |
+| Ö-2 | ITS alan sözlüğü | `data/mapping/its-2024-2956.yaml` — ilk/ara/nihai bildirim alanları + her alanın kanıt kaynağı | Art-20: partial → covered |
+| Ö-3 | Ödeme olayı ayrımı | `PRC-INC-07` (çift kanal: DORA + TCMB), `CTL-INC-010` | Art-23: partial → covered |
+| — | Gönüllü bildirim eşlemesi | Art-19 satırına `PRC-INC-05` + `CTL-INC-008` | düzeltme |
+
+Kapsam: **%86 → %96**. Süreç 21 → 23, kontrol 32 → 34.
 
 ---
 
-## 4. Öncelik
+## 3. Bir düzeltme: "gönüllü bildirim yok" yanlıştı
 
-| Sıra | İş | Kapsam etkisi | Efor | Öneri |
-|---|---|---|---|---|
-| 1 | Ö-1 kriz iletişimi | %86 → %89 | 1 gün | Yayın öncesi |
-| 2 | Ö-2 ITS alan eşlemesi | Art-20 kapanır | 1–2 gün | İlk pilot öncesi |
-| 3 | Ö-5 yönetim MI paketi | Art-05/06 güçlenir | 1 gün | İlk pilot öncesi |
-| 4 | Ö-3 ödeme olayı | Art-23 kapanır | 0,5 gün | Pilot sırasında |
-| 5 | Ö-4 gönüllü bildirim | yeni kapsam | 0,5 gün | Pilot sırasında |
-| 6 | Ö-6 takvim + export | sunum/altyapı | 1,5 gün | Tanıtım sonrası |
+İlk analizde Art-19(3) kapsamında gönüllü tehdit bildirimini "yok" diye işaretledim. **Yanlıştı:**
+`PRC-INC-05` ve `CTL-INC-008` 0.3.0'dan beri pakette vardı — ama `dora-articles.yaml` bu süreci
+hiç göstermiyordu. Yani eksik olan yetenek değil, **eşlemenin kendisiydi**.
 
-**Tek cümle:** %86 dürüst bir rakam; ama "olay raporlamasını uçtan uca kapsıyoruz" demek için
-önce Ö-2 ve Ö-3, "kriz anında iletişim var" demek için Ö-1 şart.
+Bunun tekrarlanmaması için öneri: `render-mapping.mjs --check` iki yönlü bütünlük de denetlesin —
+
+- her süreç en az bir maddede geçiyor mu?
+- her kontrol en az bir maddede geçiyor mu?
+
+Bugün 23 sürecin ve 34 kontrolün tamamı eşlemede görünüyor; kontrol otomatikleşirse bu sessiz
+boşluk sınıfı kapanır.
+
+---
+
+## 4. Kalan işler
+
+### 4.1 Paket içi
+
+1. **Art-12 yedekleme (tek kısmi madde)** — `CTL-RSK-012`: ayrı yedekleme kontrolü; geri yükleme
+   testi, yedek konumu, şifreleme, saklama süresi. ~2 saat.
+2. **RoI yıllık sunumu (Art-28)** — format ve takvim tanımlı değil: `data/regulatory-calendar.yaml`
+   + XBRL çıktı sözleşmesi. ~0,5 gün.
+3. **Yönetim kurulu MI paketi (Art-05/06)** — `PRC-RSK-06` + `CTL-RSK-011`: aylık tek sayfa
+   (açık olay, 4/72 saat SLA uyumu, kapsam, açık yüksek bulgu, tedarikçi yoğunlaşması, TLPT).
+   ~1 gün.
+
+### 4.2 Paket dışı, müşterinin soracağı
+
+1. **Kanıt paketi ihracı** — olay dosyası + hash zinciri + imza tek arşivde:
+   `dora-onboard export --session ... --evidence`.
+2. **Bildirim formu üretimi** — JSON olay kaydı → ITS alanları → PDF/XBRL. Ajan çalıştırıcısı
+   kapsam dışı olduğu için bu deterministik bir araç olmalı, ajan işi değil.
+3. **Dashboard'da raporlama görünümü** — açık olaylar, yaklaşan SLA'lar, yıllık takvim.
+   Mevcut dashboard statik kapsam gösteriyor; satış demosunda en çok sorulan ekran bu.
+
+---
+
+## 5. Öncelik
+
+| Sıra | İş | Kapsam etkisi | Efor |
+|---|---|---|---|
+| 1 | MI paketi (4.1.3) | yönetim gözetimi kanıtı | 1 gün |
+| 2 | Art-12 ayrı kontrol (4.1.1) | %96 → %100 | 2 saat |
+| 3 | RoI takvim/format (4.1.2) | yıllık sunum hazırlığı | 0,5 gün |
+| 4 | Kanıt ihracı + form üretimi (4.2.1–2) | operasyonel kullanım | 2 gün |
+| 5 | Dashboard raporlama görünümü (4.2.3) | satış demosu | 1 gün |
+
+**Tek cümle:** Raporlama maddelerinin tamamı artık kapsanıyor; kalan iş "kapsam" değil
+"kullanılabilirlik" — yani kanıtı dışa veren ve yönetime gösteren araçlar.

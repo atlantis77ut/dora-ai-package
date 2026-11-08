@@ -50,14 +50,14 @@
 </style></head>
 <body><div class="wrap">
   <header>
-    <div><h1>Kontrol Kataloğu</h1><div class="sub">32 kontrol · kanıt şartnamesi ve test prosedürü</div></div>
-    <span class="badge">08.11.2026 18:01:09</span>
+    <div><h1>Kontrol Kataloğu</h1><div class="sub">34 kontrol · kanıt şartnamesi ve test prosedürü</div></div>
+    <span class="badge">08.11.2026 20:56:46</span>
   </header>
   
   <nav>
     <a href="index.html" class="">Genel bakış</a>
-    <a href="processes.html" class="">Süreçler (21)</a>
-    <a href="controls.html" class="on">Kontroller (32)</a>
+    <a href="processes.html" class="">Süreçler (23)</a>
+    <a href="controls.html" class="on">Kontroller (34)</a>
   </nav>
   <section>
     <h2>Tüm kontroller <span>ayrıntı için satıra tıklayın</span></h2>
@@ -98,7 +98,11 @@
         <td><span class="pill">corrective</span></td><td>event_driven</td>
         <td class="num">5</td></tr><tr><td class="mono">CTL-INC-008</td><td>Gönüllü bildirim gizlilik kontrolü</td><td class="mono">PRC-INC-05</td>
         <td><span class="pill">preventive</span></td><td>event_driven</td>
-        <td class="num">4</td></tr><tr><td class="mono">CTL-TST-001</td><td>Yıllık test kapsam kontrolü</td><td class="mono">PRC-TST-01</td>
+        <td class="num">4</td></tr><tr><td class="mono">CTL-INC-009</td><td>Kriz iletişimi hazırlık ve onay kontrolü</td><td class="mono">PRC-INC-06</td>
+        <td><span class="pill">preventive</span></td><td>event_driven</td>
+        <td class="num">8</td></tr><tr><td class="mono">CTL-INC-010</td><td>Ödeme olayı ayrımı ve çift kanal bildirimi</td><td class="mono">PRC-INC-07</td>
+        <td><span class="pill">detective</span></td><td>event_driven</td>
+        <td class="num">7</td></tr><tr><td class="mono">CTL-TST-001</td><td>Yıllık test kapsam kontrolü</td><td class="mono">PRC-TST-01</td>
         <td><span class="pill">directive</span></td><td>annual</td>
         <td class="num">4</td></tr><tr><td class="mono">CTL-TST-002</td><td>Testçi bağımsızlık doğrulaması</td><td class="mono">PRC-TST-02</td>
         <td><span class="pill">preventive</span></td><td>event_driven</td>
@@ -345,6 +349,30 @@
       <dt>Zorunlu alanlar</dt><dd>threat_id: string * · contains_trade_secret: boolean * · anonymized: boolean * · cleared_by: string *</dd>
       <dt>DORA</dt><dd>Madde 45(2)</dd>
       <dt>Test prosedürü</dt><dd>Anonimleştirilmeden paylaşılmış kayıt var mı? (0 olmalı)</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">CTL-INC-009</span> &nbsp;<b>Kriz iletişimi hazırlık ve onay kontrolü</b> &nbsp;
+      <span class="pill">preventive</span><span class="pill">event_driven</span>
+      <span class="pill">PRC-INC-06</span></summary>
+    <dl class="kv">
+      <dt>Sahip</dt><dd>ROL-CEO-01</dd>
+      <dt>Kanıt</dt><dd>json · hash_chain</dd>
+      <dt>Zorunlu alanlar</dt><dd>incident_id: string * · template_version: string * · audience: string * · channel: string * · approved_by: string * · approved_at: datetime * · published_at: datetime * · within_sla: boolean *</dd>
+      <dt>DORA</dt><dd>Madde 14</dd>
+      <dt>Test prosedürü</dt><dd>Tatbikatta ilk açıklama 4 saat içinde yayınlandı mı? Onaysız yayın var mı? (0 olmalı)</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">CTL-INC-010</span> &nbsp;<b>Ödeme olayı ayrımı ve çift kanal bildirimi</b> &nbsp;
+      <span class="pill">detective</span><span class="pill">event_driven</span>
+      <span class="pill">PRC-INC-07</span></summary>
+    <dl class="kv">
+      <dt>Sahip</dt><dd>ROL-INC-01</dd>
+      <dt>Kanıt</dt><dd>json · hash_chain</dd>
+      <dt>Zorunlu alanlar</dt><dd>incident_id: string * · payment_impact: boolean * · payment_chain: string · affected_transactions: integer · dora_channel_sent_at: datetime * · cb_channel_sent_at: datetime · dual_report_complete: boolean *</dd>
+      <dt>DORA</dt><dd>Madde 23</dd>
+      <dt>Test prosedürü</dt><dd>Ödeme zincirini etkileyen her olayda payment_impact=true ve iki kanal kaydı var mı?</dd>
     </dl>
   </details>
   <details>

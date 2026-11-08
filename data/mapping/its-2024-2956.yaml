@@ -1,0 +1,126 @@
+# ITS 2024/2956 — Bildirim Şablonu Alan Sözlüğü
+#
+# Amaç: DORA Madde 20 kapsamında ilk / ara / nihai bildirimlerin hangi alanlarla
+# üretildiğini ve her alanın hangi kanıt dosyasından beslendiğini tanımlamak.
+#
+# ÖNEMLİ: Alan adları bu paketin iç kanonik adlarıdır. Resmi XBRL taksonomi
+# kodları (taxonomy element ID'leri) uygulama sırasında bu adlara bağlanır;
+# bu dosya o bağlamanın sözleşmesidir, taksonominin kendisi değildir.
+#
+# Kaynak: Commission Implementing Regulation (EU) 2024/2956 (ITS — bildirim
+# şablonları), DORA Madde 19-20. Süreler DORA Madde 19(4) ile uyumludur.
+
+its:
+  id: "ITS 2024/2956"
+  dora_ref: "Madde 19-20"
+  version: "1.0.0"
+  generated_at: "2026-11-08"
+
+templates:
+
+  - phase: initial
+    name:
+      tr: "İlk bildirim"
+      en: "Initial notification"
+    deadline: "sınıflandırmadan sonra 4 saat · tespitten en geç 24 saat"
+    process: PRC-INC-02
+    control: CTL-INC-004
+    fields:
+      - name: incident_reference
+        required: true
+        source: "incident-record.json#incident_id"
+        description: "Kurum içi tekil olay numarası"
+      - name: entity_identification
+        required: true
+        source: "institution-profile.json"
+        description: "Bildirimi yapan kuruluşun kimliği ve tier bilgisi"
+      - name: detection_time
+        required: true
+        source: "incident-record.json#detected_at"
+        description: "Olayın tespit edildiği an (zaman damgası, saat dilimi ile)"
+      - name: classification
+        required: true
+        source: "classification-decision.json#decision"
+        description: "Büyük olay sınıflandırması ve dayandığı kriter (INC-R1…R5)"
+      - name: affected_services
+        required: true
+        source: "business-service-catalogue.json"
+        description: "Etkilenen iş hizmetleri ve kritiklik işareti"
+      - name: cross_border_impact
+        required: false
+        source: "jurisdiction.json"
+        description: "Birden fazla üye devlette etki (INC-R4)"
+      - name: contact_point
+        required: true
+        source: "institution-profile.json#contact"
+        description: "Bildirim sonrası iletişim noktası"
+
+  - phase: intermediate
+    name:
+      tr: "Ara rapor"
+      en: "Intermediate report"
+    deadline: "ilk bildirimden sonra 72 saat"
+    process: PRC-INC-03
+    control: CTL-INC-005
+    fields:
+      - name: incident_reference
+        required: true
+        source: "incident-record.json#incident_id"
+        description: "İlk bildirimdeki referans (aynı olay)"
+      - name: root_cause_status
+        required: true
+        source: "rca-report.pdf"
+        description: "Kök nedenin durumu: doğrulandı / araştırılıyor"
+      - name: impact_update
+        required: true
+        source: "impact-assessment.json"
+        description: "Müşteri, işlem ve coğrafya bazında güncel etki"
+      - name: affected_services
+        required: true
+        source: "business-service-catalogue.json"
+        description: "Etki kapsamı değiştiyse güncel liste"
+      - name: mitigation_measures
+        required: true
+        source: "incident-record.json#mitigations"
+        description: "Uygulanan geçici önlemler ve etkisi"
+      - name: estimated_resolution
+        required: false
+        source: "incident-record.json#eta"
+        description: "Öngörülen kapanış zamanı"
+
+  - phase: final
+    name:
+      tr: "Nihai rapor"
+      en: "Final report"
+    deadline: "olay kapanışından sonra 1 ay"
+    process: PRC-INC-04
+    control: CTL-INC-006
+    fields:
+      - name: incident_reference
+        required: true
+        source: "incident-record.json#incident_id"
+        description: "Aynı olay referansı"
+      - name: root_cause
+        required: true
+        source: "rca-report.pdf"
+        description: "Doğrulanmış kök neden ve kanıtı"
+      - name: total_impact
+        required: true
+        source: "rca-report.pdf#impact"
+        description: "Toplam etki: süre, müşteri, işlem, ekonomik"
+      - name: affected_clients
+        required: true
+        source: "impact-assessment.json"
+        description: "Etkilenen müşteri sayısı (Kişisel Veri içermez)"
+      - name: recurring_risk
+        required: true
+        source: "gap-analysis.json"
+        description: "Benzer olayın tekrar riski ve mevcut kontroller"
+      - name: corrective_actions
+        required: true
+        source: "rca-report.pdf#actions"
+        description: "Düzeltici aksiyonlar, sorumlu ve termin"
+      - name: closure_date
+        required: true
+        source: "incident-record.json#closed_at"
+        description: "Olayın kapandığı tarih"

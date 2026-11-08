@@ -1,6 +1,6 @@
 # Lansman Öncesi İnceleme — DORA AI Package
 
-Tarih: **2026-11-08** · Sürüm: **0.3.0** · İnceleyen: DSH ajanı
+Tarih: **2026-11-08** · Sürüm: **0.4.0** · İnceleyen: DSH ajanı
 Kapsam: teknik doğrulama, doküman tutarlılığı, lisans/yayın riskleri, dağıtım hazırlığı.
 
 ---
@@ -24,8 +24,8 @@ bekliyor.
 
 | Kontrol | Komut | Sonuç |
 |---|---|---|
-| DORA eşlemesi + referans bütünlüğü | `node docs/tools/render-mapping.mjs --check` | ✅ 28 madde, kapsama %86 (24 covered, 3 partial, 1 gap) |
-| Dashboard üretimi | `node docs/tools/build-dashboard.mjs` | ✅ 21 süreç · 32 kontrol · 11 ajan · 4 senaryo · sağlık temiz |
+| DORA eşlemesi + referans bütünlüğü | `node docs/tools/render-mapping.mjs --check` | ✅ 28 madde, kapsama %96 (27 covered, 1 partial, 0 gap) |
+| Dashboard üretimi | `node docs/tools/build-dashboard.mjs` | ✅ 23 süreç · 34 kontrol · 11 ajan · 4 senaryo · sağlık temiz |
 | Faz tanımı | `node bin/dora-onboard.mjs phases` | ✅ 6 faz, sıralı, kapılar tanımlı |
 | Uçtan uca demo | `node tools/demo.mjs` | ✅ **6/6 faz geçildi**, geçici oturum silindi |
 | Lisans anahtarı koruması | `license-gen.mjs --init-dev-keys` | ✅ `--force` olmadan reddediyor (çıkış 1) |
@@ -69,7 +69,7 @@ HTML olarak `file://` ile açılıyor (0 harici URL).
 
 ### Güçlü yanlar (satışta kullanılabilir)
 
-- **Dürüst kapsam**: %86 ve tek açık madde (Art-14) ilan edilmiş; "DORA'nın tamamı" denmiyor. Denetimde güven üretir.
+- **Dürüst kapsam**: %96, tek kısmi madde (Art-12) gerekçesiyle ilan edilmiş; "DORA'nın tamamı" denmiyor. Denetimde güven üretir.
 - **Deterministik kapılar**: demo, örnek veriyle 6/6; kapı kırılınca çıkış kodu 2. Test edilebilir iddia.
 - **Sıfır bağımlılık**: CLI `npm install` istemiyor; banka ağında kurulum sürtünmesi düşük.
 - **Çevrimdışı dashboard**: harici CDN/font yok; kapalı ağda açılıyor.
@@ -99,3 +99,4 @@ HTML olarak `file://` ile açılıyor (0 harici URL).
 | CI | `validate` ve `pages` iş akışları yeşil (push başına) |
 | Yayınlanan dosya sayısı | 81 (dev-private.pem, node_modules, .dora-onboarding hariç) |
 | Telif sahibi | ustauretim |
+| Kapsam (0.4.0) | 27 covered · 1 partial (Art-12) · 0 gap · %96 |

@@ -1,29 +1,29 @@
 {
-  "generated_at": "2026-11-08T15:01:09.338Z",
+  "generated_at": "2026-11-08T17:56:46.104Z",
   "package": {
     "name": "DORA AI Ajan Paketi",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "license": "AGPL-3.0 + ticari"
   },
   "kpis": {
-    "processes": 21,
-    "controls": 32,
+    "processes": 23,
+    "controls": 34,
     "roles": 11,
     "terms": 60,
     "scenarios": 4,
     "assertions": 27,
     "orCodes": 21,
-    "coverage": 86
+    "coverage": 96
   },
   "coverage": {
     "total": 28,
-    "covered": 24,
-    "partial": 3,
-    "gap": 1
+    "covered": 27,
+    "partial": 1,
+    "gap": 0
   },
   "control_families": {
     "RSK": 10,
-    "INC": 8,
+    "INC": 10,
     "TST": 4,
     "TPP": 7,
     "INF": 3
@@ -89,21 +89,6 @@
       "id": "Art-12",
       "title": "Yedekleme politikaları, prosedürleri ve yöntemleri",
       "status": "partial"
-    },
-    {
-      "id": "Art-14",
-      "title": "İletişim",
-      "status": "gap"
-    },
-    {
-      "id": "Art-20",
-      "title": "Raporlama şablonlarının uyumlaştırılması",
-      "status": "partial"
-    },
-    {
-      "id": "Art-23",
-      "title": "Ödeme ile ilgili operasyonel/güvenlik olayları",
-      "status": "partial"
     }
   ],
   "scenarios": [
@@ -137,7 +122,7 @@
     "issues": []
   },
   "changelog": {
-    "version": "0.3.0",
-    "date": "2026-11-04"
+    "version": "0.4.0",
+    "date": "2026-11-08"
   }
 }
