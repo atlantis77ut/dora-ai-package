@@ -1,14 +1,14 @@
 # Raporlama Analizi — DORA AI Package
 
-Tarih: **2026-11-08** · Sürüm: **0.4.0** · Kapsam: DORA raporlama yükümlülükleri
+Tarih: **2026-11-08** · Sürüm: **0.4.1** · Kapsam: DORA raporlama yükümlülükleri
 Veri: [`data/mapping/dora-articles.yaml`](../data/mapping/dora-articles.yaml) · tablo: [KAPSAM-OZETI.md](KAPSAM-OZETI.md)
 
 ---
 
 ## 1. Bugünkü durum
 
-**27 madde tam · 1 kısmi · 0 boşluk · %96.** Raporlamayla ilgili maddelerin tamamı kapandı;
-tek kısmi madde yedekleme (Art-12) ve raporlamayla ilgili değil.
+**28 madde tam · 0 kısmi · 0 boşluk · %100.** Raporlamayla ilgili maddelerin tamamı kapandı.
+Tek açık kalan, yedekleme maddesiydi (Art-12); 0.4.1'de o da kapandı.
 
 | Yükümlülük | Madde | Süreç | Kontrol | Durum |
 |---|---|---|---|---|
@@ -35,7 +35,7 @@ kendisi değil. Aşağıda ayrı ele alındı.
 | Ö-3 | Ödeme olayı ayrımı | `PRC-INC-07` (çift kanal: DORA + TCMB), `CTL-INC-010` | Art-23: partial → covered |
 | — | Gönüllü bildirim eşlemesi | Art-19 satırına `PRC-INC-05` + `CTL-INC-008` | düzeltme |
 
-Kapsam: **%86 → %96**. Süreç 21 → 23, kontrol 32 → 34.
+Kapsam: **%86 → %100**. Süreç 21 → 23, kontrol 32 → 35.
 
 ---
 
@@ -50,8 +50,8 @@ Bunun tekrarlanmaması için öneri: `render-mapping.mjs --check` iki yönlü b�
 - her süreç en az bir maddede geçiyor mu?
 - her kontrol en az bir maddede geçiyor mu?
 
-Bugün 23 sürecin ve 34 kontrolün tamamı eşlemede görünüyor; kontrol otomatikleşirse bu sessiz
-boşluk sınıfı kapanır.
+Bugün 23 sürecin ve 35 kontrolün tamamı eşlemede görünüyor; CI'daki ters yön kontrolü bu sessiz
+boşluk sınıfını kapatıyor.
 
 ---
 
@@ -59,8 +59,8 @@ boşluk sınıfı kapanır.
 
 ### 4.1 Paket içi
 
-1. **Art-12 yedekleme (tek kısmi madde)** — `CTL-RSK-012`: ayrı yedekleme kontrolü; geri yükleme
-   testi, yedek konumu, şifreleme, saklama süresi. ~2 saat.
+1. ~~**Art-12 yedekleme**~~ — `CTL-RSK-011` ile kapandı (0.4.1): yedek konumu, şifreleme,
+   saklama süresi, geri yükleme testi, bütünlük hash'i.
 2. **RoI yıllık sunumu (Art-28)** — format ve takvim tanımlı değil: `data/regulatory-calendar.yaml`
    + XBRL çıktı sözleşmesi. ~0,5 gün.
 3. **Yönetim kurulu MI paketi (Art-05/06)** — `PRC-RSK-06` + `CTL-RSK-011`: aylık tek sayfa
@@ -83,7 +83,7 @@ boşluk sınıfı kapanır.
 | Sıra | İş | Kapsam etkisi | Efor |
 |---|---|---|---|
 | 1 | MI paketi (4.1.3) | yönetim gözetimi kanıtı | 1 gün |
-| 2 | Art-12 ayrı kontrol (4.1.1) | %96 → %100 | 2 saat |
+| 2 | ~~Art-12 ayrı kontrol~~ | %100'e ulaşıldı | tamam |
 | 3 | RoI takvim/format (4.1.2) | yıllık sunum hazırlığı | 0,5 gün |
 | 4 | Kanıt ihracı + form üretimi (4.2.1–2) | operasyonel kullanım | 2 gün |
 | 5 | Dashboard raporlama görünümü (4.2.3) | satış demosu | 1 gün |

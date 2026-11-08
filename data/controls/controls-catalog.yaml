@@ -230,6 +230,31 @@ controls:
     dora_ref: { article: "Madde 9(4)(c)" }
     test_procedure: "CVSS >= 9.0 ve 30 günü aşmış, istisnası olmayan kayıt var mı? (0 olmalı)"
 
+  - id: CTL-RSK-011
+    name:
+      tr: "Yedekleme ve geri yükleme doğrulaması"
+      en: "Backup and restore verification"
+    process_id: PRC-RSK-04
+    type: preventive
+    owner_role: ROL-CTO-01
+    frequency: quarterly
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: backup_id, type: string, required: true }
+        - { name: asset_id, type: string, required: true }
+        - { name: backup_type, type: string, required: true }
+        - { name: location, type: string, required: true }
+        - { name: encrypted, type: boolean, required: true }
+        - { name: retention_days, type: integer, required: true }
+        - { name: restore_tested, type: boolean, required: true }
+        - { name: restore_rto_hours, type: number, required: false }
+        - { name: integrity_hash, type: string, required: true }
+        - { name: tested_at, type: datetime, required: true }
+    dora_ref: { article: "Madde 12" }
+    test_procedure: "Son 90 günde geri yükleme testi yapılmamış kritik varlık var mı? Yedeklerin en az biri ayrı konumda ve değiştirilemez medyada mı?"
+
   # ═══════════════════════════════════════════════════════════════
   # SÜTUN 2 — OLAY YÖNETİMİ VE RAPORLAMA
   # ═══════════════════════════════════════════════════════════════

@@ -5,6 +5,22 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.4.1] — 2026-11-08
+
+### Eklendi
+
+- `CTL-RSK-011` Yedekleme ve geri yükleme doğrulaması: yedek konumu (ayrı / değiştirilemez),
+  şifreleme, saklama süresi, geri yükleme testi, RTO ölçümü ve bütünlük hash'i
+- `PRC-RSK-04` kanıt şartnamesine `backup-restore-test.json` eklendi
+
+### Değişti
+
+- Art-12 (yedekleme) **partial → covered**; kapsam **%96 → %100** (28/28)
+- Kontrol **34 → 35**
+- `verify` notu: C5 kapısı artık hiçbir maddede boşluk/kısmi görmüyor
+
+---
+
 ## [0.4.0] — 2026-11-08
 
 ### Eklendi

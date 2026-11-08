@@ -12,12 +12,12 @@
 
 | Durum | Madde |
 |---|---|
-| covered | 27 |
-| partial | 1 |
+| covered | 28 |
+| partial | 0 |
 | gap | 0 |
 | **toplam** | **28** |
 
-Tam kapsama oranı: **%96**. `partial` ve `gap` maddeleri C5 öz değerlendirmesinde
+Tam kapsama oranı: **%100**. `partial` ve `gap` maddeleri C5 öz değerlendirmesinde
 boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 
 ## Tablo
@@ -31,7 +31,7 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 | Art-09 | Koruma ve önleme | PRC-RSK-05 | CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010 | covered |
 | Art-10 | Tespit | PRC-INC-01 | CTL-INC-001 | covered |
 | Art-11 | İş sürekliliği politikası ve kurtarma planları | PRC-RSK-04, PRC-RSK-02 | CTL-RSK-005 | covered |
-| Art-12 | Yedekleme politikaları, prosedürleri ve yöntemleri | PRC-RSK-04 | CTL-RSK-005 | partial |
+| Art-12 | Yedekleme politikaları, prosedürleri ve yöntemleri | PRC-RSK-04 | CTL-RSK-005, CTL-RSK-011 | covered |
 | Art-13 | Öğrenme ve gelişme | PRC-INC-04 | CTL-INC-006, CTL-INC-007 | covered |
 | Art-14 | İletişim | PRC-INC-06 | CTL-INC-009 | covered |
 | Art-15 | Küçük kuruluşlar için basitleştirilmiş çerçeve | PRC-RSK-01, PRC-RSK-04 | CTL-RSK-001 | covered |
@@ -153,10 +153,10 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - Yedekler kritik verileri kapsar ve ayrı konumda tutulur
 
 - **Süreçler:** PRC-RSK-04
-- **Kontroller:** CTL-RSK-005
+- **Kontroller:** CTL-RSK-005, CTL-RSK-011
 - **Sahip roller:** ROL-CTO-01
-- **Durum:** partial
-- **Not:** Geri yükleme testi BCP/DRP kanıtı içinde izleniyor; ayrı yedekleme kontrolü yok.
+- **Durum:** covered
+- **Not:** CTL-RSK-011 ayrı yedekleme kontrolü: konum (ayrı/değiştirilemez), şifreleme, saklama süresi, geri yükleme testi ve bütünlük hash'i.
 
 ### Art-13 — Öğrenme ve gelişme
 

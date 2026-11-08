@@ -174,11 +174,13 @@ processes:
     evidence_requirements:
       - "bcp-drp-plan.pdf (sürüm + onay sayfası)"
       - "plan-test-evidence.json (RTO/RPO ölçüm sonuçları)"
+      - "backup-restore-test.json (yedekten geri yükleme doğrulaması)"
     tier_variants:
       tier3:
         note: "Basitleştirilmiş BCP; yıllık test yerine iki yılda bir masa başı tatbikat"
     control_ids:
       - CTL-RSK-005
+      - CTL-RSK-011
 
   # ═══════════════════════════════════════════════════════════
   # PRC-RSK-05 — Siber Güvenlik Kontrolleri (DORA Madde 9)

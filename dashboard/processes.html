@@ -50,14 +50,14 @@
 </style></head>
 <body><div class="wrap">
   <header>
-    <div><h1>Süreç Kütüphanesi</h1><div class="sub">23 süreç · 34 kontrol · CORF 6 fazı</div></div>
-    <span class="badge">08.11.2026 20:56:46</span>
+    <div><h1>Süreç Kütüphanesi</h1><div class="sub">23 süreç · 35 kontrol · CORF 6 fazı</div></div>
+    <span class="badge">08.11.2026 21:31:07</span>
   </header>
   
   <nav>
     <a href="index.html" class="">Genel bakış</a>
     <a href="processes.html" class="on">Süreçler (23)</a>
-    <a href="controls.html" class="">Kontroller (34)</a>
+    <a href="controls.html" class="">Kontroller (35)</a>
   </nav>
   <section>
     <h2>Sütun dağılımı <span>DORA 5 sütun</span></h2>
@@ -74,7 +74,7 @@
         <td class="num">2</td></tr><tr><td class="mono">PRC-RSK-04</td><td>İş Sürekliliği (BCP) ve Kurtarma (DRP) Planı Yönetimi</td>
         <td><span class="pill">ICT Risk Yönetimi</span></td>
         <td class="num">1</td><td class="num">2</td>
-        <td class="num">1</td></tr><tr><td class="mono">PRC-RSK-05</td><td>Siber Güvenlik Kontrolleri Yönetimi (erişim, şifreleme, ağ)</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-RSK-05</td><td>Siber Güvenlik Kontrolleri Yönetimi (erişim, şifreleme, ağ)</td>
         <td><span class="pill">ICT Risk Yönetimi</span></td>
         <td class="num">4</td><td class="num">4</td>
         <td class="num">4</td></tr><tr><td class="mono">PRC-INC-01</td><td>ICT Olayı Tespiti ve Büyük Olay Sınıflandırması</td>
@@ -195,7 +195,7 @@
       <span class="pill">1. Sütun — ICT Risk Yönetimi</span>
       <span class="pill">1 kural</span>
       <span class="pill">2 SLA</span>
-      <span class="pill">1 kontrol</span></summary>
+      <span class="pill">2 kontrol</span></summary>
     <dl class="kv">
       <dt>Tetikleyici</dt><dd>Yıllık plan gözden geçirmesi, test sonucu veya büyük olay sonrası</dd>
       <dt>Sorumlu</dt><dd>ROL-CIO-01</dd>
@@ -204,7 +204,7 @@
       <dt>Çıktı</dt><dd>bcp-drp-plan.pdf <span class="pill">pdf</span> · plan-test-evidence.json <span class="pill">json</span></dd>
       <dt>SLA</dt><dd>Yıllık gözden geçirme: <b>1 months</b><br>Başarısız test sonucu: <b>30 days</b></dd>
       <dt>Karar kuralları</dt><dd><span class="mono">RSK-R7</span> test_sonucu == 'RTO asildi' → plan revizyonu + kök neden analizi başlat</dd>
-      <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-005</span></dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-005</span> · <span class="mono">CTL-RSK-011</span></dd>
       <dt>Bağımlılık</dt><dd>↑ PRC-RSK-02, PRC-RSK-03 · ↓ PRC-INC-04</dd>
     </dl>
   </details>

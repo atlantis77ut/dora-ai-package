@@ -7,7 +7,7 @@ yapay zeka ajanları ile otomatikleştiren modüler paket.
 
 - 60 kavramlık standart sözlük (DORA + RTS/ITS referanslı)
 - 11 ajan rolü, üç savunma hattı modeli (CORF süreç kodlarıyla eşlenmiş)
-- 5 sütun, **23 süreç** ve **34 kontrol** (şema doğrulamalı)
+- 5 sütun, **23 süreç** ve **35 kontrol** (şema doğrulamalı)
 - CORF 6 fazlı onboarding: `C1 Identify → C2 Tolerances → C3 Map → C4 Scenarios → C5 Self-assessment → C6 MOS`
 - Tier 1/2/3 profilleri, çoklu yargı alanı (TR/AB)
 - 28 DORA maddesi → süreç/kontrol eşlemesi (üretilen doküman)
@@ -57,7 +57,7 @@ veya doğrudan `dashboard\index.html` dosyasını çift tıklayın. Üç sayfa v
 |---|---|
 | `dashboard/index.html` | KPI'lar, DORA kapsama çubuğu, 6 CORF fazı, açık noktalar, senaryolar |
 | `dashboard/processes.html` | **21 sürecin tamamı** — tetikleyici, SLA, karar kuralları, kontroller, bağımlılıklar |
-| `dashboard/controls.html` | **34 kontrol** — kanıt alanları, değiştirilemezlik, test prosedürü |
+| `dashboard/controls.html` | **35 kontrol** — kanıt alanları, değiştirilemezlik, test prosedürü |
 
 Sayfalar depodaki YAML'lardan üretilir; elle düzenlenmez. Yeniden üretmek:
 `node docs/tools/build-dashboard.mjs` · PNG kopyası: `dashboard/dashboard.png`
@@ -98,7 +98,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **0.4.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **0.4.1**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

@@ -10,11 +10,11 @@ Eşleme sürümü: **1.1.0** · kaynak: Regulation (EU) 2022/2554 (DORA) · veri
 | Ölçüt | Değer |
 |---|---|
 | Eşlenen yükümlülük maddesi | 28 |
-| Tam kapsanan | 27 |
-| Kısmi | 1 |
+| Tam kapsanan | 28 |
+| Kısmi | 0 |
 | Boşluk | 0 |
-| Tam kapsama oranı | %96 |
-| Ağırlıklı kapsama (kısmi = 0,5) | %98 |
+| Tam kapsama oranı | %100 |
+| Ağırlıklı kapsama (kısmi = 0,5) | %100 |
 
 Kapsam notu (eşlemeden): Yalnızca yükümlülük doğuran maddeler eşlendi; tanım maddeleri (3) ve kurumsal/yaptırım maddeleri kapsam dışı. Madde numaraları DORA resmi metnine göredir.
 
@@ -22,7 +22,7 @@ Kapsam notu (eşlemeden): Yalnızca yükümlülük doğuran maddeler eşlendi; t
 
 | Bölüm | Madde | Tam | Kısmi | Boşluk |
 |---|---:|---:|---:|---:|
-| Bölüm II — ICT Risk Yönetimi | 12 | 11 | 1 | 0 |
+| Bölüm II — ICT Risk Yönetimi | 12 | 12 | 0 | 0 |
 | Bölüm III — Olay Yönetimi | 5 | 5 | 0 | 0 |
 | Bölüm IV — Test | 4 | 4 | 0 | 0 |
 | Bölüm V — Üçüncü taraf riski | 6 | 6 | 0 | 0 |
@@ -39,7 +39,7 @@ Kapsam notu (eşlemeden): Yalnızca yükümlülük doğuran maddeler eşlendi; t
 | Art-09 | Koruma ve önleme | ✅ covered | PRC-RSK-05 | CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010 | ROL-CTO-01, ROL-CMP-01 |
 | Art-10 | Tespit | ✅ covered | PRC-INC-01 | CTL-INC-001 | ROL-INC-01 |
 | Art-11 | İş sürekliliği politikası ve kurtarma planları | ✅ covered | PRC-RSK-04, PRC-RSK-02 | CTL-RSK-005 | ROL-CIO-01 |
-| Art-12 | Yedekleme politikaları, prosedürleri ve yöntemleri | 🟡 partial | PRC-RSK-04 | CTL-RSK-005 | ROL-CTO-01 |
+| Art-12 | Yedekleme politikaları, prosedürleri ve yöntemleri | ✅ covered | PRC-RSK-04 | CTL-RSK-005, CTL-RSK-011 | ROL-CTO-01 |
 | Art-13 | Öğrenme ve gelişme | ✅ covered | PRC-INC-04 | CTL-INC-006, CTL-INC-007 | ROL-CMP-01, ROL-INC-01 |
 | Art-14 | İletişim | ✅ covered | PRC-INC-06 | CTL-INC-009 | ROL-CEO-01, ROL-INC-01 |
 | Art-15 | Küçük kuruluşlar için basitleştirilmiş çerçeve | ✅ covered | PRC-RSK-01, PRC-RSK-04 | CTL-RSK-001 | ROL-CIO-01 |
@@ -65,7 +65,6 @@ Kapsam notu (eşlemeden): Yalnızca yükümlülük doğuran maddeler eşlendi; t
 
 | Madde | Başlık | Durum | Gerekçe |
 |---|---|---|---|
-| Art-12 | Yedekleme politikaları, prosedürleri ve yöntemleri | partial | Geri yükleme testi BCP/DRP kanıtı içinde izleniyor; ayrı yedekleme kontrolü yok. |
 
 ---
 

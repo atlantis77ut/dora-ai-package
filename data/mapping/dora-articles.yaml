@@ -106,10 +106,10 @@ articles:
       - "Yedekleme ve geri yükleme test edilir"
       - "Yedekler kritik verileri kapsar ve ayrı konumda tutulur"
     processes: [PRC-RSK-04]
-    controls: [CTL-RSK-005]
+    controls: [CTL-RSK-005, CTL-RSK-011]
     roles: [ROL-CTO-01]
-    status: partial
-    note: "Geri yükleme testi BCP/DRP kanıtı içinde izleniyor; ayrı yedekleme kontrolü yok."
+    status: covered
+    note: "CTL-RSK-011 ayrı yedekleme kontrolü: konum (ayrı/değiştirilemez), şifreleme, saklama süresi, geri yükleme testi ve bütünlük hash'i."
 
   - id: Art-13
     chapter: "Bölüm II — ICT Risk Yönetimi"
