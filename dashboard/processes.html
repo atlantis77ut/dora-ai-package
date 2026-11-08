@@ -50,14 +50,14 @@
 </style></head>
 <body><div class="wrap">
   <header>
-    <div><h1>Süreç Kütüphanesi</h1><div class="sub">23 süreç · 35 kontrol · CORF 6 fazı</div></div>
-    <span class="badge">08.11.2026 21:49:48</span>
+    <div><h1>Süreç Kütüphanesi</h1><div class="sub">24 süreç · 36 kontrol · CORF 6 fazı</div></div>
+    <span class="badge">08.11.2026 21:53:26</span>
   </header>
   
   <nav>
     <a href="index.html" class="">Genel bakış</a>
-    <a href="processes.html" class="on">Süreçler (23)</a>
-    <a href="controls.html" class="">Kontroller (35)</a>
+    <a href="processes.html" class="on">Süreçler (24)</a>
+    <a href="controls.html" class="">Kontroller (36)</a>
   </nav>
   <section>
     <h2>Sütun dağılımı <span>DORA 5 sütun</span></h2>
@@ -77,7 +77,10 @@
         <td class="num">2</td></tr><tr><td class="mono">PRC-RSK-05</td><td>Siber Güvenlik Kontrolleri Yönetimi (erişim, şifreleme, ağ)</td>
         <td><span class="pill">ICT Risk Yönetimi</span></td>
         <td class="num">4</td><td class="num">4</td>
-        <td class="num">4</td></tr><tr><td class="mono">PRC-INC-01</td><td>ICT Olayı Tespiti ve Büyük Olay Sınıflandırması</td>
+        <td class="num">4</td></tr><tr><td class="mono">PRC-RSK-06</td><td>Yönetim Kurulu Raporlaması ve MI Paketi</td>
+        <td><span class="pill">ICT Risk Yönetimi</span></td>
+        <td class="num">3</td><td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">PRC-INC-01</td><td>ICT Olayı Tespiti ve Büyük Olay Sınıflandırması</td>
         <td><span class="pill">Olay Yönetimi ve Raporlama</span></td>
         <td class="num">5</td><td class="num">2</td>
         <td class="num">2</td></tr><tr><td class="mono">PRC-INC-02</td><td>Yetkili Otoriteye İlk Bildirim</td>
@@ -224,6 +227,24 @@
       <dt>Karar kuralları</dt><dd><span class="mono">SEC-R1</span> hesap.son_erisim > 90 gun AND hesap.aktif → hesabı devre dışı bırak, gerekçeyi kaydet<br><span class="mono">SEC-R2</span> varlik.kritik == true AND sifreleme.in_transit == false → 30 gün içinde şifreleme planı aç; kapatılmazsa risk kaydına işle<br><span class="mono">SEC-R3</span> segment.default_deny == false AND kritik_varlik_iceren_zone == true → segmentasyon ihlali aç, PRC-RSK-02 risk kaydına ekle<br><span class="mono">SEC-R4</span> zafiyet.cvss >= 9.0 AND zafiyet.yas_gun > 30 AND istisna_yok → yönetim kuruluna eskalasyon; istisna varsa gerekçeli kayıt zorunlu</dd>
       <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-007</span> · <span class="mono">CTL-RSK-008</span> · <span class="mono">CTL-RSK-009</span> · <span class="mono">CTL-RSK-010</span></dd>
       <dt>Bağımlılık</dt><dd>↑ PRC-RSK-03 · ↓ PRC-INC-01, PRC-TST-02, PRC-RSK-02</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">PRC-RSK-06</span> &nbsp;<b>Yönetim Kurulu Raporlaması ve MI Paketi</b> &nbsp;
+      <span class="pill">1. Sütun — ICT Risk Yönetimi</span>
+      <span class="pill">3 kural</span>
+      <span class="pill">2 SLA</span>
+      <span class="pill">2 kontrol</span></summary>
+    <dl class="kv">
+      <dt>Tetikleyici</dt><dd>Aylık dönem kapanışı veya kritik eşik aşımı</dd>
+      <dt>Sorumlu</dt><dd>ROL-CIO-01</dd>
+      <dt>Onaylayan</dt><dd>ROL-CEO-01</dd>
+      <dt>Girdi</dt><dd>Olay kayıtları ve SLA ölçümleri <span class="pill">json</span> · Kapsam ve boşluk analizi <span class="pill">json</span> · Tedarikçi yoğunlaşma göstergeleri <span class="pill">json</span> · Test ve TLPT durumu <span class="pill">json</span></dd>
+      <dt>Çıktı</dt><dd>mi-pack.html <span class="pill">html</span> · mi-data.json <span class="pill">json</span> · mi-approval.json <span class="pill">json</span></dd>
+      <dt>SLA</dt><dd>Dönem kapanışı: <b>5 days</b><br>Kritik eşik aşımı: <b>2 days</b></dd>
+      <dt>Karar kuralları</dt><dd><span class="mono">MI-R1</span> acik_buyuk_olay > 0 OR sla_uyumu < 90 → paketin ilk sayfasında kırmızı bayrak; yönetim kurulu gündemine ekle<br><span class="mono">MI-R2</span> kapsam_yuzdesi < onceki_donem → gerileme gerekçesini ve düzeltici aksiyonu yaz<br><span class="mono">MI-R3</span> tedarikci_yogunlasma_esigi_asildi == true → yoğunlaşma riskini ve çıkış stratejisi durumunu ekle</dd>
+      <dt>Kontroller</dt><dd><span class="mono">CTL-RSK-012</span> · <span class="mono">CTL-RSK-010</span></dd>
+      <dt>Bağımlılık</dt><dd>↑ PRC-INC-01, PRC-TPP-02, PRC-TST-01 · ↓ PRC-RSK-01</dd>
     </dl>
   </details>
   <details>

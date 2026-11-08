@@ -1,6 +1,6 @@
 # DORA AI Ajan Paketi — Uygulama Raporu
 
-**Sürüm:** 0.6.1 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
+**Sürüm:** 0.7.0 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
 **Depo:** https://github.com/atlantis77ut/dora-ai-package · **Canlı dashboard:** https://atlantis77ut.github.io/dora-ai-package/
 
 ---
@@ -18,8 +18,8 @@ Paketin bugünkü ölçeği:
 | Bileşen | Sayı |
 |---|---|
 | DORA yükümlülük maddesi (eşlenen) | 28 — **%100 kapsanıyor** (28 covered, 0 partial, 0 gap) |
-| Süreç | 23 (5 sütun) |
-| Kontrol | 35 (kanıt şartnameli) |
+| Süreç | 24 (5 sütun) |
+| Kontrol | 36 (kanıt şartnameli) |
 | Ajan rolü | 11 (üç savunma hattı) |
 | Sözlük terimi | 60 |
 | Sentetik kabul senaryosu | 4 (27 assertion) |
@@ -57,7 +57,7 @@ her kontrol bir kanıt şartnamesine bağlanır.**
 | Katman | İçerik | Kaynak |
 |---|---|---|
 | **3. Çalıştırma** | Ajanlar (11 rol) + insan onay noktaları; GOLDENHORN/CORF platformuna API ile bağlanır (tasarım) | `data/roles/`, `onboarding/corf-lifecycle.yaml` |
-| **2. Süreç** | 23 süreç, 35 kontrol, 5 sütun, CORF 6 fazı; her süreç: tetikleyici → girdi → SLA → kural → kanıt | `data/processes/`, `data/controls/` |
+| **2. Süreç** | 24 süreç, 36 kontrol, 5 sütun, CORF 6 fazı; her süreç: tetikleyici → girdi → SLA → kural → kanıt | `data/processes/`, `data/controls/` |
 | **1. Veri** | 60 terim, 11 rol, 28 DORA maddesi; YAML kaynak, JSON Schema ile doğrulama | `data/glossary/`, `schema/` |
 
 **Katman kuralı:** üst katman alt katmanı değiştiremez. Bir ajan, tanımlı olmayan bir kanıt
@@ -199,9 +199,9 @@ HTML olarak (harici CDN/font olmadan) `file://` ile açılır — kapalı ağda 
 
 | Sayfa | İçerik |
 |---|---|
-| `index.html` | KPI kartları (23 süreç · 35 kontrol · 11 ajan · 60 terim · 4 senaryo · %100), kapsama çubuğu, CORF faz tablosu, açık noktalar, senaryo listesi |
-| `processes.html` | 23 sürecin tablosu + her süreç için tetikleyici, girdi/çıktı, SLA, karar kuralları, kontroller, bağımlılıklar |
-| `controls.html` | 35 kontrolün tablosu + kanıt alanları, değiştirilemezlik, DORA maddesi, test prosedürü |
+| `index.html` | KPI kartları (24 süreç · 36 kontrol · 11 ajan · 60 terim · 4 senaryo · %100), kapsama çubuğu, CORF faz tablosu, açık noktalar, senaryo listesi |
+| `processes.html` | 24 sürecin tablosu + her süreç için tetikleyici, girdi/çıktı, SLA, karar kuralları, kontroller, bağımlılıklar |
+| `controls.html` | 36 kontrolün tablosu + kanıt alanları, değiştirilemezlik, DORA maddesi, test prosedürü |
 
 Üretici `docs/tools/build-dashboard.mjs`; sarkan bir referans bulursa çıkış kodu 1 döner, yani
 dashboard aynı zamanda bir **bütünlük testidir**. PNG kopyası Pillow ile üretilir (tarayıcısız).

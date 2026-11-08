@@ -25,7 +25,7 @@ bekliyor.
 | Kontrol | Komut | Sonuç |
 |---|---|---|
 | DORA eşlemesi + referans bütünlüğü | `node docs/tools/render-mapping.mjs --check` | ✅ 28 madde, kapsama %100 (28 covered, 0 partial, 0 gap) |
-| Dashboard üretimi | `node docs/tools/build-dashboard.mjs` | ✅ 23 süreç · 35 kontrol · 11 ajan · 4 senaryo · sağlık temiz |
+| Dashboard üretimi | `node docs/tools/build-dashboard.mjs` | ✅ 24 süreç · 36 kontrol · 11 ajan · 4 senaryo · sağlık temiz |
 | Faz tanımı | `node bin/dora-onboard.mjs phases` | ✅ 6 faz, sıralı, kapılar tanımlı |
 | Uçtan uca demo | `node tools/demo.mjs` | ✅ **6/6 faz geçildi**, geçici oturum silindi |
 | Lisans anahtarı koruması | `license-gen.mjs --init-dev-keys` | ✅ `--force` olmadan reddediyor (çıkış 1) |

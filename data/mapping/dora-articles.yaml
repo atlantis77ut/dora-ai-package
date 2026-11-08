@@ -23,10 +23,11 @@ articles:
       - "Yönetim organı ICT riskinden nihai sorumludur"
       - "ICT risk çerçevesi onaylanır ve yılda gözden geçirilir"
       - "Yeterli dijital operasyonel dayanıklılık uzmanlığı sağlanır"
-    processes: [PRC-RSK-01]
-    controls: [CTL-RSK-001]
+    processes: [PRC-RSK-01, PRC-RSK-06]
+    controls: [CTL-RSK-001, CTL-RSK-012]
     roles: [ROL-CEO-01, ROL-CIO-01]
     status: covered
+    note: "Yönetim kuruluna düzenli raporlama PRC-RSK-06 + CTL-RSK-012 (aylık MI paketi) ile kanıtlanır."
 
   - id: Art-06
     chapter: "Bölüm II — ICT Risk Yönetimi"
@@ -35,10 +36,11 @@ articles:
       - "Sağlam, kapsamlı ve iyi belgelenmiş ICT risk çerçevesi kurulur"
       - "Strateji, politika, prosedür, protokol ve araçlar tanımlanır"
       - "Çerçeve en az yılda bir gözden geçirilir"
-    processes: [PRC-RSK-01, PRC-RSK-02]
+    processes: [PRC-RSK-01, PRC-RSK-02, PRC-RSK-06]
     controls: [CTL-RSK-001, CTL-RSK-002]
     roles: [ROL-CIO-01, ROL-CMP-01]
     status: covered
+    note: "Çerçevenin yıllık gözden geçirmesi PRC-RSK-01; yönetim kuruluna durum raporlaması PRC-RSK-06."
 
   - id: Art-07
     chapter: "Bölüm II — ICT Risk Yönetimi"

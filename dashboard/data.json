@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-11-08T18:49:48.367Z",
+  "generated_at": "2026-11-08T18:53:26.104Z",
   "package": {
     "name": "DORA AI Ajan Paketi",
-    "version": "0.6.1",
+    "version": "0.7.0",
     "license": "AGPL-3.0 + ticari"
   },
   "kpis": {
-    "processes": 23,
-    "controls": 35,
+    "processes": 24,
+    "controls": 36,
     "roles": 11,
     "terms": 60,
     "scenarios": 4,
@@ -22,7 +22,7 @@
     "gap": 0
   },
   "control_families": {
-    "RSK": 11,
+    "RSK": 12,
     "INC": 10,
     "TST": 4,
     "TPP": 7,
@@ -116,7 +116,7 @@
     "issues": []
   },
   "changelog": {
-    "version": "0.6.1",
+    "version": "0.7.0",
     "date": "2026-11-08"
   }
 }

@@ -32,8 +32,8 @@ Kapsam notu (eşlemeden): Yalnızca yükümlülük doğuran maddeler eşlendi; t
 
 | Madde | Başlık | Durum | Süreç | Kontrol | Rol |
 |---|---|---|---|---|---|
-| Art-05 | Yönetişim ve organizasyon | ✅ covered | PRC-RSK-01 | CTL-RSK-001 | ROL-CEO-01, ROL-CIO-01 |
-| Art-06 | ICT risk yönetim çerçevesi | ✅ covered | PRC-RSK-01, PRC-RSK-02 | CTL-RSK-001, CTL-RSK-002 | ROL-CIO-01, ROL-CMP-01 |
+| Art-05 | Yönetişim ve organizasyon | ✅ covered | PRC-RSK-01, PRC-RSK-06 | CTL-RSK-001, CTL-RSK-012 | ROL-CEO-01, ROL-CIO-01 |
+| Art-06 | ICT risk yönetim çerçevesi | ✅ covered | PRC-RSK-01, PRC-RSK-02, PRC-RSK-06 | CTL-RSK-001, CTL-RSK-002 | ROL-CIO-01, ROL-CMP-01 |
 | Art-07 | ICT sistemleri, protokoller ve araçlar | ✅ covered | PRC-RSK-03, PRC-RSK-05 | CTL-RSK-003, CTL-RSK-009 | ROL-CTO-01, ROL-RSK-01 |
 | Art-08 | Tanımlama | ✅ covered | PRC-RSK-02, PRC-RSK-03 | CTL-RSK-003, CTL-RSK-004, CTL-RSK-006 | ROL-RSK-01 |
 | Art-09 | Koruma ve önleme | ✅ covered | PRC-RSK-05 | CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010 | ROL-CTO-01, ROL-CMP-01 |

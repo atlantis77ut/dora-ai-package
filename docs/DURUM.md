@@ -398,7 +398,7 @@ başarısız sayıyor.
 | `docs/tools/build-dashboard.mjs` | YAML'lardan üretir; sarkan referans bulursa çıkış 1 |
 | `docs/tools/render_dashboard.py` | PNG üretimi |
 
-Gösterilen: 23 süreç · 35 kontrol · 11 ajan · 60 terim · 4 senaryo (27 assertion) · %100 kapsama ·
+Gösterilen: 24 süreç · 36 kontrol · 11 ajan · 60 terim · 4 senaryo (27 assertion) · %100 kapsama ·
 6 CORF fazı (adım/kapı/süre/ajan modu) · açık noktalar · referans sağlığı.
 
 Dashboard elle düzenlenmez; `node docs/tools/build-dashboard.mjs` ile yeniden üretilir.
@@ -413,9 +413,9 @@ Dashboard elle düzenlenmez; `node docs/tools/build-dashboard.mjs` ile yeniden �
 
 | Sayfa | İçerik |
 |---|---|
-| `index.html` | KPI kartları (23 süreç · 35 kontrol · 11 ajan · 60 terim · 4 senaryo · %100 kapsama), kapsama çubuğu, CORF faz tablosu, açık noktalar, senaryo listesi |
-| `processes.html` | 23 sürecin tablosu + her süreç için açılır ayrıntı (tetikleyici, girdi/çıktı, SLA, karar kuralları, kontroller, bağımlılıklar) |
-| `controls.html` | 35 kontrolün tablosu + kanıt alanları, değiştirilemezlik, DORA maddesi, test prosedürü |
+| `index.html` | KPI kartları (24 süreç · 36 kontrol · 11 ajan · 60 terim · 4 senaryo · %100 kapsama), kapsama çubuğu, CORF faz tablosu, açık noktalar, senaryo listesi |
+| `processes.html` | 24 sürecin tablosu + her süreç için açılır ayrıntı (tetikleyici, girdi/çıktı, SLA, karar kuralları, kontroller, bağımlılıklar) |
+| `controls.html` | 36 kontrolün tablosu + kanıt alanları, değiştirilemezlik, DORA maddesi, test prosedürü |
 
 Üretici: `docs/tools/build-dashboard.mjs` (YAML → HTML/JSON; sarkan referans bulursa çıkış 1).
 PNG kopyası: `docs/tools/render_dashboard.py` → `dashboard/dashboard.png`.

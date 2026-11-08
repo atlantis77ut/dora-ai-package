@@ -255,6 +255,28 @@ controls:
     dora_ref: { article: "Madde 12" }
     test_procedure: "Son 90 günde geri yükleme testi yapılmamış kritik varlık var mı? Yedeklerin en az biri ayrı konumda ve değiştirilemez medyada mı?"
 
+  - id: CTL-RSK-012
+    name:
+      tr: "Aylık MI paketi üretimi ve onayı"
+      en: "Monthly MI pack production and approval"
+    process_id: PRC-RSK-06
+    type: directive
+    owner_role: ROL-CIO-01
+    frequency: monthly
+    evidence_spec:
+      format: json
+      immutability: hash_chain
+      fields:
+        - { name: period, type: string, required: true }
+        - { name: kpi_count, type: integer, required: true }
+        - { name: kpi_missing, type: integer, required: true }
+        - { name: red_flags, type: array<string>, required: false }
+        - { name: generated_at, type: datetime, required: true }
+        - { name: approved_by, type: string, required: true }
+        - { name: board_meeting_date, type: date, required: false }
+    dora_ref: { article: "Madde 5(2)" }
+    test_procedure: "Dönem kapanışından sonra 5 iş günü içinde onaylı paket var mı? 'Veri yok' olan KPI'lar gerekçeli mi?"
+
   # ═══════════════════════════════════════════════════════════════
   # SÜTUN 2 — OLAY YÖNETİMİ VE RAPORLAMA
   # ═══════════════════════════════════════════════════════════════

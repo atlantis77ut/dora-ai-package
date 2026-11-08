@@ -50,14 +50,14 @@
 </style></head>
 <body><div class="wrap">
   <header>
-    <div><h1>Kontrol Kataloğu</h1><div class="sub">35 kontrol · kanıt şartnamesi ve test prosedürü</div></div>
-    <span class="badge">08.11.2026 21:49:48</span>
+    <div><h1>Kontrol Kataloğu</h1><div class="sub">36 kontrol · kanıt şartnamesi ve test prosedürü</div></div>
+    <span class="badge">08.11.2026 21:53:26</span>
   </header>
   
   <nav>
     <a href="index.html" class="">Genel bakış</a>
-    <a href="processes.html" class="">Süreçler (23)</a>
-    <a href="controls.html" class="on">Kontroller (35)</a>
+    <a href="processes.html" class="">Süreçler (24)</a>
+    <a href="controls.html" class="on">Kontroller (36)</a>
   </nav>
   <section>
     <h2>Tüm kontroller <span>ayrıntı için satıra tıklayın</span></h2>
@@ -84,7 +84,9 @@
         <td><span class="pill">corrective</span></td><td>event_driven</td>
         <td class="num">7</td></tr><tr><td class="mono">CTL-RSK-011</td><td>Yedekleme ve geri yükleme doğrulaması</td><td class="mono">PRC-RSK-04</td>
         <td><span class="pill">preventive</span></td><td>quarterly</td>
-        <td class="num">10</td></tr><tr><td class="mono">CTL-INC-001</td><td>SIEM olay korelasyonu ve alarm üretimi</td><td class="mono">PRC-INC-01</td>
+        <td class="num">10</td></tr><tr><td class="mono">CTL-RSK-012</td><td>Aylık MI paketi üretimi ve onayı</td><td class="mono">PRC-RSK-06</td>
+        <td><span class="pill">directive</span></td><td>monthly</td>
+        <td class="num">7</td></tr><tr><td class="mono">CTL-INC-001</td><td>SIEM olay korelasyonu ve alarm üretimi</td><td class="mono">PRC-INC-01</td>
         <td><span class="pill">detective</span></td><td>continuous</td>
         <td class="num">5</td></tr><tr><td class="mono">CTL-INC-002</td><td>Sınıflandırma ikinci göz kontrolü</td><td class="mono">PRC-INC-01</td>
         <td><span class="pill">preventive</span></td><td>event_driven</td>
@@ -267,6 +269,18 @@
       <dt>Zorunlu alanlar</dt><dd>backup_id: string * · asset_id: string * · backup_type: string * · location: string * · encrypted: boolean * · retention_days: integer * · restore_tested: boolean * · restore_rto_hours: number · integrity_hash: string * · tested_at: datetime *</dd>
       <dt>DORA</dt><dd>Madde 12</dd>
       <dt>Test prosedürü</dt><dd>Son 90 günde geri yükleme testi yapılmamış kritik varlık var mı? Yedeklerin en az biri ayrı konumda ve değiştirilemez medyada mı?</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">CTL-RSK-012</span> &nbsp;<b>Aylık MI paketi üretimi ve onayı</b> &nbsp;
+      <span class="pill">directive</span><span class="pill">monthly</span>
+      <span class="pill">PRC-RSK-06</span></summary>
+    <dl class="kv">
+      <dt>Sahip</dt><dd>ROL-CIO-01</dd>
+      <dt>Kanıt</dt><dd>json · hash_chain</dd>
+      <dt>Zorunlu alanlar</dt><dd>period: string * · kpi_count: integer * · kpi_missing: integer * · red_flags: array<string> · generated_at: datetime * · approved_by: string * · board_meeting_date: date</dd>
+      <dt>DORA</dt><dd>Madde 5(2)</dd>
+      <dt>Test prosedürü</dt><dd>Dönem kapanışından sonra 5 iş günü içinde onaylı paket var mı? 'Veri yok' olan KPI'lar gerekçeli mi?</dd>
     </dl>
   </details>
   <details>

@@ -14,6 +14,7 @@ import { evaluatePhase, describeArtifacts } from '../src/corf/checks.mjs';
 import { verify, loadPublicKey, describe as describeLicense, REASON_TEXT } from '../src/corf/license.mjs';
 import { buildBundle, verifyBundle } from '../src/corf/evidence.mjs';
 import { buildNotification, PHASES as NOTIFY_PHASES } from '../src/corf/notify.mjs';
+import { buildMi, loadCalendar } from '../src/corf/mi.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEV_KEY = path.resolve(HERE, '../../license/dev-private.pem');
@@ -68,6 +69,14 @@ ${color.bold}Komutlar${color.reset}
   verify                      Kanıt paketini doğrula
     --bundle <dosya.zip>         Paket yolu (zorunlu)
     --pubkey <public.pem>        Açık anahtar (varsayılan: kurulumun açık anahtarı)
+
+  calendar                    Düzenleyici yükümlülük takvimi
+    --frequency <tür>            event_driven | monthly | quarterly | annual | every_3_years
+
+  mi                          Yönetim kurulu MI paketi (tek sayfa)
+    --session <id>               Oturum kimliği (zorunlu)
+    --period <YYYY-MM>           Dönem (varsayılan: bu ay)
+    --out <dizin>                Çıktı dizini (varsayılan mi/<oturum>)
 
   notify                      ITS 2024/2956 bildirim formu üret
     --session <id>               Oturum kimliği (zorunlu)
@@ -134,6 +143,8 @@ const { values: opts } = parseArgs({
     phase: { type: 'string' },
     check: { type: 'boolean' },
     'allow-unsigned': { type: 'boolean' },
+    period: { type: 'string' },
+    frequency: { type: 'string' },
   },
   allowPositionals: true,
 });
@@ -379,6 +390,37 @@ try {
     line(`\n${color.red}FORM EKSİK${color.reset} — zorunlu alanlar: ${r.payload.missing.join(', ')}`);
     line(`${color.dim}Eksik alanlar doldurulmadan bildirim gönderilmemeli.${color.reset}`);
     process.exit(2);
+  }
+
+  if (cmd === 'calendar') {
+    const cal = loadCalendar();
+    const obs = (cal.obligations ?? []).filter((o) => !opts.frequency || o.frequency === opts.frequency);
+    line(`${color.bold}Düzenleyici takvim${color.reset} — ${obs.length} yükümlülük`);
+    for (const o of obs) {
+      line(`  ${color.cyan}${o.id.padEnd(18)}${color.reset} ${String(o.name?.tr ?? '').padEnd(44)} ${color.dim}${o.frequency}${color.reset}`);
+      line(`  ${' '.repeat(18)} ${color.dim}${o.dora_ref} · ${o.deadline}${color.reset}`);
+    }
+    line(`\n${color.dim}MI paketinde aylık ve olay bazlı yükümlülükler listelenir: dora-onboard mi --session <id>${color.reset}`);
+    process.exit(0);
+  }
+
+  if (cmd === 'mi') {
+    const session = requireSession(opts);
+    const outDir = opts.out ?? path.join('mi', session.session_id);
+    const r = buildMi({ dir: store.sessionDir(session.session_id), session, period: opts.period, outDir });
+    line(`${color.bold}MI paketi${color.reset} ${r.payload.period} — ${r.payload.institution}`);
+    for (const k of r.payload.kpis) {
+      const v = k.value === null ? color.yellow + 'veri yok' + color.reset : String(k.value) + (k.unit === '%' ? '%' : '');
+      line(`  ${k.label.padEnd(26)} ${v}`);
+    }
+    if (r.payload.red_flags.length) {
+      line(`\n${color.red}Kırmızı bayrak:${color.reset} ${r.payload.red_flags.join(' · ')}`);
+    } else {
+      line(`\n${color.green}Kırmızı bayrak yok${color.reset}`);
+    }
+    line(`\n${color.dim}eksik veri: ${r.payload.missing.length} KPI — pakette 'veri yok' olarak işaretli${color.reset}`);
+    line(`yazıldı: ${path.join(r.outDir, r.files[0])}`);
+    process.exit(0);
   }
 
   line(`${color.red}Bilinmeyen komut:${color.reset} ${cmd}`);

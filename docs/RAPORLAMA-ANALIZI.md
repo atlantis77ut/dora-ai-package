@@ -50,7 +50,7 @@ Bunun tekrarlanmaması için öneri: `render-mapping.mjs --check` iki yönlü b�
 - her süreç en az bir maddede geçiyor mu?
 - her kontrol en az bir maddede geçiyor mu?
 
-Bugün 23 sürecin ve 35 kontrolün tamamı eşlemede görünüyor; CI'daki ters yön kontrolü bu sessiz
+Bugün 24 sürecin ve 36 kontrolün tamamı eşlemede görünüyor; CI'daki ters yön kontrolü bu sessiz
 boşluk sınıfını kapatıyor.
 
 ---

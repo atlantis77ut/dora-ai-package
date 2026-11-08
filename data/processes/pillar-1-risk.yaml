@@ -245,3 +245,56 @@ processes:
       - CTL-RSK-009
       - CTL-RSK-010
 
+  # ═══════════════════════════════════════════════════════════
+  # PRC-RSK-06 — Yönetim Kurulu Raporlaması (MI)
+  # ═══════════════════════════════════════════════════════════
+  - id: PRC-RSK-06
+    name:
+      tr: "Yönetim Kurulu Raporlaması ve MI Paketi"
+      en: "Management Body Reporting and MI Pack"
+    pillar: risk_mgmt
+    trigger: "Aylık dönem kapanışı veya kritik eşik aşımı"
+    preconditions:
+      - "Olay, kapsam ve tedarikçi verileri dönem içinde güncel olmalı"
+    inputs:
+      - { name: "Olay kayıtları ve SLA ölçümleri", format: json, source_role: ROL-INC-01 }
+      - { name: "Kapsam ve boşluk analizi", format: json, source_role: ROL-CMP-01 }
+      - { name: "Tedarikçi yoğunlaşma göstergeleri", format: json, source_role: ROL-TPP-01 }
+      - { name: "Test ve TLPT durumu", format: json, source_role: ROL-CTO-01 }
+    outputs:
+      - { name: "mi-pack.html", format: html, retention_years: 10 }
+      - { name: "mi-data.json", format: json, retention_years: 10 }
+      - { name: "mi-approval.json", format: json, retention_years: 10 }
+    responsible_roles: [ROL-CIO-01]
+    approval_roles: [ROL-CEO-01]
+    slas:
+      - { trigger: "Dönem kapanışı", duration: 5, unit: days, clock_start: detection }
+      - { trigger: "Kritik eşik aşımı", duration: 2, unit: days, clock_start: detection }
+    decision_rules:
+      - rule_id: MI-R1
+        condition: "acik_buyuk_olay > 0 OR sla_uyumu < 90"
+        action: "paketin ilk sayfasında kırmızı bayrak; yönetim kurulu gündemine ekle"
+        dora_ref: { article: "Madde 5(2)" }
+      - rule_id: MI-R2
+        condition: "kapsam_yuzdesi < onceki_donem"
+        action: "gerileme gerekçesini ve düzeltici aksiyonu yaz"
+        dora_ref: { article: "Madde 6(5)" }
+      - rule_id: MI-R3
+        condition: "tedarikci_yogunlasma_esigi_asildi == true"
+        action: "yoğunlaşma riskini ve çıkış stratejisi durumunu ekle"
+        dora_ref: { article: "Madde 29(1)" }
+    dependencies:
+      upstream: [PRC-INC-01, PRC-TPP-02, PRC-TST-01]
+      downstream: [PRC-RSK-01]
+    evidence_requirements:
+      - "mi-pack.html (dönem + üretim tarihi + onaylayan)"
+      - "mi-data.json (her KPI'nın kaynak dosyası; veri yoksa 'veri yok')"
+      - "mi-approval.json (yönetim kurulu oturum tarihi, karar özeti)"
+    tier_variants:
+      tier3:
+        note: "Üç aylık yeterli; tek sayfa, üç KPI"
+    control_ids:
+      - CTL-RSK-012
+
+      - CTL-RSK-010
+

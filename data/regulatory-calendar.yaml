@@ -1,0 +1,123 @@
+# Düzenleyici takvim — DORA yükümlülüklerinin tek listesi
+#
+# Amaç: süreler süreçlerin içinde dağılmış durumda; tek bakışta "hangi yükümlülük,
+# ne zaman, kimin" görünsün. Tarihler DORA'da çoğunlukla kurum takvimine bırakılmıştır;
+# bu dosya sabit tarih uydurmaz, frequency + deadline metni verir.
+#
+# frequency: event_driven | monthly | quarterly | annual | every_3_years
+
+calendar:
+  version: "1.0.0"
+  generated_at: "2026-11-08"
+  timezone: "Europe/Istanbul"
+  source: "Regulation (EU) 2022/2554 (DORA)"
+
+obligations:
+
+  - id: OBL-INC-4H
+    name:
+      tr: "Büyük olay — ilk bildirim"
+      en: "Major incident — initial notification"
+    dora_ref: "Madde 19(4)(a)"
+    process: PRC-INC-02
+    control: CTL-INC-003
+    owner_role: ROL-INC-01
+    frequency: event_driven
+    deadline: "sınıflandırma onayından 4 saat · tespitten en geç 24 saat"
+    evidence: "initial-notification.xml + notification-receipt.json"
+
+  - id: OBL-INC-72H
+    name:
+      tr: "Büyük olay — ara rapor"
+      en: "Major incident — intermediate report"
+    dora_ref: "Madde 19(4)(b)"
+    process: PRC-INC-03
+    control: CTL-INC-005
+    owner_role: ROL-INC-01
+    frequency: event_driven
+    deadline: "ilk bildirimden 72 saat"
+    evidence: "intermediate-report.xml"
+
+  - id: OBL-INC-1M
+    name:
+      tr: "Büyük olay — nihai rapor"
+      en: "Major incident — final report"
+    dora_ref: "Madde 19(4)(c)"
+    process: PRC-INC-04
+    control: CTL-INC-006
+    owner_role: ROL-INC-01
+    frequency: event_driven
+    deadline: "olay kapanışından 1 ay"
+    evidence: "final-report.xml + rca-report.pdf"
+
+  - id: OBL-PAY-4H
+    name:
+      tr: "Ödeme olayı — çift kanal bildirimi"
+      en: "Payment incident — dual-channel notification"
+    dora_ref: "Madde 23"
+    process: PRC-INC-07
+    control: CTL-INC-010
+    owner_role: ROL-INC-01
+    frequency: event_driven
+    deadline: "ödeme etkisi onayından 4 saat (DORA + TCMB)"
+    evidence: "dual-channel-receipt.json"
+
+  - id: OBL-MI-MONTHLY
+    name:
+      tr: "Yönetim kurulu MI paketi"
+      en: "Management body MI pack"
+    dora_ref: "Madde 5(2) · Madde 6"
+    process: PRC-RSK-06
+    control: CTL-RSK-012
+    owner_role: ROL-CIO-01
+    frequency: monthly
+    deadline: "her ayın ilk 5 iş günü"
+    evidence: "mi-pack.html + onay kaydı"
+
+  - id: OBL-FW-ANNUAL
+    name:
+      tr: "ICT risk çerçevesinin yıllık gözden geçirmesi"
+      en: "Annual review of the ICT risk framework"
+    dora_ref: "Madde 6(5)"
+    process: PRC-RSK-01
+    control: CTL-RSK-001
+    owner_role: ROL-CIO-01
+    frequency: annual
+    deadline: "yılda en az bir kez — kurum takvimi"
+    evidence: "review-record.json (onaylı sürüm + değişiklik gerekçesi)"
+
+  - id: OBL-TEST-ANNUAL
+    name:
+      tr: "Kritik işlevlerin yıllık testi"
+      en: "Annual testing of critical functions"
+    dora_ref: "Madde 25(2)"
+    process: PRC-TST-02
+    control: CTL-TST-001
+    owner_role: ROL-CTO-01
+    frequency: annual
+    deadline: "yılda en az bir kez — kurum takvimi"
+    evidence: "test-coverage.json"
+
+  - id: OBL-ROI-ANNUAL
+    name:
+      tr: "Bilgi kaydı (RoI) yıllık sunumu"
+      en: "Annual register of information submission"
+    dora_ref: "Madde 28(3)"
+    process: PRC-TPP-04
+    control: CTL-TPP-005
+    owner_role: ROL-TPP-01
+    frequency: annual
+    deadline: "yılda en az bir kez — yetkili otoritenin takvimi"
+    evidence: "register-of-information.xbrl + submission-receipt.json"
+
+  - id: OBL-TLPT-3Y
+    name:
+      tr: "TLPT döngüsü"
+      en: "TLPT cycle"
+    dora_ref: "Madde 26(1)"
+    process: PRC-TST-03
+    control: CTL-TST-004
+    owner_role: ROL-TLPT-01
+    frequency: every_3_years
+    deadline: "3 yılda bir — yalnız tier1 kapsamında zorunlu"
+    evidence: "tlpt-report.pdf + kapanış mektubu"

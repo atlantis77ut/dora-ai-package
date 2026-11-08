@@ -24,8 +24,8 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 
 | Madde | Başlık | Süreçler | Kontroller | Durum |
 |---|---|---|---|---|
-| Art-05 | Yönetişim ve organizasyon | PRC-RSK-01 | CTL-RSK-001 | covered |
-| Art-06 | ICT risk yönetim çerçevesi | PRC-RSK-01, PRC-RSK-02 | CTL-RSK-001, CTL-RSK-002 | covered |
+| Art-05 | Yönetişim ve organizasyon | PRC-RSK-01, PRC-RSK-06 | CTL-RSK-001, CTL-RSK-012 | covered |
+| Art-06 | ICT risk yönetim çerçevesi | PRC-RSK-01, PRC-RSK-02, PRC-RSK-06 | CTL-RSK-001, CTL-RSK-002 | covered |
 | Art-07 | ICT sistemleri, protokoller ve araçlar | PRC-RSK-03, PRC-RSK-05 | CTL-RSK-003, CTL-RSK-009 | covered |
 | Art-08 | Tanımlama | PRC-RSK-02, PRC-RSK-03 | CTL-RSK-003, CTL-RSK-004, CTL-RSK-006 | covered |
 | Art-09 | Koruma ve önleme | PRC-RSK-05 | CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010 | covered |
@@ -63,10 +63,11 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - ICT risk çerçevesi onaylanır ve yılda gözden geçirilir
 - Yeterli dijital operasyonel dayanıklılık uzmanlığı sağlanır
 
-- **Süreçler:** PRC-RSK-01
-- **Kontroller:** CTL-RSK-001
+- **Süreçler:** PRC-RSK-01, PRC-RSK-06
+- **Kontroller:** CTL-RSK-001, CTL-RSK-012
 - **Sahip roller:** ROL-CEO-01, ROL-CIO-01
 - **Durum:** covered
+- **Not:** Yönetim kuruluna düzenli raporlama PRC-RSK-06 + CTL-RSK-012 (aylık MI paketi) ile kanıtlanır.
 
 ### Art-06 — ICT risk yönetim çerçevesi
 
@@ -76,10 +77,11 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - Strateji, politika, prosedür, protokol ve araçlar tanımlanır
 - Çerçeve en az yılda bir gözden geçirilir
 
-- **Süreçler:** PRC-RSK-01, PRC-RSK-02
+- **Süreçler:** PRC-RSK-01, PRC-RSK-02, PRC-RSK-06
 - **Kontroller:** CTL-RSK-001, CTL-RSK-002
 - **Sahip roller:** ROL-CIO-01, ROL-CMP-01
 - **Durum:** covered
+- **Not:** Çerçevenin yıllık gözden geçirmesi PRC-RSK-01; yönetim kuruluna durum raporlaması PRC-RSK-06.
 
 ### Art-07 — ICT sistemleri, protokoller ve araçlar
 

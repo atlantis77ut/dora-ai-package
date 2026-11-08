@@ -7,13 +7,14 @@ yapay zeka ajanları ile otomatikleştiren modüler paket.
 
 - 60 kavramlık standart sözlük (DORA + RTS/ITS referanslı)
 - 11 ajan rolü, üç savunma hattı modeli (CORF süreç kodlarıyla eşlenmiş)
-- 5 sütun, **23 süreç** ve **35 kontrol** (şema doğrulamalı)
+- 5 sütun, **24 süreç** ve **36 kontrol** (şema doğrulamalı)
 - CORF 6 fazlı onboarding: `C1 Identify → C2 Tolerances → C3 Map → C4 Scenarios → C5 Self-assessment → C6 MOS`
 - Tier 1/2/3 profilleri, çoklu yargı alanı (TR/AB)
 - 28 DORA maddesi → süreç/kontrol eşlemesi (üretilen doküman)
-- 3 sentetik kabul senaryosu (21 assertion + tuzak testleri)
+- 4 sentetik kabul senaryosu (27 assertion + tuzak testleri)
 - Denetim izi (hash-chain / WORM), insan gözetimi noktaları
 - Kanıt paketi (ZIP + hash zinciri + Ed25519 imza) ve ITS 2024/2956 bildirim formu üretimi
+- Yönetim kurulu MI paketi (aylık tek sayfa) ve 9 kalemlik düzenleyici takvim
 - Lisans anahtarı (Ed25519, çevrimdışı doğrulama)
 
 ## Hızlı Başlangıç
@@ -31,6 +32,8 @@ node bin/dora-onboard.mjs gate  C1 --session ob-2026-xxxxx   # geçmezse çıkı
 node bin/dora-onboard.mjs status --session ob-2026-xxxxx
 node bin/dora-onboard.mjs export --session ob-2026-xxxxx       # kanıt paketi (ZIP)
 node bin/dora-onboard.mjs notify --session ob-2026-xxxxx --phase initial   # bildirim formu
+node bin/dora-onboard.mjs mi --session ob-2026-xxxxx --period 2026-11      # MI paketi
+node bin/dora-onboard.mjs calendar                                        # yükümlülük takvimi
 ```
 
 Lisans anahtarı olmadan **30 gün deneme modu** çalışır (C1-C5); üretime geçiş (C6) ticari
@@ -59,8 +62,8 @@ veya doğrudan `dashboard\index.html` dosyasını çift tıklayın. Üç sayfa v
 | Sayfa | Ne gösterir |
 |---|---|
 | `dashboard/index.html` | KPI'lar, DORA kapsama çubuğu, 6 CORF fazı, açık noktalar, senaryolar |
-| `dashboard/processes.html` | **23 sürecin tamamı** — tetikleyici, SLA, karar kuralları, kontroller, bağımlılıklar |
-| `dashboard/controls.html` | **35 kontrol** — kanıt alanları, değiştirilemezlik, test prosedürü |
+| `dashboard/processes.html` | **24 sürecin tamamı** — tetikleyici, SLA, karar kuralları, kontroller, bağımlılıklar |
+| `dashboard/controls.html` | **36 kontrol** — kanıt alanları, değiştirilemezlik, test prosedürü |
 
 Sayfalar depodaki YAML'lardan üretilir; elle düzenlenmez. Yeniden üretmek:
 `node docs/tools/build-dashboard.mjs` · PNG kopyası: `dashboard/dashboard.png`
@@ -117,7 +120,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **0.6.1**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **0.7.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

@@ -5,6 +5,36 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.7.0] — 2026-11-08
+
+> 0.5 olarak planlanan MI paketi bu sürümde teslim edildi (sıra 0.6'dan sonraya kaymıştı).
+
+### Eklendi
+
+**Yönetim kurulu MI paketi (Art-05 / Art-06)**
+- `PRC-RSK-06` Yönetim Kurulu Raporlaması ve MI Paketi + `CTL-RSK-012` üretim/onay kontrolü
+- `dora-onboard mi --session <id> --period YYYY-MM`: tek sayfa HTML + JSON
+- 6 KPI, her biri kaynak dosyasıyla; veri yoksa "veri yok", uydurma değer yok
+- Kırmızı bayraklar: açık büyük olay, %100 altı kapsam, açık kritik boşluk
+
+**Düzenleyici takvim**
+- `data/regulatory-calendar.yaml`: 9 yükümlülük (olay bazlı, aylık, yıllık, 3 yılda bir)
+- `dora-onboard calendar [--frequency ...]`: süre, madde, süreç ve sahip tek listede
+
+**Test**
+- `demo-export.mjs` artık MI paketini de üretip doğruluyor (6/6 KPI, bayrak yok, çıktılar yazıldı)
+
+**Belge**
+- `docs/MI-PAKETI.md`
+
+### Değişti
+
+- Süreç **23 → 24**, kontrol **35 → 36**
+- `PRC-RSK-05` kontrol listesine eksik olan `CTL-RSK-010` eklendi (katalogda vardı, süreçte yoktu)
+- Art-05 ve Art-06 eşlemeleri PRC-RSK-06 / CTL-RSK-012'yi gösteriyor
+
+---
+
 ## [0.6.1] — 2026-11-08
 
 ### Değişti

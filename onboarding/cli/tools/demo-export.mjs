@@ -16,6 +16,7 @@ import { loadLifecycle, runPhase } from '../src/corf/lifecycle.mjs';
 import { sign } from '../src/corf/license.mjs';
 import { buildBundle, verifyBundle } from '../src/corf/evidence.mjs';
 import { buildNotification, PHASES } from '../src/corf/notify.mjs';
+import { buildMi } from '../src/corf/mi.mjs';
 
 const { values } = parseArgs({ options: { keep: { type: 'boolean' } } });
 const CWD = path.resolve(process.cwd());
@@ -101,6 +102,24 @@ store.writeJson(path.join(dir, 'impact-assessment.json'), {
 });
 fs.writeFileSync(path.join(dir, 'rca-report.pdf'), 'DEMO RCA — kök neden: DNS yapılandırma hatası\n', 'utf8');
 
+// MI paketinin okuduğu dönem artefaktları (demo değerleri)
+store.writeJson(path.join(dir, 'notification-receipt.json'), {
+  incident_id: 'INC-2026-0001',
+  channel: 'DORA',
+  sent_at: '2026-11-08T12:58:00+03:00',
+  within_sla: true,
+  reference: 'REG-2026-88421',
+});
+store.writeJson(path.join(dir, 'gap-analysis.json'), { high_severity: 0, risk_acceptance: [] });
+store.writeJson(path.join(dir, 'go-live.json'), {
+  shadow_days: 14,
+  semi_auto_days: 30,
+  mos_dashboard: true,
+  regwatch_agent: true,
+  annual_review_date: '2027-11-03',
+});
+store.writeJson(path.join(dir, 'register-of-information.json'), { concentration_breaches: 0 });
+
 console.log('--- kanıt paketi');
 const zip = path.join(OUT, 'evidence.zip');
 const b = buildBundle({ dir, session, outFile: zip, keyFile: DEV_KEY });
@@ -138,6 +157,12 @@ store.writeJson(path.join(dir, 'classification-decision.json'), { incident_id: '
 const partial = buildNotification({ dir, session, phase: 'initial', outDir: path.join(OUT, 'tmp'), write: false });
 check(!partial.payload.complete && partial.payload.missing.includes('classification'), 'eksik zorunlu alan yakalandı');
 check(partial.payload.missing.length === 1, 'tek eksik bildirildi: ' + partial.payload.missing.join(', '));
+
+console.log('\n--- MI paketi');
+const mi = buildMi({ dir, session, period: '2026-11', outDir: path.join(OUT, 'mi') });
+check(mi.payload.kpis.every((k) => k.value !== null), 'tum KPI verili (' + mi.payload.kpis.length + ')');
+check(mi.payload.red_flags.length === 0, 'kirmizi bayrak yok');
+check(mi.files.every((f) => fs.existsSync(path.join(OUT, 'mi', f))), 'MI ciktilari yazildi');
 
 console.log('\nSONUC: ' + (failures === 0 ? 'tum kontroller gecti' : failures + ' kontrol BASARISIZ'));
 if (!values.keep) {
