@@ -32,7 +32,7 @@ function targets() {
 
 
 /** Senaryo dosyaları: şema + iş kuralı (assertion sayısı, benzersiz ID, katalog referansları). */
-export function validateScenarios(root = ROOT) {
+export function validateScenarios(root = ROOT, opts = {}) {
   const dir = path.join(root, 'tests', 'synthetic-scenarios');
   if (!fs.existsSync(dir)) return [];
   const schemaPath = path.join(root, 'schema', 'scenario.schema.json');
@@ -61,7 +61,7 @@ export function validateScenarios(root = ROOT) {
       results.push({ file: rel, schema: 'scenario.schema.json', ok: false, errors: [{ path: '(ayrıştırma)', message: e.message }] });
       continue;
     }
-    const errs = validate(doc, schema, '', { doc: schema, baseDir: path.join(root, 'schema'), cache: new Map() });
+    const errs = validate(doc, schema, '', { doc: schema, baseDir: path.join(root, 'schema'), cache: new Map(), strict: !!opts?.strict });
     const s = doc.scenario ?? {};
 
     const total = doc.then?.assertions?.length ?? 0;
@@ -112,7 +112,7 @@ export function validateScenarios(root = ROOT) {
   return results;
 }
 
-export function validateCatalogs(root = ROOT) {
+export function validateCatalogs(root = ROOT, opts = {}) {
   const results = [];
   const cache = new Map();
 
@@ -132,9 +132,9 @@ export function validateCatalogs(root = ROOT) {
         results.push({ file: rel, schema: t.schema, ok: false, errors: [{ path: '(ayrıştırma)', message: e.message }] });
         continue;
       }
-      const errs = validate(doc, schema, '', { doc: schema, baseDir: path.join(root, 'schema'), cache });
+      const errs = validate(doc, schema, '', { doc: schema, baseDir: path.join(root, 'schema'), cache, strict: !!opts?.strict });
       results.push({ file: rel, schema: t.schema, ok: errs.length === 0, errors: errs });
     }
   }
-  return results.concat(validateScenarios(root));
+  return results.concat(validateScenarios(root, opts));
 }

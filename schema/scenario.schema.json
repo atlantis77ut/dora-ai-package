@@ -175,6 +175,13 @@
               },
               "fail_if": {
                 "type": "string"
+              },
+              "matched_criterion": {
+                "type": "string"
+              },
+              "deadline_hours": {
+                "type": "integer",
+                "minimum": 0
               }
             }
           }

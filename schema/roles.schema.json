@@ -3,72 +3,182 @@
   "$id": "https://dora-package.org/schema/roles.schema.json",
   "title": "DORA Ajan Rolleri",
   "type": "object",
-  "required": ["schema_version", "roles"],
+  "required": [
+    "schema_version",
+    "roles"
+  ],
   "properties": {
-    "schema_version": { "$ref": "common.schema.json#/$defs/Version" },
-    "roles": { "type": "array", "items": { "$ref": "#/$defs/Role" } }
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/Version"
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Role"
+      }
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "dora_reference": {
+      "type": "string"
+    },
+    "defence_model": {
+      "type": "string"
+    },
+    "dependency_summary": {
+      "type": "object"
+    },
+    "reporting_tree": {
+      "type": "object"
+    },
+    "independence_matrix": {
+      "type": "object"
+    },
+    "tier_activation_summary": {
+      "type": "object"
+    }
   },
   "$defs": {
     "Role": {
       "type": "object",
-      "required": ["id", "name", "defence_line", "reports_to", "responsibilities", "tier_activation"],
+      "required": [
+        "id",
+        "name",
+        "defence_line",
+        "reports_to",
+        "responsibilities",
+        "tier_activation"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^ROL-[A-Z]{3,4}-\\d{2}$", "description": "3 harf (ROL-INC-01) veya 4 harf (ROL-TLPT-01, ROL-CTPP-01)" },
-        "name": { "$ref": "common.schema.json#/$defs/I18nText" },
-        "defence_line": { "$ref": "common.schema.json#/$defs/DefenceLine" },
-        "reports_to": { "type": ["string", "null"], "description": "null = yönetim kurulu" },
-        "subordinates": { "type": "array", "items": { "type": "string" } },
-        "human_equivalent": { "$ref": "common.schema.json#/$defs/I18nText" },
+        "id": {
+          "type": "string",
+          "pattern": "^ROL-[A-Z]{3,4}-\\d{2}$",
+          "description": "3 harf (ROL-INC-01) veya 4 harf (ROL-TLPT-01, ROL-CTPP-01)"
+        },
+        "name": {
+          "$ref": "common.schema.json#/$defs/I18nText"
+        },
+        "defence_line": {
+          "$ref": "common.schema.json#/$defs/DefenceLine"
+        },
+        "reports_to": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "null = yönetim kurulu"
+        },
+        "subordinates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "human_equivalent": {
+          "$ref": "common.schema.json#/$defs/I18nText"
+        },
         "responsibilities": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["desc", "dora_ref"],
+            "required": [
+              "desc",
+              "dora_ref"
+            ],
             "properties": {
-              "desc": { "$ref": "common.schema.json#/$defs/I18nText" },
-              "dora_ref": { "$ref": "common.schema.json#/$defs/DoraReference" }
-            }
-          }
-        },
-        "authorities": { "type": "array", "items": { "type": "string" } },
-        "skills": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["skill_id", "autonomy_level"],
-            "properties": {
-              "skill_id": { "type": "string" },
-              "autonomy_level": {
-                "type": "string",
-                "enum": ["observe", "recommend", "act_with_approval", "act_autonomous"]
+              "desc": {
+                "$ref": "common.schema.json#/$defs/I18nText"
+              },
+              "dora_ref": {
+                "$ref": "common.schema.json#/$defs/DoraReference"
               }
             }
           }
         },
-        "tools": { "type": "array", "items": { "type": "string" } },
+        "authorities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "skill_id",
+              "autonomy_level"
+            ],
+            "properties": {
+              "skill_id": {
+                "type": "string"
+              },
+              "autonomy_level": {
+                "type": "string",
+                "enum": [
+                  "observe",
+                  "recommend",
+                  "act_with_approval",
+                  "act_autonomous"
+                ]
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "knowledge_base": {
           "type": "object",
           "properties": {
-            "vector_store": { "type": "string" },
-            "collections": { "type": "array", "items": { "type": "string" } }
+            "vector_store": {
+              "type": "string"
+            },
+            "collections": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         },
         "kpis": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["name", "target", "unit"],
+            "required": [
+              "name",
+              "target",
+              "unit"
+            ],
             "properties": {
-              "name": { "type": "string" },
-              "target": { "type": "number" },
-              "unit": { "type": "string" },
-              "measurement_window": { "type": "string" }
+              "name": {
+                "type": "string"
+              },
+              "target": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "measurement_window": {
+                "type": "string"
+              }
             }
           }
         },
         "human_oversight": {
           "type": "object",
-          "required": ["required_for"],
+          "required": [
+            "required_for"
+          ],
           "properties": {
             "required_for": {
               "type": "array",
@@ -89,22 +199,48 @@
                 ]
               }
             },
-            "approver_role": { "type": "string" },
-            "max_autonomous_decision_value": { "type": "number" }
+            "approver_role": {
+              "type": "string"
+            },
+            "max_autonomous_decision_value": {
+              "type": "number"
+            }
           }
         },
         "tier_activation": {
           "type": "array",
-          "items": { "$ref": "common.schema.json#/$defs/Tier" }
+          "items": {
+            "$ref": "common.schema.json#/$defs/Tier"
+          }
         },
         "regulator_mapping": {
           "type": "object",
-          "additionalProperties": { "$ref": "common.schema.json#/$defs/Regulator" }
+          "additionalProperties": {
+            "$ref": "common.schema.json#/$defs/Regulator"
+          }
         },
         "independence_constraints": {
           "type": "array",
           "description": "Bu rolün bağımsız olması gereken roller",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
+        },
+        "layer": {
+          "type": "string"
+        },
+        "purpose": {
+          "$ref": "common.schema.json#/$defs/I18nText"
+        },
+        "corf_process_codes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^OR\\."
+          }
+        },
+        "notes": {
+          "$ref": "common.schema.json#/$defs/I18nText"
         }
       }
     }

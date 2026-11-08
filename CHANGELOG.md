@@ -5,6 +5,37 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.0.0] — 2026-11-08
+
+### Eklendi
+
+**Katı doğrulama**
+- `validate --strict`: şemada tanımlı olmayan alanlar hata sayılır
+- `jsonschema.mjs`: `allOf` ve `oneOf` desteği
+- CI'da `validate --strict` ilk adım
+
+**CI matrisi**
+- Ubuntu + Windows × Node 18 / 20 / 22 — 6 iş; "bağımlılıksız" iddiasının kanıtı
+
+**Üretim**
+- `docs/URETIM-KONTROL-LISTESI.md`: kurulum, lisans, veri, kanıt, raporlama, devir teslim
+
+### Düzeltildi
+
+Katı mod ilk çalıştırmada **12 tanımsız alan** buldu; hepsi şemalara eklendi (veri değişmedi):
+
+- roles: `layer`, `purpose`, `corf_process_codes`, `notes`, `skills[].name` + 7 kök alan
+- processes: `control_ids`, `generated_at`, `pillar`, `source_of_truth`
+- controls: `generated_at`, `source`, `purpose`, `control_families`
+- glossary: `generated_at`, `source_primary`, `source_secondary` (dizi)
+- scenario: `matched_criterion`, `deadline_hours`
+
+### Notlar
+
+- 1.0 **senaryo çalıştırıcısı içermez**; senaryolar kabul kriteri olarak durur. Çalıştırıcı 1.1.
+
+---
+
 ## [0.13.0] — 2026-11-08
 
 ### Eklendi

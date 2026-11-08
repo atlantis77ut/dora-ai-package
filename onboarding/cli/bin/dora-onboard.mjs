@@ -74,6 +74,7 @@ ${color.bold}Komutlar${color.reset}
 
   validate                    Katalog verisini şemalara göre doğrula
     --json                       Makine okunur çıktı
+    --strict                     Şemada tanımsız alanları da hata say
 
   ingest                      Dış veriyi oturuma al (konnektör çıktısı)
     --session <id>               Oturum kimliği (zorunlu)
@@ -167,6 +168,7 @@ const { values: opts } = parseArgs({
     'allow-unknown': { type: 'boolean' },
     lenient: { type: 'boolean' },
     json: { type: 'boolean' },
+    strict: { type: 'boolean' },
   },
   allowPositionals: true,
 });
@@ -415,7 +417,7 @@ try {
   }
 
   if (cmd === 'validate') {
-    const results = validateCatalogs();
+    const results = validateCatalogs(undefined, { strict: !!opts.strict });
     const bad = results.filter((r) => !r.ok);
     if (opts.json) {
       line(JSON.stringify({ checked: results.length, failed: bad.length, results }, null, 2));

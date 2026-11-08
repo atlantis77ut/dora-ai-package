@@ -3,33 +3,96 @@
   "$id": "https://dora-package.org/schema/processes.schema.json",
   "title": "DORA Süreçleri",
   "type": "object",
-  "required": ["schema_version", "processes"],
+  "required": [
+    "schema_version",
+    "processes"
+  ],
   "properties": {
-    "schema_version": { "$ref": "common.schema.json#/$defs/Version" },
-    "processes": { "type": "array", "items": { "$ref": "#/$defs/Process" } }
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/Version"
+    },
+    "processes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Process"
+      }
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "pillar": {
+      "type": "object"
+    },
+    "source_of_truth": {
+      "type": "string"
+    }
   },
   "$defs": {
     "Process": {
       "type": "object",
-      "required": ["id", "name", "pillar", "trigger", "inputs", "outputs", "responsible_roles", "slas"],
+      "required": [
+        "id",
+        "name",
+        "pillar",
+        "trigger",
+        "inputs",
+        "outputs",
+        "responsible_roles",
+        "slas"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^PRC-[A-Z]{3}-\\d{2}$" },
-        "name": { "$ref": "common.schema.json#/$defs/I18nText" },
+        "id": {
+          "type": "string",
+          "pattern": "^PRC-[A-Z]{3}-\\d{2}$"
+        },
+        "name": {
+          "$ref": "common.schema.json#/$defs/I18nText"
+        },
         "pillar": {
           "type": "string",
-          "enum": ["risk_mgmt", "incident", "testing", "third_party", "info_sharing"]
+          "enum": [
+            "risk_mgmt",
+            "incident",
+            "testing",
+            "third_party",
+            "info_sharing"
+          ]
         },
-        "trigger": { "type": "string" },
-        "preconditions": { "type": "array", "items": { "type": "string" } },
+        "trigger": {
+          "type": "string"
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "inputs": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["name", "format"],
+            "required": [
+              "name",
+              "format"
+            ],
             "properties": {
-              "name": { "type": "string" },
-              "format": { "type": "string", "enum": ["json", "yaml", "pdf", "csv", "xbrl", "manual"] },
-              "source_role": { "type": "string" }
+              "name": {
+                "type": "string"
+              },
+              "format": {
+                "type": "string",
+                "enum": [
+                  "json",
+                  "yaml",
+                  "pdf",
+                  "csv",
+                  "xbrl",
+                  "manual"
+                ]
+              },
+              "source_role": {
+                "type": "string"
+              }
             }
           }
         },
@@ -37,47 +100,108 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["name", "format", "retention_years"],
+            "required": [
+              "name",
+              "format",
+              "retention_years"
+            ],
             "properties": {
-              "name": { "type": "string" },
-              "format": { "type": "string" },
-              "template": { "type": "string" },
-              "retention_years": { "type": "integer", "minimum": 5 }
+              "name": {
+                "type": "string"
+              },
+              "format": {
+                "type": "string"
+              },
+              "template": {
+                "type": "string"
+              },
+              "retention_years": {
+                "type": "integer",
+                "minimum": 5
+              }
             }
           }
         },
-        "responsible_roles": { "type": "array", "items": { "type": "string" } },
-        "approval_roles": { "type": "array", "items": { "type": "string" } },
-        "slas": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/SLA" } },
+        "responsible_roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "approval_roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "slas": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/SLA"
+          }
+        },
         "decision_rules": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["rule_id", "condition", "action"],
+            "required": [
+              "rule_id",
+              "condition",
+              "action"
+            ],
             "properties": {
-              "rule_id": { "type": "string" },
-              "condition": { "type": "string", "description": "İfade dili (CEL/Rego)" },
-              "action": { "type": "string" },
-              "dora_ref": { "$ref": "common.schema.json#/$defs/DoraReference" }
+              "rule_id": {
+                "type": "string"
+              },
+              "condition": {
+                "type": "string",
+                "description": "İfade dili (CEL/Rego)"
+              },
+              "action": {
+                "type": "string"
+              },
+              "dora_ref": {
+                "$ref": "common.schema.json#/$defs/DoraReference"
+              }
             }
           }
         },
         "dependencies": {
           "type": "object",
           "properties": {
-            "upstream": { "type": "array", "items": { "type": "string" } },
-            "downstream": { "type": "array", "items": { "type": "string" } }
+            "upstream": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "downstream": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         },
         "evidence_requirements": {
           "type": "array",
-          "items": { "type": "string", "description": "controls.schema.json içindeki kontrol ID'leri" }
+          "items": {
+            "type": "string",
+            "description": "controls.schema.json içindeki kontrol ID'leri"
+          }
         },
         "tier_variants": {
           "type": "object",
           "additionalProperties": {
             "type": "object",
             "description": "Tier'a özel SLA ve kural override'ları"
+          }
+        },
+        "control_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CTL-[A-Z]{3}-\\d{3}$"
           }
         }
       }

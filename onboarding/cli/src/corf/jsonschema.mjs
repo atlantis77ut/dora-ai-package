@@ -45,7 +45,7 @@ function resolveRef(ref, ctx) {
     if (cur == null) return null;
     cur = cur[key];
   }
-  return { schema: cur, ctx: { doc, baseDir, cache: ctx.cache } };
+  return { schema: cur, ctx: { doc, baseDir, cache: ctx.cache, strict: ctx.strict } };
 }
 
 export function validate(instance, schema, path = '', ctx) {
@@ -58,6 +58,16 @@ export function validate(instance, schema, path = '', ctx) {
     const r = resolveRef(schema.$ref, ctx);
     if (!r) return [{ path: path || '(kök)', message: 'çözülemeyen $ref: ' + schema.$ref }];
     return validate(instance, r.schema, path, r.ctx);
+  }
+
+  if (Array.isArray(schema.allOf)) {
+    for (const sub of schema.allOf) errors.push(...validate(instance, sub, path, ctx));
+  }
+
+  if (Array.isArray(schema.oneOf)) {
+    const results = schema.oneOf.map((sub) => validate(instance, sub, path, ctx));
+    const passed = results.filter((r) => r.length === 0).length;
+    if (passed !== 1) push('oneOf: tam olarak bir koşul sağlanmalı (sağlanan: ' + passed + ')');
   }
 
   if (Array.isArray(schema.anyOf)) {
@@ -104,7 +114,10 @@ export function validate(instance, schema, path = '', ctx) {
     for (const [key, sub] of Object.entries(schema.properties ?? {})) {
       if (key in instance) errors.push(...validate(instance[key], sub, path ? path + '.' + key : key, ctx));
     }
-    if (schema.additionalProperties === false) {
+    // strict: additionalProperties belirtilmemiş nesnelerde fazladan alan reddedilir
+    const strict = ctx?.strict === true;
+    const addl = schema.additionalProperties ?? (strict && schema.properties ? false : undefined);
+    if (addl === false) {
       const allowed = new Set(Object.keys(schema.properties ?? {}));
       for (const key of Object.keys(instance)) {
         if (!allowed.has(key)) push('tanımsız alan: ' + key);
