@@ -3,6 +3,7 @@ node_modules/
 .demo-export/
 notifications/
 evidence-out/
+mi/
 *.log
 .env
 .env.local
