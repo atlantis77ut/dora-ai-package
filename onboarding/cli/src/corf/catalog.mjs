@@ -25,6 +25,8 @@ function targets() {
     { name: 'roles', schema: 'roles.schema.json', files: ['data/roles/roles-catalog.yaml'] },
     { name: 'processes', schema: 'processes.schema.json', files: processes },
     { name: 'controls', schema: 'controls.schema.json', files: ['data/controls/controls-catalog.yaml'] },
+    { name: 'mapping', schema: 'mapping.schema.json', files: ['data/mapping/dora-articles.yaml'] },
+    { name: 'lifecycle', schema: 'lifecycle.schema.json', files: ['onboarding/corf-lifecycle.yaml'] },
   ];
 }
 

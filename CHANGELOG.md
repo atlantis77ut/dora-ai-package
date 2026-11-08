@@ -5,6 +5,22 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.11.0] — 2026-11-08
+
+### Eklendi
+
+**Eşleme ve lifecycle şemaları**
+- `schema/mapping.schema.json`: 28 maddenin yapısı (id deseni, zorunlu süreç/kontrol/rol, status enum)
+- `schema/lifecycle.schema.json`: 6 faz, adım/kapı/süre, otonomi rampası, promotion_gates
+- `validate` artık **10 dosya** denetliyor; CI kapsamı genişledi
+
+### Düzeltildi
+
+- `promotion_gates` C6'da nesne (shadow_to_semi / semi_to_auto → kriter listesi); şema dizi sanıyordu.
+  Şema düzeltildi.
+
+---
+
 ## [0.10.0] — 2026-11-08
 
 ### Eklendi

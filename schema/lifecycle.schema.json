@@ -1,0 +1,167 @@
+{
+  "title": "CORF uygulama yaşam döngüsü",
+  "type": "object",
+  "required": [
+    "lifecycle",
+    "phases"
+  ],
+  "properties": {
+    "lifecycle": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "framework"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "framework": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "dora_ref": {
+          "type": "object"
+        }
+      }
+    },
+    "autonomy_ramp": {
+      "type": "object"
+    },
+    "phases": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "corf_phase",
+          "purpose",
+          "wizard_steps",
+          "exit_gate",
+          "duration_days"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^C[1-6]$"
+          },
+          "name": {
+            "type": "object",
+            "required": [
+              "tr",
+              "en"
+            ],
+            "properties": {
+              "tr": {
+                "type": "string"
+              },
+              "en": {
+                "type": "string"
+              }
+            }
+          },
+          "corf_phase": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "corresponds_to_old_steps": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "wizard_steps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "module": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "agents": {
+            "type": "object"
+          },
+          "human_roles": {
+            "type": "array"
+          },
+          "kib_artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "independence_checks": {
+            "type": "array"
+          },
+          "scenarios": {
+            "type": "array"
+          },
+          "promotion_gates": {
+            "type": "object",
+            "description": "Aşama geçiş kapıları: shadow_to_semi, semi_to_auto gibi anahtarlar → kriter listesi",
+            "additionalProperties": { "type": "array", "items": { "type": "string" } }
+          },
+          "outputs": {
+            "type": "array"
+          },
+          "duration_days": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "tier_variants": {
+            "type": "object"
+          },
+          "exit_gate": {
+            "type": "object",
+            "required": [
+              "criteria"
+            ],
+            "properties": {
+              "criteria": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "blocks_next_phase": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "continuous_cycle": {
+      "type": "object"
+    }
+  }
+}

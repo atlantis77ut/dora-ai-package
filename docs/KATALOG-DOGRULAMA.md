@@ -10,7 +10,7 @@ node bin/dora-onboard.mjs validate
 node bin/dora-onboard.mjs validate --json
 ~~~
 
-Sekiz dosya denetlenir:
+On dosya denetlenir:
 
 | Dosya | Şema |
 |---|---|
@@ -18,6 +18,8 @@ Sekiz dosya denetlenir:
 | data/roles/roles-catalog.yaml | roles.schema.json |
 | data/processes/pillar-1…5.yaml | processes.schema.json |
 | data/controls/controls-catalog.yaml | controls.schema.json |
+| data/mapping/dora-articles.yaml | mapping.schema.json |
+| onboarding/corf-lifecycle.yaml | lifecycle.schema.json |
 
 Çıkış kodu: **0** tümü uyumlu · **1** en az bir dosya uymuyor.
 
@@ -33,6 +35,7 @@ Komut yazılır yazılmaz dört gerçek sorun çıktı — hiçbiri gözle gör�
 | ROL-CEO-01'in defence_line değeri null; şema yalnızca 1/2/3 kabul ediyordu | DefenceLine enum'a null eklendi (yönetim organı, hat dışı) |
 | 11 rolde human_oversight.required_for değerleri şema enum'unda yoktu | Enum 6 değerle genişletildi |
 | PRC-INC-06'da clock_start "publication" geçersizdi | **Veri düzeltildi**: "Paydaş güncellemesi / 24 saat / classification" |
+| C6'da promotion_gates nesne, şemada dizi bekleniyordu | Şema düzeltildi: anahtar → kriter listesi eşlemesi |
 
 Son satır önemli: sorun şemada değil, 0.4.0'da benim yazdığım süreçteydi. Doğrulama olmadan
 bu hata denetimde "bu SLA neye göre başlıyor" sorusuyla ortaya çıkardı.
@@ -51,6 +54,6 @@ bu hata denetimde "bu SLA neye göre başlıyor" sorusuyla ortaya çıkardı.
 
 - Doğrulayıcı draft'ın alt kümesini uygular: type, required, properties, additionalProperties,
   enum, pattern, min/max, items, anyOf. allOf/oneOf/$ref zincirleri desteklenmez.
-- Eşleme dosyası (dora-articles.yaml) ve lifecycle (corf-lifecycle.yaml) şemasızdır; bu komut
-  onları denetlemez. Eşleme bütünlüğü ayrı bir kontrolle (render-mapping --check) sağlanır.
+- Eşleme ve lifecycle artık şemalı; ancak iş kuralı kontrolleri (sarkan referans, sahipsiz OR.* kodu)
+  hâlâ ayrı araçlarda: render-mapping --check ve build-dashboard.
 - Ek alanlar serbest bırakılmıştır (additionalProperties varsayılanı); katı mod eklenebilir.
