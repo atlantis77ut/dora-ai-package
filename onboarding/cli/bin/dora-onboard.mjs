@@ -63,6 +63,7 @@ ${color.bold}Komutlar${color.reset}
     --session <id>               Oturum kimliği (zorunlu)
     --out <dosya.zip>            Çıktı yolu (varsayılan evidence-out/<oturum>-evidence.zip)
     --key <private.pem>          İmza anahtarı (varsayılan: varsa geliştirme anahtarı)
+    --allow-unsigned             Anahtar yoksa imzasız paket üret (varsayılan: reddet)
 
   verify                      Kanıt paketini doğrula
     --bundle <dosya.zip>         Paket yolu (zorunlu)
@@ -132,6 +133,7 @@ const { values: opts } = parseArgs({
     pubkey: { type: 'string' },
     phase: { type: 'string' },
     check: { type: 'boolean' },
+    'allow-unsigned': { type: 'boolean' },
   },
   allowPositionals: true,
 });
@@ -315,6 +317,11 @@ try {
     const dir = store.sessionDir(session.session_id);
     const out = opts.out ?? path.join('evidence-out', session.session_id + '-evidence.zip');
     const keyFile = opts.key ?? DEV_KEY;
+    if (!fs.existsSync(keyFile) && !opts['allow-unsigned']) {
+      line(`${color.red}İMZASIZ PAKET REDDEDİLDİ${color.reset} — imza anahtarı bulunamadı: ${keyFile}`);
+      line(`${color.dim}Üretimde --key <private.pem> verin. Bilinçli olarak imzasız üretmek için --allow-unsigned.${color.reset}`);
+      process.exit(1);
+    }
     const r = buildBundle({ dir, session, outFile: out, keyFile });
     line(`${color.green}Kanıt paketi hazır:${color.reset} ${r.outFile}`);
     line(`  dosya      : ${r.files}`);

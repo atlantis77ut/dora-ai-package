@@ -60,8 +60,10 @@ dora-evidence-v1|<generated_at>|<session_id>|<chain_head>
 Manifest'e signature olarak yazılır: alg, payload, value (base64) ve key_fingerprint
 (açık anahtarın sha256 ilk 16 karakteri).
 
-Anahtar verilmezse paket **imzasız** üretilir; doğrulama bunu açıkça söyler. Üretimde satıcı
-özel anahtarı kullanılmalı, dev-private.pem yalnızca demo içindir.
+**İmza zorunludur.** Anahtar bulunamazsa `export` çalışmayı reddeder (çıkış kodu 1). Bilinçli
+olarak imzasız paket üretmek için `--allow-unsigned` gerekir; bu durumda doğrulama paketi
+"imza: yok" olarak raporlar. Üretimde satıcı özel anahtarı kullanılmalı, dev-private.pem
+yalnızca demo içindir.
 
 ### 1.4 Kullanım
 
@@ -72,6 +74,9 @@ node bin/dora-onboard.mjs export --session ob-2026-xxxxx
 # satıcı anahtarıyla imzala
 node bin/dora-onboard.mjs export --session ob-2026-xxxxx \
   --key /guvenli/yol/private.pem --out kanit/olay-2026-001.zip
+
+# bilinçli olarak imzasız (yalnızca test/geliştirme)
+node bin/dora-onboard.mjs export --session ob-2026-xxxxx --allow-unsigned
 
 # doğrula
 node bin/dora-onboard.mjs verify --bundle kanit/olay-2026-001.zip

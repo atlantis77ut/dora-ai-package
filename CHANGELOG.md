@@ -5,6 +5,20 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.6.1] — 2026-11-08
+
+### Değişti
+
+- **`export` imza olmadan çalışmıyor.** İmza anahtarı yoksa komut çıkış kodu 1 ile reddediyor;
+  bilinçli imzasız üretim için `--allow-unsigned` gerekiyor.
+
+### Gerekçe
+
+Hash zinciri paketin kendi içinde tutarlılığını kanıtlar; manifest de yeniden üretilirse imzasız
+durumda kurcalama yakalanmaz. Üretimde imza artık varsayılan, imzasızlık istisna.
+
+---
+
 ## [0.6.0] — 2026-11-08
 
 > Not: 0.5 (yönetim kurulu MI paketi) atlandı; sıra kanıt ve bildirim araçlarına verildi.
