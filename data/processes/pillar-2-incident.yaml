@@ -245,7 +245,7 @@ processes:
     approval_roles: [ROL-CEO-01, ROL-CMP-01]
     slas:
       - { trigger: "Sınıflandırma onayı", duration: 4, unit: hours, clock_start: classification }
-      - { trigger: "İlk açıklama", duration: 24, unit: hours, clock_start: publication }
+      - { trigger: "Paydaş güncellemesi", duration: 24, unit: hours, clock_start: classification }
     decision_rules:
       - rule_id: INC-R11
         condition: "etkilenen_musteri > 0"

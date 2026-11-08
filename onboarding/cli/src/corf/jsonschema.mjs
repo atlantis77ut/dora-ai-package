@@ -17,11 +17,53 @@ const TYPES = {
   null: (v) => v === null,
 };
 
-export function validate(instance, schema, path = '') {
+import fs from 'node:fs';
+import pathMod from 'node:path';
+
+/** $ref çözümü: aynı dosya içi (#/$defs/X) veya komşu dosya (common.schema.json#/$defs/X). */
+function resolveRef(ref, ctx) {
+  if (!ctx) return null;
+  const [file, pointer = ''] = ref.split('#');
+  let doc = ctx.doc;
+  let baseDir = ctx.baseDir;
+
+  if (file) {
+    if (!baseDir) return null;
+    const full = pathMod.join(baseDir, file);
+    if (ctx.cache?.has(full)) doc = ctx.cache.get(full);
+    else {
+      if (!fs.existsSync(full)) return null;
+      doc = JSON.parse(fs.readFileSync(full, 'utf8'));
+      ctx.cache?.set(full, doc);
+    }
+    baseDir = pathMod.dirname(full);
+  }
+
+  let cur = doc;
+  for (const raw of pointer.split('/').filter(Boolean)) {
+    const key = decodeURIComponent(raw.replace(/~1/g, '/').replace(/~0/g, '~'));
+    if (cur == null) return null;
+    cur = cur[key];
+  }
+  return { schema: cur, ctx: { doc, baseDir, cache: ctx.cache } };
+}
+
+export function validate(instance, schema, path = '', ctx) {
   const errors = [];
   const push = (msg) => errors.push({ path: path || '(kök)', message: msg });
 
   if (!schema || typeof schema !== 'object') return errors;
+
+  if (schema.$ref) {
+    const r = resolveRef(schema.$ref, ctx);
+    if (!r) return [{ path: path || '(kök)', message: 'çözülemeyen $ref: ' + schema.$ref }];
+    return validate(instance, r.schema, path, r.ctx);
+  }
+
+  if (Array.isArray(schema.anyOf)) {
+    const anyOk = schema.anyOf.some((sub) => validate(instance, sub, path, ctx).length === 0);
+    if (!anyOk) push('anyOf koşullarından hiçbiri sağlanmadı');
+  }
 
   if (schema.type) {
     const types = Array.isArray(schema.type) ? schema.type : [schema.type];
@@ -51,7 +93,7 @@ export function validate(instance, schema, path = '') {
     if (schema.minItems != null && instance.length < schema.minItems) push('en az ' + schema.minItems + ' öğe');
     if (schema.maxItems != null && instance.length > schema.maxItems) push('en çok ' + schema.maxItems + ' öğe');
     if (schema.items) {
-      instance.forEach((v, i) => errors.push(...validate(v, schema.items, path + '[' + i + ']')));
+      instance.forEach((v, i) => errors.push(...validate(v, schema.items, path + '[' + i + ']', ctx)));
     }
   }
 
@@ -60,7 +102,7 @@ export function validate(instance, schema, path = '') {
       if (!(req in instance)) push('zorunlu alan yok: ' + req);
     }
     for (const [key, sub] of Object.entries(schema.properties ?? {})) {
-      if (key in instance) errors.push(...validate(instance[key], sub, path ? path + '.' + key : key));
+      if (key in instance) errors.push(...validate(instance[key], sub, path ? path + '.' + key : key, ctx));
     }
     if (schema.additionalProperties === false) {
       const allowed = new Set(Object.keys(schema.properties ?? {}));

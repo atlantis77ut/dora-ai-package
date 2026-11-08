@@ -16,6 +16,7 @@ import { buildBundle, verifyBundle } from '../src/corf/evidence.mjs';
 import { buildNotification, PHASES as NOTIFY_PHASES } from '../src/corf/notify.mjs';
 import { buildMi, loadCalendar, loadAnchors, upcoming, fmtDate } from '../src/corf/mi.mjs';
 import { ingest } from '../src/corf/ingest.mjs';
+import { validateCatalogs } from '../src/corf/catalog.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEV_KEY = path.resolve(HERE, '../../license/dev-private.pem');
@@ -70,6 +71,9 @@ ${color.bold}Komutlar${color.reset}
   verify                      Kanıt paketini doğrula
     --bundle <dosya.zip>         Paket yolu (zorunlu)
     --pubkey <public.pem>        Açık anahtar (varsayılan: kurulumun açık anahtarı)
+
+  validate                    Katalog verisini şemalara göre doğrula
+    --json                       Makine okunur çıktı
 
   ingest                      Dış veriyi oturuma al (konnektör çıktısı)
     --session <id>               Oturum kimliği (zorunlu)
@@ -162,6 +166,7 @@ const { values: opts } = parseArgs({
     from: { type: 'string' },
     'allow-unknown': { type: 'boolean' },
     lenient: { type: 'boolean' },
+    json: { type: 'boolean' },
   },
   allowPositionals: true,
 });
@@ -407,6 +412,28 @@ try {
     line(`\n${color.red}FORM EKSİK${color.reset} — zorunlu alanlar: ${r.payload.missing.join(', ')}`);
     line(`${color.dim}Eksik alanlar doldurulmadan bildirim gönderilmemeli.${color.reset}`);
     process.exit(2);
+  }
+
+  if (cmd === 'validate') {
+    const results = validateCatalogs();
+    const bad = results.filter((r) => !r.ok);
+    if (opts.json) {
+      line(JSON.stringify({ checked: results.length, failed: bad.length, results }, null, 2));
+      process.exit(bad.length ? 1 : 0);
+    }
+    line(`${color.bold}Katalog doğrulaması${color.reset} — ${results.length} dosya`);
+    for (const r of results) {
+      const mark = r.ok ? color.green + '✔' + color.reset : color.red + '✘' + color.reset;
+      line(`  ${mark} ${r.file.padEnd(38)} ${color.dim}${r.schema}${color.reset}`);
+      for (const e of r.errors.slice(0, 4)) line(`      ${color.red}${e.path}${color.reset} — ${e.message}`);
+      if (r.errors.length > 4) line(`      ${color.dim}… ${r.errors.length - 4} hata daha${color.reset}`);
+    }
+    if (bad.length) {
+      line(`\n${color.red}${bad.length} dosya şemaya uymuyor${color.reset}`);
+      process.exit(1);
+    }
+    line(`\n${color.green}✓ Tüm katalog şemaya uyuyor${color.reset}`);
+    process.exit(0);
   }
 
   if (cmd === 'ingest') {

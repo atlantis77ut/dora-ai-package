@@ -15,6 +15,7 @@ yapay zeka ajanları ile otomatikleştiren modüler paket.
 - Denetim izi (hash-chain / WORM), insan gözetimi noktaları
 - Kanıt paketi (ZIP + hash zinciri + Ed25519 imza) ve ITS 2024/2956 bildirim formu üretimi
 - Yönetim kurulu MI paketi (aylık tek sayfa) ve 9 kalemlik düzenleyici takvim
+- Katalog doğrulaması: 8 veri dosyası 5 JSON Schema ile denetlenir (CI kapısı)
 - Dış veri alımı: dosya bırakma sözleşmesi (`ingest`), sha256 alım kaydı
 - Lisans anahtarı (Ed25519, çevrimdışı doğrulama)
 
@@ -26,6 +27,7 @@ Gereksinim: Node.js 18+ · **npm install gerekmez** — wizard bağımlılıksı
 git clone https://github.com/atlantis77ut/dora-ai-package.git
 cd dora-ai-package/onboarding/cli
 
+node bin/dora-onboard.mjs validate            # katalog şema doğrulaması
 node bin/dora-onboard.mjs phases              # 6 faz, kapı sayıları, süreler
 node bin/dora-onboard.mjs init --tier tier2 --regulator BDDK
 node bin/dora-onboard.mjs phase C1 --session ob-2026-xxxxx --demo
@@ -122,7 +124,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **0.9.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **0.10.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

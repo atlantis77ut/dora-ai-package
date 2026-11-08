@@ -10,8 +10,8 @@
     },
     "DoraReference": {
       "type": "object",
-      "required": ["article"],
-      "description": "paragraph ve rts_its opsiyonel: veri dosyalarında çoğu referans yalnızca madde düzeyinde tutuluyor",
+      "anyOf": [{ "required": ["article"] }, { "required": ["rts_its"] }],
+      "description": "En az bir referans zorunlu: article veya rts_its. Bazı karar kuralları yalnızca RTS maddesine dayanır.",
       "properties": {
         "article": { "type": "string", "examples": ["Madde 5", "Article 18"] },
         "paragraph": { "type": "string", "examples": ["1(a)", "3"] },
@@ -25,9 +25,9 @@
       "description": "tier1=büyük/sistemik, tier2=orta, tier3=küçük/kamu"
     },
     "DefenceLine": {
-      "type": "integer",
-      "enum": [1, 2, 3],
-      "description": "1=operasyon, 2=kontrol, 3=denetim"
+      "type": ["integer", "null"],
+      "enum": [1, 2, 3, null],
+      "description": "1=operasyon, 2=kontrol, 3=denetim, null=yönetim organı (hat dışı)"
     },
     "SLA": {
       "type": "object",

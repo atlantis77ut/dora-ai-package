@@ -1,6 +1,6 @@
 # DORA AI Ajan Paketi — Uygulama Raporu
 
-**Sürüm:** 0.9.0 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
+**Sürüm:** 0.10.0 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
 **Depo:** https://github.com/atlantis77ut/dora-ai-package · **Canlı dashboard:** https://atlantis77ut.github.io/dora-ai-package/
 
 ---
@@ -24,7 +24,7 @@ Paketin bugünkü ölçeği:
 | Sözlük terimi | 60 |
 | Sentetik kabul senaryosu | 4 (27 assertion) |
 | CORF fazı | 6 (C1–C6) |
-| JSON Şema | 5 |
+| JSON Şema | 12 (5 katalog + 7 artefakt) |
 
 **Ne değildir:** bir LLM orkestrasyon motoru değil, bir ajan çalıştırıcısı değil, hukuki görüş değil.
 Paket; süreçleri, yetkileri ve kanıt kurallarını tanımlar; ajanların gerçek çalıştırıcısı bilinçli
@@ -218,10 +218,11 @@ dashboard aynı zamanda bir **bütünlük testidir**. PNG kopyası Pillow ile ü
 
 ## 8. Doğrulama ve kalite
 
-Dört kontrol her push'ta GitHub Actions'ta çalışır:
+Altı kontrol her push'ta GitHub Actions'ta çalışır:
 
 | Kontrol | Ne yapar |
 |---|---|
+| `dora-onboard validate` | 8 katalog dosyasını 5 JSON Schema'ya göre denetler (şema ihlalinde kırılır) |
 | `render-mapping.mjs --check` | 28 maddeyi doğrular; tanımsız referans, tekrarlanan ID, gerekçesiz gap ve **eşlemede görünmeyen süreç/kontrol** arar |
 | `build-dashboard.mjs` | YAML'lardan siteyi üretir; sarkan referansta kırılır |
 | `dora-onboard.mjs phases` | Lifecycle dosyasının yapısal geçerliliğini denetler |

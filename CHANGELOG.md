@@ -5,6 +5,29 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.10.0] — 2026-11-08
+
+### Eklendi
+
+**Katalog doğrulaması (validate)**
+- `dora-onboard validate [--json]`: 8 YAML dosyasını `schema/` altındaki 5 JSON Schema'ya göre denetler
+- `jsonschema.mjs`: `$ref` (aynı dosya ve komşu dosya) + `anyOf` desteği eklendi
+- CI'da ilk adım: veri şemayı kırarsa push kırmızı
+- `docs/KATALOG-DOGRULAMA.md`
+
+### Düzeltildi (doğrulamanın ilk çalıştırmasında çıkan gerçek hatalar)
+
+- `common.schema.json` DoraReference yalnızca `article` istiyordu; 6 sözlük terimi ve 2 karar kuralı
+  yalnızca RTS referansı taşıyor. Kural `anyOf: article | rts_its` yapıldı.
+- `DefenceLine` yalnızca 1/2/3 kabul ediyordu; ROL-CEO-01 yönetim organı olduğu için `null`.
+  Enum'a `null` eklendi.
+- 11 rolde `human_oversight.required_for` değerleri (approval, strategy_approval,
+  risk_appetite_change, crisis_declaration, scope_change, disclosure) şemada yoktu; enum genişletildi.
+- **PRC-INC-06'da geçersiz `clock_start: publication`** vardı — 0.4.0'da benim yazdığım SLA.
+  Veri düzeltildi: "Paydaş güncellemesi / 24 saat / classification".
+
+---
+
 ## [0.9.0] — 2026-11-08
 
 ### Eklendi

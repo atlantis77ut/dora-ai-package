@@ -74,7 +74,19 @@
               "type": "array",
               "items": {
                 "type": "string",
-                "enum": ["classification", "notification", "closure", "escalation", "contract_approval"]
+                "enum": [
+                  "classification",
+                  "notification",
+                  "closure",
+                  "escalation",
+                  "contract_approval",
+                  "approval",
+                  "strategy_approval",
+                  "risk_appetite_change",
+                  "crisis_declaration",
+                  "scope_change",
+                  "disclosure"
+                ]
               }
             },
             "approver_role": { "type": "string" },
