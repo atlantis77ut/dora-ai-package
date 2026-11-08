@@ -1,6 +1,6 @@
 # DORA AI Ajan Paketi — Uygulama Raporu
 
-**Sürüm:** 0.7.0 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
+**Sürüm:** 0.8.0 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
 **Depo:** https://github.com/atlantis77ut/dora-ai-package · **Canlı dashboard:** https://atlantis77ut.github.io/dora-ai-package/
 
 ---
@@ -156,6 +156,11 @@ node bin/dora-onboard.mjs phase C1 --session ob-2026-xxxxx --demo
 node bin/dora-onboard.mjs gate  C1 --session ob-2026-xxxxx    # geçmezse çıkış 2
 node bin/dora-onboard.mjs status --session ob-2026-xxxxx
 node bin/dora-onboard.mjs rollback --session ob-2026-xxxxx --to-phase C1
+node bin/dora-onboard.mjs export --session ob-2026-xxxxx        # kanıt paketi
+node bin/dora-onboard.mjs notify --session ob-2026-xxxxx --phase initial
+node bin/dora-onboard.mjs mi --session ob-2026-xxxxx --period 2026-11
+node bin/dora-onboard.mjs calendar --next 90 --anchors data/calendar-anchors.example.yaml
+node bin/dora-onboard.mjs ingest --session ob-2026-xxxxx --from ./drop
 ```
 
 | Komut | İş |
@@ -169,6 +174,9 @@ node bin/dora-onboard.mjs rollback --session ob-2026-xxxxx --to-phase C1
 | `export` | Kanıt paketi üretir: ZIP + manifest + hash zinciri + Ed25519 imza |
 | `verify` | Paketin dosya özetlerini, zincirini ve imzasını doğrular |
 | `notify` | ITS 2024/2956 bildirim formunu doldurur (json/md/html), eksik alanı işaretler |
+| `mi` | Yönetim kurulu MI paketi (6 KPI + kırmızı bayrak + yaklaşan yükümlülükler) |
+| `calendar` | Düzenleyici takvim; `--next N --anchors` ile tarih hesabı |
+| `ingest` | Dış veriyi oturuma alır, sha256 ile kaydeder |
 
 Oturum verisi `.dora-onboarding/<oturum-id>/` altında JSON olarak tutulur: kurum profili,
 yargı alanı, iş hizmetleri kataloğu, etki toleransları, risk iştahı, envanter, ajan aktivasyonu,
@@ -218,7 +226,8 @@ Dört kontrol her push'ta GitHub Actions'ta çalışır:
 | `build-dashboard.mjs` | YAML'lardan siteyi üretir; sarkan referansta kırılır |
 | `dora-onboard.mjs phases` | Lifecycle dosyasının yapısal geçerliliğini denetler |
 | `demo.mjs` | Altı fazı örnek veriyle uçtan uca çalıştırır |
-| `demo-export.mjs` | Kanıt paketi + doğrulama + kurcalama testi + üç bildirim formu |
+| `demo-export.mjs` | Kanıt paketi + doğrulama + kurcalama testi + üç bildirim formu + MI |
+| `demo-ingest.mjs` | Dış veri alımı, ret davranışı, sha256 kaydı, takvim tarihleri |
 
 Ek olarak `build-coverage-summary.mjs` kapsam tablosunu (`docs/KAPSAM-OZETI.md`) üretir.
 
@@ -288,7 +297,8 @@ Dürüst bir rapor, sınırları da yazmalı:
    (araç çağırma, hafıza, kuyruk) kapsam dışıdır. `autonomy_level` alanları bu katmanın
    sözleşmesidir, uygulaması değil.
 2. **GOLDENHORN/CORF API adaptörü tasarımdır**, kodlanmamıştır.
-3. **Otomatik kod testi yok.** Doğrulama, veri ve akış bütünlüğü düzeyindedir.
+3. **Otomatik kod testi yok.** Doğrulama, veri ve akış bütünlüğü düzeyindedir. Dış sistem
+   bağlantısı dosya bırakma sözleşmesiyle sınırlıdır; API istemcisi yoktur.
 4. **Hukuki görüş değildir.** BDDK/SPK/KVKK eşlemesi bilgi amaçlıdır; avukat onayı gerekir.
 5. **ITS XBRL taksonomi bağlaması açık.** Alan sözlüğü var, resmi taksonomi kodlarının bağlanması
    uygulama adımıdır.

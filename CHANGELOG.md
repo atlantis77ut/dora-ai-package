@@ -5,6 +5,33 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [0.8.0] — 2026-11-08
+
+### Eklendi
+
+**Konnektör sözleşmesi (dosya bırakma)**
+- `dora-onboard ingest --session <id> --from <dizin>`: JSON doğrular, opak kanıtları (pdf/xml/xbrl) alır,
+  bilinmeyen uzantıyı reddeder (`--allow-unknown` ile geçer)
+- Her alım `ingest-log.json`'a eklenir: dosya, tür, boyut, sha256, kaynak, zaman
+- `docs/KONNEKTOR.md`: sözleşme, desteklenen dosyalar, Splunk/ServiceNow/Archer örnekleri, sınırlar
+
+**Takvim tarih hesabı**
+- `calendar --next <gün> --anchors <yaml>`: önümüzdeki N günün yükümlülükleri
+- `mi --anchors <yaml> --days <gün>`: MI paketine "Yaklaşan yükümlülükler" bölümü
+- `data/calendar-anchors.example.yaml`: aylık/yıllık/tek seferlik tarih kuralları
+
+**Test**
+- `tools/demo-ingest.mjs`: alım, ret, sha256 kaydı, tarih hesabı ve MI entegrasyonu
+
+### Düzeltildi
+
+- **BOM'lu JSON reddediliyordu.** Windows araçlarının yazdığı UTF-8 BOM artık tolere ediliyor
+  (ingest, mi ve notify okuma yolları).
+- **Takvim tarihleri bir gün kayıyordu.** `toISOString()` UTC'ye çevirdiği için 30 Nisan
+  "29 Nisan" görünüyordu; yerel tarih biçimlendirmesi eklendi.
+
+---
+
 ## [0.7.0] — 2026-11-08
 
 > 0.5 olarak planlanan MI paketi bu sürümde teslim edildi (sıra 0.6'dan sonraya kaymıştı).

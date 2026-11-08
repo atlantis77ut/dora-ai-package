@@ -29,7 +29,7 @@ function readJsonSafe(dir, name) {
   const f = path.join(dir, name);
   if (!fs.existsSync(f)) return { exists: false, data: null };
   try {
-    return { exists: true, data: JSON.parse(fs.readFileSync(f, 'utf8')) };
+    return { exists: true, data: JSON.parse(fs.readFileSync(f, 'utf8').replace(/^\uFEFF/, '')) };
   } catch {
     return { exists: true, data: null };
   }

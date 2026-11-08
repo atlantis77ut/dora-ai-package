@@ -23,7 +23,7 @@ export function loadCalendar(file = CAL) {
 function readJson(dir, name) {
   const f = path.join(dir, name);
   if (!fs.existsSync(f)) return null;
-  try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; }
+  try { return JSON.parse(fs.readFileSync(f, 'utf8').replace(/^\uFEFF/, '')); } catch { return null; }
 }
 
 function coverage() {
@@ -85,7 +85,62 @@ export function computeKpis(dir) {
   return kpis;
 }
 
-export function buildMi({ dir, session, period, outDir, write = true }) {
+/** Takvim tarihleri: kuruma özel anchor dosyası (obligation id -> tarih kuralı). */
+export function loadAnchors(file) {
+  if (!file || !fs.existsSync(file)) return {};
+  const doc = parse(fs.readFileSync(file, 'utf8'));
+  return doc.anchors ?? {};
+}
+
+/** YYYY-MM-DD (yerel saat) — toISOString UTC'ye kaydırdığı için kullanılmaz. */
+export function fmtDate(d) {
+  const p = (n) => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+
+function startOfDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+/** Anchor kuralından bir sonraki tarihi hesaplar: { date, days, overdue } veya null. */
+export function nextDue(anchor, now = new Date()) {
+  if (!anchor) return null;
+  const today = startOfDay(now);
+
+  if (anchor.date) {
+    const d = startOfDay(new Date(anchor.date + 'T00:00:00'));
+    if (Number.isNaN(d.getTime())) return null;
+    return { date: d, days: Math.round((d - today) / 86400000), overdue: d < today };
+  }
+
+  if (anchor.day_of_month) {
+    const day = Number(anchor.day_of_month);
+    let d = new Date(today.getFullYear(), today.getMonth(), day);
+    if (d < today) d = new Date(today.getFullYear(), today.getMonth() + 1, day);
+    return { date: d, days: Math.round((d - today) / 86400000), overdue: false };
+  }
+
+  if (anchor.month && anchor.day) {
+    let d = new Date(today.getFullYear(), Number(anchor.month) - 1, Number(anchor.day));
+    if (d < today) d = new Date(today.getFullYear() + 1, Number(anchor.month) - 1, Number(anchor.day));
+    return { date: d, days: Math.round((d - today) / 86400000), overdue: false };
+  }
+
+  return null;
+}
+
+/** Önümüzdeki N gün içindeki yükümlülükler (anchor'ı olanlar). */
+export function upcoming(obligations, anchors, days = 30, now = new Date()) {
+  const out = [];
+  for (const o of obligations) {
+    const due = nextDue(anchors[o.id], now);
+    if (!due) continue;
+    if (due.overdue || due.days <= days) out.push({ ...o, due });
+  }
+  return out.sort((a, b) => a.due.date - b.due.date);
+}
+
+export function buildMi({ dir, session, period, outDir, write = true, anchors = {}, days = 30 }) {
   const now = new Date();
   const p = period ?? now.toISOString().slice(0, 7);
   const kpis = computeKpis(dir);
@@ -116,6 +171,8 @@ export function buildMi({ dir, session, period, outDir, write = true }) {
     missing,
     incidents: inc ? [inc] : [],
     obligations: { monthly, event_driven: eventDriven },
+    upcoming: upcoming(obligations, anchors, days),
+    upcoming_days: days,
   };
 
   const files = ['mi-' + p + '.html', 'mi-' + p + '.json'];
@@ -154,6 +211,14 @@ function renderHtml(p) {
         .join('\n')
     : '      <tr><td colspan="4" class="na">Olay kaydı yok</td></tr>';
 
+  const upRows = p.upcoming.length
+    ? p.upcoming
+        .map(
+          (o) => `      <tr><td>${esc(o.name?.tr ?? o.id)}</td><td>${esc(fmtDate(o.due.date))}</td><td>${o.due.overdue ? '<span class="late">gecikmiş</span>' : o.due.days + ' gün'}</td><td>${esc(o.owner_role)}</td></tr>`,
+        )
+        .join('\n')
+    : '      <tr><td colspan="4" class="na">Tarih girilmemiş — data/calendar-anchors.example.yaml</td></tr>';
+
   const oblRows = [...p.obligations.monthly, ...p.obligations.event_driven]
     .map(
       (o) => `      <tr><td>${esc(o.name?.tr ?? o.id)}</td><td>${esc(o.dora_ref)}</td><td>${esc(o.deadline)}</td><td>${esc(o.owner_role)}</td></tr>`,
@@ -185,6 +250,7 @@ function renderHtml(p) {
   th { font-size:10.5px; color:var(--muted); text-transform:uppercase; }
   ul.flags { margin:4px 0 0 18px; padding:0; color:var(--bad); }
   .none { color:var(--ok); margin:4px 0 0; }
+  .late { color:var(--bad); font-weight:700; }
   footer { margin-top:22px; border-top:1px solid var(--line); padding-top:8px; color:var(--muted); font-size:10.5px; }
   @media print { body { padding:0; } .card { break-inside:avoid; } }
 </style>
@@ -199,6 +265,14 @@ ${cards}
 
   <h2>Kırmızı bayraklar</h2>
   ${flags}
+
+  <h2>Yaklaşan yükümlülükler (${p.upcoming_days} gün)</h2>
+  <table>
+    <thead><tr><th>Yükümlülük</th><th>Tarih</th><th>Kalan</th><th>Sahip</th></tr></thead>
+    <tbody>
+${upRows}
+    </tbody>
+  </table>
 
   <h2>Olaylar (dönem)</h2>
   <table>

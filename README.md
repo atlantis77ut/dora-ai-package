@@ -15,6 +15,7 @@ yapay zeka ajanları ile otomatikleştiren modüler paket.
 - Denetim izi (hash-chain / WORM), insan gözetimi noktaları
 - Kanıt paketi (ZIP + hash zinciri + Ed25519 imza) ve ITS 2024/2956 bildirim formu üretimi
 - Yönetim kurulu MI paketi (aylık tek sayfa) ve 9 kalemlik düzenleyici takvim
+- Dış veri alımı: dosya bırakma sözleşmesi (`ingest`), sha256 alım kaydı
 - Lisans anahtarı (Ed25519, çevrimdışı doğrulama)
 
 ## Hızlı Başlangıç
@@ -33,7 +34,8 @@ node bin/dora-onboard.mjs status --session ob-2026-xxxxx
 node bin/dora-onboard.mjs export --session ob-2026-xxxxx       # kanıt paketi (ZIP)
 node bin/dora-onboard.mjs notify --session ob-2026-xxxxx --phase initial   # bildirim formu
 node bin/dora-onboard.mjs mi --session ob-2026-xxxxx --period 2026-11      # MI paketi
-node bin/dora-onboard.mjs calendar                                        # yükümlülük takvimi
+node bin/dora-onboard.mjs calendar --next 90 --anchors data/calendar-anchors.example.yaml
+node bin/dora-onboard.mjs ingest --session ob-2026-xxxxx --from ./drop   # dış veri alımı
 ```
 
 Lisans anahtarı olmadan **30 gün deneme modu** çalışır (C1-C5); üretime geçiş (C6) ticari
@@ -120,7 +122,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **0.7.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **0.8.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

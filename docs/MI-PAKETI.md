@@ -33,6 +33,7 @@ Tek sayfa, yazdırmaya hazır HTML + makine okunur JSON:
 | KPI kartları | DORA kapsamı, açık büyük olay, 4 saat bildirim uyumu, kritik boşluk, yıllık gözden geçirme, yoğunlaşma eşiği |
 | Kırmızı bayraklar | Açık büyük olay, %100 altı kapsam, açık kritik boşluk |
 | Olaylar | Dönemdeki olay kaydı (id, sınıf, tespit, kapanış) |
+| Yaklaşan yükümlülükler | Anchor dosyası verilirse önümüzdeki N günün takvimi (tarih + kalan gün) |
 | Yükümlülükler | Aylık ve olay bazlı yükümlülükler (madde, süre, sahip) |
 
 Her KPI kartının altında **kaynak dosya** yazılıdır. Veri yoksa kart "veri yok" gösterir ve
@@ -61,6 +62,10 @@ node bin/dora-onboard.mjs mi --session ob-2026-xxxxx --period 2026-11
 # yükümlülük takvimi
 node bin/dora-onboard.mjs calendar
 node bin/dora-onboard.mjs calendar --frequency monthly
+
+# yaklaşanlar (kurum tarihleriyle)
+node bin/dora-onboard.mjs calendar --next 90 --anchors data/calendar-anchors.example.yaml
+node bin/dora-onboard.mjs mi --session ob-2026-xxxxx --anchors data/calendar-anchors.example.yaml --days 90
 ~~~
 
 Çıktı: mi/<oturum>/mi-<dönem>.html ve .json.
@@ -96,4 +101,6 @@ bırakılmıştır; dosya sıklık ve son tarih metnini verir, kurum kendi takvi
 - KPI'lar oturum artefaktlarına dayanır; kurumun canlı sistemlerine bağlanmaz. Gerçek veri
   için ajanların/konnektörlerin artefaktları üretmesi gerekir (0.8 konusu).
 - Paket imzalanmaz; onay kaydı ayrı dosyadır (mi-approval.json) ve CTL-RSK-012 kanıtıdır.
-- Takvimde tarih hesabı yoktur; "yaklaşan 30 gün" görünümü kurum takvimi girilince anlamlı olur.
+- Tarih hesabı anchor dosyasına bağlıdır. Dosya yoksa "Yaklaşan yükümlülükler" bölümü
+  "tarih girilmemiş" der; paket yine üretilir. DORA yıllık yükümlülükler için sabit tarih
+  vermediğinden bu tarihler kurumun seçimidir (data/calendar-anchors.example.yaml).

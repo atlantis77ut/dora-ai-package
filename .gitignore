@@ -1,6 +1,8 @@
 node_modules/
 .dora-onboarding/
 .demo-export/
+.ingest-drop/
+.demo-ingest/
 notifications/
 evidence-out/
 mi/

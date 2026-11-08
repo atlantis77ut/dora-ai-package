@@ -1,0 +1,20 @@
+# Kuruma özel takvim tarihleri — ÖRNEK
+#
+# Kopyalayıp calendar-anchors.yaml yapın ve kendi tarihlerinizi girin.
+# DORA yıllık yükümlülükler için sabit tarih vermez; bu dosya kurumun seçimidir.
+#
+# Kurallar:
+#   { month: 4, day: 30 }   -> her yıl 30 Nisan
+#   { day_of_month: 5 }     -> her ayın 5'i
+#   { date: "2027-06-01" }  -> tek seferlik tarih (TLPT gibi 3 yıllık döngüler)
+#
+# Kullanım:
+#   node bin/dora-onboard.mjs calendar --next 30 --anchors data/calendar-anchors.yaml
+#   node bin/dora-onboard.mjs mi --session <id> --anchors data/calendar-anchors.yaml
+
+anchors:
+  OBL-MI-MONTHLY: { day_of_month: 5 }
+  OBL-FW-ANNUAL: { month: 11, day: 3 }
+  OBL-TEST-ANNUAL: { month: 9, day: 15 }
+  OBL-ROI-ANNUAL: { month: 4, day: 30 }
+  OBL-TLPT-3Y: { date: "2027-06-01" }

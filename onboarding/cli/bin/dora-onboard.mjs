@@ -14,7 +14,8 @@ import { evaluatePhase, describeArtifacts } from '../src/corf/checks.mjs';
 import { verify, loadPublicKey, describe as describeLicense, REASON_TEXT } from '../src/corf/license.mjs';
 import { buildBundle, verifyBundle } from '../src/corf/evidence.mjs';
 import { buildNotification, PHASES as NOTIFY_PHASES } from '../src/corf/notify.mjs';
-import { buildMi, loadCalendar } from '../src/corf/mi.mjs';
+import { buildMi, loadCalendar, loadAnchors, upcoming, fmtDate } from '../src/corf/mi.mjs';
+import { ingest } from '../src/corf/ingest.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEV_KEY = path.resolve(HERE, '../../license/dev-private.pem');
@@ -70,13 +71,22 @@ ${color.bold}Komutlar${color.reset}
     --bundle <dosya.zip>         Paket yolu (zorunlu)
     --pubkey <public.pem>        Açık anahtar (varsayılan: kurulumun açık anahtarı)
 
+  ingest                      Dış veriyi oturuma al (konnektör çıktısı)
+    --session <id>               Oturum kimliği (zorunlu)
+    --from <dizin>               Kaynak dizin (zorunlu)
+    --allow-unknown              Bilinmeyen uzantıları da al
+
   calendar                    Düzenleyici yükümlülük takvimi
     --frequency <tür>            event_driven | monthly | quarterly | annual | every_3_years
+    --next <gün>                 Önümüzdeki N gün içindekiler (anchor dosyası gerekir)
+    --anchors <dosya.yaml>       Kuruma özel tarihler (bkz. data/calendar-anchors.example.yaml)
 
   mi                          Yönetim kurulu MI paketi (tek sayfa)
     --session <id>               Oturum kimliği (zorunlu)
     --period <YYYY-MM>           Dönem (varsayılan: bu ay)
     --out <dizin>                Çıktı dizini (varsayılan mi/<oturum>)
+    --anchors <dosya.yaml>       Yaklaşan yükümlülükler için kurum tarihleri
+    --days <gün>                 "Yaklaşan" penceresi (varsayılan 30)
 
   notify                      ITS 2024/2956 bildirim formu üret
     --session <id>               Oturum kimliği (zorunlu)
@@ -145,6 +155,11 @@ const { values: opts } = parseArgs({
     'allow-unsigned': { type: 'boolean' },
     period: { type: 'string' },
     frequency: { type: 'string' },
+    anchors: { type: 'string' },
+    days: { type: 'string' },
+    next: { type: 'string' },
+    from: { type: 'string' },
+    'allow-unknown': { type: 'boolean' },
   },
   allowPositionals: true,
 });
@@ -392,8 +407,44 @@ try {
     process.exit(2);
   }
 
+  if (cmd === 'ingest') {
+    const session = requireSession(opts);
+    if (!opts.from) {
+      line(`${color.red}--from zorunlu${color.reset}`);
+      process.exit(1);
+    }
+    const r = ingest({
+      dir: store.sessionDir(session.session_id),
+      from: opts.from,
+      allowUnknown: !!opts['allow-unknown'],
+    });
+    line(`${color.bold}Alım tamam${color.reset} — ${r.ingested.length} dosya, ${r.rejected.length} ret`);
+    for (const i of r.ingested) line(`  ${color.green}✔${color.reset} ${i.file.padEnd(34)} ${i.sha256.slice(0, 12)}…`);
+    for (const j of r.rejected) line(`  ${color.red}✘${color.reset} ${j.file.padEnd(34)} ${j.reason}`);
+    line(`\n${color.dim}kayıt: ${path.relative(process.cwd(), r.logFile)}${color.reset}`);
+    process.exit(r.rejected.length ? 2 : 0);
+  }
+
   if (cmd === 'calendar') {
     const cal = loadCalendar();
+    const anchors = loadAnchors(opts.anchors);
+    if (opts.next) {
+      const n = Number(opts.next);
+      if (!Number.isFinite(n) || n <= 0) {
+        line(`${color.red}--next pozitif bir gün sayısı olmalı${color.reset}`);
+        process.exit(1);
+      }
+      const list = upcoming(cal.obligations ?? [], anchors, n);
+      line(`${color.bold}Yaklaşan ${n} gün${color.reset} — ${list.length} yükümlülük`);
+      if (!list.length) {
+        line(`  ${color.dim}tarih hesabı için --anchors <dosya.yaml> gerekir (bkz. data/calendar-anchors.example.yaml)${color.reset}`);
+      }
+      for (const o of list) {
+        const kalan = o.due.overdue ? `${color.red}GECİKMİŞ${color.reset}` : String(o.due.days).padStart(3) + 'g';
+        line(`  ${fmtDate(o.due.date)}  ${kalan}  ${color.cyan}${o.id.padEnd(18)}${color.reset} ${o.name?.tr ?? ''}`);
+      }
+      process.exit(0);
+    }
     const obs = (cal.obligations ?? []).filter((o) => !opts.frequency || o.frequency === opts.frequency);
     line(`${color.bold}Düzenleyici takvim${color.reset} — ${obs.length} yükümlülük`);
     for (const o of obs) {
@@ -407,7 +458,14 @@ try {
   if (cmd === 'mi') {
     const session = requireSession(opts);
     const outDir = opts.out ?? path.join('mi', session.session_id);
-    const r = buildMi({ dir: store.sessionDir(session.session_id), session, period: opts.period, outDir });
+    const r = buildMi({
+      dir: store.sessionDir(session.session_id),
+      session,
+      period: opts.period,
+      outDir,
+      anchors: loadAnchors(opts.anchors),
+      days: opts.days ? Number(opts.days) : 30,
+    });
     line(`${color.bold}MI paketi${color.reset} ${r.payload.period} — ${r.payload.institution}`);
     for (const k of r.payload.kpis) {
       const v = k.value === null ? color.yellow + 'veri yok' + color.reset : String(k.value) + (k.unit === '%' ? '%' : '');

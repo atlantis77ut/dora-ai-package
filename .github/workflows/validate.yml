@@ -36,3 +36,7 @@ jobs:
       - name: Kanıt paketi ve bildirim formları (0.6)
         working-directory: onboarding/cli
         run: node tools/demo-export.mjs
+
+      - name: Dış veri alımı ve takvim (0.8)
+        working-directory: onboarding/cli
+        run: node tools/demo-ingest.mjs
