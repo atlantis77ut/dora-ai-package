@@ -5,6 +5,16 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.26.1] — 2026-11-09
+
+### Eklendi
+
+- `tools/seed-demo.mjs`: inceleme için dolu demo oturumu üretir (altı adımın çıktıları, iki olay,
+  raporlama süreleri — biri gecikmiş, bekleyen onay, SIEM olayları, zaman çizelgeleri).
+  Mevcut oturumlara ve ayarlara dokunmaz; `--clean` ile silinir.
+
+---
+
 ## [1.26.0] — 2026-11-09
 
 ### Eklendi — kullanıcı el kitabı
