@@ -553,6 +553,22 @@ function viewYonetim() {
     </div>
 
     <div class="card">
+      <h2>Bildirimler</h2>
+      <p class="sub">Raporlama süresi yaklaşan/geçen olaylar ve bekleyen onay talepleri için e-posta.
+        SMTP ayarları dolu olmalı; gönderilemezse kuyruğa düşer.</p>
+      <div class="grid k2">
+        <div><label class="sub"><input type="checkbox" id="notifOn" style="width:auto"> Etkin</label></div>
+        <div><label class="sub">Alıcılar (virgülle; boşsa yönetici e-postaları)</label>
+          <input id="notifTo" placeholder="yonetim@ornek.local, risk@ornek.local"></div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="notifSave">Kaydet</button>
+        <button class="ghost-btn" id="notifScan">Şimdi tara</button>
+        <span class="sub" id="notifLast"></span>
+      </div>
+    </div>
+
+    <div class="card">
       <h2>Onay akışı (dört göz)</h2>
       <p class="sub">Açıkken olay sınıflandırması ve canlıya geçiş <b>ikinci bir yöneticinin</b> onayına gider.
         Talebi oluşturan kişi kendi talebini onaylayamaz.</p>
@@ -862,6 +878,34 @@ function bindYonetim() {
   loadUsers();
   loadAudit();
   loadApprovals();
+  loadNotifications();
+
+  $('#notifSave')?.addEventListener('click', async () => {
+    try {
+      const recipients = ($('#notifTo').value || '')
+        .split(',')
+        .map((x) => x.trim())
+        .filter(Boolean);
+      await api('/api/settings/notifications', {
+        method: 'PUT',
+        body: JSON.stringify({ enabled: $('#notifOn').checked, recipients }),
+      });
+      toast('Bildirim ayarları kaydedildi', 'ok');
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#notifScan')?.addEventListener('click', async () => {
+    try {
+      const r = await api('/api/settings/notifications/scan', { method: 'POST', body: '{}' });
+      toast(`Tarama: ${r.events ?? 0} uyarı · ${r.sent ?? 0} e-posta`, (r.problems ?? []).length ? 'bad' : 'ok');
+      loadNotifications();
+      loadAudit();
+    } catch (e) {
+      toast('Taranamadı: ' + e.message, 'bad');
+    }
+  });
 
   $('#aprSave')?.addEventListener('click', async () => {
     try {
@@ -989,6 +1033,22 @@ function bindYonetim() {
   });
 }
 
+async function loadNotifications() {
+  try {
+    const n = await api('/api/settings/notifications');
+    if ($('#notifOn')) $('#notifOn').checked = Boolean(n.enabled);
+    if ($('#notifTo')) $('#notifTo').value = (n.recipients ?? []).join(', ');
+    const box = $('#notifLast');
+    if (box) {
+      box.textContent = n.last_run
+        ? `son tarama: ${new Date(n.last_run.at).toLocaleString('tr-TR')} · ${n.last_run.events ?? 0} uyarı · ${n.last_run.sent ?? 0} e-posta`
+        : 'henüz taranmadı';
+    }
+  } catch {
+    /* yönetici değilse */
+  }
+}
+
 async function loadApprovals() {
   const box = $('#aprList');
   const sid = state.activeSession?.session_id;
@@ -1024,6 +1084,34 @@ async function loadApprovals() {
           });
           toast(decision === 'approved' ? 'Talep onaylandı ve uygulandı' : 'Talep reddedildi', 'ok');
           loadApprovals();
+  loadNotifications();
+
+  $('#notifSave')?.addEventListener('click', async () => {
+    try {
+      const recipients = ($('#notifTo').value || '')
+        .split(',')
+        .map((x) => x.trim())
+        .filter(Boolean);
+      await api('/api/settings/notifications', {
+        method: 'PUT',
+        body: JSON.stringify({ enabled: $('#notifOn').checked, recipients }),
+      });
+      toast('Bildirim ayarları kaydedildi', 'ok');
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#notifScan')?.addEventListener('click', async () => {
+    try {
+      const r = await api('/api/settings/notifications/scan', { method: 'POST', body: '{}' });
+      toast(`Tarama: ${r.events ?? 0} uyarı · ${r.sent ?? 0} e-posta`, (r.problems ?? []).length ? 'bad' : 'ok');
+      loadNotifications();
+      loadAudit();
+    } catch (e) {
+      toast('Taranamadı: ' + e.message, 'bad');
+    }
+  });
           loadAudit();
         } catch (e) {
           toast('Karar verilemedi: ' + e.message, 'bad');

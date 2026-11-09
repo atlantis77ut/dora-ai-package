@@ -5,6 +5,29 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.23.0] — 2026-11-09
+
+### Eklendi — e-posta bildirimleri
+
+- `src/orl/alerts.mjs`: raporlama süresi **yaklaşan/geçen** olaylar ve **bekleyen onaylar** için uyarı üretimi
+- Tekrar koruması: `alerts-state.json` içindeki anahtarlar (`deadline:<oturum>:<olay>:<adım>:<durum>`,
+  `approval:<oturum>:<id>`) bir kez gönderilir
+- Taramalar **sıraya alınır** (eşzamanlı çalışma tekrar e-postayı engeller)
+- Yönetim → **Bildirimler** kartı: etkin, alıcılar, "şimdi tara", son tarama özeti
+- Onay talebi oluşunca **anında** tarama tetiklenir; ayrıca 30 sn'lik tikte 5 dakikada bir taranır
+- Alıcılar: ayardaki liste + yönetici e-posta adresleri (tekrarsız)
+- Uçlar: `GET/PUT /api/settings/notifications`, `POST /api/settings/notifications/scan`
+
+### Doğrulama (izole kurulum + sahte SMTP)
+
+```
+2 uyarı (gecikmiş ilk bildirim + bekleyen onay) × 2 alıcı = 4 e-posta
+elle tara → 0 yeni (tekrar koruması çalıştı)
+8 birim testi eklendi (toplam 128)
+```
+
+---
+
 ## [1.22.0] — 2026-11-09
 
 ### Eklendi — olay bazında DORA raporlama süreleri

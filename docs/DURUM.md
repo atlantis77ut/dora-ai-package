@@ -1330,3 +1330,36 @@ mark initial → done, late=true, referans BDDK-2026-1 kalıcı
 - Bildirim **gönderilmiyor**: paket yalnız sayaç ve kayıt tutar; gerçek gönderim düzenleyici kanalından
 - Otomatik hatırlatma/e-posta yok (SMTP hazır, bağlanmadı)
 - Tatil/iş günü takvimi yok; süreler takvim saatine göre
+
+---
+
+## 45. E-posta bildirimleri — 1.23.0 (2026-11-09)
+
+| Uyarı | Tetikleyici | Anahtar |
+|---|---|---|
+| Süre yaklaşıyor | `due_soon` (kalan ≤ %25) | `deadline:<oturum>:<olay>:<adım>:due_soon` |
+| Süre geçti | `overdue` | `deadline:<oturum>:<olay>:<adım>:overdue` |
+| Onay bekliyor | yeni talep | `approval:<oturum>:<id>` |
+
+### Çalışma biçimi
+
+- Tarama: onay talebinde **anında**, ayrıca 30 sn tikte **5 dakikada bir**
+- Taramalar promise zinciriyle sıraya alınır (eşzamanlı yazma tekrar e-postaya yol açmaz)
+- Gönderim `sendOrQueue` üzerinden: SMTP kapalıysa kuyruğa düşer, kaybolmaz
+- Alıcılar: `notifications.recipients` + yönetici e-posta adresleri (tekrarsız)
+
+### Doğrulama
+
+```
+gecikmiş ilk bildirim + bekleyen onay → 2 uyarı × 2 alıcı = 4 e-posta
+ikinci tarama → 0 yeni
+128 birim testi geçti
+```
+
+### Sınırlar
+
+- **E-posta dışı kanal yok** (SMS, Slack, Teams, webhook)
+- Zamanlayıcı süreç içi; sunucu durursa tarama durur
+- Uyarı durumu `alerts-state.json`'da; dosya silinirse aynı uyarılar yeniden gönderilir
+- Kişi bazlı abonelik yok (herkes aynı listeyi alır)
+- SMTP yoksa uyarılar kuyrukta birikir, kimse görmez (kuyruk arayüzden izlenebilir)

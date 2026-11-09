@@ -149,6 +149,7 @@ node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 - **Olay kaydı**: SIEM olayından taslak DORA kaydı, alan doldurma, aktif kayda yükseltme
 - **Raporlama süreleri**: 4 saat / 72 saat / 1 ay sayaçları, gecikme uyarısı, gönderildi işaretleme
 - **E-posta**: SMTP ile davet/parola bağlantısı; gönderilemezse kuyruk ([EPOSTA.md](docs/EPOSTA.md))
+- **Bildirimler**: süre yaklaşan/geçen olaylar ve bekleyen onaylar için otomatik e-posta
 - **Yedekleme**: `node onboarding/cli/tools/backup.mjs` → `web-data/` + oturumlar tek zip;
   `--verify` ile doğrula, `tools/restore.mjs` ile geri yükle ([YEDEKLEME.md](docs/YEDEKLEME.md))
 - **Kullanıcı**: Durum · Kurum bilgileri · Sistem bağlantıları · Varlıklarım · Sorumlular · Belgeler

@@ -25,6 +25,7 @@ import { buildBundle } from '../src/orl/evidence.mjs';
 import { createResetStore } from '../src/orl/reset.mjs';
 import { createApprovalStore } from '../src/orl/approvals.mjs';
 import { createReporting, reportingStatus, markSent } from '../src/orl/deadlines.mjs';
+import { scanAlerts, resolveRecipients } from '../src/orl/alerts.mjs';
 import { sendMail, createOutbox } from '../src/orl/mailer.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
 import { discover, buildAuthUrl, exchangeCode, fetchJwks, verifyIdToken, makeState, verifyState } from '../src/orl/oidc.mjs';
@@ -491,6 +492,74 @@ function applyAssessmentAccept(dir, payload) {
   doc.updated_at = new Date().toISOString();
   writeJson(file, doc);
   return { ok: true, risk_acceptance: doc.risk_acceptance };
+}
+
+const ALERTS_FILE = path.join(DATA, 'alerts-state.json');
+
+function notifySettings() {
+  return { enabled: false, recipients: [], ...(loadSettings().notifications ?? {}) };
+}
+
+/** Raporlama süreleri + bekleyen onaylar için uyarı e-postaları üretir. */
+let alertScanChain = Promise.resolve();
+
+/** Taramaları sıraya sokar: eşzamanlı çalışma tekrar e-postaya yol açmasın. */
+function runAlertScan(opts = {}) {
+  alertScanChain = alertScanChain.then(() => runAlertScanOnce(opts)).catch(() => ({ ok: false }));
+  return alertScanChain;
+}
+
+async function runAlertScanOnce({ reason = 'tick' } = {}) {
+  const cfg = notifySettings();
+  if (!cfg.enabled) return { ok: false, skipped: true, error: 'bildirimler kapalı' };
+
+  const state = readJson(ALERTS_FILE, { sent: {} });
+  const sessions = listSessions()
+    .slice(0, 10)
+    .map((s) => {
+      const dir = path.join(SESSIONS, s.session_id);
+      return {
+        id: s.session_id,
+        incidents: readJson(path.join(dir, 'incidents.json'), { incidents: [] }).incidents ?? [],
+        approvals: readJson(path.join(dir, 'approvals.json'), { approvals: [] }).approvals ?? [],
+      };
+    });
+
+  const { events, state: nextState } = scanAlerts({ sessions, state, now: Date.now() });
+  const recipients = resolveRecipients(
+    { notifications: cfg },
+    auth.users().filter((u) => u.role === 'admin').map((u) => u.username),
+  );
+
+  let sent = 0;
+  const problems = [];
+  for (const ev of events) {
+    if (!recipients.length) {
+      problems.push('alıcı yok');
+      break;
+    }
+    for (const to of recipients) {
+      const r = await sendOrQueue({ to, subject: ev.subject, text: ev.text });
+      if (r.sent) sent++;
+      else if (r.error && !r.queued) problems.push(r.error);
+    }
+  }
+
+  writeJson(ALERTS_FILE, nextState);
+  const s = loadSettings();
+  s.notifications = { ...cfg, last_run: { at: new Date().toISOString(), reason, events: events.length, sent, problems: problems.slice(0, 3) } };
+  saveSettings(s);
+  if (events.length) auth.audit('alerts', 'notify_scan', `${reason}: ${events.length} uyarı, ${sent} e-posta`);
+  return { ok: true, events: events.length, sent, recipients: recipients.length, problems: problems.slice(0, 3) };
+}
+
+let lastAlertScan = 0;
+function alertsTick() {
+  const cfg = notifySettings();
+  if (!cfg.enabled) return;
+  if (Date.now() - lastAlertScan < 5 * 60 * 1000) return;
+  lastAlertScan = Date.now();
+  runAlertScan({ reason: 'tick' }).catch(() => {});
 }
 
 function parseCookies(req) {
@@ -1183,6 +1252,31 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { ok: true, ...s.approvals });
   }
 
+  if (urlPath === '/api/settings/notifications' && method === 'GET') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    return sendJson(res, 200, { ok: true, ...notifySettings() });
+  }
+
+  if (urlPath === '/api/settings/notifications' && method === 'PUT') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const body = await readBody(req);
+    const recipients = (Array.isArray(body.recipients) ? body.recipients : [])
+      .map((x) => String(x).trim())
+      .filter((x) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x))
+      .slice(0, 20);
+    const s = loadSettings();
+    s.notifications = { enabled: Boolean(body.enabled), recipients, last_run: s.notifications?.last_run ?? null };
+    saveSettings(s);
+    auth.audit(me.user.username, 'notifications_update', s.notifications.enabled ? 'açık' : 'kapalı');
+    return sendJson(res, 200, { ok: true, ...s.notifications });
+  }
+
+  if (urlPath === '/api/settings/notifications/scan' && method === 'POST') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const r = await runAlertScan({ reason: 'manual' });
+    return sendJson(res, r.ok ? 200 : 400, r);
+  }
+
   // kurum profili
   if (urlPath === '/api/institution' && method === 'PUT') {
     const body = await readBody(req);
@@ -1376,6 +1470,7 @@ async function api(req, res, urlPath, method) {
       });
       if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
       auth.audit(me.user.username, 'approval_request', `${body.type}:${body.target}`);
+      runAlertScan({ reason: 'approval' }).catch(() => {});
       return sendJson(res, 201, { ok: true, approval: r.approval });
     }
 
@@ -1451,6 +1546,7 @@ async function api(req, res, urlPath, method) {
         });
         if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
         auth.audit(me.user.username, 'approval_request', 'incident_update:' + artifact);
+        runAlertScan({ reason: 'approval' }).catch(() => {});
         return sendJson(res, 202, { ok: true, pending: true, approval: r.approval });
       }
       const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
@@ -2003,7 +2099,10 @@ server.listen(PORT, HOST, () => {
   console.log(`  veri      : ${DATA}`);
 });
 
-const schedTimer = setInterval(scheduleTick, 30_000);
+const schedTimer = setInterval(() => {
+  scheduleTick();
+  alertsTick();
+}, 30_000);
 schedTimer.unref?.();
 
 const shutdown = () => {
