@@ -5,6 +5,28 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.18.0] — 2026-11-09
+
+### Eklendi — hukuk ve uyum belgeleri
+
+`docs/hukuk/` altında beş belge:
+
+| Belge | İçerik |
+|---|---|
+| `AGPL-SAAS-UYUM.md` | AGPL §13 (ağ üzerinden kullanım) yükümlülükleri, üç dağıtım modeli, kaynak teklifi metni, ticari lisans maddeleri, sık hatalar |
+| `KVKK-AYDINLATMA.md` | kullanıcı aydınlatma metni taslağı (veri kategorileri, hukuki sebep, saklama, haklar, çerezler) |
+| `KVKK-DPA-TASLAK.md` | veri işleyen sözleşmesi taslağı (KVKK m.9 / GDPR Art. 28), alt işleyen listesi, ihlal bildirimi 24 saat |
+| `VERI-ENVANTERI.md` | kodla eşleşen veri envanteri: dosya, alan, nitelik, amaç |
+| `SAKLAMA-SILME-PROSEDURU.md` | saklama süreleri, kullanıcı silme, anonimleştirme, tam silme, geri yükleme testi, DSAR akışı |
+
+### Notlar
+
+- Belgeler **taslaktır**; hukukçu incelemesi gerekir, `[ ]` alanlar doldurulmalı
+- AGPL için teknik durum: sıfır npm bağımlılığı, gömülü tek dış metin lisans metni
+- Bu sürümde kod değişmedi; yalnız belge eklendi
+
+---
+
 ## [1.17.2] — 2026-11-09
 
 ### Değişti

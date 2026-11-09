@@ -1168,3 +1168,25 @@ run → 2 olay / 2 kayıt · tekrar run → 0 (dedupe)
 | Sınırlar | tek IdP, grup→rol eşlemesi yok, SCIM yok, single logout yok |
 
 Gerçek IdP ile denenmedi — test yalnız yerel sahte sağlayıcıyla yapıldı (bkz. §34).
+
+---
+
+## 40. Hukuk ve uyum belgeleri — 1.18.0 (2026-11-09)
+
+Ürün çalışıyor ama satış/dağıtım öncesi hukuki zemin yoktu. `docs/hukuk/` altında beş taslak:
+
+| Belge | Kapsam |
+|---|---|
+| AGPL-SAAS-UYUM | §13 tetikleyicileri, üç model (açık çekirdek / yalnız AGPL / yalnız ticari), kaynak teklifi metni, ticari sözleşme maddeleri |
+| KVKK-AYDINLATMA | veri kategorileri, m.5 dayanakları, aktarım, saklama, m.11 hakları, çerez tablosu |
+| KVKK-DPA-TASLAK | m.9 / Art. 28 uyumlu iskelet, 24 saat ihlal bildirimi, alt işleyen listesi, fesih sonrası iade+silme |
+| VERI-ENVANTERI | `users.json`, `audit.log`, oturum artefaktları, sırlar — alan alan |
+| SAKLAMA-SILME | saklama süreleri, anonimleştirme, tam silme, yedekten geri yükleme, DSAR |
+
+### Dürüst durum
+
+- Hepsi **taslak**; hukukçu incelemesi yapılmadı
+- `[ ]` alanlar (şirket unvanı, süreler, alt işleyenler) doldurulmalı
+- Silme ve geri yükleme adımları **test edilmedi** — bir test kurulumunda çalıştırılmalı
+- Ticari lisans fiyat/SLA alanları hâlâ boş (`LICENSE-COMMERCIAL.md`)
+

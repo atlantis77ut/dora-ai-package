@@ -164,6 +164,8 @@ Bulgular ve kalan riskler: [`docs/GUVENLIK-TARAMASI.md`](docs/GUVENLIK-TARAMASI.
 
 SSO kurulumu (Entra / Keycloak): [`docs/SSO-KURULUM.md`](docs/SSO-KURULUM.md)
 
+Hukuk ve uyum (AGPL/SaaS, KVKK aydınlatma, DPA, veri envanteri): [`docs/hukuk/`](docs/hukuk/README.md)
+
 ## Sunucuya kurulum
 
 ```bash
