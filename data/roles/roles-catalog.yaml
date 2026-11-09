@@ -96,7 +96,7 @@ roles:
         - "crisis_declaration"
       approver_role: "Yönetim Kurulu Başkanı"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Govern
       - OR.OVERS
       - OR.PERFM
@@ -219,7 +219,7 @@ roles:
         - "escalation"
       approver_role: "ROL-CIO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Detect, Respond & Recover
       - OR.EVNTM
       - OR.INCRM
@@ -327,7 +327,7 @@ roles:
         - "classification"
       approver_role: "ROL-CIO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Identify & Plan
       - OR.RIA
       - OR.KIB.BSACM
@@ -440,7 +440,7 @@ roles:
         - "strategy_approval"
       approver_role: "ROL-CEO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Govern & Plan
       - OR.STRAM
       - OR.PLAN
@@ -545,7 +545,7 @@ roles:
         - "escalation"
       approver_role: "ROL-CEO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Conduct & Protect
       - OR.CT
       - OR.ESM
@@ -646,7 +646,7 @@ roles:
         - "escalation"
       approver_role: "ROL-CEO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Govern & Improve
       - OR.IRR
       - OR.NC
@@ -761,7 +761,7 @@ roles:
         - "escalation"
       approver_role: "ROL-CTO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Identify & Plan
       - OR.KIB.RMDM
       - OR.RIA
@@ -867,7 +867,7 @@ roles:
         - "escalation"
       approver_role: "Denetim Komitesi Başkanı"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Improve
       - OR.OVERS
       - OR.FND.AR
@@ -959,7 +959,7 @@ roles:
         - "scope_change"
       approver_role: "ROL-CTO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Conduct
       - OR.CEP
     tier_activation:
@@ -1040,7 +1040,7 @@ roles:
         - "escalation"
       approver_role: "ROL-CTO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Govern & Improve
       - OR.REL
     tier_activation:
@@ -1122,7 +1122,7 @@ roles:
         - "disclosure"
       approver_role: "ROL-CEO-01"
       max_autonomous_decision_value: 0
-    corf_process_codes:
+    process_codes:
       # Protect & Improve
       - OR.INTEL
     tier_activation:

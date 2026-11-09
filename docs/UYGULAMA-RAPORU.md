@@ -23,7 +23,7 @@ Paketin bugünkü ölçeği:
 | Ajan rolü | 11 (üç savunma hattı) |
 | Sözlük terimi | 60 |
 | Sentetik kabul senaryosu | 4 (27 assertion) |
-| CORF fazı | 6 (C1–C6) |
+| ORL fazı | 6 (C1–C6) |
 | JSON Şema | 15 (8 katalog + 7 artefakt) |
 
 **Ne değildir:** bir LLM orkestrasyon motoru değil, bir ajan çalıştırıcısı değil, hukuki görüş değil.
@@ -56,8 +56,8 @@ her kontrol bir kanıt şartnamesine bağlanır.**
 
 | Katman | İçerik | Kaynak |
 |---|---|---|
-| **3. Çalıştırma** | Ajanlar (11 rol) + insan onay noktaları; GOLDENHORN/CORF platformuna API ile bağlanır (tasarım) | `data/roles/`, `onboarding/corf-lifecycle.yaml` |
-| **2. Süreç** | 24 süreç, 36 kontrol, 5 sütun, CORF 6 fazı; her süreç: tetikleyici → girdi → SLA → kural → kanıt | `data/processes/`, `data/controls/` |
+| **3. Çalıştırma** | Ajanlar (11 rol) + insan onay noktaları; referans platforma API ile bağlanır (tasarım) | `data/roles/`, `onboarding/orl-lifecycle.yaml` |
+| **2. Süreç** | 24 süreç, 36 kontrol, 5 sütun, ORL 6 fazı; her süreç: tetikleyici → girdi → SLA → kural → kanıt | `data/processes/`, `data/controls/` |
 | **1. Veri** | 60 terim, 11 rol, 28 DORA maddesi; YAML kaynak, JSON Schema ile doğrulama | `data/glossary/`, `schema/` |
 
 **Katman kuralı:** üst katman alt katmanı değiştiremez. Bir ajan, tanımlı olmayan bir kanıt
@@ -115,9 +115,9 @@ zorundadır.
 
 ---
 
-## 5. Nasıl çalışır — CORF altı fazı
+## 5. Nasıl çalışır — ORL altı fazı
 
-Kurulum altı fazda yapılır. Her fazın adımları, çıkış kriterleri ve süresi `corf-lifecycle.yaml`
+Kurulum altı fazda yapılır. Her fazın adımları, çıkış kriterleri ve süresi `orl-lifecycle.yaml`
 içinde tanımlıdır; CLI bu dosyayı okur ve kapıları çalıştırır.
 
 | Faz | Ad | Adım | Kriter | Süre | Ajan modu |
@@ -207,7 +207,7 @@ HTML olarak (harici CDN/font olmadan) `file://` ile açılır — kapalı ağda 
 
 | Sayfa | İçerik |
 |---|---|
-| `index.html` | KPI kartları (24 süreç · 36 kontrol · 11 ajan · 60 terim · 4 senaryo · %100), kapsama çubuğu, CORF faz tablosu, açık noktalar, senaryo listesi |
+| `index.html` | KPI kartları (24 süreç · 36 kontrol · 11 ajan · 60 terim · 4 senaryo · %100), kapsama çubuğu, ORL faz tablosu, açık noktalar, senaryo listesi |
 | `processes.html` | 24 sürecin tablosu + her süreç için tetikleyici, girdi/çıktı, SLA, karar kuralları, kontroller, bağımlılıklar |
 | `controls.html` | 36 kontrolün tablosu + kanıt alanları, değiştirilemezlik, DORA maddesi, test prosedürü |
 
@@ -298,7 +298,7 @@ Dürüst bir rapor, sınırları da yazmalı:
 1. **Ajan çalıştırıcısı yok.** Paket rolleri, süreçleri ve kapıları tanımlar; LLM orkestrasyonu
    (araç çağırma, hafıza, kuyruk) kapsam dışıdır. `autonomy_level` alanları bu katmanın
    sözleşmesidir, uygulaması değil.
-2. **GOLDENHORN/CORF API adaptörü tasarımdır**, kodlanmamıştır.
+2. **Platform API adaptörü tasarımdır**, kodlanmamıştır.
 3. **Otomatik kod testi yok.** Doğrulama, veri ve akış bütünlüğü düzeyindedir. Dış sistem
    bağlantısı dosya bırakma sözleşmesiyle sınırlıdır; API istemcisi yoktur.
 4. **Hukuki görüş değildir.** BDDK/SPK/KVKK eşlemesi bilgi amaçlıdır; avukat onayı gerekir.

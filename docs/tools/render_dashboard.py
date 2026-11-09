@@ -59,7 +59,7 @@ def panel(box, radius=14, fill=PANEL, outline=LINE):
 y = 34
 text((M, y), d["package"]["name"], font("b", 26))
 y += 36
-sub = f"v{d['package']['version']} · {d['package']['license']} · {len(d['phases'])} CORF fazı"
+sub = f"v{d['package']['version']} · {d['package']['license']} · {len(d['phases'])} ORL fazı"
 text((M, y), sub, font("r", 12.5), MUTED)
 health_txt = "sağlık: temiz" if d["health"]["ok"] else f"sağlık: {len(d['health']['issues'])} sorun"
 dr.text((W - M - dr.textlength(health_txt, font=font("r", 12.5)), y), health_txt, font=font("r", 12.5),
@@ -70,7 +70,7 @@ k = d["kpis"]
 cards = [
     ("SÜREÇ", k["processes"], "5 sütun"),
     ("KONTROL", k["controls"], " · ".join(f"{a} {b}" for a, b in d["control_families"].items())),
-    ("AJAN", k["roles"], f"{k['orCodes']} CORF kodu"),
+    ("AJAN", k["roles"], f"{k['orCodes']} ORL kodu"),
     ("TERİM", k["terms"], "DORA + RTS/ITS"),
     ("SENARYO", k["scenarios"], f"{k['assertions']} assertion"),
     ("KAPSAMA", f"{k['coverage']}%", f"{d['coverage']['covered']}/{d['coverage']['total']} madde"),
@@ -123,15 +123,15 @@ text((bar_x + bar_w - dr.textlength(s, font=font("r", 11)), cy + 62), s, font("r
 # ── fazlar ────────────────────────────────────────────────
 py = cy + 112
 panel([M, py, W - M, py + 236])
-text((M + 18, py + 14), "CORF UYGULAMA FAZLARI", font("r", 10), MUTED)
+text((M + 18, py + 14), "ORL UYGULAMA FAZLARI", font("r", 10), MUTED)
 text((M + 18 + 190, py + 14), "geçiş kapıları", font("r", 10), (110, 124, 158))
 
-cols = [("FAZ", 0, 52), ("ADIM", 52, 430), ("CORF", 482, 110), ("ADIM#", 592, 62)]
+cols = [("FAZ", 0, 52), ("ADIM", 52, 430), ("ORL", 482, 110), ("ADIM#", 592, 62)]
 x_hdr = [M + 18, M + 18 + 52, M + 18 + 482, M + 18 + 592]
 hy = py + 40
 for (label, _off, _w) in cols:
     pass
-for label, off in [("FAZ", 0), ("ADIM", 52), ("CORF", 482), ("ADIM#", 592)]:
+for label, off in [("FAZ", 0), ("ADIM", 52), ("ORL", 482), ("ADIM#", 592)]:
     text((M + 18 + off, hy), label, font("r", 9), MUTED)
 text((M + 18 + 668, hy), "KAPI", font("r", 9), MUTED)
 text((M + 18 + 736, hy), "GÜN", font("r", 9), MUTED)
@@ -146,7 +146,7 @@ for p in d["phases"]:
     if len(name) > 52:
         name = name[:51] + "…"
     text((M + 18 + 52, ry + 2), name, font("r", 12), FG)
-    text((M + 18 + 482, ry + 2), p["corf"], font("r", 11.5), MUTED)
+    text((M + 18 + 482, ry + 2), p["orl"], font("r", 11.5), MUTED)
     text((M + 18 + 600, ry + 2), str(p["steps"]), font("r", 11.5), FG)
     text((M + 18 + 676, ry + 2), str(p["gates"]), font("r", 11.5), FG)
     text((M + 18 + 744, ry + 2), str(p["days"]), font("r", 11.5), FG)

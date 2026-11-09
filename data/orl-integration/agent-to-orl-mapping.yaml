@@ -2,15 +2,15 @@ schema_version: "1.0.0"
 generated_at: "2025-01-15"
 source_frameworks:
   - "DORA (EU) 2022/2554"
-  - "TACAS CORF Process Model"
-  - "TACAS GOLDENHORN ONERESILIENCE Modules"
+  - "Referans operasyonel dayanıklılık süreç modeli"
+  - "Referans platform modülleri"
 integration_purpose: >
-  Bu dosya, DORA AI Ajan Paketimizdeki 11 rolün, TACAS CORF yaşam döngüsü 
-  süreçlerini (OR.*) nasıl yürüteceğini ve GOLDENHORN platformunun hangi 
+  Bu dosya, DORA AI Ajan Paketimizdeki 11 rolün, yaşam döngüsü 
+  süreçlerini (OR.*) nasıl yürüteceğini ve referans platformun hangi 
   modüllerini kullanacağını tanımlar.
 
 # ═══════════════════════════════════════════════════════════════
-# AJAN -> CORF SÜREÇ EŞLEŞTİRMESİ
+# AJAN -> ORL SÜREÇ EŞLEŞTİRMESİ
 # ═══════════════════════════════════════════════════════════════
 
 agent_process_mappings:
@@ -18,9 +18,9 @@ agent_process_mappings:
   - agent_id: ROL-RSK-01
     agent_name: "ICT Risk Analisti (ICT-Risk-Ajanı)"
     dora_pillar: "1. ICT Risk Yönetimi"
-    corf_lifecycle_phase: "Identify & Plan"
-    goldenhorn_modules: [ITA, RRM, KIB]
-    owned_corf_processes:
+    lifecycle_phase: "Identify & Plan"
+    platform_modules: [ITA, RRM, KIB]
+    owned_processes:
       - process_code: OR.RIA
         process_name: "Resilience Risk and Impact Analysis (Dayanıklılık Riski ve Etki Analizi)"
         interaction: "Varlıkları ve iş süreçlerini envanterler, etki toleranslarını hesaplar."
@@ -33,9 +33,9 @@ agent_process_mappings:
   - agent_id: ROL-INC-01
     agent_name: "Olay Müdahale Operatörü (Incident-Ajanı)"
     dora_pillar: "2. Olay Yönetimi ve Raporlama"
-    corf_lifecycle_phase: "Detect, Respond & Recover"
-    goldenhorn_modules: [IRM, RRCM]
-    owned_corf_processes:
+    lifecycle_phase: "Detect, Respond & Recover"
+    platform_modules: [IRM, RRCM]
+    owned_processes:
       - process_code: OR.EVNTM
         process_name: "Resilience Event Management (Olay Yönetimi)"
         interaction: "SIEM'den gelen olayları izler ve sınıflandırır."
@@ -54,9 +54,9 @@ agent_process_mappings:
   - agent_id: ROL-CIO-01
     agent_name: "Bilgi ve Raporlama Lideri (CIO-Ajanı)"
     dora_pillar: "1. ICT Risk Yönetimi & 2. Olay Yönetimi"
-    corf_lifecycle_phase: "Govern & Plan"
-    goldenhorn_modules: [RSM, RCM]
-    owned_corf_processes:
+    lifecycle_phase: "Govern & Plan"
+    platform_modules: [RSM, RCM]
+    owned_processes:
       - process_code: OR.STRAM
         process_name: "Resilience Strategy Management (Dayanıklılık Stratejisi Yönetimi)"
         interaction: "DORA stratejisini belirler ve yıllık hedefleri koyar."
@@ -72,9 +72,9 @@ agent_process_mappings:
   - agent_id: ROL-CTO-01
     agent_name: "Teknoloji ve Test Lideri (CTO-Ajanı)"
     dora_pillar: "3. Dijital Dayanıklılık Testleri"
-    corf_lifecycle_phase: "Conduct & Protect"
-    goldenhorn_modules: [RCM, KIB]
-    owned_corf_processes:
+    lifecycle_phase: "Conduct & Protect"
+    platform_modules: [RCM, KIB]
+    owned_processes:
       - process_code: OR.CT
         process_name: "Resilience Control Testing (Dayanıklılık Kontrol Testi)"
         interaction: "Sızma testleri, zafiyet taramaları ve senaryo testlerini planlar."
@@ -87,9 +87,9 @@ agent_process_mappings:
   - agent_id: ROL-TPP-01
     agent_name: "Tedarikçi Risk Yöneticisi (ThirdParty-Ajanı)"
     dora_pillar: "4. Üçüncü Taraf Riski Yönetimi"
-    corf_lifecycle_phase: "Identify & Plan"
-    goldenhorn_modules: [RRM, KIB]
-    owned_corf_processes:
+    lifecycle_phase: "Identify & Plan"
+    platform_modules: [RRM, KIB]
+    owned_processes:
       - process_code: OR.KIB.RMDM
         process_name: "Resilience Master Data Management (Ana Veri Yönetimi)"
         interaction: "Tedarikçi sözleşmelerini ve Bilgi Kaydını (Register of Information) tutar."
@@ -102,9 +102,9 @@ agent_process_mappings:
   - agent_id: ROL-CMP-01
     agent_name: "DORA Uyum Görevlisi (Compliance-Ajanı)"
     dora_pillar: "Tüm Sütunlar (Bağımsız Kontrol)"
-    corf_lifecycle_phase: "Govern & Improve"
-    goldenhorn_modules: [RIM, RSM]
-    owned_corf_processes:
+    lifecycle_phase: "Govern & Improve"
+    platform_modules: [RIM, RSM]
+    owned_processes:
       - process_code: OR.IRR
         process_name: "Resilience Internal Rules and Regulations (İç Kurallar ve Yönetmelikler)"
         interaction: "DORA mevzuat değişikliklerini takip eder, iç politikalara yansıtır."
@@ -120,9 +120,9 @@ agent_process_mappings:
   - agent_id: ROL-AUD-01
     agent_name: "İç Denetim Ajanı (Audit-Ajanı)"
     dora_pillar: "Tüm Sütunlar (3. Savunma Hattı)"
-    corf_lifecycle_phase: "Improve"
-    goldenhorn_modules: [RIM, KIB]
-    owned_corf_processes:
+    lifecycle_phase: "Improve"
+    platform_modules: [RIM, KIB]
+    owned_processes:
       - process_code: OR.OVERS
         process_name: "Resilience Oversight Management (Gözetim Yönetimi)"
         interaction: "Bağımsız denetim yapar, Yönetim Kuruluna doğrudan raporlar."
@@ -135,9 +135,9 @@ agent_process_mappings:
   - agent_id: ROL-TLPT-01
     agent_name: "TLPT Koordinatörü (TLPT-Ajanı)"
     dora_pillar: "3. Dijital Dayanıklılık Testleri"
-    corf_lifecycle_phase: "Conduct"
-    goldenhorn_modules: [RCM]
-    owned_corf_processes:
+    lifecycle_phase: "Conduct"
+    platform_modules: [RCM]
+    owned_processes:
       - process_code: OR.CEP
         process_name: "Change Resilience Evaluation Project (Değişim ve Değerlendirme Projesi)"
         interaction: "Tehdit odaklı sızma testi (TLPT) projelerini koordine eder."
@@ -147,9 +147,9 @@ agent_process_mappings:
   - agent_id: ROL-CTPP-01
     agent_name: "CTPP Gözetim Ajanı"
     dora_pillar: "4. Üçüncü Taraf Riski Yönetimi"
-    corf_lifecycle_phase: "Govern & Improve"
-    goldenhorn_modules: [RSM, RRM]
-    owned_corf_processes:
+    lifecycle_phase: "Govern & Improve"
+    platform_modules: [RSM, RRM]
+    owned_processes:
       - process_code: OR.REL
         process_name: "Resilience Relationship Management (İlişki Yönetimi)"
         interaction: "ESA (Avrupa Denetim Otoriteleri) ile CTPP gözetim ilişkilerini yönetir."
@@ -159,9 +159,9 @@ agent_process_mappings:
   - agent_id: ROL-INF-01
     agent_name: "Bilgi Paylaşım Ajanı (InfoSharing-Ajanı)"
     dora_pillar: "5. Bilgi Paylaşımı"
-    corf_lifecycle_phase: "Protect & Improve"
-    goldenhorn_modules: [RRM]
-    owned_corf_processes:
+    lifecycle_phase: "Protect & Improve"
+    platform_modules: [RRM]
+    owned_processes:
       - process_code: OR.INTEL
         process_name: "Resilience Intelligence Monitoring (İstihbarat İzleme)"
         interaction: "Siber tehdit istihbaratını toplar, güvenilir topluluklarla paylaşır."
@@ -171,9 +171,9 @@ agent_process_mappings:
   - agent_id: ROL-CEO-01
     agent_name: "DORA Uyum Lideri (CEO-Ajanı)"
     dora_pillar: "Stratejik Yönetim"
-    corf_lifecycle_phase: "Govern"
-    goldenhorn_modules: [RSM]
-    owned_corf_processes:
+    lifecycle_phase: "Govern"
+    platform_modules: [RSM]
+    owned_processes:
       - process_code: OR.OVERS
         process_name: "Resilience Oversight Management (Gözetim Yönetimi)"
         interaction: "Nihai hesap verebilirliği taşır, Yönetim Kurulu onaylarını yönetir."
@@ -184,10 +184,10 @@ agent_process_mappings:
     output_artifact: "board-dora-dashboard.pdf"
 
 # ═══════════════════════════════════════════════════════════════
-# ÖZET MATRİS: Hangi Ajan, Hangi CORF Aşamasında?
+# ÖZET MATRİS: Hangi Ajan, Hangi ORL Aşamasında?
 # ═══════════════════════════════════════════════════════════════
 
-corf_lifecycle_summary:
+lifecycle_summary:
   Govern:
     - ROL-CEO-01 (Oversight, Performance)
     - ROL-CIO-01 (Strategy)

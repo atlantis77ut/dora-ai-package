@@ -26,7 +26,7 @@ DORA uyumunu belgede bırakmayan, **çalıştırılabilir** bir çerçeve: 28 y�
 | DORA yükümlülük maddesi | 28 (tamamı eşlenmiş) |
 | Süreç / kontrol | 24 / 36 (kanıt şartnameli) |
 | Ajan rolü | 11 (üç savunma hattı) |
-| CORF fazı | 6 (kapılı) |
+| ORL fazı | 6 (kapılı) |
 | JSON şema | 15 (katalog + artefakt) |
 | Kabul senaryosu | 4 (27 assertion) |
 

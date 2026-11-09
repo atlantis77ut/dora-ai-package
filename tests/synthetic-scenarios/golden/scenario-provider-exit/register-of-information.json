@@ -1,0 +1,22 @@
+{
+  "providers": {
+    "PRV-014": {
+      "status": "exiting",
+      "changed_at": "2026-05-21T10:30:00+03:00"
+    },
+    "PRV-016": {
+      "status": "active",
+      "changed_at": "2026-05-21T10:30:00+03:00"
+    }
+  },
+  "change_log": [
+    {
+      "provider": "PRV-014",
+      "from": "active",
+      "to": "exiting",
+      "at": "2026-05-21T10:30:00+03:00",
+      "by": "ROL-TPP-01"
+    }
+  ],
+  "generated_at": "2026-05-31T09:00:00+03:00"
+}

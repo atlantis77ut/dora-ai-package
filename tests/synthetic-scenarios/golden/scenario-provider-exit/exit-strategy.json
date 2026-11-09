@@ -1,0 +1,9 @@
+{
+  "provider": "PRV-014",
+  "draft_days": 7,
+  "approved": false,
+  "dual_run_required": true,
+  "dual_run_started_at": "2026-05-20T09:00:00+03:00",
+  "data_return_verified": false,
+  "owner": "ROL-TPP-01"
+}

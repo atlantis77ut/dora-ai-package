@@ -11,12 +11,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import * as store from '../src/corf/session.mjs';
-import { loadLifecycle, runPhase } from '../src/corf/lifecycle.mjs';
-import { sign } from '../src/corf/license.mjs';
-import { buildBundle, verifyBundle } from '../src/corf/evidence.mjs';
-import { buildNotification, PHASES } from '../src/corf/notify.mjs';
-import { buildMi } from '../src/corf/mi.mjs';
+import * as store from '../src/orl/session.mjs';
+import { loadLifecycle, runPhase } from '../src/orl/lifecycle.mjs';
+import { sign } from '../src/orl/license.mjs';
+import { buildBundle, verifyBundle } from '../src/orl/evidence.mjs';
+import { buildNotification, PHASES } from '../src/orl/notify.mjs';
+import { buildMi } from '../src/orl/mi.mjs';
 
 const { values } = parseArgs({ options: { keep: { type: 'boolean' } } });
 const CWD = path.resolve(process.cwd());
@@ -47,7 +47,7 @@ session.license = fs.existsSync(DEV_KEY)
           licensee: 'Demo Bankası A.Ş.',
           tier: 'tier2',
           phases: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'],
-          modules: ['agents', 'processes', 'corf', 'pilot'],
+          modules: ['agents', 'processes', 'orl', 'pilot'],
           issued_at: new Date().toISOString(),
           expires_at: new Date(Date.now() + 365 * 86400000).toISOString(),
         },

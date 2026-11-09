@@ -1,0 +1,9 @@
+{
+  "review_id": "AR-2026-Q4",
+  "accounts_total": 420,
+  "privileged_accounts": 18,
+  "dormant_accounts_closed": 12,
+  "revoked_count": 2,
+  "reviewer": "IAM Ekibi",
+  "signed_at": "2026-11-09T09:00:00+03:00"
+}

@@ -1,0 +1,7 @@
+{
+  "incident_id": "INC-2026-0077",
+  "detected_at": "2026-11-09T08:30:00+03:00",
+  "classification": "major",
+  "source": "siem",
+  "type": "unauthorized_access_attempt"
+}

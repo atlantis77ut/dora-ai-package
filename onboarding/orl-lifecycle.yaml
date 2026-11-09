@@ -1,18 +1,18 @@
-# CORF 6 Fazlı Uygulama Yaşam Döngüsü — Onboarding Tanımı
+# ORL 6 Fazlı Uygulama Yaşam Döngüsü — Onboarding Tanımı
 #
 # Amaç: bir kurum paketi satın aldığında ajanların 6 fazda nasıl kurulacağını,
 # eğitileceğini ve ne zaman otonom çalışmaya bırakılacağını tanımlar.
 #
-# Kaynak: dora-tam-konusma.md satır 4538-4593 (CORF tabanlı plan),
-#         satır 929-1238 (eski 8 adımlı wizard), satır 4717 (CORF eşleştirmesi)
+# Kaynak: dora-tam-konusma.md satır 4538-4593 (ORL tabanlı plan),
+#         satır 929-1238 (eski 8 adımlı wizard), satır 4717 (ORL eşleştirmesi)
 # Şema: schema/processes.schema.json ile aynı SLA sözlüğünü kullanır.
 
 lifecycle:
-  id: CORF-IMPL-6
+  id: ORL-IMPL-6
   version: "1.0.0"
   generated_at: "2026-10-30"
-  framework: "TACAS CORF — Implementation Lifecycle"
-  platform: "GOLDENHORN ONERESILIENCE"
+  framework: "Implementation Lifecycle (6 faz)"
+  platform: "harici referans platform"
   dora_ref:
     article: "Madde 6, 8, 16"
     note: "Orantılılık (Madde 16) gereği tier3 kurumlarda faz 4-5 basitleştirilebilir"
@@ -40,14 +40,14 @@ phases:
     name:
       tr: "Faz 1 — Önemli İş Hizmetlerinin Belirlenmesi (Identify)"
       en: "Phase 1 — Identify Critical Business Services"
-    corf_phase: Identify
+    lifecycle_phase: Identify
     purpose: "Lisans ve kurum profilini sabitle, tier'ı belirle, iş hizmetleri kataloğunu (BSC) oluştur."
     corresponds_to_old_steps: [0, 1, 2]
     wizard_steps:
       - { id: C1-S1, name: "Lisans doğrulama", module: step-0-license }
       - { id: C1-S2, name: "Kurum profili ve tier seçimi", module: step-1-profile }
       - { id: C1-S3, name: "Yargı alanı ve regülatör eşleme", module: step-2-jurisdiction }
-      - { id: C1-S4, name: "İş hizmetleri kataloğu (BSC) oluşturma", module: corf-bsc }
+      - { id: C1-S4, name: "İş hizmetleri kataloğu (BSC) oluşturma", module: orl-bsc }
     agents:
       observe: [ROL-RSK-01, ROL-CIO-01]
       description: "RSK ajanı hizmetleri envanterler, CIO ajanı kritiklik önerisi üretir; onay insanda."
@@ -76,14 +76,14 @@ phases:
     name:
       tr: "Faz 2 — Etki Toleranslarının Belirlenmesi (Set Tolerances)"
       en: "Phase 2 — Set Impact Tolerances"
-    corf_phase: Set tolerances
+    lifecycle_phase: Set tolerances
     purpose: "Her kritik hizmet için MTD/RTO/RPO ve risk iştahı eşiklerini belirle; SLA'ları buradan türet."
     corresponds_to_old_steps: [5]
     wizard_steps:
-      - { id: C2-S1, name: "Etki toleransı tanımlama (hizmet bazında)", module: corf-tolerance }
-      - { id: C2-S2, name: "Risk iştahı ve eşikler", module: corf-appetite }
+      - { id: C2-S1, name: "Etki toleransı tanımlama (hizmet bazında)", module: orl-tolerance }
+      - { id: C2-S2, name: "Risk iştahı ve eşikler", module: orl-appetite }
       - { id: C2-S3, name: "SLA türetme ve yerel override", module: step-5-sla }
-      - { id: C2-S4, name: "Ekonomik etki modeli (büyük olay kriteri)", module: corf-economic-impact }
+      - { id: C2-S4, name: "Ekonomik etki modeli (büyük olay kriteri)", module: orl-economic-impact }
     agents:
       observe: [ROL-CIO-01, ROL-RSK-01]
       description: "Ajanlar öneri üretir: tolerans önerisi, SLA çakışma uyarısı. Onay yönetim kurulunda."
@@ -110,17 +110,17 @@ phases:
     name:
       tr: "Faz 3 — Kaynakların Haritalanması ve Ajan Aktivasyonu (Map Resources)"
       en: "Phase 3 — Map Resources and Activate Agents"
-    corf_phase: Map resources
+    lifecycle_phase: Map resources
     purpose: "ICT envanterini, tedarikçi bağımlılıklarını ve ajan/insan eşlemesini kur; bağımsızlığı kanıtla."
     corresponds_to_old_steps: [3, 4, 6]
     wizard_steps:
       - { id: C3-S1, name: "ICT ve tedarikçi envanteri içe aktarma", module: step-3-inventory }
-      - { id: C3-S2, name: "Kritiklik ve CTPP işaretleme", module: corf-criticality }
+      - { id: C3-S2, name: "Kritiklik ve CTPP işaretleme", module: orl-criticality }
       - { id: C3-S3, name: "Ajan aktivasyonu (tier matrisi)", module: step-4-agents }
       - { id: C3-S4, name: "İnsan muadili atama", module: step-4-agents }
       - { id: C3-S5, name: "Bağımsızlık kontrolleri", module: step-4-agents }
       - { id: C3-S6, name: "Entegrasyon konnektörleri (SIEM/ITSM/GRC/CMDB)", module: step-6-integration }
-      - { id: C3-S7, name: "CORF süreç eşleştirmesini KIB'e yazma", module: corf-mapping-sync }
+      - { id: C3-S7, name: "ORL süreç eşleştirmesini KIB'e yazma", module: orl-mapping-sync }
     agents:
       observe: [ROL-RSK-01, ROL-TPP-01, ROL-CTPP-01]
       recommend: [ROL-CIO-01, ROL-CMP-01]
@@ -151,9 +151,9 @@ phases:
         - "Aktive edilen her ajanın insan muadili atandı"
         - "Dört bağımsızlık kontrolü PASS"
         - "Tüm zorunlu entegrasyonlar test bağlantısından geçti"
-        - "CORF eşleştirmesi (agent-to-corf-mapping) KIB'de doğrulandı"
+        - "ORL eşleştirmesi (agent-to-orl-mapping) KIB'de doğrulandı"
         - "Her OR.* süreç kodu en az bir aktive ajan tarafından sahiplenilmiş; sahipsiz kod yok"
-        - "Her GOLDENHORN modülünün en az bir ajan bağlantısı var"
+        - "Her platform modülünün en az bir ajan bağlantısı var"
       blocks_next_phase: true
     duration_days: 20
 
@@ -162,15 +162,15 @@ phases:
     name:
       tr: "Faz 4 — Senaryo Testleri (Scenario Tests)"
       en: "Phase 4 — Scenario Tests"
-    corf_phase: Scenario tests
+    lifecycle_phase: Scenario tests
     purpose: "Ajanları sentetik senaryolarla sına; sınıflandırma ve bildirim doğruluğunu ölç."
     corresponds_to_old_steps: [7]
     wizard_steps:
-      - { id: C4-S1, name: "Senaryo setini KIB'e yükleme", module: corf-scenarios }
-      - { id: C4-S2, name: "Büyük olay simülasyonu (PRC-INC-01..04)", module: corf-run-scenario }
-      - { id: C4-S3, name: "Tedarikçi çıkış simülasyonu (PRC-TPP-06)", module: corf-run-scenario }
-      - { id: C4-S4, name: "Regülatör bilgi talebi simülasyonu (PRC-TPP-04)", module: corf-run-scenario }
-      - { id: C4-S5, name: "Sonuç karşılaştırma ve kabul raporu", module: corf-acceptance }
+      - { id: C4-S1, name: "Senaryo setini KIB'e yükleme", module: orl-scenarios }
+      - { id: C4-S2, name: "Büyük olay simülasyonu (PRC-INC-01..04)", module: orl-run-scenario }
+      - { id: C4-S3, name: "Tedarikçi çıkış simülasyonu (PRC-TPP-06)", module: orl-run-scenario }
+      - { id: C4-S4, name: "Regülatör bilgi talebi simülasyonu (PRC-TPP-04)", module: orl-run-scenario }
+      - { id: C4-S5, name: "Sonuç karşılaştırma ve kabul raporu", module: orl-acceptance }
     scenarios:
       - id: SCN-01
         name: "500.000 müşteriyi etkileyen 6 saatlik kesinti"
@@ -204,14 +204,14 @@ phases:
     name:
       tr: "Faz 5 — Öz Değerlendirme (Self-Assessment)"
       en: "Phase 5 — Self-Assessment"
-    corf_phase: Self-assessment
+    lifecycle_phase: Self-assessment
     purpose: "DORA maddeleri bazında boşluk analizi; ajanların kapsamadığı kontrolleri ve riskleri görünür kıl."
     corresponds_to_old_steps: []
     wizard_steps:
-      - { id: C5-S1, name: "Madde-süreç-kontrol kapsama matrisi", module: corf-coverage }
-      - { id: C5-S2, name: "Boşluk analizi ve risk skoru", module: corf-gap-analysis }
-      - { id: C5-S3, name: "Bağımsız kontrol fonksiyonu doğrulaması", module: corf-independent-review }
-      - { id: C5-S4, name: "Olgunluk raporu", module: corf-maturity }
+      - { id: C5-S1, name: "Madde-süreç-kontrol kapsama matrisi", module: orl-coverage }
+      - { id: C5-S2, name: "Boşluk analizi ve risk skoru", module: orl-gap-analysis }
+      - { id: C5-S3, name: "Bağımsız kontrol fonksiyonu doğrulaması", module: orl-independent-review }
+      - { id: C5-S4, name: "Olgunluk raporu", module: orl-maturity }
     agents:
       recommend: [ROL-CMP-01, ROL-AUD-01]
       description: "CMP boşlukları üretir, AUD bağımsız olarak doğrular; hiçbiri kendi bulgusunu kapatamaz."
@@ -241,16 +241,16 @@ phases:
     name:
       tr: "Faz 6 — Yönetim İşletim Sisteminin Devreye Alınması (MOS)"
       en: "Phase 6 — Implement Management Operating System (MOS)"
-    corf_phase: Implement MOS
+    lifecycle_phase: Implement MOS
     purpose: "Gölge moddan otonom moda geçiş; izleme, sertifikasyon ve sürekli iyileştirme döngüsü."
     corresponds_to_old_steps: [8]
     wizard_steps:
       - { id: C6-S1, name: "Gölge mod başlatma (2 hafta)", module: step-8-golive }
       - { id: C6-S2, name: "Yarı-otomatik mod (1 ay)", module: step-8-golive }
-      - { id: C6-S3, name: "Otonom mod yetkilendirmesi", module: corf-autonomy-grant }
-      - { id: C6-S4, name: "MOS panosu ve KPI izleme", module: corf-mos-dashboard }
-      - { id: C6-S5, name: "Regülasyon izleme ajanını devreye alma", module: corf-regwatch }
-      - { id: C6-S6, name: "Sertifikasyon ve vaka kaydı", module: corf-certification }
+      - { id: C6-S3, name: "Otonom mod yetkilendirmesi", module: orl-autonomy-grant }
+      - { id: C6-S4, name: "MOS panosu ve KPI izleme", module: orl-mos-dashboard }
+      - { id: C6-S5, name: "Regülasyon izleme ajanını devreye alma", module: orl-regwatch }
+      - { id: C6-S6, name: "Sertifikasyon ve vaka kaydı", module: orl-certification }
     agents:
       act_with_approval: [ROL-INC-01, ROL-CIO-01, ROL-CTO-01, ROL-TPP-01, ROL-CMP-01, ROL-CEO-01]
       act_autonomous: [ROL-RSK-01, ROL-INF-01, ROL-TLPT-01]
@@ -281,7 +281,7 @@ phases:
       blocks_next_phase: false
     duration_days: 45
 
-# Sürekli döngü: MOS sonrası CORF fazları yıllık olarak tekrar çalışır.
+# Sürekli döngü: MOS sonrası ORL fazları yıllık olarak tekrar çalışır.
 continuous_cycle:
   cadence: annual
   reentry_phase: C2

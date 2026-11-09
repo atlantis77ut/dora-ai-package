@@ -1,0 +1,11 @@
+{
+  "zones": {
+    "DMZ-01": {
+      "default_deny": true,
+      "critical_assets": [
+        "AST-014"
+      ],
+      "closed_at": "2026-11-10T12:00:00+03:00"
+    }
+  }
+}

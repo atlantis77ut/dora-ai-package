@@ -44,7 +44,7 @@ Bu tabloyu teklife koy; fiyat, değerin yüzdesi olarak okunur.
 | Katman | Kapsam | Aktif ajan | Önerilen yıllık aralık |
 |---|---|---|---|
 | **Starter** | 60 terim, 4 zorunlu ajan, 5 temel süreç, TR profili | 4 | **12.000 – 18.000 €** |
-| **Professional** | tüm ajanlar (11), 24 süreç, 36 kontrol, CORF 6 fazı | 11 | **35.000 – 55.000 €** |
+| **Professional** | tüm ajanlar (11), 24 süreç, 36 kontrol, ORL 6 fazı | 11 | **35.000 – 55.000 €** |
 | **Enterprise** | Professional + TLPT/CTPP + öncelikli destek + yol haritası etkisi | 11 + özel | **80.000 – 140.000 €** |
 | **Public Sector** | Kamu uyarlaması, yerel mevzuat eşlemesi, kapalı ağ kurulumu | 4–11 | **20.000 – 35.000 €** |
 

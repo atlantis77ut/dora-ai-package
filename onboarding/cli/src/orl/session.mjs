@@ -20,7 +20,7 @@ export function sessionDir(sessionId, cwd = process.cwd()) {
   return path.join(sessionsRoot(cwd), sessionId);
 }
 
-export function create({ tier = null, regulator = null, mode = 'corf', cwd = process.cwd() }) {
+export function create({ tier = null, regulator = null, mode = 'orl', cwd = process.cwd() }) {
   const id = newId();
   const dir = sessionDir(id, cwd);
   fs.mkdirSync(dir, { recursive: true });

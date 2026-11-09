@@ -1,0 +1,9 @@
+{
+  "incident_id": "INC-2026-0412",
+  "root_cause": "kontrol_eksikligi",
+  "category": "change_management",
+  "actions_total": 4,
+  "actions_closed": 4,
+  "prepared_by": "M. Demir (Olay Yöneticisi)",
+  "reviewed_by": "A. Şahin (Uyum)"
+}

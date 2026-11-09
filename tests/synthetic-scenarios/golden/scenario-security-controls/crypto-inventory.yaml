@@ -1,0 +1,6 @@
+assets:
+  AST-001:
+    at_rest: true
+    in_transit: false
+    remediation_due_days: 21
+    algorithm: AES-256

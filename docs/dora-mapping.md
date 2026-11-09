@@ -121,7 +121,7 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - **Kontroller:** CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010
 - **Sahip roller:** ROL-CTO-01, ROL-CMP-01
 - **Durum:** covered
-- **Tier:** tier3: yıllık tek gözden geçirme yeterli (corf-lifecycle tier_variants)
+- **Tier:** tier3: yıllık tek gözden geçirme yeterli (orl-lifecycle tier_variants)
 
 ### Art-10 — Tespit
 
@@ -195,7 +195,7 @@ boşluk olarak görünür; kapatılmadıkça faz kapısı geçilmez.
 - **Kontroller:** CTL-RSK-001
 - **Sahip roller:** ROL-CIO-01
 - **Durum:** covered
-- **Tier:** tier3 profillerinde uygulanır (corf-lifecycle.yaml tier_variants).
+- **Tier:** tier3 profillerinde uygulanır (orl-lifecycle.yaml tier_variants).
 
 ### Art-16 — Orantılılık ilkesi
 

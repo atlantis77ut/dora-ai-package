@@ -11,7 +11,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo === Uctan uca demo: 6 CORF fazi ===
+echo === Uctan uca demo: 6 ORL fazi ===
 echo.
 node tools\demo.mjs
 set RC=%ERRORLEVEL%

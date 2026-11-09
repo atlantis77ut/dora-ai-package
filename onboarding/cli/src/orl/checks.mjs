@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 ustauretim
 // Faz geçiş kapıları: her fazın ölçülebilir kontrol listesi.
-// corf-lifecycle.yaml içindeki exit_gate.criteria metinleri burada çalıştırılabilir
+// orl-lifecycle.yaml içindeki exit_gate.criteria metinleri burada çalıştırılabilir
 // kontrollere dönüşür. Metin ile kontrol aynı sırada; ikisi birlikte güncellenmeli.
 
 import { readJson, hasFile } from './session.mjs';
@@ -146,11 +146,11 @@ export const PHASE_CHECKS = {
       id: 'C3-4',
       text: 'Her OR.* süreç kodu en az bir ajan tarafından sahiplenilmiş',
       run: (ctx) => {
-        const m = readJson(ctx.dir, 'corf-mapping.json');
+        const m = readJson(ctx.dir, 'orl-mapping.json');
         const owned = m?.owned_codes ?? [];
         const all = m?.all_codes ?? [];
         const orphan = all.filter((c) => !owned.includes(c));
-        return ok('C3-4', all.length > 0 && orphan.length === 0, all.length ? `${all.length} kod, ${orphan.length} sahipsiz` : 'corf-mapping.json yok');
+        return ok('C3-4', all.length > 0 && orphan.length === 0, all.length ? `${all.length} kod, ${orphan.length} sahipsiz` : 'orl-mapping.json yok');
       },
     },
   ],
@@ -269,7 +269,7 @@ export function phaseArtifacts() {
   return {
     C1: ['institution-profile.json', 'jurisdiction.json', 'business-service-catalogue.json'],
     C2: ['impact-tolerances.json', 'risk-appetite.json', 'sla-overrides.json'],
-    C3: ['ict-inventory.json', 'agent-activation.json', 'corf-mapping.json'],
+    C3: ['ict-inventory.json', 'agent-activation.json', 'orl-mapping.json'],
     C4: ['scenario-results.json'],
     C5: ['coverage-matrix.json', 'gap-analysis.json'],
     C6: ['autonomy-grant.json', 'go-live.json'],

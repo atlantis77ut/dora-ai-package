@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 ustauretim
-// DORA AI Package — CORF 6 fazlı onboarding CLI (bağımlılıksız, ESM).
+// DORA AI Package — ORL 6 fazlı onboarding CLI (bağımlılıksız, ESM).
 // Kullanım: node bin/dora-onboard.mjs <komut> [seçenekler]
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import * as store from '../src/corf/session.mjs';
-import { loadLifecycle, validateLifecycle, phaseById, nextPhase, runPhase } from '../src/corf/lifecycle.mjs';
-import { evaluatePhase, describeArtifacts } from '../src/corf/checks.mjs';
-import { verify, loadPublicKey, describe as describeLicense, REASON_TEXT } from '../src/corf/license.mjs';
-import { buildBundle, verifyBundle } from '../src/corf/evidence.mjs';
-import { buildNotification, PHASES as NOTIFY_PHASES } from '../src/corf/notify.mjs';
-import { buildMi, loadCalendar, loadAnchors, upcoming, fmtDate } from '../src/corf/mi.mjs';
-import { ingest } from '../src/corf/ingest.mjs';
-import { validateCatalogs } from '../src/corf/catalog.mjs';
-import { runScenario } from '../src/corf/scenario.mjs';
+import * as store from '../src/orl/session.mjs';
+import { loadLifecycle, validateLifecycle, phaseById, nextPhase, runPhase } from '../src/orl/lifecycle.mjs';
+import { evaluatePhase, describeArtifacts } from '../src/orl/checks.mjs';
+import { verify, loadPublicKey, describe as describeLicense, REASON_TEXT } from '../src/orl/license.mjs';
+import { buildBundle, verifyBundle } from '../src/orl/evidence.mjs';
+import { buildNotification, PHASES as NOTIFY_PHASES } from '../src/orl/notify.mjs';
+import { buildMi, loadCalendar, loadAnchors, upcoming, fmtDate } from '../src/orl/mi.mjs';
+import { ingest } from '../src/orl/ingest.mjs';
+import { validateCatalogs } from '../src/orl/catalog.mjs';
+import { runScenario, seedArtifacts } from '../src/orl/scenario.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEV_KEY = path.resolve(HERE, '../../license/dev-private.pem');
@@ -38,7 +38,7 @@ function line(s = '') {
 }
 
 function usage() {
-  line(`${color.bold}dora-onboard${color.reset} — CORF 6 fazlı kurum onboarding sihirbazı
+  line(`${color.bold}dora-onboard${color.reset} — ORL 6 fazlı kurum onboarding sihirbazı
 
 ${color.bold}Komutlar${color.reset}
   init                        Yeni oturum başlat
@@ -158,6 +158,7 @@ const { values: opts } = parseArgs({
     'to-phase': { type: 'string' },
     license: { type: 'string' },
     demo: { type: 'boolean' },
+    golden: { type: 'boolean' },
     out: { type: 'string' },
     key: { type: 'string' },
     bundle: { type: 'string' },
@@ -441,6 +442,12 @@ try {
     let totalFail = 0;
     let totalManual = 0;
     for (const f of files) {
+      if (opts.golden) {
+        const goldenDir = path.join(scenariosDir, 'golden', path.basename(f, '.yaml'));
+        const seeded = seedArtifacts(dir, goldenDir);
+        if (seeded.found) line(`${color.dim}  golden: ${seeded.copied.length} artefakt yüklendi (${path.basename(goldenDir)})${color.reset}`);
+        else line(`${color.yellow}  uyarı:${color.reset} golden dizin yok: ${path.basename(goldenDir)}`);
+      }
       const { payload } = runScenario({ file: f, dir });
       line(`${color.bold}${payload.scenario}${color.reset} ${payload.name} ${color.dim}(${payload.file})${color.reset}`);
       for (const r of payload.results) {

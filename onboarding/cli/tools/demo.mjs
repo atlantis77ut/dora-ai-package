@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 ustauretim
 //
-// Uçtan uca demo: 6 CORF fazını örnek veriyle çalıştırır, kapıları değerlendirir.
+// Uçtan uca demo: 6 ORL fazını örnek veriyle çalıştırır, kapıları değerlendirir.
 // Gerçek kuruluma dokunmaz — kendi geçici oturumunu açar ve sonunda siler.
 //
 // Kullanım:  node tools/demo.mjs            (tüm fazlar)
@@ -11,10 +11,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import * as store from '../src/corf/session.mjs';
-import { loadLifecycle, runPhase } from '../src/corf/lifecycle.mjs';
-import { evaluatePhase } from '../src/corf/checks.mjs';
-import { sign } from '../src/corf/license.mjs';
+import * as store from '../src/orl/session.mjs';
+import { loadLifecycle, runPhase } from '../src/orl/lifecycle.mjs';
+import { evaluatePhase } from '../src/orl/checks.mjs';
+import { sign } from '../src/orl/license.mjs';
 
 const { values } = parseArgs({ options: { keep: { type: 'boolean' } } });
 const CWD = path.resolve(process.cwd());
@@ -30,7 +30,7 @@ if (fs.existsSync(DEV_KEY)) {
     licensee: 'Demo Bankası A.Ş.',
     tier: 'tier2',
     phases: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'],
-    modules: ['agents', 'processes', 'corf', 'pilot'],
+    modules: ['agents', 'processes', 'orl', 'pilot'],
     issued_at: new Date().toISOString(),
     expires_at: new Date(Date.now() + 365 * 86400000).toISOString(),
   };

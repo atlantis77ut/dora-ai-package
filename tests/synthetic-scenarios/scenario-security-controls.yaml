@@ -3,7 +3,7 @@
 # Amaç: erişim, şifreleme, ağ segmentasyonu ve zafiyet kapatma kontrollerinin
 # uçtan uca çalıştığını sınamak — yani "kontrol var" demekle "kontrol kanıtlanıyor"
 # arasındaki farkı yakalamak.
-# CORF fazı: C4 (Scenario tests)
+# ORL fazı: C4 (Scenario tests)
 
 scenario:
   id: SCN-04

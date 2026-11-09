@@ -1,0 +1,15 @@
+{
+  "request_id": "REQ-2026-07-11",
+  "items_total": 5,
+  "items_matched": 5,
+  "files": [
+    "classification-decision.json",
+    "notification-receipt.json",
+    "rca-report.json",
+    "register-of-information.xbrl",
+    "control-update-record.json"
+  ],
+  "hash_chain_verified": true,
+  "manifest": "bundle-manifest.json",
+  "bundle_hash": "sha256:3b7e1d9c4f2a8065b1d3e7c9a2f4b6d8e0c1a3f5b7d9e1c3a5f7b9d1e3c5a7f9"
+}

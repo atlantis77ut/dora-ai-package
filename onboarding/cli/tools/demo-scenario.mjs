@@ -2,16 +2,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 ustauretim
 //
-// 1.1 demo: senaryo çalıştırıcısı. SCN-04'ün assertion'larını karşılayan artefaktları
-// yazar, senaryoyu çalıştırır, bozuk veriyle fail ürettiğini gösterir.
+// Senaryo çalıştırıcısı demosu:
+//   1) her senaryo için golden artefaktları yükler, çalıştırır  -> 27/27 pass beklenir
+//   2) SCN-04 kanıtını bozar, tekrar çalıştırır                 -> 2 fail beklenir
 //
 // Kullanım: node tools/demo-scenario.mjs [--keep]
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import * as store from '../src/corf/session.mjs';
-import { runScenario } from '../src/corf/scenario.mjs';
+import * as store from '../src/orl/session.mjs';
+import { runScenario, seedArtifacts } from '../src/orl/scenario.mjs';
 
 const { values } = parseArgs({ options: { keep: { type: 'boolean' } } });
 const CWD = path.resolve(process.cwd());
@@ -29,71 +30,39 @@ const session = store.create({ tier: 'tier2', regulator: 'BDDK', jurisdiction: '
 const dir = store.sessionDir(session.session_id, CWD);
 console.log('oturum: ' + session.session_id + '\n');
 
-// SCN-04 assertion'larının beklediği kanıtlar
-store.writeJson(path.join(dir, 'access-review-record.json'), {
-  review_id: 'AR-2026-Q4',
-  accounts_total: 420,
-  privileged_accounts: 18,
-  dormant_accounts_closed: 12,
-  revoked_count: 2,
-  reviewer: 'IAM Ekibi',
-  signed_at: '2026-11-09T09:00:00+03:00',
-});
-fs.writeFileSync(
-  path.join(dir, 'crypto-inventory.yaml'),
-  [
-    'assets:',
-    '  AST-001:',
-    '    at_rest: true',
-    '    in_transit: false',
-    '    remediation_due_days: 21',
-    '    algorithm: AES-256',
-    '',
-  ].join('\n'),
-);
-store.writeJson(path.join(dir, 'segmentation-evidence.json'), {
-  zones: { 'DMZ-01': { default_deny: true, critical_assets: ['AST-014'], closed_at: '2026-11-10T12:00:00+03:00' } },
-});
-store.writeJson(path.join(dir, 'vulnerability-closure.json'), {
-  vuln_id: 'CVE-2026-31142',
-  cvss: 9.4,
-  asset_id: 'AST-001',
-  closed_at: '2026-11-20T10:00:00+03:00',
-  days_open: 18,
-});
-store.writeJson(path.join(dir, 'incident-record.json'), {
-  incident_id: 'INC-2026-0077',
-  detected_at: '2026-11-09T08:30:00+03:00',
-  classification: 'major',
-  source: 'siem',
-});
+const files = fs.readdirSync(SCEN).filter((f) => f.endsWith('.yaml')).sort();
 
-console.log('--- SCN-04 (sağlam veri)');
-const r1 = runScenario({ file: path.join(SCEN, 'scenario-security-controls.yaml'), dir });
-console.log('  ' + r1.payload.passed + '/' + r1.payload.total + ' geçti, ' + r1.payload.failed + ' başarısız, ' + r1.payload.manual + ' manuel');
-check(r1.payload.failed === 0, 'tüm çalıştırılabilir assertion geçti');
-check(r1.payload.passed === 6, '6 assertion çalıştırıldı (manuel yok)');
-check(fs.existsSync(r1.outFile), 'sonuç dosyası oturuma yazıldı: ' + path.basename(r1.outFile));
-
-console.log('\n--- SCN-04 (bozuk veri)');
-store.writeJson(path.join(dir, 'access-review-record.json'), { dormant_accounts_closed: 5, revoked_count: 0 });
-const r2 = runScenario({ file: path.join(SCEN, 'scenario-security-controls.yaml'), dir });
-console.log('  ' + r2.payload.passed + '/' + r2.payload.total + ' geçti, ' + r2.payload.failed + ' başarısız');
-check(r2.payload.failed === 2, 'iki assertion başarısız oldu (kapatılan hesap + iptal)');
-check(r2.payload.results.some((x) => x.id === 'A1' && x.status === 'fail'), 'A1 gerekçesi kaydedildi');
-
-console.log('\n--- tüm senaryolar');
-const all = fs.readdirSync(SCEN).filter((f) => f.endsWith('.yaml')).sort();
-let manual = 0;
+console.log('--- golden kosu (tum senaryolar)');
+let passed = 0;
 let failed = 0;
-for (const f of all) {
-  const r = runScenario({ file: path.join(SCEN, f), dir });
-  manual += r.payload.manual;
-  failed += r.payload.failed;
-  console.log('  ' + r.payload.scenario + ': ' + r.payload.passed + ' pass, ' + r.payload.failed + ' fail, ' + r.payload.manual + ' manuel');
+let manual = 0;
+for (const f of files) {
+  const goldenDir = path.join(SCEN, 'golden', path.basename(f, '.yaml'));
+  const seeded = seedArtifacts(dir, goldenDir);
+  const { payload } = runScenario({ file: path.join(SCEN, f), dir });
+  passed += payload.passed;
+  failed += payload.failed;
+  manual += payload.manual;
+  const seedInfo = seeded.found ? seeded.copied.length + ' artefakt' : 'golden yok';
+  console.log(
+    '  ' + payload.scenario + ': ' + payload.passed + ' pass, ' + payload.failed + ' fail, ' +
+      payload.manual + ' manuel  (' + seedInfo + ')',
+  );
 }
-check(failed > 0, 'bozuk veri tüm senaryo turunda da yakalandı');
-check(manual > 0, manual + ' assertion check tanımsız olduğu için manuel sayıldı');
+check(failed === 0, 'hic basarisiz assertion yok');
+check(passed === 27, '27/27 assertion calistirildi (beklenen: 27)');
+check(manual === 0, 'manuel assertion yok - tumu deterministik');
+
+console.log('\n--- bozuk kanit (SCN-04)');
+store.writeJson(path.join(dir, 'access-review-record.json'), { dormant_accounts_closed: 5, revoked_count: 0 });
+const broken = runScenario({ file: path.join(SCEN, 'scenario-security-controls.yaml'), dir });
+console.log('  ' + broken.payload.passed + '/' + broken.payload.total + ' gecti, ' + broken.payload.failed + ' basarisiz');
+check(broken.payload.failed === 2, 'iki assertion basarisiz oldu (kapatilan hesap + iptal)');
+check(
+  broken.payload.results.some((x) => x.id === 'A1' && x.status === 'fail'),
+  'A1 icin gerekce kaydedildi',
+);
+check(fs.existsSync(path.join(dir, 'scenario-SCN-04-results.json')), 'sonuc dosyasi oturuma yazildi');
 
 console.log('\nSONUC: ' + (failures === 0 ? 'tum kontroller gecti' : failures + ' kontrol BASARISIZ'));
 if (!values.keep) {

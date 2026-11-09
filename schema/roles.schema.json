@@ -232,7 +232,7 @@
         "purpose": {
           "$ref": "common.schema.json#/$defs/I18nText"
         },
-        "corf_process_codes": {
+        "process_codes": {
           "type": "array",
           "items": {
             "type": "string",

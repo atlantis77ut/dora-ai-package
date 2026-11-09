@@ -1,0 +1,7 @@
+{
+  "incident_id": "INC-2026-0412",
+  "updated_control": "CTL-RSK-006",
+  "change": "Değişiklik risk kapısına yedekleme penceresi çakışma kontrolü eklendi",
+  "updated_at": "2026-05-20T11:00:00+03:00",
+  "verified_by_audit": true
+}

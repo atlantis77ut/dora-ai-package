@@ -1,0 +1,13 @@
+{
+  "incident_id": "INC-2026-0412",
+  "detected_at": "2026-04-12T02:14:00+03:00",
+  "source": "siem",
+  "classification": "major",
+  "affected_customers": 512000,
+  "outage_minutes": 372,
+  "economic_impact_eur": 2400000,
+  "affected_member_states": [
+    "TR"
+  ],
+  "data_loss": false
+}

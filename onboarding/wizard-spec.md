@@ -1,14 +1,14 @@
-# Onboarding Wizard — CORF 6 Fazına Göre Yeniden Tasarım
+# Onboarding Wizard — ORL 6 Fazına Göre Yeniden Tasarım
 
-Bu belge, eski **8 adımlı sihirbazı** TACAS CORF'un **6 fazlı uygulama yaşam döngüsüne** taşıyan tasarımı açıklar.
-Makine tarafından okunabilir tanım: [`corf-lifecycle.yaml`](corf-lifecycle.yaml).
+Bu belge, eski **8 adımlı sihirbazı** **6 fazlı uygulama yaşam döngüsüne** taşıyan tasarımı açıklar.
+Makine tarafından okunabilir tanım: [`orl-lifecycle.yaml`](orl-lifecycle.yaml).
 
 ---
 
 ## 1. Neden değişti
 
 Eski wizard teknik bir kurulum akışıydı: lisans → profil → envanter → ajan → SLA → entegrasyon → kabul → canlı.
-CORF ise yönetişim dilinde konuşuyor: **hizmeti tanımla, toleransı koy, kaynağı haritala, senaryoyla sına, öz değerlendirme yap, işletim sistemine geç.**
+ORL ise yönetişim dilinde konuşuyor: **hizmeti tanımla, toleransı koy, kaynağı haritala, senaryoyla sına, öz değerlendirme yap, işletim sistemine geç.**
 
 Fark, sıralamada değil **kapılarda**: eski akışta "adım tamamlandı" yeterliydi; yeni akışta bir sonraki faza geçmek için ölçülebilir kanıt gerekiyor (`exit_gate.criteria`). Kapı geçilmezse wizard ilerlemez — bu, denetimde "kurulum yapıldı" demenin kanıtı olur.
 
@@ -16,7 +16,7 @@ Fark, sıralamada değil **kapılarda**: eski akışta "adım tamamlandı" yeter
 
 ## 2. Altı faz ve eski adımların eşleşmesi
 
-| CORF fazı | Eski adımlar | Ajanların rolü | Çıktı |
+| ORL fazı | Eski adımlar | Ajanların rolü | Çıktı |
 |---|---|---|---|
 | **C1 — Identify** | 0, 1, 2 | İzler (observe) | `business-service-catalogue.yaml`, profil, jurisdiction |
 | **C2 — Set tolerances** | 5 | İzler | `impact-tolerances.yaml`, `risk-appetite.yaml`, `sla-overrides.yaml` |
@@ -69,15 +69,15 @@ Her fazın `exit_gate.criteria` listesi makine tarafından denetlenebilir ifadel
 ## 4.5. Uygulama durumu (2026-11-03)
 
 Bu tasarım kâğıtta kalmadı: `onboarding/cli/bin/dora-onboard.mjs` içinde **çalışan, bağımlılıksız** bir CLI var.
-`npm install` gerekmiyor — kendi mini YAML okuyucusu (`src/corf/yaml.mjs`) `corf-lifecycle.yaml`'ı doğrudan okur.
+`npm install` gerekmiyor — kendi mini YAML okuyucusu (`src/orl/yaml.mjs`) `orl-lifecycle.yaml`'ı doğrudan okur.
 
 | Dosya | İş |
 |---|---|
 | `bin/dora-onboard.mjs` | Komutlar: `init`, `phase`, `gate`, `status`, `phases`, `rollback` |
-| `src/corf/yaml.mjs` | Minimal YAML okuyucu (eşleme, liste, akış eşleme, blok skaler) |
-| `src/corf/lifecycle.mjs` | Faz tanımını yükler, doğrular, faz çalıştırıcılarını barındırır |
-| `src/corf/checks.mjs` | `exit_gate.criteria` metinlerinin **çalıştırılabilir** karşılıkları (21 kontrol) |
-| `src/corf/session.mjs` | Oturum deposu (`.dora-onboarding/<id>/`), rollback |
+| `src/orl/yaml.mjs` | Minimal YAML okuyucu (eşleme, liste, akış eşleme, blok skaler) |
+| `src/orl/lifecycle.mjs` | Faz tanımını yükler, doğrular, faz çalıştırıcılarını barındırır |
+| `src/orl/checks.mjs` | `exit_gate.criteria` metinlerinin **çalıştırılabilir** karşılıkları (21 kontrol) |
+| `src/orl/session.mjs` | Oturum deposu (`.dora-onboarding/<id>/`), rollback |
 
 Çalıştırma:
 
@@ -95,7 +95,7 @@ Kapı geçilmezse süreç **çıkış kodu 2** ile durur ve sonraki fazın başl
 ## 5. CLI akışı
 
 ```
-dora-onboard init --tier=tier2 --regulator=BDDK --corf
+dora-onboard init --tier=tier2 --regulator=BDDK --orl
 dora-onboard phase C1 --session ob-2026-0001
 dora-onboard gate  C1 --session ob-2026-0001       # kapıyı değerlendirir, geçmezse çıkış kodu 2
 dora-onboard phase C2 --session ob-2026-0001
@@ -105,13 +105,13 @@ dora-onboard rollback --session ob-2026-0001 --to-phase C3
 dora-onboard validate --session ob-2026-0001        # şemalara karşı tüm çıktılar
 ```
 
-`--corf` bayrağı olmadan eski 8 adımlı akış çalışmaya devam eder (geriye dönük uyumluluk); yeni kurulumlarda varsayılan CORF modudur.
+`--orl` bayrağı olmadan eski 8 adımlı akış çalışmaya devam eder (geriye dönük uyumluluk); yeni kurulumlarda varsayılan ORL modudur.
 
 Oturum dosyası artık faz bazlı:
 
 ```yaml
 session_id: ob-2026-0001
-mode: corf
+mode: orl
 tier: tier2
 current_phase: C3
 phases:
@@ -133,16 +133,16 @@ phases:
 | C5 | Tam kapsama matrisi + bağımsız doğrulama | Kapsama matrisi | 5 sütun anketi |
 | C6 | Gölge → yarı → otonom | Gölge → yarı | Gölge → yarı (otonom opsiyonel) |
 
-Tier 3'te C4 ve C5 birleştirilip tek "kabul" fazı olarak çalıştırılabilir; `corf-lifecycle.yaml` içinde `tier_variants` bunu not eder.
+Tier 3'te C4 ve C5 birleştirilip tek "kabul" fazı olarak çalıştırılabilir; `orl-lifecycle.yaml` içinde `tier_variants` bunu not eder.
 
 ---
 
-## 7. CORF eşleştirmesiyle bağ
+## 7. ORL eşleştirmesiyle bağ
 
-`data/corf-integration/agent-to-corf-mapping.yaml` her ajanın hangi CORF süreç kodunu (`OR.*`) yürüttüğünü ve hangi GOLDENHORN modülünü kullandığını tanımlar. Bu dosya artık **C3 fazında** doğrulanır:
+`data/orl-integration/agent-to-orl-mapping.yaml` her ajanın hangi süreç kodunu (`OR.*`) yürüttüğünü ve hangi platform modülünü kullandığını tanımlar. Bu dosya artık **C3 fazında** doğrulanır:
 
 - Her `OR.*` kodu en az bir aktive ajan tarafından sahiplenilmiş olmalı.
-- Her GOLDENHORN modülünün en az bir ajan bağlantısı olmalı.
+- Her platform modülünün en az bir ajan bağlantısı olmalı.
 - Sahipsiz süreç kodu varsa C3 kapısı `fail` verir.
 
 Bu doğrulama, "kâğıt üzerinde eşleştirme var ama işleyen sahibi yok" durumunu yakalar.
@@ -151,6 +151,6 @@ Bu doğrulama, "kâğıt üzerinde eşleştirme var ama işleyen sahibi yok" dur
 
 ## 8. Açık noktalar
 
-1. **TACAS CORF süreç kodlarının tam listesi** elimizde yalnızca konuşmada geçen 22 kod kadar (Govern/Plan/Conduct/Protect/Detect/Respond/Recover/Improve + KIB). Gerçek CORF dokümanındaki tam liste alınırsa `agent-to-corf-mapping.yaml` genişletilmeli.
-2. **GOLDENHORN API sözleşmesi** yok — C3'teki konnektörler şimdilik SIEM/ITSM/GRC/CMDB varsayımıyla tanımlı; gerçek endpoint'ler gelince `integration-config.yaml` şeması netleşir.
+1. **Süreç kodlarının tam listesi** elimizde yalnızca konuşmada geçen 22 kod kadar (Govern/Plan/Conduct/Protect/Detect/Respond/Recover/Improve + KIB). Referans dokümanın tam listesi alınırsa `agent-to-orl-mapping.yaml` genişletilmeli.
+2. **Platform API sözleşmesi** yok — C3'teki konnektörler şimdilik SIEM/ITSM/GRC/CMDB varsayımıyla tanımlı; gerçek endpoint'ler gelince `integration-config.yaml` şeması netleşir.
 3. **C5 kapsama matrisi** için DORA madde listesinin makine okunur hâli gerekiyor (Modül 6'da `docs/dora-mapping.md` ile gelecek).

@@ -1,0 +1,11 @@
+{
+  "incident_id": "INC-2026-0412",
+  "xml_file": "initial-notification.xml",
+  "payload_hash": "sha256:9f2c1b7d4a1e5c0b3f6a8d2e7c4b1a9f0d3e6c9b2a5f8d1e4c7b0a3f6d9e2c5b",
+  "approved_before_send": true,
+  "approval_ref": "APR-2026-0412-01",
+  "classified_at": "2026-04-12T02:29:00+03:00",
+  "sent_at": "2026-04-12T05:35:00+03:00",
+  "elapsed_minutes": 186,
+  "channel": "BDDK ONLINE"
+}

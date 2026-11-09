@@ -92,11 +92,13 @@ değişikliğiyle aktifleşir. `jurisdiction-config.yaml` içinde `disabled_proc
 bağlıydı. Bu ortamda `npm install` çalıştırılamadı (sandbox), yani iskelet hiç çalıştırılamazdı
 — test edilmemiş kod, dokümandan farksız.
 
-**Karar.** CORF sihirbazı `onboarding/cli/bin/dora-onboard.mjs` altında **sıfır bağımlılıkla**
-yazıldı: kendi mini YAML okuyucusu (`src/corf/yaml.mjs`), `node:util.parseArgs`, JSON oturum deposu.
+**Karar.** ORL sihirbazı `onboarding/cli/bin/dora-onboard.mjs` altında **sıfır bağımlılıkla**
+yazıldı: kendi mini YAML okuyucusu (`src/orl/yaml.mjs`), `node:util.parseArgs`, JSON oturum deposu.
 
 **Sonuç.** Altı komut da gerçekten çalışıyor ve kanıt üretiyor (`docs/DURUM.md` §8).
-Dökümden gelen `bin/dora-onboard.js` olduğu gibi korundu; `package.json` değiştirilmedi.
+Dökümden gelen `bin/dora-onboard.js` (ve `src/index.js`, `src/steps/*`) **`legacy/` altına
+taşındı** — çalışma zamanı yolunda tek CLI var: `bin/dora-onboard.mjs`. Gerekçe ve eşleme:
+`onboarding/cli/legacy/README.md`.
 
 ---
 
@@ -158,7 +160,7 @@ Açık anahtar depoda, özel anahtar satıcıda. Deneme modu 30 gün; C1-C5 çal
 geçiş) ticari lisans ister**.
 
 **Sonuç.**
-- `src/corf/license.mjs` (doğrulama), `tools/license-gen.mjs` (imzalama), `onboarding/license/`.
+- `src/orl/license.mjs` (doğrulama), `tools/license-gen.mjs` (imzalama), `onboarding/license/`.
 - Kapıya iki kontrol eklendi: `C1-0` (lisans geçerli + tier uyumlu) ve `C6-0` (ticari lisans).
 - Anlık iptal yok; telafi: yıllık süre, anahtar döndürme, sözleşme, `license_id` izleme
   (`docs/license-keys.md` §5).

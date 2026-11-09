@@ -7,7 +7,7 @@ Kapsam: teknik doğrulama, doküman tutarlılığı, lisans/yayın riskleri, da�
 
 ## 1. Yönetici özeti
 
-Paket **teknik olarak çalışıyor**: altı CORF fazı uçtan uca geçiyor, eşleme ve dashboard
+Paket **teknik olarak çalışıyor**: altı ORL fazı uçtan uca geçiyor, eşleme ve dashboard
 üretimi deterministik, referans sağlığı temiz. Ancak **olduğu gibi herkese açık yayına
 çıkmamalı**. Dört P0 kalemi var; üçü bu turda kapatıldı, biri (telif sahibi adı) kararınızı
 bekliyor.
@@ -56,7 +56,7 @@ HTML olarak `file://` ile açılıyor (0 harici URL).
 | P1-4 | `docs/DURUM.md` başlığı "Son güncelleme: 2026-10-30" (içerik 2026-11-06'ya kadar) | Düzeltildi |
 | P1-5 | `onboarding/cli/package.json`: `bin` **eski commander CLI'ına** işaret ediyordu; 9 npm bağımlılığı beyan ediyordu — README ise "bağımlılıksız" diyor | `bin` → `dora-onboard.mjs`, bağımlılıklar kaldırıldı, `private: true` (CLI depo içi yollara bağlı, npm paketi olarak yayınlanamaz) |
 | P1-6 | CI yok | `.github/workflows/validate.yml` eklendi (4 kontrol + dashboard güncellik testi) |
-| P1-7 | İki paralel CLI: `bin/dora-onboard.js` (eski, `commander` kurulmadan çalışmaz) ve `bin/dora-onboard.mjs` (yeni) | **AÇIK** — eski dosyalar `legacy/` altına taşınmalı ya da silinmeli; şu an `package.json` onlara işaret etmiyor |
+| P1-7 | İki paralel CLI: `bin/dora-onboard.js` (eski, `commander` kurulmadan çalışmaz) ve `bin/dora-onboard.mjs` (yeni) | **KAPANDI (1.2.1)** — eski dosyalar `onboarding/cli/legacy/` altına taşındı, `legacy/README.md` eşlemeyi yazıyor; çalışma zamanında tek CLI var |
 
 ### P2 — iyileştirme
 

@@ -1,0 +1,12 @@
+{
+  "request_id": "REQ-2026-07-11",
+  "personal_data_masked": true,
+  "trade_secret_masked": true,
+  "masked_fields": [
+    "customer_id",
+    "iban",
+    "internal_margin"
+  ],
+  "screened_at": "2026-07-11T15:40:00+03:00",
+  "screened_by": "A. Şahin (Uyum)"
+}

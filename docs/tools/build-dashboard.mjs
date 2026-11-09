@@ -13,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parse } from '../../onboarding/cli/src/corf/yaml.mjs';
+import { parse } from '../../onboarding/cli/src/orl/yaml.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, '../..');
@@ -52,11 +52,11 @@ const byStatus = { covered: 0, partial: 0, gap: 0 };
 for (const a of articles) byStatus[a.status] = (byStatus[a.status] ?? 0) + 1;
 const coveragePct = Math.round((byStatus.covered / articles.length) * 100);
 
-// ── CORF fazları ──────────────────────────────────────────
-const phases = (parse(read('onboarding/corf-lifecycle.yaml')).phases ?? []).map((p) => ({
+// ── ORL fazları ──────────────────────────────────────────
+const phases = (parse(read('onboarding/orl-lifecycle.yaml')).phases ?? []).map((p) => ({
   id: p.id,
   name: p.name?.tr ?? p.id,
-  corf: p.corf_phase,
+  orl: p.lifecycle_phase,
   steps: (p.wizard_steps ?? []).length,
   gates: (p.exit_gate?.criteria ?? []).length,
   days: p.duration_days ?? null,
@@ -95,7 +95,7 @@ const data = {
     terms: terms.length,
     scenarios: scenarios.length,
     assertions: scenarios.reduce((s, x) => s + Number(x.assertions ?? 0), 0),
-    orCodes: new Set(roles.flatMap((r) => r.corf_process_codes ?? [])).size,
+    orCodes: new Set(roles.flatMap((r) => r.process_codes ?? [])).size,
     coverage: coveragePct,
   },
   coverage: { total: articles.length, ...byStatus },
@@ -193,7 +193,7 @@ const indexHtml = page(
   'DORA AI Ajan Paketi — Dashboard',
   `${head(
     data.package.name,
-    `v${data.package.version} · ${data.package.license} · ${phases.length} CORF fazı · ${
+    `v${data.package.version} · ${data.package.license} · ${phases.length} ORL fazı · ${
       data.health.ok ? '<span class="ok">sağlık: temiz</span>' : '<span class="bad">sağlık: sorun var</span>'
     }`,
     stamp,
@@ -202,7 +202,7 @@ const indexHtml = page(
   <div class="grid">
     ${kpi('Süreç', data.kpis.processes, '5 sütun')}
     ${kpi('Kontrol', data.kpis.controls, Object.entries(fams).map(([k, v]) => `${k} ${v}`).join(' · '))}
-    ${kpi('Ajan', data.kpis.roles, `${data.kpis.orCodes} CORF kodu`)}
+    ${kpi('Ajan', data.kpis.roles, `${data.kpis.orCodes} ORL kodu`)}
     ${kpi('Terim', data.kpis.terms, 'DORA + RTS/ITS')}
     ${kpi('Senaryo', data.kpis.scenarios, `${data.kpis.assertions} assertion`)}
     ${kpi('DORA kapsama', data.kpis.coverage + '%', `${data.coverage.covered}/${data.coverage.total} madde`)}
@@ -219,12 +219,12 @@ const indexHtml = page(
   </section>
   <div class="two">
     <section>
-      <h2>CORF uygulama fazları <span>geçiş kapıları</span></h2>
-      <table><thead><tr><th>Faz</th><th>Adım</th><th>CORF</th><th class="num">Adım</th><th class="num">Kapı</th><th class="num">Gün</th><th>Ajan modu</th></tr></thead>
+      <h2>ORL uygulama fazları <span>geçiş kapıları</span></h2>
+      <table><thead><tr><th>Faz</th><th>Adım</th><th>ORL</th><th class="num">Adım</th><th class="num">Kapı</th><th class="num">Gün</th><th>Ajan modu</th></tr></thead>
       <tbody>${phases
         .map(
           (p) => `<tr><td class="mono">${p.id}</td><td>${p.name.replace(/^Faz \d+ — /, '')}</td>
-          <td class="mono">${p.corf}</td><td class="num">${p.steps}</td><td class="num">${p.gates}</td>
+          <td class="mono">${p.orl}</td><td class="num">${p.steps}</td><td class="num">${p.gates}</td>
           <td class="num">${p.days ?? '—'}</td><td><span class="pill">${p.level.replace(/_/g, ' ')}</span></td></tr>`,
         )
         .join('')}</tbody></table>
@@ -271,7 +271,7 @@ const procDetail = (p) => `
 
 const processesHtml = page(
   'Süreçler — DORA AI Ajan Paketi',
-  `${head('Süreç Kütüphanesi', `${processes.length} süreç · ${controls.length} kontrol · CORF 6 fazı`, stamp)}
+  `${head('Süreç Kütüphanesi', `${processes.length} süreç · ${controls.length} kontrol · ORL 6 fazı`, stamp)}
   ${nav('processes')}
   <section>
     <h2>Sütun dağılımı <span>DORA 5 sütun</span></h2>

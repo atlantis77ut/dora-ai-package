@@ -22,7 +22,7 @@ DORA-LIC-v1.<base64url(payload)>.<base64url(Ed25519 imza)>
   "licensee": "Örnek Bankası A.Ş.",
   "tier": "tier2",
   "phases": ["C1", "C2", "C3", "C4", "C5", "C6"],
-  "modules": ["agents", "processes", "corf", "pilot"],
+  "modules": ["agents", "processes", "orl", "pilot"],
   "issued_at": "2026-11-03T12:00:00.000Z",
   "expires_at": "2027-11-03T23:59:59.000Z"
 }
@@ -41,7 +41,7 @@ doğrulaması hızlı ve deterministik. Ek bağımlılık yok (DR-005).
 |---|---|---|
 | `onboarding/license/public-key.pem` | depo | **hayır** — dağıtılabilir, doğrulama için gerekli |
 | `onboarding/license/dev-private.pem` | depo (`.gitignore`) | **evet** — yalnız geliştirme; üretimde asla |
-| `src/corf/license.mjs` | depo | doğrulama mantığı |
+| `src/orl/license.mjs` | depo | doğrulama mantığı |
 | `tools/license-gen.mjs` | depo | satıcı aracı (imzalama) |
 
 Üretimde özel anahtar **depoda durmaz**: satıcının kasa/HSM'inde tutulur ve imzalama çevrimdışı

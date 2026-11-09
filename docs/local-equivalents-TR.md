@@ -81,7 +81,7 @@ Bir kuruluş hem AB'de (şube/iştirak) hem Türkiye'de faaliyetteyse:
 - **Ajan davranışı:** PRC-INC-02 birden fazla hedef kanal taşır; `notification-receipt.json`
   kanal başına ayrı satır tutar.
 
-`corf-lifecycle.yaml` içinde C1 fazı `jurisdiction-config.yaml` üretir; çoklu yargı alanı
+`orl-lifecycle.yaml` içinde C1 fazı `jurisdiction-config.yaml` üretir; çoklu yargı alanı
 burada `jurisdictions: [TR, EU]` olarak listelenir ve C3 fazında her kanal için entegrasyon
 testi zorunlu olur.
 

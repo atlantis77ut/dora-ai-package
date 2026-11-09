@@ -19,7 +19,7 @@ On dört dosya denetlenir:
 | data/processes/pillar-1…5.yaml | processes.schema.json |
 | data/controls/controls-catalog.yaml | controls.schema.json |
 | data/mapping/dora-articles.yaml | mapping.schema.json |
-| onboarding/corf-lifecycle.yaml | lifecycle.schema.json |
+| onboarding/orl-lifecycle.yaml | lifecycle.schema.json |
 | tests/synthetic-scenarios/*.yaml (4) | scenario.schema.json |
 
 Çıkış kodu: **0** tümü uyumlu · **1** en az bir dosya uymuyor.

@@ -1,6 +1,6 @@
 # Senaryo Çalıştırıcısı
 
-Sürüm 1.1.0 · 9 Kasım 2026 · ustauretim
+Sürüm 1.2.0 · 9 Kasım 2026 · ustauretim
 
 Kabul senaryolarındaki assertion'ları oturum artefaktları üzerinde **deterministik** olarak
 değerlendirir. Doğal dil yorumlamaz: assertion'da `check` bloğu varsa çalıştırır, yoksa
@@ -9,6 +9,7 @@ değerlendirir. Doğal dil yorumlamaz: assertion'da `check` bloğu varsa çalı�
 ~~~bash
 node bin/dora-onboard.mjs scenario --session ob-2026-xxxxx --file tests/synthetic-scenarios/scenario-security-controls.yaml
 node bin/dora-onboard.mjs scenario --session ob-2026-xxxxx --all
+node bin/dora-onboard.mjs scenario --session ob-2026-xxxxx --all --golden   # golden artefaktlarla 27/27
 ~~~
 
 Çıkış kodu: **0** çalıştırılabilir assertion'ların tümü geçti · **2** en az biri başarısız · **1** hata.

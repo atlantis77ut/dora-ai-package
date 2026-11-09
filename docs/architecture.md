@@ -19,10 +19,10 @@ her adımı **geçiş kapılarıyla** doğrulayan bir referans mimarisidir.
 ┌─────────────────────────────────────────────────────────────┐
 │  3. ÇALIŞTIRMA KATMANI                                       │
 │     Ajanlar (11 rol) + insan onay noktaları                  │
-│     GOLDENHORN / CORF platformuna API ile bağlanır           │
+│     referans platforma API ile bağlanır           │
 ├─────────────────────────────────────────────────────────────┤
 │  2. SÜREÇ KATMANI                                            │
-│     24 süreç, 36 kontrol, 5 sütun, CORF 6 fazı               │
+│     24 süreç, 36 kontrol, 5 sütun, ORL 6 fazı               │
 │     Her süreç: tetikleyici → girdi → SLA → kural → kanıt     │
 ├─────────────────────────────────────────────────────────────┤
 │  1. VERİ KATMANI                                             │
@@ -43,11 +43,11 @@ bir tanımı var" demenin tek yolu.
 |---|---|---|
 | `schema/` | 5 JSON Schema (common, glossary, roles, processes, controls) | `ajv` / `json.loads` |
 | `data/glossary/` | 60 terim, DORA/RTS/ITS referanslı | glossary.schema.json |
-| `data/roles/` | 11 ajan: sorumluluk, beceri, KPI, otonomi, CORF kodları | roles.schema.json |
+| `data/roles/` | 11 ajan: sorumluluk, beceri, KPI, otonomi, ORL kodları | roles.schema.json |
 | `data/processes/` | 24 süreç × 5 sütun | processes.schema.json |
 | `data/controls/` | 36 kontrol + kanıt şartnamesi | controls.schema.json |
 | `data/mapping/` | 28 DORA maddesi → süreç/kontrol/rol | render-mapping `--check` |
-| `data/corf-integration/` | ajan → CORF süreç kodu → GOLDENHORN modülü | — |
+| `data/orl-integration/` | ajan → süreç kodu → platform modülü | — |
 
 Bağlar: `süreç.control_ids` ↔ `kontrol.process_id`, `sözlük.related_roles` ↔ `roller.id`,
 `madde.processes` ↔ `süreçler.id`. Her bağ iki yönlü tutulur ve doğrulama betikleri
@@ -81,8 +81,8 @@ Tetikleyici ──► Girdi ──► Karar kuralı ──► İnsan onayı? ─
 **Tier varyantları** davranışı değil konfigürasyonu değiştirir: aynı kod tabanı, farklı profil.
 `tier3` için süreç sayısı azalır, süreler gevşemez (bkz. DR-001).
 
-**Kapı mantığı.** Her CORF fazı, çıktıların varlığını ve içeriğini denetleyen ölçülebilir
-kriterlerle kapanır (`onboarding/corf-lifecycle.yaml`). Kriter geçilmezse sonraki faz
+**Kapı mantığı.** Her ORL fazı, çıktıların varlığını ve içeriğini denetleyen ölçülebilir
+kriterlerle kapanır (`onboarding/orl-lifecycle.yaml`). Kriter geçilmezse sonraki faz
 başlamaz — bu mimarinin en sert kuralıdır, konfigürasyonla kapatılamaz.
 
 ---
@@ -99,7 +99,7 @@ Kişilik değil, yetki sınırı. `roles-catalog.yaml` içindeki her rol şunlar
 - `tools[]` — SIEM, ITSM, regulator portalı, kanıt kasası
 - `human_oversight.required_for[]` — hangi kararlarda insan şart
 - `independence_constraints[]` — hangi rollerden bağımsız olması gerektiği
-- `corf_process_codes[]` — hangi CORF süreç kodlarını (`OR.*`) yürüttüğü
+- `process_codes[]` — hangi ORL süreç kodlarını (`OR.*`) yürüttüğü
 
 ### 4.2 Üç savunma hattı kod düzeyinde
 
@@ -131,7 +131,7 @@ tek kayıtla cevap verebilmek.
 
 ---
 
-## 5. Platform entegrasyonu (GOLDENHORN / CORF)
+## 5. Platform entegrasyonu
 
 ```
    Ajan katmanı                     Platform katmanı
@@ -146,10 +146,10 @@ tek kayıtla cevap verebilmek.
              OR.KIB.ARCH / RMDM / BSACM
 ```
 
-Eşleme `data/corf-integration/agent-to-corf-mapping.yaml` içinde: her ajanın sahip olduğu
+Eşleme `data/orl-integration/agent-to-orl-mapping.yaml` içinde: her ajanın sahip olduğu
 `OR.*` kodları ve kullandığı modüller. C3 fazı, sahipsiz `OR.*` kodu kalmadığını denetler.
 
-Entegrasyon sözleşmesi henüz tanımlı değil (GOLDENHORN API'si elimizde yok). Bu yüzden
+Entegrasyon sözleşmesi henüz tanımlı değil (platform API'si elimizde yok). Bu yüzden
 konnektörler **port/adapter** olarak modellendi: `integration-config.yaml` hangi aracın
 bağlanacağını söyler, ajan yalnızca arayüze konuşur. Platform değişirse ajan kodu değişmez.
 
@@ -160,10 +160,10 @@ bağlanacağını söyler, ajan yalnızca arayüze konuşur. Platform değişirs
 ```
 dora-onboard (CLI, bağımlılıksız)
 ├── bin/dora-onboard.mjs      komut yönlendirme
-├── src/corf/yaml.mjs         minimal YAML okuyucu
-├── src/corf/lifecycle.mjs    faz yükleme + doğrulama + faz çalıştırıcıları
-├── src/corf/checks.mjs       21 kapı kontrolü (çalıştırılabilir)
-└── src/corf/session.mjs      oturum deposu, rollback
+├── src/orl/yaml.mjs         minimal YAML okuyucu
+├── src/orl/lifecycle.mjs    faz yükleme + doğrulama + faz çalıştırıcıları
+├── src/orl/checks.mjs       21 kapı kontrolü (çalıştırılabilir)
+└── src/orl/session.mjs      oturum deposu, rollback
 ```
 
 Oturum durumu: `.dora-onboarding/<id>/` altında JSON artefaktlar + `session.json`
@@ -198,7 +198,7 @@ ajanların gerçek çalıştırıcısı kapsam dışı (bkz. §9).
 | Yeni kontrol | `data/controls/controls-catalog.yaml` | kanıt şartnamesi + test prosedürü |
 | Yeni yargı alanı | `docs/local-equivalents-<ÜLKE>.md` + `jurisdiction-config.yaml` | süreler yalnız katılaşır |
 | Yeni DORA maddesi | `data/mapping/dora-articles.yaml` | süreç/kontrol referansı zorunlu |
-| Yeni faz | `onboarding/corf-lifecycle.yaml` + `checks.mjs` | her kriterin çalıştırılabilir karşılığı |
+| Yeni faz | `onboarding/orl-lifecycle.yaml` + `checks.mjs` | her kriterin çalıştırılabilir karşılığı |
 
 ---
 
@@ -206,7 +206,7 @@ ajanların gerçek çalıştırıcısı kapsam dışı (bkz. §9).
 
 1. **Ajan çalıştırıcısı yok.** Paket rolleri, süreçleri ve kapıları tanımlar; LLM orkestrasyonu
    (araç çağırma, hafıza, kuyruk) kapsam dışı. `autonomy_level` alanları bu katmanın sözleşmesidir.
-2. **GOLDENHORN API'si yok.** Konnektörler port/adapter olarak soyutlandı; gerçek endpoint'ler
+2. **Platform API'si yok.** Konnektörler port/adapter olarak soyutlandı; gerçek endpoint'ler
    geldiğinde `integration-config.yaml` şeması netleşecek.
 3. **İki DORA boşluğu açık.** Madde 9 (erişim/şifreleme) ve Madde 14 (kriz iletişimi) —
    gerekçeleri `docs/dora-mapping.md` içinde.

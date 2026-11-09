@@ -17,7 +17,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { sign } from '../src/corf/license.mjs';
+import { sign } from '../src/orl/license.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const LIC_DIR = path.resolve(HERE, '../../license');
@@ -30,7 +30,7 @@ const { values } = parseArgs({
     phases: { type: 'string', default: 'C1,C2,C3,C4,C5,C6' },
     expires: { type: 'string' },
     id: { type: 'string' },
-    modules: { type: 'string', default: 'agents,processes,corf,pilot' },
+    modules: { type: 'string', default: 'agents,processes,orl,pilot' },
     'init-dev-keys': { type: 'boolean' },
     force: { type: 'boolean' },
   },

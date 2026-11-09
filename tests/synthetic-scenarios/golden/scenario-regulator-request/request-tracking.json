@@ -1,0 +1,8 @@
+{
+  "request_id": "REQ-2026-07-11",
+  "authority": "BDDK",
+  "received_at": "2026-07-11T09:30:00+03:00",
+  "sla_deadline": "2026-07-12T09:30:00+03:00",
+  "status": "answered",
+  "answered_at": "2026-07-12T05:20:00+03:00"
+}

@@ -1,0 +1,7 @@
+{
+  "incident_id": "INC-2026-0412",
+  "closed_at": "2026-04-20T18:00:00+03:00",
+  "sent_at": "2026-05-18T16:40:00+03:00",
+  "days_after_close": 28,
+  "root_cause_summary": "Yedekleme işi ile üretim trafiği çakışması"
+}

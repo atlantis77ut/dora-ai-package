@@ -1,0 +1,11 @@
+{
+  "incident_id": "INC-2026-0412",
+  "sent_at": "2026-04-15T05:20:00+03:00",
+  "hours_after_initial": 71,
+  "scope_summary": "Ödeme ve mevduat işlevleri etkilendi; 512.000 müşteri",
+  "temporary_measures": [
+    "read-only mod",
+    "manuel mutabakat",
+    "yedek hat devrede"
+  ]
+}

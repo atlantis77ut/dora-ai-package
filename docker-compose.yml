@@ -9,7 +9,7 @@ services:
     environment:
       - NODE_ENV=production
       - LOG_LEVEL=info
-    command: ["node", "bin/dora-onboard.js", "--help"]
+    command: ["node", "bin/dora-onboard.mjs", "--help"]
 
   schema-validator:
     image: node:20-alpine

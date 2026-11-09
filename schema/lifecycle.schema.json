@@ -1,5 +1,5 @@
 {
-  "title": "CORF uygulama yaşam döngüsü",
+  "title": "ORL uygulama yaşam döngüsü",
   "type": "object",
   "required": [
     "lifecycle",
@@ -46,7 +46,7 @@
         "required": [
           "id",
           "name",
-          "corf_phase",
+          "lifecycle_phase",
           "purpose",
           "wizard_steps",
           "exit_gate",
@@ -72,7 +72,7 @@
               }
             }
           },
-          "corf_phase": {
+          "lifecycle_phase": {
             "type": "string"
           },
           "purpose": {

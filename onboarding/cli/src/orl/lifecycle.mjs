@@ -8,7 +8,7 @@ import { parse } from './yaml.mjs';
 import { writeJson, readJson } from './session.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const LIFECYCLE_FILE = path.resolve(HERE, '../../../corf-lifecycle.yaml');
+const LIFECYCLE_FILE = path.resolve(HERE, '../../../orl-lifecycle.yaml');
 
 export function loadLifecycle(file = LIFECYCLE_FILE) {
   if (!fs.existsSync(file)) throw new Error(`Faz tanımı bulunamadı: ${file}`);
@@ -98,12 +98,12 @@ const RUNNERS = {
           { check: 'IND-04', result: 'PASS' },
         ],
       });
-      writeJson(path.join(dir, 'corf-mapping.json'), {
+      writeJson(path.join(dir, 'orl-mapping.json'), {
         all_codes: ['OR.RIA', 'OR.INCRM', 'OR.STRAM', 'OR.IRR'],
         owned_codes: ['OR.RIA', 'OR.INCRM', 'OR.STRAM', 'OR.IRR'],
       });
     }
-    return { phase: 'C3', wrote: opts.demo ? ['ict-inventory.json', 'agent-activation.json', 'corf-mapping.json'] : [] };
+    return { phase: 'C3', wrote: opts.demo ? ['ict-inventory.json', 'agent-activation.json', 'orl-mapping.json'] : [] };
   },
   C4: (session, dir, opts) => {
     if (opts.demo) {

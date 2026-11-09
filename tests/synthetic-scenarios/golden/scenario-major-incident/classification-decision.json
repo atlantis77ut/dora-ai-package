@@ -1,0 +1,14 @@
+{
+  "incident_id": "INC-2026-0412",
+  "classification": "major",
+  "matched_criteria": [
+    "etkilenen_musteri"
+  ],
+  "criteria_detail": {
+    "etkilenen_musteri": "512000 > 100000",
+    "kesinti_suresi": "372 dk < 24 saat (eşik aşılmadı)"
+  },
+  "decided_at": "2026-04-12T02:21:00+03:00",
+  "approved_by": "Z. Kaya (CIO)",
+  "approved_at": "2026-04-12T02:29:00+03:00"
+}

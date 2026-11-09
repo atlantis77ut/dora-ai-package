@@ -3,7 +3,7 @@
 # Amaç: CTPP statüsündeki bir tedarikçinin sözleşmesi sona erdiğinde ajanların
 # çıkış stratejisini, veri iadesini ve bilgi kaydı (RoI) güncellemesini doğru
 # sırayla üretip üretmediğini sınamak.
-# CORF fazı: C4 (Scenario tests)
+# ORL fazı: C4 (Scenario tests)
 
 scenario:
   id: SCN-02
@@ -58,6 +58,10 @@ then:
       control: CTL-TPP-003
       deadline_days: 1
       fail_if: "breach_flag = false"
+      check:
+        file: criticality-assessment.yaml
+        path: concentration_breach
+        truthy: true
 
     - id: A2
       statement: "Çıkış stratejisi zorunlu hâle gelir ve taslak 10 gün içinde üretilir"
@@ -66,6 +70,10 @@ then:
       control: CTL-TPP-007
       deadline_days: 10
       fail_if: "taslak yok"
+      check:
+        file: exit-strategy.json
+        path: draft_days
+        lte: 10
 
     - id: A3
       statement: "Kritik hizmet için paralel çalışma (dual-run) şartı uygulanır"
@@ -74,6 +82,10 @@ then:
       control: CTL-TPP-007
       deadline_days: 10
       fail_if: "çıkış onaylandı ama dual-run kaydı yok"
+      check:
+        file: exit-strategy.json
+        path: dual_run_required
+        truthy: true
 
     - id: A4
       statement: "Veri iadesi taahhüdü sözleşmede doğrulanır"
@@ -82,6 +94,10 @@ then:
       control: CTL-TPP-004
       deadline_days: 5
       fail_if: "veri iadesi maddesi yok"
+      check:
+        file: contract-compliance.json
+        path: data_return.present
+        truthy: true
 
     - id: A5
       statement: "Bilgi kaydı (RoI) çıkışla birlikte güncellenir"
@@ -90,6 +106,10 @@ then:
       control: CTL-TPP-005
       deadline_days: 10
       fail_if: "RoI'de değişiklik yok"
+      check:
+        file: register-of-information.json
+        path: providers.PRV-014.status
+        eq: exiting
 
     - id: A6
       statement: "Envanterdeki bağımlı varlıklar yeni sağlayıcıya veya iç çözüme bağlanır"
@@ -98,6 +118,10 @@ then:
       control: CTL-RSK-003
       deadline_days: 30
       fail_if: "bağımlı varlık kaldı"
+      check:
+        file: ict-inventory.json
+        path: assets_by_provider.PRV-014
+        eq: 0
 
     - id: A7
       statement: "CTPP gözetim önerileri çıkış sürecine yansıtılır"
@@ -106,6 +130,11 @@ then:
       control: CTL-TPP-006
       deadline_days: 30
       fail_if: "öneri durumu belirsiz"
+      check:
+        file: ctpp-oversight-status.yaml
+        path: open_recommendations
+        eq: 0
+
 
 negative_tests:
   - id: N1

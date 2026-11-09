@@ -127,3 +127,19 @@ export function runScenario({ file, dir }) {
 
   return { payload, outFile };
 }
+
+/**
+ * Altın koşu (golden run) artefaktlarını oturuma kopyalar.
+ * Senaryo assertion'ları bu dosyalar üzerinde değerlendirilir.
+ * Yalnızca üst düzeydeki .json/.yaml/.yml dosyaları alınır.
+ */
+export function seedArtifacts(dir, sourceDir) {
+  if (!sourceDir || !fs.existsSync(sourceDir)) return { copied: [], source: sourceDir ?? null, found: false };
+  const copied = [];
+  for (const name of fs.readdirSync(sourceDir).sort()) {
+    if (!/\.(json|yaml|yml)$/i.test(name)) continue;
+    fs.copyFileSync(path.join(sourceDir, name), path.join(dir, name));
+    copied.push(name);
+  }
+  return { copied, source: sourceDir, found: true };
+}

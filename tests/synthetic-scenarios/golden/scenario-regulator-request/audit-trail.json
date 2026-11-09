@@ -1,0 +1,25 @@
+{
+  "request_id": "REQ-2026-07-11",
+  "entries": [
+    {
+      "actor": "ROL-CMP-01",
+      "action": "request_opened",
+      "at": "2026-07-11T09:31:00+03:00"
+    },
+    {
+      "actor": "ROL-INC-01",
+      "action": "evidence_collected",
+      "at": "2026-07-11T11:10:00+03:00"
+    },
+    {
+      "actor": "ROL-INF-01",
+      "action": "confidentiality_screened",
+      "at": "2026-07-11T15:40:00+03:00"
+    },
+    {
+      "actor": "A. Şahin",
+      "action": "approved_and_sent",
+      "at": "2026-07-12T05:05:00+03:00"
+    }
+  ]
+}

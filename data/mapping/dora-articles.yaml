@@ -77,7 +77,7 @@ articles:
     controls: [CTL-RSK-007, CTL-RSK-008, CTL-RSK-009, CTL-RSK-010]
     roles: [ROL-CTO-01, ROL-CMP-01]
     status: covered
-    tier_note: "tier3: yıllık tek gözden geçirme yeterli (corf-lifecycle tier_variants)"
+    tier_note: "tier3: yıllık tek gözden geçirme yeterli (orl-lifecycle tier_variants)"
 
   - id: Art-10
     chapter: "Bölüm II — ICT Risk Yönetimi"
@@ -145,7 +145,7 @@ articles:
     controls: [CTL-RSK-001]
     roles: [ROL-CIO-01]
     status: covered
-    tier_note: "tier3 profillerinde uygulanır (corf-lifecycle.yaml tier_variants)."
+    tier_note: "tier3 profillerinde uygulanır (orl-lifecycle.yaml tier_variants)."
 
   - id: Art-16
     chapter: "Bölüm II — ICT Risk Yönetimi"

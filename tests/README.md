@@ -1,15 +1,30 @@
 # Sentetik Senaryolar — Kabul Testleri
 
-Bu klasör, CORF **C4 (Scenario tests)** fazının çalıştırdığı kabul senaryolarını içerir.
-`onboarding/corf-lifecycle.yaml` içindeki C4 geçiş kapısı bu senaryoların sonuçlarına bakar.
+Bu klasör, ORL **C4 (Scenario tests)** fazının çalıştırdığı kabul senaryolarını içerir.
+`onboarding/orl-lifecycle.yaml` içindeki C4 geçiş kapısı bu senaryoların sonuçlarına bakar.
 
 | Dosya | ID | Ne sınar | Assertion |
 |---|---|---|---|
 | `scenario-major-incident.yaml` | SCN-01 | Sınıflandırma + 4 saat bildirim zinciri + insan onayı | 8 |
 | `scenario-provider-exit.yaml` | SCN-02 | CTPP çıkışı, veri iadesi, RoI güncellemesi | 7 |
 | `scenario-regulator-request.yaml` | SCN-03 | 24 saatte kanıt paketi, maskeleme, denetim izi | 6 |
+| `scenario-security-controls.yaml` | SCN-04 | Erişim, şifreleme, segmentasyon, zafiyet kapatma | 6 |
 
 Fixture'lar `fixtures/` altında: senaryonun "verilen" durumunu temsil eden ham veri.
+
+## Golden koşu artefaktları
+
+`golden/<senaryo-dosya-adı>/` altında, senaryonun assertion'larını karşılayan **kanıt dosyaları**
+durur (JSON/YAML). `scenario --golden` bunları oturum dizinine kopyalar, sonra assertion'ları
+çalıştırır:
+
+```bash
+node bin/dora-onboard.mjs scenario --session ob-2026-xxxxx --all --golden
+# SCN-01 8/8 · SCN-02 7/7 · SCN-03 6/6 · SCN-04 6/6  →  27/27, manuel 0
+```
+
+Golden dosyalar "doğru kurulumun çıktısı" örneğidir; gerçek çalıştırmada bu artefaktları
+ajanlar/sistemler üretir, golden yalnızca test ve CI içindir.
 
 ---
 
@@ -67,7 +82,7 @@ evidence_expected: # üretilmesi gereken kanıt dosyaları
 makine tarafından değerlendirilir. Değerlendirme için gereken alanlar assertion içinde
 zaten tanımlı: `process`, `control`, `deadline`, `fail_if`.
 
-Kapı kuralı (`corf-lifecycle.yaml` → C4):
+Kapı kuralı (`orl-lifecycle.yaml` → C4):
 
 - `pass_threshold` karşılanmazsa faz **geçilmez**.
 - `negative_tests`'ten biri tetiklenirse, assertion'lar geçse bile senaryo **başarısız** sayılır —

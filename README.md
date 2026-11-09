@@ -1,14 +1,19 @@
 # DORA AI Package
 
-Finansal kuruluşlar için DORA (Digital Operational Resilience Act) uyumunu
-yapay zeka ajanları ile otomatikleştiren modüler paket.
+Finansal kuruluşlar için DORA (Digital Operational Resilience Act) uyumunu **yapay zeka
+ajanlarıyla yürüten**, her adımı **geçiş kapılarıyla doğrulayan** modüler referans çerçevesi.
+
+Süreçler, kontroller ve ajan rolleri tanımlıdır; kararlar deterministik kapılarla denetlenir.
+**Ajan çalıştırıcısı (LLM orkestrasyonu) bu paketin kapsamında değildir** — paket, ajanların
+ne yapacağını, hangi kanıtı üreteceğini ve ne zaman duracağını tanımlar (bkz. aşağıdaki
+"Ne değildir" ve `docs/architecture.md` §9).
 
 ## Özellikler
 
 - 60 kavramlık standart sözlük (DORA + RTS/ITS referanslı)
-- 11 ajan rolü, üç savunma hattı modeli (CORF süreç kodlarıyla eşlenmiş)
+- 11 ajan rolü, üç savunma hattı modeli (ORL süreç kodlarıyla eşlenmiş)
 - 5 sütun, **24 süreç** ve **36 kontrol** (şema doğrulamalı)
-- CORF 6 fazlı onboarding: `C1 Identify → C2 Tolerances → C3 Map → C4 Scenarios → C5 Self-assessment → C6 MOS`
+- ORL 6 fazlı onboarding: `C1 Identify → C2 Tolerances → C3 Map → C4 Scenarios → C5 Self-assessment → C6 MOS`
 - Tier 1/2/3 profilleri, çoklu yargı alanı (TR/AB)
 - 28 DORA maddesi → süreç/kontrol eşlemesi (üretilen doküman)
 - 4 sentetik kabul senaryosu (27 assertion + tuzak testleri)
@@ -17,7 +22,7 @@ yapay zeka ajanları ile otomatikleştiren modüler paket.
 - Yönetim kurulu MI paketi (aylık tek sayfa) ve 9 kalemlik düzenleyici takvim
 - Katalog doğrulaması: 14 dosya 8 JSON Schema ile denetlenir (CI kapısı)
 - Dış veri alımı: dosya bırakma sözleşmesi (`ingest`), sha256 alım kaydı
-- Senaryo çalıştırıcısı: `check` DSL ile assertion'lar artefaktlar üzerinde koşar (SCN-04 pilot)
+- Senaryo çalıştırıcısı: `check` DSL ile **27/27 assertion** artefaktlar üzerinde koşar (golden koşu)
 - Lisans anahtarı (Ed25519, çevrimdışı doğrulama)
 
 ## Hızlı Başlangıç
@@ -39,7 +44,7 @@ node bin/dora-onboard.mjs notify --session ob-2026-xxxxx --phase initial   # bil
 node bin/dora-onboard.mjs mi --session ob-2026-xxxxx --period 2026-11      # MI paketi
 node bin/dora-onboard.mjs calendar --next 90 --anchors data/calendar-anchors.example.yaml
 node bin/dora-onboard.mjs ingest --session ob-2026-xxxxx --from ./drop   # dış veri alımı
-node bin/dora-onboard.mjs scenario --session ob-2026-xxxxx --all          # senaryoları koş
+node bin/dora-onboard.mjs scenario --session ob-2026-xxxxx --all --golden # 27/27 assertion
 ```
 
 Lisans anahtarı olmadan **30 gün deneme modu** çalışır (C1-C5); üretime geçiş (C6) ticari
@@ -67,7 +72,7 @@ veya doğrudan `dashboard\index.html` dosyasını çift tıklayın. Üç sayfa v
 
 | Sayfa | Ne gösterir |
 |---|---|
-| `dashboard/index.html` | KPI'lar, DORA kapsama çubuğu, 6 CORF fazı, açık noktalar, senaryolar |
+| `dashboard/index.html` | KPI'lar, DORA kapsama çubuğu, 6 ORL fazı, açık noktalar, senaryolar |
 | `dashboard/processes.html` | **24 sürecin tamamı** — tetikleyici, SLA, karar kuralları, kontroller, bağımlılıklar |
 | `dashboard/controls.html` | **36 kontrol** — kanıt alanları, değiştirilemezlik, test prosedürü |
 
@@ -111,14 +116,26 @@ faz tanımı, uçtan uca demo.
 > Node.js gerekir (LTS yeterli). `npm install` gerekmez — CLI bağımlılıksızdır.
 > Windows dışında: `node onboarding/cli/tools/demo.mjs`, `node docs/tools/build-dashboard.mjs`.
 
+## Ne değildir
+
+Satın alma görüşmesinde ilk sorulan soru bu; cevabı baştan yazılı olsun:
+
+| Değildir | Çünkü |
+|---|---|
+| Ajan çalıştırıcısı / LLM orkestrasyonu | Rolleri, becerileri ve otonomi seviyelerini **tanımlar**; modeli çalıştırmaz. Araç çağırma, hafıza ve kuyruk katmanı kapsam dışı. |
+| Hazır regülatör bildirimi gönderen sistem | Bildirim paketini üretir ve kapıdan geçirir; gönderim kurumun kanalından, insan onayıyla yapılır. |
+| Hukuki görüş | Mevzuat eşlemesi ve kontrol seti sunar; uyum sorumluluğu kurumdadır (`LICENSE-COMMERCIAL.md` §7). |
+| Ticari bir ürünün yerine geçen platform | Süreç kodlarıyla eşleşir, platformun yerini almaz; entegrasyon port/adapter olarak soyutlanmıştır. |
+| Sıfır kurulum | Kurulum + 6 fazlı onboarding gerekir (tipik 95 gün, `orl-lifecycle.yaml`). |
+
 ## Dizin Yapısı
 
 | Dizin | İçerik |
 |---|---|
 | `schema/` | 5 JSON Schema (common, glossary, roles, processes, controls) |
-| `data/` | Sözlük, roller, süreçler, kontroller, DORA eşlemesi, CORF entegrasyonu |
-| `onboarding/` | CORF faz tanımı, wizard spec, bağımlılıksız CLI |
-| `tests/` | 3 sentetik senaryo + fixture'lar |
+| `data/` | Sözlük, roller, süreçler, kontroller, DORA eşlemesi, ORL entegrasyonu |
+| `onboarding/` | ORL faz tanımı, wizard spec, bağımlılıksız CLI |
+| `tests/` | 4 sentetik senaryo + fixture'lar + golden koşu artefaktları |
 | `pilots/` | Pilot seçim, sözleşme, başarı kriterleri, vaka şablonu |
 | `docs/` | Mimari, DORA eşlemesi, TR mevzuatı, lisanslama, fiyatlandırma, kararlar |
 | `dashboard/` | Üretilen site: `index.html` · `processes.html` · `controls.html` · `data.json` · `dashboard.png` |
@@ -126,7 +143,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **1.1.1**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.3.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

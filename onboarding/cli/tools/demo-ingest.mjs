@@ -10,9 +10,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import * as store from '../src/corf/session.mjs';
-import { ingest } from '../src/corf/ingest.mjs';
-import { buildMi, loadAnchors, loadCalendar, upcoming } from '../src/corf/mi.mjs';
+import * as store from '../src/orl/session.mjs';
+import { ingest } from '../src/orl/ingest.mjs';
+import { buildMi, loadAnchors, loadCalendar, upcoming } from '../src/orl/mi.mjs';
 
 const { values } = parseArgs({ options: { keep: { type: 'boolean' } } });
 const CWD = path.resolve(process.cwd());

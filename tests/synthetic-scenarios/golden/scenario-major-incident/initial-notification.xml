@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notification type="initial" incident="INC-2026-0412">
+  <authority>BDDK</authority>
+  <classification>major</classification>
+  <detected_at>2026-04-12T02:14:00+03:00</detected_at>
+  <sent_at>2026-04-12T05:35:00+03:00</sent_at>
+  <affected_customers>512000</affected_customers>
+  <status>sent</status>
+</notification>

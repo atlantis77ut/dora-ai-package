@@ -27,7 +27,7 @@ Hepsi `json.loads` ile doğrulandı.
 | `data/glossary/glossary-full.yaml` | 560 | 60 terim, 6 kategori — dökümden birebir |
 | `data/glossary/glossary-seed.yaml` | 45 | 3 örnek terim (dökümde 20 hedeflenmişti, 3'ü yazılmış) |
 | `data/roles/roles-catalog.yaml` | 1.180 | 11 ajan — dökümden birebir |
-| `data/corf-integration/agent-to-corf-mapping.yaml` | 222 | 11 ajan → CORF süreç kodu → GOLDENHORN modülü |
+| `data/orl-integration/agent-to-orl-mapping.yaml` | 222 | 11 ajan → süreç kodu → platform modülü |
 | `data/processes/pillar-1-risk.yaml` | 4 süreç | **yeni yazıldı** (PRC-RSK-01..04) |
 | `data/processes/pillar-2-incident.yaml` | 5 süreç | **yeni yazıldı** (PRC-INC-01..05) |
 | `data/processes/pillar-3-testing.yaml` | 3 süreç | **yeni yazıldı** (PRC-TST-01..03) |
@@ -76,7 +76,7 @@ Doğrulama betiği: `../dora/_lint.py` çalıştırıldı, sıfır sorun.
 | # | Eksik | Modül |
 |---|---|---|
 | 1 | ~~`data/controls/controls-catalog.yaml`~~ — **tamamlandı** (28 kontrol) | 3 ✔ |
-| 2 | Wizard kod modülleri: `corf-*.js` (lifecycle tanımı hazır, çalışan kod yok) + eski `step-{0,2,3,5,6,7,8}.js` | 4 |
+| 2 | Wizard kod modülleri: `orl-*.js` (lifecycle tanımı hazır, çalışan kod yok) + eski `step-{0,2,3,5,6,7,8}.js` | 4 |
 | 3 | `tests/synthetic-scenarios/*.yaml` — 3 kabul senaryosu | 5 |
 | 4 | `docs/dora-mapping.md`, `docs/local-equivalents-TR.md` | 6 |
 | 5 | `docs/architecture.md` | 7 |
@@ -94,13 +94,13 @@ Doğrulama betiği: `../dora/_lint.py` çalıştırıldı, sıfır sorun.
 
 ---
 
-## 5. CORF 6 fazlı onboarding tasarımı (2026-10-30)
+## 5. ORL 6 fazlı onboarding tasarımı (2026-10-30)
 
-Dökümün sonunda sorulan "wizard'ı CORF'un 6 fazına göre yeniden tasarlayalım mı?" sorusuna karşılık:
+Dökümün sonunda sorulan "wizard'ı ORL'un 6 fazına göre yeniden tasarlayalım mı?" sorusuna karşılık:
 
 | Dosya | Ne |
 |---|---|
-| `onboarding/corf-lifecycle.yaml` | 6 faz, makine okunur: her fazın adımları, ajan otonomi seviyesi, insan rolleri, KIB artefaktları, çıktılar, **geçiş kapısı kriterleri**, süre, tier varyantı |
+| `onboarding/orl-lifecycle.yaml` | 6 faz, makine okunur: her fazın adımları, ajan otonomi seviyesi, insan rolleri, KIB artefaktları, çıktılar, **geçiş kapısı kriterleri**, süre, tier varyantı |
 | `onboarding/wizard-spec.md` | Tasarım gerekçesi: neden değişti, eski 8 adım → 6 faz eşlemesi, otonomi merdiveni, kapı mantığı, CLI akışı, ölçek uyarlaması |
 
 Fazlar: **C1 Identify** → **C2 Set tolerances** → **C3 Map resources + ajan aktivasyonu** → **C4 Scenario tests** → **C5 Self-assessment** *(yeni)* → **C6 Implement MOS**.
@@ -109,8 +109,8 @@ Ajan "eğitimi" otonomi merdiveniyle tanımlandı: `observe` (C1–C2) → `reco
 
 ### Bu turda bulunan ve düzeltilen iki hata
 
-**1. "CORF kodları beceri listesine entegre edildi" iddiası dosyalarda doğru değildi.**
-`roles-catalog.yaml` içinde 42 genel beceri vardı ama **tek bir `OR.*` kodu yoktu**; kodlar yalnızca `agent-to-corf-mapping.yaml` içinde duruyordu. Düzeltme: `/dora/_enrich.py` ile mapping'den türetilerek her role `corf_process_codes` alanı eklendi. Sonuç: 20 benzersiz `OR.*` kodu, 11/11 rolde, mapping ile tam parite.
+**1. "ORL kodları beceri listesine entegre edildi" iddiası dosyalarda doğru değildi.**
+`roles-catalog.yaml` içinde 42 genel beceri vardı ama **tek bir `OR.*` kodu yoktu**; kodlar yalnızca `agent-to-orl-mapping.yaml` içinde duruyordu. Düzeltme: `/dora/_enrich.py` ile mapping'den türetilerek her role `process_codes` alanı eklendi. Sonuç: 20 benzersiz `OR.*` kodu, 11/11 rolde, mapping ile tam parite.
 
 **2. Şema kendi verisini reddediyordu.**
 `roles.schema.json` deseni `^ROL-[A-Z]{3}-\d{2}$` idi; ama katalogda `ROL-TLPT-01` ve `ROL-CTPP-01` (4 harf) var. Desen `^ROL-[A-Z]{3,4}-\d{2}$` yapıldı. Bu hata, türetme betiğinin ilk çalışmasında iki rolü atlamasıyla ortaya çıktı — aynı hata `data/glossary/glossary-full.yaml` içindeki `related_roles` referanslarını da etkiliyordu.
@@ -119,7 +119,7 @@ Ajan "eğitimi" otonomi merdiveniyle tanımlandı: `observe` (C1–C2) → `reco
 
 | Kontrol | Sonuç |
 |---|---|
-| `corf_process_codes` eklenen rol | 11/11 |
+| `process_codes` eklenen rol | 11/11 |
 | Mapping ↔ rol kataloğu `OR.*` kodu paritesi | 20 = 20 |
 | Lifecycle'da geçen rol ID'lerinin katalogda bulunması | 11/11 (bilinmeyen yok) |
 | Lifecycle'da geçen süreç ID'lerinin tanımlı olması | 4/4 (bilinmeyen yok) |
@@ -178,21 +178,21 @@ Doğrulama: `assertions_total` alanı gerçek assertion sayısıyla eşleşiyor 
 
 ## 8. Modül 4 — Wizard kodu (2026-11-03)
 
-`corf-lifecycle.yaml` artık **çalıştırılabilir**: `onboarding/cli/bin/dora-onboard.mjs`, sıfır npm bağımlılığıyla 6 fazı yürütür.
+`orl-lifecycle.yaml` artık **çalıştırılabilir**: `onboarding/cli/bin/dora-onboard.mjs`, sıfır npm bağımlılığıyla 6 fazı yürütür.
 
 | Dosya | Satır | Görev |
 |---|---|---|
 | `bin/dora-onboard.mjs` | ~200 | `init`, `phase`, `gate`, `status`, `phases`, `rollback` |
-| `src/corf/yaml.mjs` | ~150 | Minimal YAML okuyucu (bağımlılık yok) |
-| `src/corf/lifecycle.mjs` | ~180 | Faz yükleme/doğrulama + faz çalıştırıcıları |
-| `src/corf/checks.mjs` | ~230 | Faz kapılarının çalıştırılabilir kontrolleri (21 adet) |
-| `src/corf/session.mjs` | ~80 | Oturum deposu ve rollback |
+| `src/orl/yaml.mjs` | ~150 | Minimal YAML okuyucu (bağımlılık yok) |
+| `src/orl/lifecycle.mjs` | ~180 | Faz yükleme/doğrulama + faz çalıştırıcıları |
+| `src/orl/checks.mjs` | ~230 | Faz kapılarının çalıştırılabilir kontrolleri (21 adet) |
+| `src/orl/session.mjs` | ~80 | Oturum deposu ve rollback |
 
 ### Çalıştırma kanıtı
 
 ```
 $ dora-onboard phases
-CORF-IMPL-6 — TACAS CORF — Implementation Lifecycle (GOLDENHORN ONERESILIENCE)
+ORL-IMPL-6 — Implementation Lifecycle (referans platform)
   C1  4 adım, 4 kriter, 10g
   ...
 ✓ Faz tanımı geçerli (6 faz, sıralı, kapıları tanımlı)
@@ -273,10 +273,10 @@ uygulanır (tek yönlü katılaştırma). `PRC-INC-02` ve tier varyantları 4 sa
 
 `docs/architecture.md` — 10 bölüm: katman modeli, veri katmanı ve bağlar, süreç katmanı
 (tetikleyici → kanıt akışı), ajan çalışma modeli, üç savunma hattının kod düzeyinde karşılığı,
-insan gözetimi, denetim izi, GOLDENHORN entegrasyonu (port/adapter), wizard mimarisi, dağıtım,
+insan gözetimi, denetim izi, platform entegrasyonu (port/adapter), wizard mimarisi, dağıtım,
 genişleme noktaları, **bilinçli sınırlar**.
 
-Bilinçli sınırlar bölümü önemli: ajan çalıştırıcısı (LLM orkestrasyonu), GOLDENHORN API'si,
+Bilinçli sınırlar bölümü önemli: ajan çalıştırıcısı (LLM orkestrasyonu), platform API'si,
 kod testleri ve iki DORA boşluğu açıkça "yok" olarak yazıldı — paketin ne olmadığını da
 söylemesi, denetimde ve satışta güven üretir.
 
@@ -284,7 +284,7 @@ Ayrıca `docs/decisions.md` eklendi: 6 karar kaydı (DR-001…DR-006), her biri 
 
 ## 11. Modül 8 — Pilot vaka çalışması (2026-11-03)
 
-`pilots/case-study-template.md` — 173 satır, 10 bölüm: künye, başlangıç ölçümleri, CORF faz
+`pilots/case-study-template.md` — 173 satır, 10 bölüm: künye, başlangıç ölçümleri, ORL faz
 deneyimi (kapı kırılmaları dahil), senaryo sonuçları, ajan davranışı (iyi/sınırda/başarısız),
 başarı kriterleri tablosu, uyum ve denetim, sorunlar, dersler, yayın izinleri, üretime geçiş kararı.
 
@@ -294,7 +294,7 @@ kaydetmesini istiyor — kapı kırılmaları bölümü bunun için var.
 
 ## 12. Bu turda düzeltilen tutarsızlık
 
-`OR.KIB.ARCH` kodu `corf-lifecycle.yaml` (C1 KIB artefaktı) ve `architecture.md` içinde geçiyordu
+`OR.KIB.ARCH` kodu `orl-lifecycle.yaml` (C1 KIB artefaktı) ve `architecture.md` içinde geçiyordu
 ama hiçbir ajan tarafından sahiplenilmemişti — C3 kapısının "sahipsiz OR.* kodu yok" kriteri
 bu kodu yakalardı. `ROL-CIO-01`e atandı; mapping ve rol kataloğu tekrar pariteye geldi
 (21 kod = 21 kod).
@@ -323,7 +323,7 @@ anahtarı doğrulama adımı, hukuk incelemesi.
 
 | Dosya | Görev |
 |---|---|
-| `onboarding/cli/src/corf/license.mjs` | Ed25519 imza doğrulama, tier/faz yetki kontrolü |
+| `onboarding/cli/src/orl/license.mjs` | Ed25519 imza doğrulama, tier/faz yetki kontrolü |
 | `onboarding/cli/tools/license-gen.mjs` | Satıcı aracı: anahtar üretimi + token imzalama |
 | `onboarding/license/public-key.pem` | Dağıtılabilir açık anahtar |
 | `onboarding/license/dev-private.pem` | Yalnız geliştirme (`.gitignore`) |
@@ -399,7 +399,7 @@ başarısız sayıyor.
 | `docs/tools/render_dashboard.py` | PNG üretimi |
 
 Gösterilen: 24 süreç · 36 kontrol · 11 ajan · 60 terim · 4 senaryo (27 assertion) · %100 kapsama ·
-6 CORF fazı (adım/kapı/süre/ajan modu) · açık noktalar · referans sağlığı.
+6 ORL fazı (adım/kapı/süre/ajan modu) · açık noktalar · referans sağlığı.
 
 Dashboard elle düzenlenmez; `node docs/tools/build-dashboard.mjs` ile yeniden üretilir.
 
@@ -413,7 +413,7 @@ Dashboard elle düzenlenmez; `node docs/tools/build-dashboard.mjs` ile yeniden �
 
 | Sayfa | İçerik |
 |---|---|
-| `index.html` | KPI kartları (24 süreç · 36 kontrol · 11 ajan · 60 terim · 4 senaryo · %100 kapsama), kapsama çubuğu, CORF faz tablosu, açık noktalar, senaryo listesi |
+| `index.html` | KPI kartları (24 süreç · 36 kontrol · 11 ajan · 60 terim · 4 senaryo · %100 kapsama), kapsama çubuğu, ORL faz tablosu, açık noktalar, senaryo listesi |
 | `processes.html` | 24 sürecin tablosu + her süreç için açılır ayrıntı (tetikleyici, girdi/çıktı, SLA, karar kuralları, kontroller, bağımlılıklar) |
 | `controls.html` | 36 kontrolün tablosu + kanıt alanları, değiştirilemezlik, DORA maddesi, test prosedürü |
 
@@ -453,3 +453,137 @@ Böylece C5 kapısı hiçbir maddede boşluk/kısmi görmüyor.
 Raporlama tarafında kalan işler (paket dışı): kanıt paketi ihracı, bildirim formu üretimi,
 dashboard'da açık olay/SLA görünümü — ayrıntı: [RAPORLAMA-ANALIZI.md](RAPORLAMA-ANALIZI.md) §3.
 
+
+---
+
+## 19. Kabul testleri tamamen çalıştırılabilir — 1.2.0 (2026-11-09)
+
+1.1.0'da 27 assertion'ın yalnızca 6'sı `check` bloğuna sahipti; kalan 21'i "manuel" sayılıyordu.
+1.2.0'da bu kapandı.
+
+| Senaryo | Assertion | 1.1.0 | 1.2.0 |
+|---|---|---|---|
+| SCN-01 Büyük olay | 8 | 0 check | **8/8** |
+| SCN-02 Tedarikçi çıkışı | 7 | 0 check | **7/7** |
+| SCN-03 Regülatör talebi | 6 | 0 check | **6/6** |
+| SCN-04 Güvenlik kontrolleri | 6 | 6 check | **6/6** |
+| **Toplam** | **27** | **6 çalışır / 21 manuel** | **27/27, manuel 0** |
+
+### Mekanizma
+
+- `tests/synthetic-scenarios/golden/<senaryo>/` — assertion'ların beklediği kanıt dosyaları
+  (JSON/YAML; XML yalnızca `initial-notification.xml` örneği olarak duruyor, kontrol JSON makbuzu
+  üzerinden yapılıyor)
+- `scenario --golden` → `seedArtifacts()` bu dosyaları oturum dizinine kopyalar
+- Her assertion `{ file, path, op }` veya `all_of/any_of` ile tek bir ölçülebilir koşula bağlı
+
+### Doğrulama
+
+```
+$ node tools/demo-scenario.mjs
+  SCN-01: 8 pass, 0 fail, 0 manuel  (7 artefakt)
+  SCN-02: 7 pass, 0 fail, 0 manuel  (6 artefakt)
+  SCN-03: 6 pass, 0 fail, 0 manuel  (5 artefakt)
+  SCN-04: 6 pass, 0 fail, 0 manuel  (5 artefakt)
+✔ 27/27 assertion calistirildi · manuel assertion yok
+--- bozuk kanit (SCN-04): 4/6 gecti, 2 basarisiz
+SONUC: tum kontroller gecti
+```
+
+Bozuk kanıt testi önemli: `check`'lerin gerçekten "ısırdığını" gösteriyor — veri bozulunca
+assertion'lar fail veriyor, sessizce geçmiyor.
+
+### Not
+
+Golden dosyalar "doğru kurulumun çıktısı" örneğidir; üretimde bu artefaktları ajanlar ve
+sistemler üretir. CI bunları kullanarak 27 assertion'ı 6 iş matrisinde koşuyor.
+
+---
+
+## 20. Lansman incelemesi kalanları — B ve C kapandı (2026-11-09)
+
+`docs/LAUNCH-REVIEW.md` P1-7 ve P2-1 maddeleri kapatıldı.
+
+### B — Legacy CLI ayrıldı (P1-7)
+
+`onboarding/cli/legacy/` altına taşındı: `bin/dora-onboard.js`, `src/index.js`,
+`src/steps/step-1-profile.js`, `src/steps/step-4-agents.js`. Yanına `legacy/README.md` yazıldı:
+bu dosyaların neden çalışmadığı (commander/inquirer/js-yaml bağımlılıkları) ve yerlerine ne
+geldiği tablo hâlinde. `docker-compose.yml` içindeki `bin/dora-onboard.js` komutu da
+`bin/dora-onboard.mjs` olarak düzeltildi — aksi hâlde container açılışta hata verirdi.
+
+Sonuç: `onboarding/cli/` altında tek bir CLI var (`bin/dora-onboard.mjs`), `package.json`
+yalnızca onu gösteriyor. Kafa karıştıran ikinci giriş noktası kalmadı.
+
+### C — README iddiası mimariyle hizalandı (P2-1)
+
+Açılış cümlesi "otomatikleştiren" yerine **"yürüten ... kapılarla doğrulayan"** oldu; hemen
+altına ajan çalıştırıcısının kapsam dışı olduğu yazıldı. Ayrıca **"Ne değildir"** tablosu
+eklendi: ajan çalıştırıcısı, hazır bildirim gönderen sistem, hukuki görüş, platform yerine
+geçme, sıfır kurulum. Beş satır, satın alma görüşmesinde ilk sorulan soruların cevabı.
+
+### Doğrulama
+
+- `node bin/dora-onboard.mjs validate --strict` → geçti
+- `demo.mjs` (6 faz) ve `demo-scenario.mjs` (27/27) → geçti
+- `render-mapping --check` → %100 kapsama
+- Legacy dosyalar çalışma zamanı yolunda değil: `src/steps/` klasörü tamamen kaldırıldı
+
+---
+
+## 21. Marka adı temizliği — 1.2.2 (2026-11-09)
+
+Üçüncü taraf tedarikçi ve ürün adları (5 harfli kısaltma ve 10 harfli platform adı) tüm
+dosyalardan kaldırıldı; yerine nötr tanımlar kondu. Gerekçe hukuki: bu adlar müşteriye
+sunulan belgede marka kullanımı sayılabilir.
+
+| Yer | Önce | Sonra |
+|---|---|---|
+| mapping `source_frameworks` | tedarikçi + ürün adı | "referans operasyonel dayanıklılık süreç modeli" / "referans platform modülleri" |
+| mapping alanı | ürün adlı alan | `platform_modules` |
+| lifecycle `framework` | tedarikçi adı + çerçeve | "Implementation Lifecycle (6 faz)" |
+| lifecycle `platform` | ürün adı | "harici referans platform" |
+| dokümanlar | ad geçen cümleler | nötr karşılıklar |
+
+### Kapsam ve doğrulama
+
+- 8 metin dosyası düzeltildi; ardından tüm depo tarandı (md/yaml/json/mjs/html/cmd): **0 eşleşme**
+- `UYGULAMA-RAPORU.docx`: iki geçiş run düzeyinde düzeltildi (biçim korunarak)
+- `UYGULAMA-RAPORU.pdf`: temiz DOCX'ten yeniden üretildi (LibreOffice Kit); sıkıştırılmış
+  akışlar açılıp tarandı — **0 eşleşme**
+- `validate --strict`, 6 fazlı demo, 27/27 senaryo, DORA eşlemesi, dashboard + site: geçti
+
+### Açık kalan karar
+
+Çerçevenin kısaltması (**C**-O-R-F, 28 yerde, klasör ve alan adlarında) hâlâ duruyor. Bu kısaltma
+da aynı tedarikçinin çerçeve adı. Kaldırılması istenirse dosya/klasör/alan yeniden adlandırması
+gerekir — ayrı bir iş kalemi olarak bekliyor.
+
+---
+
+## 22. ORL yeniden adlandırması — 1.3.0 (2026-11-09)
+
+1.2.2'de tedarikçi ve ürün adları metinlerden çıkarıldı; ancak çerçevenin kısaltması
+dosya, klasör ve veri alanı adlarında kalmıştı. 1.3.0 bunu tamamen kaldırdı.
+
+Yeni ad: **ORL — Operational Resilience Lifecycle** (paketin kendi tanımı).
+
+| Katman | Yeni ad |
+|---|---|
+| Dosya | `onboarding/orl-lifecycle.yaml` |
+| Modül | `onboarding/cli/src/orl/` |
+| Veri | `data/orl-integration/agent-to-orl-mapping.yaml` |
+| Alanlar | `process_codes`, `lifecycle_phase`, `owned_processes`, `lifecycle_summary` |
+| Kimlik | `ORL-IMPL-6` |
+| Metin | 51 dosyada çerçeve kısaltması ORL olarak değişti |
+
+### Doğrulama
+
+- Depoda `ORL` (her harf durumu) araması: **0 eşleşme**
+- `validate --strict`, `phases`, `demo` 6/6, `demo-scenario` 27/27, `render-mapping --check` %100
+- Dashboard, site ve PNG yeniden üretildi (faz alanı `orl` olarak güncellendi)
+
+### Etki
+
+Kırıcı: eski oturum dosyaları ve dış betikler `ORL_*` alanlarını kullanıyorsa güncellenmeli.
+CLI'ın ürettiği tüm artefaktlar yeni adlarla yeniden üretildi.

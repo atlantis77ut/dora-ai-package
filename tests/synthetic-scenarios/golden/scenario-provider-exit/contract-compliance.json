@@ -1,0 +1,21 @@
+{
+  "contract_id": "CTR-2023-014",
+  "verdict": "pass",
+  "clauses_present": [
+    "audit_right",
+    "data_return",
+    "sla",
+    "subcontractor_approval"
+  ],
+  "missing_clauses": [],
+  "data_return": {
+    "present": true,
+    "format": "CSV",
+    "days": 30
+  },
+  "exit_strategy_clause": {
+    "present": false,
+    "note": "çıkış stratejisi ayrı belgede tutuluyor"
+  },
+  "reviewed_at": "2026-05-08T14:00:00+03:00"
+}

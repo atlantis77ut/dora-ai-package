@@ -17,7 +17,7 @@ Pilot bitiminde doldurulur; `pilots/pilot-agreement-template.md` Madde 5 uyarın
 | Tier | tier1 / tier2 / tier3 |
 | Sektör | banka / sigorta / ödeme / kripto / kamu |
 | Yargı alanı | TR / AB / çoklu |
-| Kullanılan profil | `corf-lifecycle.yaml` sürümü + `jurisdiction-config` |
+| Kullanılan profil | `orl-lifecycle.yaml` sürümü + `jurisdiction-config` |
 | Pilot süresi | … hafta (planlanan / gerçekleşen) |
 | Aktive edilen ajanlar | ROL-… (liste) |
 | Pasif bırakılan süreçler | PRC-… (varsa gerekçe) |
@@ -42,7 +42,7 @@ Pilot öncesi ölçüm — sonraki bölümdeki karşılaştırmanın tabanı.
 
 ---
 
-## 2. Kurulum deneyimi (CORF 6 fazı)
+## 2. Kurulum deneyimi (ORL 6 fazı)
 
 Her faz için: süre, takılma noktası, kimin kararı gerektiği.
 
