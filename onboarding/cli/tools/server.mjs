@@ -20,7 +20,7 @@ import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 import { evaluatePhase } from '../src/orl/checks.mjs';
 import { verify as verifyLicense, loadPublicKey } from '../src/orl/license.mjs';
 import { fetchSiemEvents } from '../src/orl/connectors/siem.mjs';
-import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq } from '../src/orl/incident.mjs';
+import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq, normalizeRules, DEFAULT_KEYWORD_RULES } from '../src/orl/incident.mjs';
 import { buildBundle } from '../src/orl/evidence.mjs';
 import { createResetStore } from '../src/orl/reset.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
@@ -282,6 +282,86 @@ function stateSecret() {
     writeJson(path.join(DATA, 'secrets.json'), sec);
   }
   return sec.state_secret;
+}
+
+const SCHEDULE_FILE = path.join(DATA, 'schedule.json');
+const RULES_FILE = path.join(DATA, 'siem-rules.json');
+
+function loadRules() {
+  const doc = readJson(RULES_FILE, null);
+  return doc?.rules?.length ? doc.rules : DEFAULT_KEYWORD_RULES;
+}
+
+function saveRules(rules) {
+  writeJson(RULES_FILE, { rules, updated_at: new Date().toISOString() });
+}
+
+function loadSchedule() {
+  return readJson(SCHEDULE_FILE, { enabled: false, interval_minutes: 60, min_severity: 'high', last_run: null });
+}
+
+function saveSchedule(s) {
+  writeJson(SCHEDULE_FILE, s);
+}
+
+let schedRunning = false;
+
+/** Tüm oturumlar için SIEM'i bir kez çeker, taslak kayıt üretir. */
+async function runScheduledFetch({ reason = 'manual' } = {}) {
+  if (schedRunning) return { ok: false, error: 'zaten çalışıyor' };
+  schedRunning = true;
+  const cfg = loadSettings().integrations.find((i) => i.id === 'siem') ?? {};
+  const token = loadSecrets().siem;
+  const rules = loadRules();
+  const schedule = loadSchedule();
+  let fetched = 0;
+  let created = 0;
+  let error = null;
+  try {
+    if (!cfg.endpoint) throw new Error('SIEM adresi tanımlı değil');
+    const result = await fetchSiemEvents({ vendor: cfg.vendor, endpoint: cfg.endpoint, token }, { limit: 100 });
+    fetched = result.count;
+    for (const s of listSessions().slice(0, 10)) {
+      const dir = path.join(SESSIONS, s.session_id);
+      const siemFile = path.join(dir, 'siem-events.json');
+      writeJson(siemFile, result);
+      const pool = result.events.filter((e) => shouldCreateIncident(e, { minSeverity: schedule.min_severity, rules }).yes);
+      const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
+      const existing = stored.incidents ?? [];
+      let seq = nextSeq(existing);
+      const drafts = pool.map((e) => incidentFromEvent(e, { sessionId: s.session_id, seq: seq++, rules }));
+      const merged = mergeIncidents(existing, drafts);
+      if (merged.added.length) {
+        writeJson(path.join(dir, 'incidents.json'), { incidents: merged.all, updated_at: new Date().toISOString() });
+        created += merged.added.length;
+      }
+    }
+  } catch (e) {
+    error = e.message;
+  } finally {
+    schedRunning = false;
+  }
+  schedule.last_run = {
+    at: new Date().toISOString(),
+    ok: !error,
+    reason,
+    fetched,
+    created,
+    error,
+  };
+  saveSchedule(schedule);
+  auth.audit('scheduler', 'siem_scheduled', `${reason}: ${fetched} olay, ${created} kayıt${error ? ', hata: ' + error : ''}`);
+  return { ok: !error, ...schedule.last_run };
+}
+
+function scheduleTick() {
+  const s = loadSchedule();
+  if (!s.enabled) return;
+  const interval = Math.max(1, Number(s.interval_minutes) || 60) * 60 * 1000;
+  const last = s.last_run?.at ? new Date(s.last_run.at).getTime() : 0;
+  if (Date.now() - last >= interval) {
+    runScheduledFetch({ reason: 'schedule' }).catch(() => {});
+  }
 }
 
 function parseCookies(req) {
@@ -834,6 +914,43 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { ok: true, oidc: s.oidc });
   }
 
+  if (urlPath === '/api/settings/siem-rules' && method === 'GET') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    return sendJson(res, 200, { ok: true, rules: loadRules() });
+  }
+
+  if (urlPath === '/api/settings/siem-rules' && method === 'PUT') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const body = await readBody(req);
+    const rules = normalizeRules(body.rules);
+    saveRules(rules);
+    auth.audit(me.user.username, 'siem_rules_update', String(rules.length) + ' kural');
+    return sendJson(res, 200, { ok: true, rules });
+  }
+
+  if (urlPath === '/api/settings/schedule' && method === 'GET') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    return sendJson(res, 200, { ok: true, ...loadSchedule() });
+  }
+
+  if (urlPath === '/api/settings/schedule' && method === 'PUT') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const body = await readBody(req);
+    const s = loadSchedule();
+    s.enabled = Boolean(body.enabled);
+    s.interval_minutes = Math.max(1, Math.min(1440, Number(body.interval_minutes) || 60));
+    if (['low', 'medium', 'high'].includes(body.min_severity)) s.min_severity = body.min_severity;
+    saveSchedule(s);
+    auth.audit(me.user.username, 'schedule_update', `${s.enabled ? 'açık' : 'kapalı'} / ${s.interval_minutes} dk`);
+    return sendJson(res, 200, { ok: true, ...s });
+  }
+
+  if (urlPath === '/api/settings/schedule/run' && method === 'POST') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const r = await runScheduledFetch({ reason: 'manual' });
+    return sendJson(res, r.ok ? 200 : 502, r);
+  }
+
   // kurum profili
   if (urlPath === '/api/institution' && method === 'PUT') {
     const body = await readBody(req);
@@ -988,14 +1105,15 @@ async function api(req, res, urlPath, method) {
 
       const wanted = Array.isArray(body.event_ids) ? new Set(body.event_ids.map(String)) : null;
       const minSeverity = ['low', 'medium', 'high'].includes(body.min_severity) ? body.min_severity : 'high';
+      const rules = loadRules();
       const pool = siem.events.filter((e) =>
-        wanted ? wanted.has(String(e.id)) : shouldCreateIncident(e, { minSeverity }).yes,
+        wanted ? wanted.has(String(e.id)) : shouldCreateIncident(e, { minSeverity, rules }).yes,
       );
 
       const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
       const existing = stored.incidents ?? [];
       let seq = nextSeq(existing);
-      const created = pool.map((e) => incidentFromEvent(e, { sessionId: id, seq: seq++ }));
+      const created = pool.map((e) => incidentFromEvent(e, { sessionId: id, seq: seq++, rules }));
       const merged = mergeIncidents(existing, created);
       writeJson(path.join(dir, 'incidents.json'), { incidents: merged.all, updated_at: new Date().toISOString() });
       auth.audit(me.user.username, 'incident_draft', `${id}: ${merged.added.length} yeni`);
@@ -1553,7 +1671,11 @@ server.listen(PORT, HOST, () => {
   console.log(`  veri      : web-data/`);
 });
 
+const schedTimer = setInterval(scheduleTick, 30_000);
+schedTimer.unref?.();
+
 const shutdown = () => {
+  clearInterval(schedTimer);
   console.log('\nkapatılıyor…');
   server.close(() => process.exit(0));
 };

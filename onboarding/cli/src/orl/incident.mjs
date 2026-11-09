@@ -6,7 +6,7 @@
 // kesinti süresi, ekonomik etki) insan tarafından doldurulur. Kurallar motoru bu kaydı
 // sınıflandırma için kullanır (INC-R1…R5).
 
-const KEYWORD_RULES = [
+export const DEFAULT_KEYWORD_RULES = [
   { keys: ['ransomware', 'fidye'], reason: 'fidye yazılımı işareti', dataLoss: true, unauthorized: true },
   { keys: ['breach', 'sızıntı', 'sizinti', 'exfiltration'], reason: 'veri sızıntısı işareti', dataLoss: true },
   { keys: ['unauthorized', 'yetkisiz', 'brute', 'credential'], reason: 'yetkisiz erişim işareti', unauthorized: true },
@@ -17,13 +17,13 @@ const KEYWORD_RULES = [
 const OPEN_STATUS = 'draft';
 
 /** Olaydan taslak kayıt üretir (alanlar bilinmiyorsa null/false). */
-export function incidentFromEvent(event, { sessionId, seq = 1, now = new Date() } = {}) {
+export function incidentFromEvent(event, { sessionId, seq = 1, now = new Date(), rules = DEFAULT_KEYWORD_RULES } = {}) {
   const reasons = [];
   let dataLoss = false;
   let unauthorized = false;
   const haystack = `${event.title ?? ''} ${JSON.stringify(event.raw ?? {})}`.toLowerCase();
 
-  for (const rule of KEYWORD_RULES) {
+  for (const rule of rules ?? DEFAULT_KEYWORD_RULES) {
     if (rule.keys.some((k) => haystack.includes(k))) {
       reasons.push(rule.reason);
       if (rule.dataLoss) dataLoss = true;
@@ -57,9 +57,9 @@ export function incidentFromEvent(event, { sessionId, seq = 1, now = new Date() 
 }
 
 /** Olay kayıt açmaya değer mi? */
-export function shouldCreateIncident(event, { minSeverity = 'high' } = {}) {
+export function shouldCreateIncident(event, { minSeverity = 'high', rules = DEFAULT_KEYWORD_RULES } = {}) {
   const haystack = `${event.title ?? ''} ${JSON.stringify(event.raw ?? {})}`.toLowerCase();
-  const keywordHit = KEYWORD_RULES.some((r) => r.keys.some((k) => haystack.includes(k)));
+  const keywordHit = (rules ?? DEFAULT_KEYWORD_RULES).some((r) => (r.keys ?? []).some((k) => haystack.includes(String(k).toLowerCase())));
   const sevRank = { low: 1, medium: 2, high: 3 };
   const meets = (sevRank[event.severity] ?? 0) >= (sevRank[minSeverity] ?? 3);
   return {
@@ -81,6 +81,26 @@ export function mergeIncidents(existing, created) {
     added.push(inc);
   }
   return { added, all: [...(existing ?? []), ...added] };
+}
+
+/** Dışarıdan gelen kural listesini doğrular ve sadeleştirir. */
+export function normalizeRules(input) {
+  const list = Array.isArray(input) ? input : [];
+  const out = [];
+  for (const r of list.slice(0, 50)) {
+    const keys = (Array.isArray(r.keys) ? r.keys : String(r.keys ?? '').split(','))
+      .map((k) => String(k).trim().toLowerCase())
+      .filter(Boolean)
+      .slice(0, 20);
+    if (!keys.length) continue;
+    out.push({
+      keys,
+      reason: String(r.reason ?? 'anahtar kelime').slice(0, 120),
+      dataLoss: Boolean(r.dataLoss ?? r.data_loss),
+      unauthorized: Boolean(r.unauthorized),
+    });
+  }
+  return out.length ? out : DEFAULT_KEYWORD_RULES;
 }
 
 export function nextSeq(existing) {

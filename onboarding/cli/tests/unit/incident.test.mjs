@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq } from '../../src/orl/incident.mjs';
+import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq, normalizeRules, DEFAULT_KEYWORD_RULES } from '../../src/orl/incident.mjs';
 
 const ev = (over = {}) => ({
   id: 'evt-1',
@@ -71,4 +71,25 @@ test('incident: başlık ve kaynak kırpılır', () => {
   const inc = incidentFromEvent(ev({ title: 'x'.repeat(500), source: 'y'.repeat(200) }), { seq: 1 });
   assert.ok(inc.title.length <= 300);
   assert.ok(inc.source.length <= 200);
+});
+
+
+test('incident: normalizeRules geçersiz girdiyi varsayılana döndürür', () => {
+  assert.deepEqual(normalizeRules([]), DEFAULT_KEYWORD_RULES);
+  assert.deepEqual(normalizeRules(null), DEFAULT_KEYWORD_RULES);
+  assert.deepEqual(normalizeRules([{ keys: [] }]), DEFAULT_KEYWORD_RULES);
+});
+
+test('incident: normalizeRules anahtarları küçük harfe indirir', () => {
+  const r = normalizeRules([{ keys: ['RansomWare', ' FIDYE '], reason: 'x', dataLoss: true }]);
+  assert.deepEqual(r[0].keys, ['ransomware', 'fidye']);
+  assert.equal(r[0].dataLoss, true);
+});
+
+test('incident: özel kural eşleşmeyi genişletir', () => {
+  const rules = [...DEFAULT_KEYWORD_RULES, { keys: ['xyz'], reason: 'özel', dataLoss: false, unauthorized: false }];
+  const yes = shouldCreateIncident({ severity: 'low', title: 'Custom marker XYZ', raw: {} }, { minSeverity: 'high', rules });
+  assert.equal(yes.yes, true);
+  const inc = incidentFromEvent({ id: 'e9', severity: 'low', title: 'XYZ', raw: {} }, { rules, seq: 1 });
+  assert.ok(inc.matched_reasons.includes('özel'));
 });

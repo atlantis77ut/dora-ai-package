@@ -5,6 +5,36 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.17.0] — 2026-11-09
+
+### Eklendi — düzenlenebilir olay kuralları
+
+- Kurallar artık `web-data/siem-rules.json` içinde; varsayılan beş kural korunuyor
+- `GET/PUT /api/settings/siem-rules` (yönetici) — anahtar kelime, açıklama, veri kaybı ve
+  yetkisiz erişim işaretleri düzenlenebilir
+- `normalizeRules()`: anahtarları küçük harfe indirir, boş/geçersiz girdide varsayılana döner
+- Arayüz: SIEM sayfasında **Olay kuralları** tablosu (satır ekle/sil, kaydet)
+
+### Eklendi — zamanlanmış SIEM çekme
+
+- `web-data/schedule.json`: `enabled`, `interval_minutes` (1-1440), `min_severity`, `last_run`
+- Sunucu 30 saniyede bir kontrol eder; aralık dolduysa tüm oturumlar için SIEM'i çeker,
+  olayları kaydeder ve kurallara göre taslak kayıt üretir
+- `GET/PUT /api/settings/schedule` · `POST /api/settings/schedule/run` (elle çalıştır)
+- Arayüz: **Zamanlanmış çekme** kartı — etkin, aralık, eşik, "şimdi çalıştır", son çalışma özeti
+- Eşzamanlılık koruması: aynı anda ikinci çalışma reddedilir
+
+### Doğrulama
+
+```
+varsayılan kural 5 → özel kural eklendi 6
+zamanlama: açık, 5 dk, eşik düşük
+çalıştır → 2 olay, 2 yeni kayıt · tekrar → 0 yeni
+birim testleri: 89 test, 89 pass
+```
+
+---
+
 ## [1.16.0] — 2026-11-09
 
 ### Eklendi — SIEM olayından olay kaydına

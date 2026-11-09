@@ -1316,6 +1316,33 @@ function viewSiem() {
         <button class="primary" id="incDraft">Taslak kayıt oluştur</button>
       </div>
       <div id="incResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Olay kuralları</h2>
+      <p class="sub">Hangi olayların kayıt açacağını belirleyen anahtar kelimeler. Virgülle birden fazla yazılabilir.</p>
+      <div id="rulesList" class="sub">yükleniyor…</div>
+      <div class="actions">
+        <button class="ghost-btn" id="ruleAdd">+ kural ekle</button>
+        <button class="primary" id="ruleSave">Kuralları kaydet</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Zamanlanmış çekme</h2>
+      <p class="sub">Açıkken sunucu belirli aralıkla SIEM'i çeker ve taslak kayıt üretir.</p>
+      <div class="grid k3">
+        <div><label class="sub"><input type="checkbox" id="schedOn" style="width:auto"> Etkin</label></div>
+        <div><label class="sub">Aralık (dakika)</label><input id="schedMin" type="number" min="1" max="1440" value="60"></div>
+        <div><label class="sub">En düşük önem</label>
+          <select id="schedSev"><option value="high">yüksek</option><option value="medium">orta</option><option value="low">düşük</option></select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="schedSave">Kaydet</button>
+        <button class="ghost-btn" id="schedRun">Şimdi çalıştır</button>
+        <span class="sub" id="schedLast"></span>
+      </div>
     </div>`;
 }
 
@@ -1345,6 +1372,61 @@ function bindSiem() {
   });
   loadSiem();
   loadIncidents();
+  loadRules();
+  loadSchedule();
+
+  $('#ruleAdd')?.addEventListener('click', () => addRuleRow({ keys: [], reason: '', dataLoss: false, unauthorized: false }));
+
+  $('#ruleSave')?.addEventListener('click', async () => {
+    const rules = [...document.querySelectorAll('.rule-row')]
+      .map((row) => ({
+        keys: row.querySelector('.rule-keys').value.split(',').map((x) => x.trim()).filter(Boolean),
+        reason: row.querySelector('.rule-reason').value.trim(),
+        dataLoss: row.querySelector('.rule-dl').checked,
+        unauthorized: row.querySelector('.rule-un').checked,
+      }))
+      .filter((r) => r.keys.length);
+    try {
+      const r = await api('/api/settings/siem-rules', { method: 'PUT', body: JSON.stringify({ rules }) });
+      toast(`${r.rules.length} kural kaydedildi`, 'ok');
+      renderRules(r.rules);
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#schedSave')?.addEventListener('click', async () => {
+    try {
+      const r = await api('/api/settings/schedule', {
+        method: 'PUT',
+        body: JSON.stringify({
+          enabled: $('#schedOn').checked,
+          interval_minutes: Number($('#schedMin').value),
+          min_severity: $('#schedSev').value,
+        }),
+      });
+      toast(r.enabled ? `Zamanlanmış çekme açık (${r.interval_minutes} dk)` : 'Zamanlanmış çekme kapalı', 'ok');
+      renderSchedLast(r.last_run);
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#schedRun')?.addEventListener('click', async () => {
+    const btn = $('#schedRun');
+    btn.disabled = true;
+    try {
+      const r = await api('/api/settings/schedule/run', { method: 'POST', body: '{}' });
+      toast(`Çalıştı: ${r.fetched} olay, ${r.created} kayıt`, 'ok');
+      renderSchedLast(r);
+      loadIncidents();
+      loadSiem();
+    } catch (e) {
+      toast('Çalıştırılamadı: ' + e.message, 'bad');
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
   $('#incDraft')?.addEventListener('click', async () => {
     try {
@@ -1358,6 +1440,61 @@ function bindSiem() {
       toast('Oluşturulamadı: ' + e.message, 'bad');
     }
   });
+}
+
+async function loadRules() {
+  try {
+    const r = await api('/api/settings/siem-rules');
+    renderRules(r.rules);
+  } catch (e) {
+    const box = $('#rulesList');
+    if (box) box.textContent = 'Kurallar yüklenemedi: ' + e.message;
+  }
+}
+
+function renderRules(rules) {
+  const box = $('#rulesList');
+  if (!box) return;
+  box.innerHTML = (rules ?? []).map((r) => ruleRowHtml(r)).join('');
+  box.querySelectorAll('.rule-del').forEach((b) => (b.onclick = () => b.closest('.rule-row').remove()));
+}
+
+function ruleRowHtml(r) {
+  return `<div class="rule-row" style="display:grid;grid-template-columns:2fr 2fr auto auto auto;gap:8px;margin:8px 0;align-items:center">
+    <input class="rule-keys" value="${esc((r.keys ?? []).join(', '))}" placeholder="ransomware, fidye">
+    <input class="rule-reason" value="${esc(r.reason ?? '')}" placeholder="açıklama">
+    <label class="sub"><input type="checkbox" class="rule-dl" style="width:auto" ${r.dataLoss ? 'checked' : ''}> veri</label>
+    <label class="sub"><input type="checkbox" class="rule-un" style="width:auto" ${r.unauthorized ? 'checked' : ''}> yetki</label>
+    <button class="ghost-btn rule-del">sil</button>
+  </div>`;
+}
+
+function addRuleRow(r) {
+  const box = $('#rulesList');
+  if (!box) return;
+  box.insertAdjacentHTML('beforeend', ruleRowHtml(r));
+  const last = box.lastElementChild;
+  last.querySelector('.rule-del').onclick = () => last.remove();
+}
+
+async function loadSchedule() {
+  try {
+    const s = await api('/api/settings/schedule');
+    if ($('#schedOn')) $('#schedOn').checked = Boolean(s.enabled);
+    if ($('#schedMin')) $('#schedMin').value = s.interval_minutes ?? 60;
+    if ($('#schedSev')) $('#schedSev').value = s.min_severity ?? 'high';
+    renderSchedLast(s.last_run);
+  } catch {
+    /* yönetici değilse */
+  }
+}
+
+function renderSchedLast(lr) {
+  const box = $('#schedLast');
+  if (!box) return;
+  box.textContent = lr
+    ? `son çalışma: ${new Date(lr.at).toLocaleString('tr-TR')} · ${lr.fetched ?? 0} olay · ${lr.created ?? 0} kayıt${lr.error ? ' · hata: ' + lr.error : ''}`
+    : 'henüz çalışmadı';
 }
 
 async function fetchIncidents() {

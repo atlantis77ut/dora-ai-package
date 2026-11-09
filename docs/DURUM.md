@@ -1111,3 +1111,41 @@ PATCH: 250000 müşteri, 45 dk, 750000 EUR, major → promote
 incident-record.json: 200
 birim: 86 test, 86 pass
 ```
+
+---
+
+## 38. Kural düzenleyici ve zamanlanmış çekme — 1.17.0 (2026-11-09)
+
+| Konu | Ayar dosyası | Uç |
+|---|---|---|
+| Olay kuralları | `web-data/siem-rules.json` | `GET/PUT /api/settings/siem-rules` |
+| Zamanlama | `web-data/schedule.json` | `GET/PUT /api/settings/schedule`, `POST …/run` |
+
+### Kural biçimi
+
+```json
+{ "rules": [ { "keys": ["ransomware", "fidye"], "reason": "fidye yazılımı",
+               "dataLoss": true, "unauthorized": true } ] }
+```
+
+Kurallar boşsa varsayılan beş kural kullanılır (`normalizeRules`).
+
+### Zamanlayıcı davranışı
+
+- 30 saniyede bir tik; `last_run.at` üzerinden aralık hesabı
+- Açıkken **tüm oturumlar** (en fazla 10) için olaylar kaydedilir ve taslak kayıt üretilir
+- `schedRunning` bayrağı ile eşzamanlı çalışma engellenir
+- Sonuç `last_run` içinde: zaman, olay sayısı, kayıt sayısı, hata
+
+### Doğrulama
+
+```
+özel kural (xyz) eklendi → düşük önemli olay da kayıt açtı
+run → 2 olay / 2 kayıt · tekrar run → 0 (dedupe)
+89 birim testi geçti
+```
+
+### Sınırlar
+
+- Zamanlayıcı süreç içi; sunucu durursa çalışmaz (kalıcı zamanlama için systemd timer/cron)
+- Tek SIEM yapılandırması tüm oturumlar için kullanılıyor
