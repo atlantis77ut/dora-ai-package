@@ -86,6 +86,8 @@ export function createAuthStore(dataDir) {
       if (!p.exp || p.exp < Date.now()) return null;
       const u = users().find((x) => x.id === p.uid);
       if (!u) return null;
+      // parola değiştiyse eski oturum geçersiz
+      if (p.pv !== u.hash.slice(0, 8)) return null;
       return { ...p, user: publicUser(u) };
     } catch {
       return null;
@@ -100,7 +102,7 @@ export function createAuthStore(dataDir) {
     u.last_login = new Date().toISOString();
     saveUsers(list);
     const ttl = Math.max(1, Math.min(168, Number(hours) || 8)) * 3600 * 1000;
-    const token = sign({ uid: u.id, role: u.role, exp: Date.now() + ttl });
+    const token = sign({ uid: u.id, role: u.role, pv: u.hash.slice(0, 8), exp: Date.now() + ttl });
     audit(u.username, 'login');
     return { ok: true, token, user: publicUser(u) };
   }
@@ -125,6 +127,14 @@ export function createAuthStore(dataDir) {
     audit(u.username, 'bootstrap', 'ilk yönetici');
     const token = sign({ uid: u.id, role: 'admin', exp: Date.now() + SESSION_TTL_S * 1000 });
     return { ok: true, token, user: publicUser(u) };
+  }
+
+  function refresh(user, hours = 8) {
+    const list = users();
+    const u = list.find((x) => x.id === user.id);
+    if (!u) return null;
+    const ttl = Math.max(1, Math.min(168, Number(hours) || 8)) * 3600 * 1000;
+    return sign({ uid: u.id, role: u.role, pv: u.hash.slice(0, 8), exp: Date.now() + ttl });
   }
 
   function createUser({ username, password, name, role }) {
@@ -197,6 +207,7 @@ export function createAuthStore(dataDir) {
     updateUser,
     removeUser,
     verify,
+    refresh,
     audit,
     listAudit,
   };

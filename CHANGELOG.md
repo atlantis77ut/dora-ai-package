@@ -5,6 +5,36 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.9.0] — 2026-11-09
+
+### Düzeltildi — oturum ve menü
+
+- **Parola değişince eski oturumlar geçersiz**: token'a parola sürümü (`pv`) eklendi; parola
+  değiştirme/sıfırlama sonrası eski çerez 401 döner
+- **CSRF koruması**: yazma istekleri `X-Dora-CSRF: 1` başlığı taşımak zorunda (403 aksi hâlde)
+- **Çerez**: `Secure` bayrağı HTTPS arkasında otomatik eklenir; bozuk çerez artık isteği düşürmez
+- **Oturum süresi görünür**: başlıkta kalan dakika; "oturumu uzat" (`POST /api/auth/refresh`)
+- **Aktif oturum seçimi**: birden fazla oturum varsa yönetici seçebilir (`POST /api/sessions/active`)
+- **Menü**:
+  - navigasyon bir kez kuruluyor, her tıklamada yeniden çizilmiyor (çift tetiklenme gitti)
+  - "Teknik panel" yalnız yöneticide ve **aynı sekmede** açılıyor (fazladan sekme yok)
+  - "Kurulumu başlat" düğmesi tüm sayfalarda çalışıyor (delegasyon)
+  - giriş sonrası hash korunuyor, gereksiz yeniden yönlendirme yok
+
+### Doğrulama (gerçek HTTP)
+
+```
+CSRF'siz yazma                 → 403
+CSRF'li yazma                  → 200
+parola sıfırlama sonrası me    → 401  (eski oturum geçersiz)
+yeni parolayla giriş           → 200
+oturum süresi 4 saat           → 200
+refresh                        → 200
+aktif oturum seçimi            → 200, state doğruladı
+```
+
+---
+
 ## [1.8.0] — 2026-11-09
 
 ### Eklendi

@@ -836,3 +836,29 @@ C2 kapısı                     → 200
 6. **Kanıt paketi indirme arayüzde yok** — CLI `export` ile alınıyor.
 7. **Konnektörler yalnız test eder**, veri çekmez (SIEM/ITSM gerçek entegrasyonu yok).
 8. **Birim testi yok** — CI demo adımlarıyla sınırlı.
+
+---
+
+## 30. Oturum sertleştirme ve gezinme düzeltmeleri — 1.9.0 (2026-11-09)
+
+Kullanıcı geri bildirimi: "menü geçişleri ve oturumlar sıkıntılı, fazla sayfa açıyor".
+Tespit edilenler ve yapılanlar:
+
+| Bulgu | Neden | Düzeltme |
+|---|---|---|
+| Fazladan sekme | "Teknik panel" `target="_blank"` her tıklamada yeni sekme, kullanıcıda ise girişe yönleniyordu | Aynı sekme + yalnız yönetici |
+| Menü çift tetikleme | `renderShell()` her `render()`'da nav'ı yeniden kuruyordu | `navKey` ile bir kez kurulum, sonra yalnız aktif sınıf |
+| "Kurulumu başlat" bazı sayfalarda ölü | Düğme yalnız `bindCommon` çağrılan rotalarda bağlanıyordu | `document` üzerinde delegasyon |
+| Parola değişince eski oturum açık kalıyordu | Token yalnız kullanıcı kimliği taşıyordu | Token'a `pv` (parola özeti ilk 8) eklendi, doğrulamada karşılaştırılıyor |
+| CSRF yok | Çerez `SameSite=Lax` vardı ama başlık kontrolü yoktu | Yazma isteklerinde `X-Dora-CSRF` zorunlu |
+| Oturum süresi görünmüyordu | — | Başlıkta kalan dakika + "oturumu uzat" |
+| Çoklu oturum seçilemiyordu | Hep en yenisi aktif | `active_session` ayarı + seçim kutusu |
+
+### Doğrulama
+
+```
+CSRF'siz yazma → 403            CSRF'li yazma → 200
+parola sıfırlama → eski oturum 401
+refresh → 200 · oturum süresi 4 saat → 200
+aktif oturum seçimi → 200
+```

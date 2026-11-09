@@ -45,7 +45,11 @@ function toast(msg, kind = '') {
 }
 
 async function api(path, options = {}) {
-  const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options });
+  const res = await fetch(path, {
+    headers: { 'Content-Type': 'application/json', 'X-Dora-CSRF': '1' },
+    credentials: 'same-origin',
+    ...options,
+  });
   let data = {};
   try {
     data = await res.json();
@@ -53,8 +57,10 @@ async function api(path, options = {}) {
     /* boş */
   }
   if (res.status === 401) {
+    if (state.user) toast('Oturum sona erdi, yeniden giriş yapın', 'bad');
     state.user = null;
-    renderLogin();
+    state.role = null;
+    renderLogin('login');
     throw new Error('giriş gerekli');
   }
   if (!res.ok) throw new Error(data.error || data.detail || `HTTP ${res.status}`);
@@ -94,7 +100,9 @@ function renderLogin(mode = 'login') {
         : { username: $('#bUser').value, password: $('#bPass').value };
       await api(bootstrap ? '/api/auth/bootstrap' : '/api/auth/login', { method: 'POST', body: JSON.stringify(payload) });
       state.needsBootstrap = false;
+      navKey = null;
       await loadState();
+      if (!location.hash) location.hash = isAdmin() ? '#genel' : '#durum';
       render();
     } catch (e) {
       $('#bErr').textContent = e.message;
@@ -124,8 +132,11 @@ async function loadState() {
     state.user = null;
     return;
   }
-  state.user = (await me.json()).user;
+  const meBody = await me.json();
+  state.user = meBody.user;
   state.role = state.user.role;
+  state.exp = meBody.exp;
+  state.sessionHours = meBody.session_hours;
 
   const s = await api('/api/state');
   state.settings = s.settings;
@@ -356,7 +367,7 @@ function viewGenel() {
       <p class="sub">${inst.name ? esc(inst.name) : 'Kurum adı girilmedi'} · ${esc(inst.tier || 'tier yok')} · ${esc(inst.regulator || 'regülatör yok')} · ${esc(inst.jurisdiction || 'TR')}</p>
       <div class="actions">
         <a class="ghost" href="#kurum" style="padding:8px 14px">Kurum profili</a>
-        <a class="ghost" href="/dashboard/" target="_blank" rel="noopener" style="padding:8px 14px">Teknik panel ↗</a>
+        <a class="ghost" href="/dashboard/" style="padding:8px 14px">Teknik panel</a>
       </div>
     </div>
     <div class="card">
@@ -386,6 +397,14 @@ function viewGenel() {
             )
             .join('')
         : '<tr><td colspan="6" class="sub">Oturum yok.</td></tr>'}</tbody></table>
+      ${
+        state.sessions.length > 1
+          ? `<div class="actions"><label class="sub">Aktif oturum</label>
+             <select id="activeSess">${state.sessions
+               .map((s) => `<option value="${esc(s.session_id)}" ${s.session_id === state.activeSession?.session_id ? 'selected' : ''}>${esc(s.session_id)}</option>`)
+               .join('')}</select></div>`
+          : ''
+      }
     </div>`;
 }
 
@@ -423,8 +442,32 @@ function viewYonetim() {
 /* ── davranışlar ──────────────────────────────────────── */
 
 function bindCommon() {
-  document.querySelectorAll('[data-action="newSession"], #newSession').forEach((b) => b.addEventListener('click', createSession));
+  $('#activeSess')?.addEventListener('change', async (e) => {
+    try {
+      await api('/api/sessions/active', { method: 'POST', body: JSON.stringify({ session_id: e.target.value }) });
+      toast('Aktif oturum değiştirildi', 'ok');
+      await loadState();
+      render();
+    } catch (err) {
+      toast('Değiştirilemedi: ' + err.message, 'bad');
+    }
+  });
+  /* yeni oturum düğmesi: #newSession ve [data-action=newSession] */
+  document.querySelectorAll('#newSession, [data-action="newSession"]').forEach((b) => {
+    if (b.dataset.bound) return;
+    b.dataset.bound = '1';
+    b.addEventListener('click', createSession);
+  });
 }
+
+// Tüm sayfalarda geçerli: "kurulumu başlat" düğmesi
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-action="newSession"], #newSession');
+  if (b) {
+    e.preventDefault();
+    createSession();
+  }
+});
 
 function bindKurum() {
   $('#saveInst')?.addEventListener('click', async () => {
@@ -951,21 +994,62 @@ function currentTab() {
   return tab;
 }
 
+let navKey = null;
+
+function sessionLabel() {
+  if (!state.exp) return '';
+  const left = Math.max(0, Math.round((state.exp - Date.now()) / 60000));
+  return left > 0 ? `${left} dk` : 'doldu';
+}
+
 function renderShell() {
+  const key = `${state.user?.id ?? '-'}:${state.role ?? '-'}`;
   const items = navItems();
-  $('#nav').innerHTML =
-    items.map(([id, label]) => `<a href="#${id}" data-tab="${id}">${label}</a>`).join('') +
-    `<a href="/dashboard/" target="_blank" rel="noopener" data-tab="panel">Teknik panel ↗</a>` +
-    `<a href="#" id="logout" data-tab="cikis">Çıkış</a>`;
-  $('#sessionPill').textContent = state.user ? `${state.user.name || state.user.username} · ${isAdmin() ? 'yönetici' : 'kullanıcı'}` : 'giriş yok';
+
+  if (key !== navKey) {
+    navKey = key;
+    $('#nav').innerHTML =
+      items.map(([id, label]) => `<a href="#${id}" data-tab="${id}">${label}</a>`).join('') +
+      (isAdmin() ? `<a href="/dashboard/" data-tab="panel">Teknik panel</a>` : '') +
+      `<a href="#" id="logout" data-tab="cikis">Çıkış</a>`;
+    $('#logout').addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await fetch('/api/auth/logout', { method: 'POST', headers: { 'X-Dora-CSRF': '1' } });
+      } catch {
+        /* çıkışta ağ hatası önemsiz */
+      }
+      state.user = null;
+      state.role = null;
+      state.exp = null;
+      navKey = null;
+      location.hash = '';
+      renderLogin('login');
+    });
+  }
+
+  $('#sessionPill').textContent = state.user
+    ? `${state.user.name || state.user.username} · ${isAdmin() ? 'yönetici' : 'kullanıcı'} · ${sessionLabel()}`
+    : 'giriş yok';
   $('#sessionPill').className = 'pill ' + (isAdmin() ? 'warn' : 'ok');
-  $('#logout').addEventListener('click', async (e) => {
-    e.preventDefault();
-    await fetch('/api/auth/logout', { method: 'POST' });
-    state.user = null;
-    state.role = null;
-    renderLogin();
-  });
+  $('#saveState').innerHTML = state.user
+    ? `<a href="#parola" style="color:inherit;text-decoration:none">parola</a> · <a href="#" id="extend" style="color:inherit;text-decoration:none">oturumu uzat</a>`
+    : 'kaydedildi';
+  $('#saveState').className = 'pill muted';
+  const ext = $('#extend');
+  if (ext) {
+    ext.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        const r = await api('/api/auth/refresh', { method: 'POST', body: '{}' });
+        state.exp = r.exp;
+        renderShell();
+        toast('Oturum ' + r.session_hours + ' saat uzatıldı', 'ok');
+      } catch (err) {
+        toast('Uzatılamadı: ' + err.message, 'bad');
+      }
+    });
+  }
 }
 
 function render() {

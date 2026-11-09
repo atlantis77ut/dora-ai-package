@@ -247,7 +247,13 @@ function parseCookies(req) {
   const out = {};
   for (const part of String(req.headers.cookie ?? '').split(';')) {
     const i = part.indexOf('=');
-    if (i > 0) out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
+    if (i > 0) {
+      try {
+        out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
+      } catch {
+        out[part.slice(0, i).trim()] = part.slice(i + 1).trim();
+      }
+    }
   }
   return out;
 }
@@ -260,13 +266,15 @@ function getUser(req) {
   }
 }
 
-function setCookie(res, token, maxAge = 8 * 3600) {
-  const c = `${COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
+function setCookie(res, req, token, maxAge = 8 * 3600) {
+  const secure = String(req.headers['x-forwarded-proto'] ?? '').includes('https') ? '; Secure' : '';
+  const c = `${COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`;
   res.setHeader('Set-Cookie', c);
 }
 
-function clearCookie(res) {
-  res.setHeader('Set-Cookie', `${COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`);
+function clearCookie(res, req = {}) {
+  const secure = String((req.headers ?? {})['x-forwarded-proto'] ?? '').includes('https') ? '; Secure' : '';
+  res.setHeader('Set-Cookie', `${COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`);
 }
 
 async function readBody(req, limit = 5 * 1024 * 1024) {
@@ -306,7 +314,7 @@ async function api(req, res, urlPath, method) {
     const body = await readBody(req);
     const r = auth.bootstrap(body);
     if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
-    setCookie(res, r.token);
+    setCookie(res, req, r.token);
     return sendJson(res, 201, { ok: true, user: r.user });
   }
 
@@ -323,15 +331,25 @@ async function api(req, res, urlPath, method) {
       return sendJson(res, 401, { ok: false, error: r.error });
     }
     loginAttempts.delete(String(body.username).toLowerCase());
-    setCookie(res, r.token, hours * 3600);
+    setCookie(res, req, r.token, hours * 3600);
     return sendJson(res, 200, { ok: true, user: r.user });
   }
 
   if (urlPath === '/api/auth/logout' && method === 'POST') {
-    const me = getUser(req);
+    // CSRF: tarayıcı formundan gelen basit istekler özel başlık taşıyamaz
+  if (method !== 'GET' && method !== 'HEAD' && !req.headers['x-dora-csrf']) {
+    return sendJson(res, 403, { ok: false, error: 'CSRF başlığı yok (X-Dora-CSRF)' });
+  }
+
+  const me = getUser(req);
     if (me) auth.audit(me.user.username, 'logout');
-    clearCookie(res);
+    clearCookie(res, req);
     return sendJson(res, 200, { ok: true });
+  }
+
+  // CSRF: tarayıcı formundan gelen basit istekler özel başlık taşıyamaz
+  if (method !== 'GET' && method !== 'HEAD' && !req.headers['x-dora-csrf']) {
+    return sendJson(res, 403, { ok: false, error: 'CSRF başlığı yok (X-Dora-CSRF)' });
   }
 
   const me = getUser(req);
@@ -349,7 +367,16 @@ async function api(req, res, urlPath, method) {
 
   if (urlPath === '/api/auth/me' && method === 'GET') {
     if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
-    return sendJson(res, 200, { user: me.user });
+    return sendJson(res, 200, { user: me.user, exp: me.exp, session_hours: Number(loadSettings().session_hours) || 8 });
+  }
+
+  if (urlPath === '/api/auth/refresh' && method === 'POST') {
+    if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
+    const hours = Number(loadSettings().session_hours) || 8;
+    const token = auth.refresh(me.user, hours);
+    if (!token) return sendJson(res, 401, { ok: false, error: 'oturum yenilenemedi' });
+    setCookie(res, req, token, hours * 3600);
+    return sendJson(res, 200, { ok: true, exp: Date.now() + hours * 3600 * 1000, session_hours: hours });
   }
 
   if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
@@ -393,7 +420,7 @@ async function api(req, res, urlPath, method) {
       role: me.role,
       settings: publicSettings(),
       sessions,
-      activeSession: sessions[0] ?? null,
+      activeSession: sessions.find((x) => x.session_id === loadSettings().active_session) ?? sessions[0] ?? null,
       counts: isAdmin ? metaCounts() : undefined,
     });
   }
@@ -495,6 +522,17 @@ async function api(req, res, urlPath, method) {
   }
 
   // oturumlar
+  if (urlPath === '/api/sessions/active' && method === 'POST') {
+    const body = await readBody(req);
+    const id = String(body.session_id ?? '');
+    const dir = path.join(SESSIONS, id.replace(/[^a-zA-Z0-9._-]/g, ''));
+    if (!id || !fs.existsSync(dir)) return sendJson(res, 404, { ok: false, error: 'oturum bulunamadı' });
+    const s = loadSettings();
+    s.active_session = id;
+    saveSettings(s);
+    return sendJson(res, 200, { ok: true, active_session: id });
+  }
+
   if (urlPath === '/api/sessions' && method === 'POST') {
     const body = await readBody(req);
     if (!body.tier) return sendJson(res, 400, { ok: false, error: 'tier zorunlu (tier1|tier2|tier3)' });
@@ -730,7 +768,12 @@ const server = http.createServer(async (req, res) => {
       urlPath === '/site' || urlPath.startsWith('/site/') ||
       urlPath === '/docs' || urlPath.startsWith('/docs/');
     if (adminArea) {
-      const me = getUser(req);
+      // CSRF: tarayıcı formundan gelen basit istekler özel başlık taşıyamaz
+  if (method !== 'GET' && method !== 'HEAD' && !req.headers['x-dora-csrf']) {
+    return sendJson(res, 403, { ok: false, error: 'CSRF başlığı yok (X-Dora-CSRF)' });
+  }
+
+  const me = getUser(req);
       if (!me || me.role !== 'admin') {
         res.writeHead(302, { Location: '/app/#giris' });
         return res.end();
