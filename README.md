@@ -142,7 +142,9 @@ node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 - **Kurulum sihirbazı (6 adım)**: hizmetler → toleranslar → varlık/sorumlu eşlemesi → senaryo
   testleri → öz değerlendirme → canlıya geçiş + lisans etkinleştirme → **imzalı kanıt paketi (zip)**
 - **Yönetici**: teknik panel (`/dashboard/`), kanıtlar, kullanıcı yönetimi, işlem kaydı,
-  parola sıfırlama, oturum süresi
+  parola sıfırlama bağlantısı, oturum süresi, SSO ayarları
+- **Güvenlik**: iki adımlı doğrulama (TOTP) + kurtarma kodları, kurumsal giriş (OIDC)
+- **Yedekleme**: `node onboarding/cli/tools/backup.mjs` → `web-data/` + oturumlar tek zip
 - **Kullanıcı**: Durum · Kurum bilgileri · Sistem bağlantıları · Varlıklarım · Sorumlular · Belgeler
 
 Veriler `web-data/` (ayarlar, kullanıcılar, anahtarlar) ve `.dora-onboarding/` (oturumlar) altında;

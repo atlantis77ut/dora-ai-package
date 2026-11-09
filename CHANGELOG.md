@@ -5,6 +5,49 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.13.0] — 2026-11-09
+
+### Eklendi — self-service parola sıfırlama
+
+- Yönetici, kullanıcı satırından **tek kullanımlık bağlantı** üretir (30 dk, tek kullanım)
+- `POST /api/users/:id/reset-link` · `POST /api/auth/reset` (herkese açık)
+- Bağlantı tarayıcıya düz gider, diskte yalnız `sha256` özeti tutulur
+- Sıfırlama sonrası kullanıcının tüm oturumları düşer (`pv` mekanizması)
+
+### Eklendi — iki adımlı doğrulama (TOTP)
+
+- `src/orl/totp.mjs`: RFC 6238 (6 hane / 30 sn), base32, ±1 adım tolerans, kurtarma kodları
+- Kurulum: `POST /api/auth/2fa/setup` → `otpauth://` bağlantısı + manuel anahtar
+- Etkinleştirme: `POST /api/auth/2fa/enable` → 10 tek kullanımlık kurtarma kodu
+- Giriş: parola sonrası `otp_required` + 5 dakikalık meydan okuma; `POST /api/auth/2fa/verify`
+- Kapatma parola ile: `POST /api/auth/2fa/disable`
+
+### Eklendi — kurumsal giriş (SSO / OIDC)
+
+- `src/orl/oidc.mjs`: keşif belgesi, authorization-code akışı, JWKS ile RS256 doğrulama,
+  `iss`/`aud`/`exp`/`nonce` ve imzalı `state` kontrolleri
+- `GET /api/auth/oidc/status|start` · `GET /api/auth/oidc/callback`
+- Yönetici: `GET/PUT /api/settings/oidc` (issuer, client_id, redirect_uri, secret, auto_provision)
+- Arayüz: giriş ekranında "Kurumsal hesapla giriş (SSO)", Yönetim'de SSO kartı
+
+### Eklendi — küçük iyileştirmeler
+
+- Yönetim'de kullanıcı **rolü** değiştirilebiliyor (yönetici/kullanıcı)
+- `GET /api/audit.csv` — işlem kaydını CSV indir
+- `tools/backup.mjs` — `web-data/` + oturumları tek zip'e yedekler
+
+### Doğrulama
+
+```
+2fa: setup → enable (10 kurtarma kodu) → login otp_required → yanlış kod 401 → doğru kod 200
+     kurtarma kodu 200 · aynı kod tekrar 401
+reset: bağlantı 200 → parola 200 → aynı bağlantı 400
+sso: start 302 → callback 302 /app/#genel → /api/state 200 (sso@ornek.local, user)
+testler: 67 test, 67 pass
+```
+
+---
+
 ## [1.12.0] — 2026-11-09
 
 ### Eklendi — CSV dosya yükleme ve şablon

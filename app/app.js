@@ -69,6 +69,76 @@ async function api(path, options = {}) {
 
 /* ── giriş / ilk kurulum ──────────────────────────────── */
 
+function resetToken() {
+  const m = location.hash.match(/reset=([A-Za-z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+function renderReset(token) {
+  $('#nav').innerHTML = '';
+  $('#title').textContent = 'Yeni parola';
+  $('#subtitle').textContent = 'Sıfırlama bağlantısıyla parolanızı belirleyin';
+  $('#sessionPill').textContent = 'parola sıfırlama';
+  $('#sessionPill').className = 'pill warn';
+  view.innerHTML = `
+    <div class="card" style="max-width:430px">
+      <h2>Yeni parola belirle</h2>
+      <p class="sub">En az 8 karakter. Bağlantı 30 dakika geçerlidir ve tek kullanımlıktır.</p>
+      <div class="row"><label>Yeni parola</label><input id="rPass" type="password" autocomplete="new-password"></div>
+      <div class="row"><label>Tekrar</label><input id="rPass2" type="password" autocomplete="new-password"></div>
+      <div class="actions"><button class="primary" id="rGo">Parolayı kaydet</button><span class="sub" id="rErr"></span></div>
+    </div>`;
+  $('#rGo').addEventListener('click', async () => {
+    if ($('#rPass').value !== $('#rPass2').value) {
+      $('#rErr').textContent = 'Parolalar aynı değil';
+      return;
+    }
+    try {
+      const r = await fetch('/api/auth/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Dora-CSRF': '1' },
+        body: JSON.stringify({ token, password: $('#rPass').value }),
+      });
+      const body = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(body.error || 'sıfırlanamadı');
+      toast('Parola güncellendi, giriş yapabilirsiniz', 'ok');
+      location.hash = '';
+      renderLogin('login');
+    } catch (e) {
+      $('#rErr').textContent = e.message;
+    }
+  });
+}
+
+function renderOtp(challenge) {
+  $('#nav').innerHTML = '';
+  $('#title').textContent = 'İki adımlı doğrulama';
+  $('#subtitle').textContent = 'Doğrulama uygulamanızdaki 6 haneli kodu girin';
+  view.innerHTML = `
+    <div class="card" style="max-width:430px">
+      <h2>Doğrulama kodu</h2>
+      <p class="sub">Kodu kaybettiyseniz kurtarma kodlarınızdan birini kullanabilirsiniz.</p>
+      <div class="row"><label>Kod</label><input id="otpCode" autocomplete="one-time-code" placeholder="123456"></div>
+      <div class="actions"><button class="primary" id="otpGo">Doğrula</button><span class="sub" id="otpErr"></span></div>
+    </div>`;
+  const go = async () => {
+    try {
+      await api('/api/auth/2fa/verify', { method: 'POST', body: JSON.stringify({ challenge, code: $('#otpCode').value }) });
+      state.needsBootstrap = false;
+      navKey = null;
+      await loadState();
+      if (!location.hash || location.hash === '#giris') location.hash = isAdmin() ? '#genel' : '#durum';
+      render();
+    } catch (e) {
+      $('#otpErr').textContent = e.message;
+    }
+  };
+  $('#otpGo').addEventListener('click', go);
+  $('#otpCode').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') go();
+  });
+}
+
 function renderLogin(mode = 'login') {
   const bootstrap = mode === 'bootstrap' || state.needsBootstrap;
   $('#title').textContent = bootstrap ? 'İlk kurulum' : 'Giriş';
@@ -89,6 +159,8 @@ function renderLogin(mode = 'login') {
         <button class="primary" id="bGo">${bootstrap ? 'Hesabı oluştur' : 'Giriş yap'}</button>
         <span class="sub" id="bErr"></span>
       </div>
+      ${bootstrap ? '' : '<div class="actions"><a class="ghost" id="ssoGo" style="display:none;padding:8px 14px" href="#">Kurumsal hesapla giriş (SSO)</a></div>'}
+      <div class="sub" id="ssoErr" style="margin-top:8px"></div>
     </div>`;
   const go = async () => {
     const btn = $('#bGo');
@@ -98,7 +170,14 @@ function renderLogin(mode = 'login') {
       const payload = bootstrap
         ? { username: $('#bUser').value, password: $('#bPass').value, name: $('#bName')?.value }
         : { username: $('#bUser').value, password: $('#bPass').value };
-      await api(bootstrap ? '/api/auth/bootstrap' : '/api/auth/login', { method: 'POST', body: JSON.stringify(payload) });
+      const res = await api(bootstrap ? '/api/auth/bootstrap' : '/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      if (res.otp_required) {
+        renderOtp(res.challenge);
+        return;
+      }
       state.needsBootstrap = false;
       navKey = null;
       await loadState();
@@ -110,6 +189,22 @@ function renderLogin(mode = 'login') {
       btn.textContent = bootstrap ? 'Hesabı oluştur' : 'Giriş yap';
     }
   };
+  const ssoErr = location.hash.match(/[#&]giris=([^&]*)/);
+  if (ssoErr) {
+    const box = $('#ssoErr');
+    if (box) box.textContent = 'SSO: ' + decodeURIComponent(ssoErr[1]);
+  }
+  fetch('/api/auth/oidc/status')
+    .then((r) => r.json())
+    .then((s) => {
+      const btn = $('#ssoGo');
+      if (btn && s.enabled) {
+        btn.style.display = 'inline-block';
+        btn.href = '/api/auth/oidc/start';
+      }
+    })
+    .catch(() => {});
+
   $('#bGo').addEventListener('click', go);
   view.querySelectorAll('input').forEach((i) =>
     i.addEventListener('keydown', (e) => {
@@ -423,6 +518,9 @@ function viewYonetim() {
       <p class="sub">Yöneticiler teknik paneli ve ayarları görür; kullanıcılar yalnız iş arayüzünü görür.</p>
       <table><thead><tr><th>Kullanıcı</th><th>Ad</th><th>Rol</th><th>Son giriş</th><th></th></tr></thead>
       <tbody id="userBody"><tr><td colspan="5" class="sub">Yükleniyor…</td></tr></tbody></table>
+      <div class="actions" style="margin-top:12px">
+        <a class="ghost" href="/api/audit.csv" style="padding:8px 14px">İşlem kaydını CSV indir</a>
+      </div>
       <h2 style="margin-top:22px">Yeni kullanıcı</h2>
       <div class="grid k4">
         <div><label class="sub">Kullanıcı adı</label><input id="uName" placeholder="kullanici"></div>
@@ -432,6 +530,25 @@ function viewYonetim() {
       </div>
       <div class="actions"><button class="primary" id="uAdd">Kullanıcı ekle</button></div>
     </div>
+    <div class="card">
+      <h2>Kurumsal giriş (SSO / OIDC)</h2>
+      <p class="sub">Kimlik sağlayıcınızın keşif belgesini kullanır. Anahtar <code>web-data/secrets.json</code> içinde tutulur.</p>
+      <div class="grid k2">
+        <div><label class="sub">Issuer</label><input id="oidcIssuer" placeholder="https://login.microsoftonline.com/…/v2.0"></div>
+        <div><label class="sub">Client ID</label><input id="oidcClient" placeholder="uygulama kimliği"></div>
+      </div>
+      <div class="grid k2" style="margin-top:10px">
+        <div><label class="sub">Redirect URI</label><input id="oidcRedirect" placeholder="http://sunucu:8080/api/auth/oidc/callback"></div>
+        <div><label class="sub">Client secret</label><input id="oidcSecret" type="password" placeholder="boş bırakılırsa değişmez"></div>
+      </div>
+      <div class="actions">
+        <label class="sub"><input type="checkbox" id="oidcEnabled" style="width:auto"> Etkin</label>
+        <label class="sub"><input type="checkbox" id="oidcAuto" style="width:auto"> Bilinmeyen kullanıcıyı otomatik aç (rol: kullanıcı)</label>
+        <button class="primary" id="oidcSave">Kaydet</button>
+        <span class="sub" id="oidcMsg"></span>
+      </div>
+    </div>
+
     <div class="card">
       <h2>Oturum süresi</h2>
       <p class="sub">Giriş yaptıktan sonra oturumun kaç saat açık kalacağı (1-168).</p>
@@ -703,6 +820,36 @@ async function loadArtifacts() {
 function bindYonetim() {
   loadUsers();
   loadAudit();
+  api('/api/settings/oidc')
+    .then((c) => {
+      if ($('#oidcIssuer')) $('#oidcIssuer').value = c.issuer ?? '';
+      if ($('#oidcClient')) $('#oidcClient').value = c.client_id ?? '';
+      if ($('#oidcRedirect')) $('#oidcRedirect').value = c.redirect_uri ?? '';
+      if ($('#oidcEnabled')) $('#oidcEnabled').checked = Boolean(c.enabled);
+      if ($('#oidcAuto')) $('#oidcAuto').checked = Boolean(c.auto_provision);
+    })
+    .catch(() => {});
+
+  $('#oidcSave')?.addEventListener('click', async () => {
+    try {
+      await api('/api/settings/oidc', {
+        method: 'PUT',
+        body: JSON.stringify({
+          enabled: $('#oidcEnabled').checked,
+          issuer: $('#oidcIssuer').value.trim(),
+          client_id: $('#oidcClient').value.trim(),
+          redirect_uri: $('#oidcRedirect').value.trim(),
+          client_secret: $('#oidcSecret').value.trim() || undefined,
+          auto_provision: $('#oidcAuto').checked,
+        }),
+      });
+      toast('SSO ayarları kaydedildi', 'ok');
+      loadAudit();
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
   $('#sSave')?.addEventListener('click', async () => {
     try {
       const r = await api('/api/settings/session', { method: 'PUT', body: JSON.stringify({ session_hours: Number($('#sHours').value) }) });
@@ -736,14 +883,44 @@ async function loadUsers() {
     body.innerHTML = r.users
       .map(
         (u) => `<tr><td class="mono">${esc(u.username)}</td><td>${esc(u.name ?? '')}</td>
-        <td><span class="pill ${u.role === 'admin' ? 'warn' : ''}">${u.role === 'admin' ? 'yönetici' : 'kullanıcı'}</span></td>
+        <td><select class="u-role" data-id="${esc(u.id)}" ${u.username === state.user.username ? 'disabled' : ''}>
+          <option value="user" ${u.role === 'user' ? 'selected' : ''}>kullanıcı</option>
+          <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>yönetici</option>
+        </select></td>
         <td>${u.last_login ? new Date(u.last_login).toLocaleString('tr-TR') : '—'}</td>
         <td>${u.username === state.user.username
           ? '<span class="sub">siz</span>'
           : `<button class="ghost-btn u-pw" data-id="${esc(u.id)}" data-name="${esc(u.username)}">parola sıfırla</button>
+             <button class="ghost-btn u-link" data-id="${esc(u.id)}" data-name="${esc(u.username)}">sıfırlama bağlantısı</button>
              <button class="ghost-btn u-del" data-id="${esc(u.id)}">sil</button>`}</td></tr>`,
       )
       .join('');
+    document.querySelectorAll('.u-role').forEach((sel) =>
+      sel.addEventListener('change', async () => {
+        try {
+          await api('/api/users/' + sel.dataset.id, { method: 'PATCH', body: JSON.stringify({ role: sel.value }) });
+          toast('Rol güncellendi', 'ok');
+          loadUsers();
+          loadAudit();
+        } catch (e) {
+          toast('Rol değiştirilemedi: ' + e.message, 'bad');
+          loadUsers();
+        }
+      }),
+    );
+    document.querySelectorAll('.u-link').forEach((b) =>
+      b.addEventListener('click', async () => {
+        try {
+          const r = await api('/api/users/' + b.dataset.id + '/reset-link', { method: 'POST', body: '{}' });
+          const url = location.origin + r.url;
+          await navigator.clipboard?.writeText(url).catch(() => {});
+          alert(`${b.dataset.name} için tek kullanımlık bağlantı (30 dk):\n\n${url}\n\nPanoya kopyalandı (izin varsa).`);
+          loadAudit();
+        } catch (e) {
+          toast('Bağlantı üretilemedi: ' + e.message, 'bad');
+        }
+      }),
+    );
     document.querySelectorAll('.u-pw').forEach((b) =>
       b.addEventListener('click', async () => {
         const yeni = prompt(`${b.dataset.name} için yeni parola (en az 8 karakter):`);
@@ -1232,6 +1409,67 @@ async function loadTolerances() {
   }
 }
 
+function viewGuvenlik() {
+  const enabled = Boolean(state.user?.totp_enabled);
+  return `
+    <div class="card">
+      <h2>İki adımlı doğrulama</h2>
+      <p class="sub">Durum: ${enabled ? '<span class="pill ok">açık</span>' : '<span class="pill">kapalı</span>'}</p>
+      ${
+        enabled
+          ? `<p class="sub">Doğrulama uygulamanızla giriş yapıyorsunuz. Kapatmak için parolanızı girin.</p>
+             <div class="row"><label>Parola</label><input id="tfaPass" type="password"></div>
+             <div class="actions"><button class="danger" id="tfaOff">Kapat</button></div>`
+          : `<div class="actions"><button class="primary" id="tfaStart">Kurulumu başlat</button></div>
+             <div id="tfaBox"></div>`
+      }
+    </div>`;
+}
+
+function bindGuvenlik() {
+  $('#tfaStart')?.addEventListener('click', async () => {
+    try {
+      const r = await api('/api/auth/2fa/setup', { method: 'POST', body: '{}' });
+      $('#tfaBox').innerHTML = `
+        <div class="card" style="background:#0f1626;margin-top:14px">
+          <h2>1) Uygulamaya ekleyin</h2>
+          <p class="sub">Google Authenticator, Microsoft Authenticator veya 1Password ile bu bağlantıyı açın:</p>
+          <p class="mono" style="word-break:break-all">${esc(r.otpauth)}</p>
+          <p class="sub">Manuel giriş için anahtar: <span class="mono">${esc(r.secret)}</span></p>
+          <h2>2) Kodu doğrulayın</h2>
+          <div class="row"><label>6 haneli kod</label><input id="tfaCode" placeholder="123456"></div>
+          <div class="actions"><button class="primary" id="tfaConfirm">Etkinleştir</button></div>
+          <div id="tfaCodes"></div>
+        </div>`;
+      $('#tfaConfirm').addEventListener('click', async () => {
+        try {
+          const e = await api('/api/auth/2fa/enable', { method: 'POST', body: JSON.stringify({ code: $('#tfaCode').value }) });
+          $('#tfaCodes').innerHTML = `<h2>3) Kurtarma kodları</h2>
+            <p class="sub">Bu kodları güvenli bir yerde saklayın; her biri bir kez kullanılabilir.</p>
+            <pre class="mono" style="background:#0c1322;border:1px solid var(--line);border-radius:10px;padding:12px">${e.recovery_codes.join('\n')}</pre>`;
+          toast('İki adımlı doğrulama açıldı', 'ok');
+          await loadState();
+        } catch (err) {
+          toast('Etkinleştirilemedi: ' + err.message, 'bad');
+        }
+      });
+    } catch (e) {
+      toast('Kurulum başlatılamadı: ' + e.message, 'bad');
+    }
+  });
+
+  $('#tfaOff')?.addEventListener('click', async () => {
+    try {
+      await api('/api/auth/2fa/disable', { method: 'POST', body: JSON.stringify({ password: $('#tfaPass').value }) });
+      toast('İki adımlı doğrulama kapatıldı', 'ok');
+      await loadState();
+      render();
+    } catch (e) {
+      toast('Kapatılamadı: ' + e.message, 'bad');
+    }
+  });
+}
+
 function viewParola() {
   return `
     <div class="card" style="max-width:460px">
@@ -1267,6 +1505,7 @@ const ROUTES = {
   kurulum: { title: 'Kurulum', sub: 'Hizmetler, toleranslar ve adım denetimi', render: viewKurulum, bind: bindKurulum, roles: ['user', 'admin'] },
   kurum: { title: 'Kurum bilgileri', sub: 'Temel bilgiler', render: viewKurum, bind: bindKurum, roles: ['user', 'admin'] },
   parola: { title: 'Parolamı değiştir', sub: 'Hesap güvenliği', render: viewParola, bind: bindParola, roles: ['user', 'admin'] },
+  guvenlik: { title: 'Güvenlik', sub: 'İki adımlı doğrulama', render: viewGuvenlik, bind: bindGuvenlik, roles: ['user', 'admin'] },
   baglantilar: { title: 'Sistem bağlantıları', sub: 'Olay, destek, uyum ve envanter sistemleri', render: viewBaglantilar, bind: bindBaglantilar, roles: ['user', 'admin'] },
   entegrasyonlar: { title: 'Entegrasyonlar', sub: 'Teknik bağlantı ayarları', render: viewBaglantilar, bind: bindBaglantilar, roles: ['admin'] },
   envanter: { title: 'Varlıklarım', sub: 'Sunucu ve sistem listesi', render: viewVarliklar, bind: bindVarliklar, roles: ['user', 'admin'] },
@@ -1287,6 +1526,7 @@ function navItems() {
         ['envanter', 'Envanter'],
         ['ajanlar', 'Ajanlar'],
         ['kanitlar', 'Kanıtlar'],
+        ['guvenlik', 'Güvenlik'],
         ['yonetim', 'Yönetim'],
       ]
     : [
@@ -1297,6 +1537,7 @@ function navItems() {
         ['envanter', 'Varlıklarım'],
         ['ajanlar', 'Sorumlular'],
         ['belgeler', 'Belgeler'],
+        ['guvenlik', 'Güvenlik'],
       ];
 }
 
@@ -1368,6 +1609,11 @@ function renderShell() {
 }
 
 function render() {
+  const rt = resetToken();
+  if (rt && !state.user) {
+    renderReset(rt);
+    return;
+  }
   if (!state.user) {
     renderShell();
     renderLogin(state.needsBootstrap ? 'bootstrap' : 'login');

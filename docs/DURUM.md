@@ -977,3 +977,35 @@ Kapsanan kritik davranışlar:
 
 Kural motorunda `AND`/`OR` kısa devre yapmıyor; bu, eksik alan raporlamasını tamamlamak için
 bilinçli bir tercih (test bunu doğruluyor).
+
+---
+
+## 34. Parola sıfırlama, 2FA ve SSO — 1.13.0 (2026-11-09)
+
+| Konu | Uç | Not |
+|---|---|---|
+| Sıfırlama bağlantısı | `POST /api/users/:id/reset-link` | 30 dk, tek kullanım; diskte sha256 özeti |
+| Sıfırlama | `POST /api/auth/reset` | parola güncellenir, tüm oturumlar düşer |
+| 2FA kurulum | `POST /api/auth/2fa/setup` | `otpauth://` + manuel anahtar |
+| 2FA etkinleştir | `POST /api/auth/2fa/enable` | 10 kurtarma kodu (tek kullanımlık) |
+| 2FA giriş | `POST /api/auth/2fa/verify` | 5 dk meydan okuma, ±1 adım tolerans |
+| SSO başlat | `GET /api/auth/oidc/start` | keşif + imzalı state çerezi |
+| SSO dönüş | `GET /api/auth/oidc/callback` | JWKS ile RS256, iss/aud/exp/nonce |
+| SSO ayarı | `GET/PUT /api/settings/oidc` | yönetici; secret `secrets.json` içinde |
+
+### Doğrulama
+
+```
+2FA: setup 200 → enable 200 (10 kod) → login otp_required
+     yanlış kod 401 · doğru kod 200 · kurtarma kodu 200 · tekrar 401
+Sıfırlama: bağlantı 200 → parola 200 → aynı bağlantı 400
+SSO (yerel sahte sağlayıcı): start 302 → callback 302 /app/#genel → /api/state 200
+Birim testleri: 67 test, 67 pass
+```
+
+### Güvenlik notları
+
+- TOTP sırrı `web-data/users.json` içinde (0600); üretimde KMS/HSM önerilir
+- SSO `state` HMAC ile imzalı ve 10 dk ömürlü; `nonce` id_token içinde doğrulanıyor
+- `auto_provision` kapalıyken tanınmayan SSO kullanıcısı **reddedilir**
+- Yedek zip'i anahtar dosyalarını düz metin taşır: şifreli saklayın

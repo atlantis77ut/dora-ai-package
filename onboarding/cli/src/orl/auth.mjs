@@ -10,6 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { verifyTotp, hashCode } from './totp.mjs';
 
 const SCRYPT = { N: 16384, r: 8, p: 1 };
 const SESSION_TTL_S = 8 * 3600;
@@ -57,7 +58,15 @@ export function createAuthStore(dataDir) {
   }
 
   function publicUser(u) {
-    return { id: u.id, username: u.username, name: u.name, role: u.role, created_at: u.created_at, last_login: u.last_login ?? null };
+    return {
+      id: u.id,
+      username: u.username,
+      name: u.name,
+      role: u.role,
+      created_at: u.created_at,
+      last_login: u.last_login ?? null,
+      totp_enabled: Boolean(u.totp_enabled),
+    };
   }
 
   function audit(user, action, target = '') {
@@ -99,6 +108,10 @@ export function createAuthStore(dataDir) {
     const u = list.find((x) => x.username.toLowerCase() === String(username ?? '').toLowerCase());
     if (!u) return { ok: false, error: 'kullanıcı adı veya parola hatalı' };
     if (!verifyPassword(password, u.salt, u.hash)) return { ok: false, error: 'kullanıcı adı veya parola hatalı' };
+    if (u.totp_enabled) {
+      const challenge = sign({ uid: u.id, stage: 'otp', exp: Date.now() + 5 * 60 * 1000 });
+      return { ok: true, otpRequired: true, challenge, user: publicUser(u) };
+    }
     u.last_login = new Date().toISOString();
     saveUsers(list);
     const ttl = Math.max(1, Math.min(168, Number(hours) || 8)) * 3600 * 1000;
@@ -135,6 +148,84 @@ export function createAuthStore(dataDir) {
     if (!u) return null;
     const ttl = Math.max(1, Math.min(168, Number(hours) || 8)) * 3600 * 1000;
     return sign({ uid: u.id, role: u.role, pv: u.hash.slice(0, 8), exp: Date.now() + ttl });
+  }
+
+  /** Bekleyen TOTP sırrını yazar (henüz etkin değil). */
+  function setPendingTotp(uid, secret) {
+    const list = users();
+    const u = list.find((x) => x.id === uid);
+    if (!u) return { ok: false, error: 'kullanıcı yok' };
+    u.totp_pending = secret;
+    saveUsers(list);
+    return { ok: true };
+  }
+
+  /** Kodu doğrulayıp TOTP'yi etkinleştirir; kurtarma kodlarının özetlerini saklar. */
+  function enableTotp(uid, code, codes) {
+    const list = users();
+    const u = list.find((x) => x.id === uid);
+    if (!u || !u.totp_pending) return { ok: false, error: 'kurulum başlatılmamış' };
+    if (!verifyTotp(u.totp_pending, code)) return { ok: false, error: 'kod doğrulanamadı' };
+    u.totp_secret = u.totp_pending;
+    delete u.totp_pending;
+    u.totp_enabled = true;
+    u.recovery_hashes = (codes ?? []).map((c) => hashCode(c));
+    saveUsers(list);
+    audit(u.username, 'totp_enabled');
+    return { ok: true, user: publicUser(u) };
+  }
+
+  function disableTotp(uid) {
+    const list = users();
+    const u = list.find((x) => x.id === uid);
+    if (!u) return { ok: false, error: 'kullanıcı yok' };
+    delete u.totp_secret;
+    delete u.totp_pending;
+    u.totp_enabled = false;
+    u.recovery_hashes = [];
+    saveUsers(list);
+    audit(u.username, 'totp_disabled');
+    return { ok: true, user: publicUser(u) };
+  }
+
+  /** İki adımlı girişin ikinci aşaması: TOTP veya kurtarma kodu. */
+  function verifyOtp(challengeToken, code, hours = 8) {
+    let payload;
+    try {
+      const [body, sig] = challengeToken.split('.');
+      if (!body || !sig) return { ok: false, error: 'geçersiz meydan okuma' };
+      const expect = crypto.createHmac('sha256', secret()).update(body).digest('base64url');
+      if (sig.length !== expect.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expect))) {
+        return { ok: false, error: 'geçersiz meydan okuma' };
+      }
+      payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+    } catch {
+      return { ok: false, error: 'geçersiz meydan okuma' };
+    }
+    if (payload.stage !== 'otp' || payload.exp < Date.now()) return { ok: false, error: 'süre doldu, tekrar giriş yapın' };
+
+    const list = users();
+    const u = list.find((x) => x.id === payload.uid);
+    if (!u || !u.totp_enabled) return { ok: false, error: 'kullanıcı yok' };
+
+    const clean = String(code ?? '').trim().toUpperCase();
+    const recoveryIdx = (u.recovery_hashes ?? []).indexOf(hashCode(clean));
+    const okCode = verifyTotp(u.totp_secret, clean) || recoveryIdx >= 0;
+    if (!okCode) {
+      audit(u.username, 'otp_failed');
+      return { ok: false, error: 'kod hatalı' };
+    }
+    if (recoveryIdx >= 0) {
+      u.recovery_hashes.splice(recoveryIdx, 1);
+      audit(u.username, 'recovery_code_used');
+    }
+
+    u.last_login = new Date().toISOString();
+    saveUsers(list);
+    const ttl = Math.max(1, Math.min(168, Number(hours) || 8)) * 3600 * 1000;
+    const token = sign({ uid: u.id, role: u.role, pv: u.hash.slice(0, 8), exp: Date.now() + ttl });
+    audit(u.username, 'login');
+    return { ok: true, token, user: publicUser(u) };
   }
 
   function createUser({ username, password, name, role }) {
@@ -208,6 +299,10 @@ export function createAuthStore(dataDir) {
     removeUser,
     verify,
     refresh,
+    setPendingTotp,
+    enableTotp,
+    disableTotp,
+    verifyOtp,
     audit,
     listAudit,
   };

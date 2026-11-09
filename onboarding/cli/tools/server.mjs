@@ -20,6 +20,9 @@ import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 import { evaluatePhase } from '../src/orl/checks.mjs';
 import { verify as verifyLicense, loadPublicKey } from '../src/orl/license.mjs';
 import { buildBundle } from '../src/orl/evidence.mjs';
+import { createResetStore } from '../src/orl/reset.mjs';
+import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
+import { discover, buildAuthUrl, exchangeCode, fetchJwks, verifyIdToken, makeState, verifyState } from '../src/orl/oidc.mjs';
 import { parseInventoryCsv, INVENTORY_CSV_TEMPLATE } from '../src/orl/csv.mjs';
 import crypto from 'node:crypto';
 
@@ -28,6 +31,7 @@ const ROOT = path.resolve(HERE, '../../..');
 const DATA = path.join(ROOT, 'web-data');
 const SESSIONS = path.join(ROOT, '.dora-onboarding');
 const auth = createAuthStore(DATA);
+const resets = createResetStore(path.join(DATA, 'resets.json'), { readJson, writeJson });
 
 const { values } = parseArgs({
   options: {
@@ -261,6 +265,15 @@ function evidenceKeyPair() {
   return { priv, pub };
 }
 
+function stateSecret() {
+  const sec = loadSecrets();
+  if (!sec.state_secret) {
+    sec.state_secret = crypto.randomBytes(32).toString('hex');
+    writeJson(path.join(DATA, 'secrets.json'), sec);
+  }
+  return sec.state_secret;
+}
+
 function parseCookies(req) {
   const out = {};
   for (const part of String(req.headers.cookie ?? '').split(';')) {
@@ -349,6 +362,9 @@ async function api(req, res, urlPath, method) {
       return sendJson(res, 401, { ok: false, error: r.error });
     }
     loginAttempts.delete(String(body.username).toLowerCase());
+    if (r.otpRequired) {
+      return sendJson(res, 200, { ok: true, otp_required: true, challenge: r.challenge });
+    }
     setCookie(res, req, r.token, hours * 3600);
     return sendJson(res, 200, { ok: true, user: r.user });
   }
@@ -357,6 +373,110 @@ async function api(req, res, urlPath, method) {
     // CSRF: tarayıcı formundan gelen basit istekler özel başlık taşıyamaz
   if (method !== 'GET' && method !== 'HEAD' && !req.headers['x-dora-csrf']) {
     return sendJson(res, 403, { ok: false, error: 'CSRF başlığı yok (X-Dora-CSRF)' });
+  }
+
+  if (urlPath === '/api/auth/oidc/status' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    return sendJson(res, 200, { enabled: Boolean(cfg.enabled && cfg.issuer && cfg.client_id), issuer: cfg.issuer ?? null });
+  }
+
+  if (urlPath === '/api/auth/oidc/start' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    if (!cfg.enabled || !cfg.issuer || !cfg.client_id) {
+      return sendJson(res, 400, { ok: false, error: 'SSO yapılandırılmamış' });
+    }
+    try {
+      const disc = await discover(cfg.issuer);
+      const st = makeState(stateSecret());
+      const url = buildAuthUrl(cfg, { state: st.state, nonce: st.nonce, discovery: disc });
+      res.writeHead(302, {
+        Location: url,
+        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
+      });
+      return res.end();
+    } catch (e) {
+      return sendJson(res, 502, { ok: false, error: 'SSO başlatılamadı: ' + e.message });
+    }
+  }
+
+  if (urlPath === '/api/auth/oidc/callback' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    const url = new URL(req.url, 'http://localhost');
+    const code = url.searchParams.get('code') ?? '';
+    const state = url.searchParams.get('state') ?? '';
+    const cookieState = parseCookies(req).dora_oidc ?? '';
+    const fail = (msg) => {
+      res.writeHead(302, { Location: '/app/#giris=' + encodeURIComponent(msg) });
+      return res.end();
+    };
+    if (!cfg.enabled || !cfg.issuer) return fail('SSO kapalı');
+    if (!code || !state || state !== cookieState) return fail('durum doğrulanamadı');
+    try {
+      const disc = await discover(cfg.issuer);
+      const tokenCfg = { ...cfg, token_endpoint: disc.token_endpoint, jwks_uri: disc.jwks_uri };
+      const st = verifyState(stateSecret(), state);
+      if (!st) return fail('durum süresi dolmuş');
+      const tok = await exchangeCode(tokenCfg, code);
+      const jwks = await fetchJwks(tokenCfg);
+      const v = verifyIdToken(tok.id_token, jwks, {
+        issuer: cfg.issuer,
+        clientId: cfg.client_id,
+        nonce: st.nonce,
+      });
+      if (!v.valid) return fail('kimlik doğrulanamadı: ' + v.reason);
+      const claims = v.claims;
+      const email = String(claims.email ?? '').toLowerCase();
+      const list = auth.users();
+      let user = list.find((u) => u.username.toLowerCase() === email || u.username === claims.sub);
+      if (!user && cfg.auto_provision) {
+        const created = auth.createUser({
+          username: email || String(claims.sub).slice(0, 40),
+          password: crypto.randomBytes(24).toString('base64url'),
+          name: claims.name ?? email,
+          role: 'user',
+        });
+        if (!created.ok) return fail('kullanıcı oluşturulamadı');
+        user = created.user;
+      }
+      if (!user) return fail('bu hesap için yetki tanımlı değil');
+      const hours = Number(loadSettings().session_hours) || 8;
+      // SSO kullanıcısının parolası yok; doğrudan oturum token'ı üret
+      const token = auth.refresh(user, hours);
+      auth.audit(user.username, 'login_sso', cfg.issuer);
+      setCookie(res, req, token, hours * 3600);
+      res.writeHead(302, { Location: '/app/#genel' });
+      return res.end();
+    } catch (e) {
+      return fail('SSO hatası: ' + e.message);
+    }
+  }
+
+  if (urlPath === '/api/auth/reset' && method === 'POST') {
+    const body = await readBody(req);
+    const r = resets.consume(body.token);
+    if (!r.ok) {
+      auth.audit('-', 'reset_failed');
+      return sendJson(res, 400, { ok: false, error: r.error });
+    }
+    const upd = auth.updateUser(r.uid, { password: body.password });
+    if (!upd.ok) return sendJson(res, 400, { ok: false, error: upd.error });
+    auth.audit(upd.user.username, 'reset_completed', 'tek kullanımlık bağlantı');
+    return sendJson(res, 200, { ok: true, username: upd.user.username });
+  }
+
+  if (urlPath === '/api/auth/2fa/verify' && method === 'POST') {
+    const body = await readBody(req);
+    if (throttled('otp:' + String(body.challenge ?? '').slice(0, 16))) {
+      return sendJson(res, 429, { ok: false, error: 'çok fazla deneme — 1 dakika sonra tekrar deneyin' });
+    }
+    const hours = Number(loadSettings().session_hours) || 8;
+    const r = auth.verifyOtp(String(body.challenge ?? ''), body.code, hours);
+    if (!r.ok) {
+      recordFailure('otp:' + String(body.challenge ?? '').slice(0, 16));
+      return sendJson(res, 401, { ok: false, error: r.error });
+    }
+    setCookie(res, req, r.token, hours * 3600);
+    return sendJson(res, 200, { ok: true, user: r.user });
   }
 
   const me = getUser(req);
@@ -370,6 +490,110 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 403, { ok: false, error: 'CSRF başlığı yok (X-Dora-CSRF)' });
   }
 
+  if (urlPath === '/api/auth/oidc/status' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    return sendJson(res, 200, { enabled: Boolean(cfg.enabled && cfg.issuer && cfg.client_id), issuer: cfg.issuer ?? null });
+  }
+
+  if (urlPath === '/api/auth/oidc/start' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    if (!cfg.enabled || !cfg.issuer || !cfg.client_id) {
+      return sendJson(res, 400, { ok: false, error: 'SSO yapılandırılmamış' });
+    }
+    try {
+      const disc = await discover(cfg.issuer);
+      const st = makeState(stateSecret());
+      const url = buildAuthUrl(cfg, { state: st.state, nonce: st.nonce, discovery: disc });
+      res.writeHead(302, {
+        Location: url,
+        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
+      });
+      return res.end();
+    } catch (e) {
+      return sendJson(res, 502, { ok: false, error: 'SSO başlatılamadı: ' + e.message });
+    }
+  }
+
+  if (urlPath === '/api/auth/oidc/callback' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    const url = new URL(req.url, 'http://localhost');
+    const code = url.searchParams.get('code') ?? '';
+    const state = url.searchParams.get('state') ?? '';
+    const cookieState = parseCookies(req).dora_oidc ?? '';
+    const fail = (msg) => {
+      res.writeHead(302, { Location: '/app/#giris=' + encodeURIComponent(msg) });
+      return res.end();
+    };
+    if (!cfg.enabled || !cfg.issuer) return fail('SSO kapalı');
+    if (!code || !state || state !== cookieState) return fail('durum doğrulanamadı');
+    try {
+      const disc = await discover(cfg.issuer);
+      const tokenCfg = { ...cfg, token_endpoint: disc.token_endpoint, jwks_uri: disc.jwks_uri };
+      const st = verifyState(stateSecret(), state);
+      if (!st) return fail('durum süresi dolmuş');
+      const tok = await exchangeCode(tokenCfg, code);
+      const jwks = await fetchJwks(tokenCfg);
+      const v = verifyIdToken(tok.id_token, jwks, {
+        issuer: cfg.issuer,
+        clientId: cfg.client_id,
+        nonce: st.nonce,
+      });
+      if (!v.valid) return fail('kimlik doğrulanamadı: ' + v.reason);
+      const claims = v.claims;
+      const email = String(claims.email ?? '').toLowerCase();
+      const list = auth.users();
+      let user = list.find((u) => u.username.toLowerCase() === email || u.username === claims.sub);
+      if (!user && cfg.auto_provision) {
+        const created = auth.createUser({
+          username: email || String(claims.sub).slice(0, 40),
+          password: crypto.randomBytes(24).toString('base64url'),
+          name: claims.name ?? email,
+          role: 'user',
+        });
+        if (!created.ok) return fail('kullanıcı oluşturulamadı');
+        user = created.user;
+      }
+      if (!user) return fail('bu hesap için yetki tanımlı değil');
+      const hours = Number(loadSettings().session_hours) || 8;
+      // SSO kullanıcısının parolası yok; doğrudan oturum token'ı üret
+      const token = auth.refresh(user, hours);
+      auth.audit(user.username, 'login_sso', cfg.issuer);
+      setCookie(res, req, token, hours * 3600);
+      res.writeHead(302, { Location: '/app/#genel' });
+      return res.end();
+    } catch (e) {
+      return fail('SSO hatası: ' + e.message);
+    }
+  }
+
+  if (urlPath === '/api/auth/reset' && method === 'POST') {
+    const body = await readBody(req);
+    const r = resets.consume(body.token);
+    if (!r.ok) {
+      auth.audit('-', 'reset_failed');
+      return sendJson(res, 400, { ok: false, error: r.error });
+    }
+    const upd = auth.updateUser(r.uid, { password: body.password });
+    if (!upd.ok) return sendJson(res, 400, { ok: false, error: upd.error });
+    auth.audit(upd.user.username, 'reset_completed', 'tek kullanımlık bağlantı');
+    return sendJson(res, 200, { ok: true, username: upd.user.username });
+  }
+
+  if (urlPath === '/api/auth/2fa/verify' && method === 'POST') {
+    const body = await readBody(req);
+    if (throttled('otp:' + String(body.challenge ?? '').slice(0, 16))) {
+      return sendJson(res, 429, { ok: false, error: 'çok fazla deneme — 1 dakika sonra tekrar deneyin' });
+    }
+    const hours = Number(loadSettings().session_hours) || 8;
+    const r = auth.verifyOtp(String(body.challenge ?? ''), body.code, hours);
+    if (!r.ok) {
+      recordFailure('otp:' + String(body.challenge ?? '').slice(0, 16));
+      return sendJson(res, 401, { ok: false, error: r.error });
+    }
+    setCookie(res, req, r.token, hours * 3600);
+    return sendJson(res, 200, { ok: true, user: r.user });
+  }
+
   const me = getUser(req);
 
   if (urlPath === '/api/auth/password' && method === 'POST') {
@@ -380,6 +604,36 @@ async function api(req, res, urlPath, method) {
     const upd = auth.updateUser(me.user.id, { password: body.password });
     if (!upd.ok) return sendJson(res, 400, { ok: false, error: upd.error });
     auth.audit(me.user.username, 'password_change', 'kendi hesabı');
+    return sendJson(res, 200, { ok: true });
+  }
+
+  if (urlPath === '/api/auth/2fa/setup' && method === 'POST') {
+    if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
+    const secret = generateSecret();
+    const r = auth.setPendingTotp(me.user.id, secret);
+    if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+    return sendJson(res, 200, {
+      ok: true,
+      secret,
+      otpauth: otpauthUrl('DORA Ajan Paketi', me.user.username, secret),
+    });
+  }
+
+  if (urlPath === '/api/auth/2fa/enable' && method === 'POST') {
+    if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
+    const body = await readBody(req);
+    const codes = generateRecoveryCodes();
+    const r = auth.enableTotp(me.user.id, body.code, codes);
+    if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+    return sendJson(res, 200, { ok: true, recovery_codes: codes });
+  }
+
+  if (urlPath === '/api/auth/2fa/disable' && method === 'POST') {
+    if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
+    const body = await readBody(req);
+    const check = auth.login(me.user.username, body.password);
+    if (!check.ok) return sendJson(res, 400, { ok: false, error: 'parola hatalı' });
+    auth.disableTotp(me.user.id);
     return sendJson(res, 200, { ok: true });
   }
 
@@ -411,6 +665,22 @@ async function api(req, res, urlPath, method) {
       auth.audit(me.user.username, 'user_create', body.username);
       return sendJson(res, 201, { ok: true, user: r.user });
     }
+    const rl = urlPath.match(/^\/api\/users\/([\w-]+)\/reset-link$/);
+    if (rl && method === 'POST') {
+      const list = auth.users();
+      const target = list.find((u) => u.id === rl[1]);
+      if (!target) return sendJson(res, 404, { ok: false, error: 'kullanıcı yok' });
+      const r = resets.issue(target.id);
+      auth.audit(me.user.username, 'reset_link', target.username);
+      return sendJson(res, 200, {
+        ok: true,
+        username: target.username,
+        token: r.token,
+        url: `/app/#reset=${r.token}`,
+        expires_at: r.expires_at,
+      });
+    }
+
     const um = urlPath.match(/^\/api\/users\/([\w-]+)$/);
     if (um && method === 'PATCH') {
       const body = await readBody(req);
@@ -426,6 +696,18 @@ async function api(req, res, urlPath, method) {
       return sendJson(res, 200, { ok: true });
     }
     if (urlPath === '/api/audit' && method === 'GET') return sendJson(res, 200, { entries: auth.listAudit(150) });
+    if (urlPath === '/api/audit.csv' && method === 'GET') {
+      const rows = auth.listAudit(1000);
+      const csv = ['zaman,kullanici,islem,hedef']
+        .concat(rows.map((e) => [e.at, e.user, e.action, e.target ?? ''].map((x) => `"${String(x).replace(/"/g, '""')}"`).join(',')))
+        .join('\n');
+      res.writeHead(200, {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': 'attachment; filename="islem-kaydi.csv"',
+        'Cache-Control': 'no-store',
+      });
+      return res.end('\uFEFF' + csv + '\n');
+    }
     return sendJson(res, 405, { ok: false, error: 'desteklenmeyen metot' });
   }
 
@@ -505,6 +787,40 @@ async function api(req, res, urlPath, method) {
       'Cache-Control': 'no-store',
     });
     return res.end('\uFEFF' + INVENTORY_CSV_TEMPLATE);
+  }
+
+  if (urlPath === '/api/settings/oidc' && method === 'GET') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const cfg = loadSettings().oidc ?? {};
+    return sendJson(res, 200, { ...cfg, client_secret_set: Boolean(loadSecrets().oidc_client_secret) });
+  }
+
+  if (urlPath === '/api/settings/oidc' && method === 'PUT') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const body = await readBody(req);
+    const s = loadSettings();
+    s.oidc = {
+      enabled: Boolean(body.enabled),
+      issuer: String(body.issuer ?? '').slice(0, 300),
+      client_id: String(body.client_id ?? '').slice(0, 200),
+      redirect_uri: String(body.redirect_uri ?? '').slice(0, 300),
+      scopes: String(body.scopes ?? 'openid email profile').slice(0, 120),
+      auto_provision: Boolean(body.auto_provision),
+    };
+    saveSettings(s);
+    if (typeof body.client_secret === 'string' && body.client_secret.trim()) {
+      const sec = loadSecrets();
+      sec.oidc_client_secret = body.client_secret.trim();
+      if (!sec.state_secret) sec.state_secret = crypto.randomBytes(32).toString('hex');
+      writeJson(path.join(DATA, 'secrets.json'), sec);
+    }
+    const sec2 = loadSecrets();
+    if (!sec2.state_secret) {
+      sec2.state_secret = crypto.randomBytes(32).toString('hex');
+      writeJson(path.join(DATA, 'secrets.json'), sec2);
+    }
+    auth.audit(me.user.username, 'oidc_update', s.oidc.issuer);
+    return sendJson(res, 200, { ok: true, oidc: s.oidc });
   }
 
   // kurum profili
@@ -990,6 +1306,110 @@ const server = http.createServer(async (req, res) => {
       // CSRF: tarayıcı formundan gelen basit istekler özel başlık taşıyamaz
   if (method !== 'GET' && method !== 'HEAD' && !req.headers['x-dora-csrf']) {
     return sendJson(res, 403, { ok: false, error: 'CSRF başlığı yok (X-Dora-CSRF)' });
+  }
+
+  if (urlPath === '/api/auth/oidc/status' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    return sendJson(res, 200, { enabled: Boolean(cfg.enabled && cfg.issuer && cfg.client_id), issuer: cfg.issuer ?? null });
+  }
+
+  if (urlPath === '/api/auth/oidc/start' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    if (!cfg.enabled || !cfg.issuer || !cfg.client_id) {
+      return sendJson(res, 400, { ok: false, error: 'SSO yapılandırılmamış' });
+    }
+    try {
+      const disc = await discover(cfg.issuer);
+      const st = makeState(stateSecret());
+      const url = buildAuthUrl(cfg, { state: st.state, nonce: st.nonce, discovery: disc });
+      res.writeHead(302, {
+        Location: url,
+        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
+      });
+      return res.end();
+    } catch (e) {
+      return sendJson(res, 502, { ok: false, error: 'SSO başlatılamadı: ' + e.message });
+    }
+  }
+
+  if (urlPath === '/api/auth/oidc/callback' && method === 'GET') {
+    const cfg = loadSettings().oidc ?? {};
+    const url = new URL(req.url, 'http://localhost');
+    const code = url.searchParams.get('code') ?? '';
+    const state = url.searchParams.get('state') ?? '';
+    const cookieState = parseCookies(req).dora_oidc ?? '';
+    const fail = (msg) => {
+      res.writeHead(302, { Location: '/app/#giris=' + encodeURIComponent(msg) });
+      return res.end();
+    };
+    if (!cfg.enabled || !cfg.issuer) return fail('SSO kapalı');
+    if (!code || !state || state !== cookieState) return fail('durum doğrulanamadı');
+    try {
+      const disc = await discover(cfg.issuer);
+      const tokenCfg = { ...cfg, token_endpoint: disc.token_endpoint, jwks_uri: disc.jwks_uri };
+      const st = verifyState(stateSecret(), state);
+      if (!st) return fail('durum süresi dolmuş');
+      const tok = await exchangeCode(tokenCfg, code);
+      const jwks = await fetchJwks(tokenCfg);
+      const v = verifyIdToken(tok.id_token, jwks, {
+        issuer: cfg.issuer,
+        clientId: cfg.client_id,
+        nonce: st.nonce,
+      });
+      if (!v.valid) return fail('kimlik doğrulanamadı: ' + v.reason);
+      const claims = v.claims;
+      const email = String(claims.email ?? '').toLowerCase();
+      const list = auth.users();
+      let user = list.find((u) => u.username.toLowerCase() === email || u.username === claims.sub);
+      if (!user && cfg.auto_provision) {
+        const created = auth.createUser({
+          username: email || String(claims.sub).slice(0, 40),
+          password: crypto.randomBytes(24).toString('base64url'),
+          name: claims.name ?? email,
+          role: 'user',
+        });
+        if (!created.ok) return fail('kullanıcı oluşturulamadı');
+        user = created.user;
+      }
+      if (!user) return fail('bu hesap için yetki tanımlı değil');
+      const hours = Number(loadSettings().session_hours) || 8;
+      // SSO kullanıcısının parolası yok; doğrudan oturum token'ı üret
+      const token = auth.refresh(user, hours);
+      auth.audit(user.username, 'login_sso', cfg.issuer);
+      setCookie(res, req, token, hours * 3600);
+      res.writeHead(302, { Location: '/app/#genel' });
+      return res.end();
+    } catch (e) {
+      return fail('SSO hatası: ' + e.message);
+    }
+  }
+
+  if (urlPath === '/api/auth/reset' && method === 'POST') {
+    const body = await readBody(req);
+    const r = resets.consume(body.token);
+    if (!r.ok) {
+      auth.audit('-', 'reset_failed');
+      return sendJson(res, 400, { ok: false, error: r.error });
+    }
+    const upd = auth.updateUser(r.uid, { password: body.password });
+    if (!upd.ok) return sendJson(res, 400, { ok: false, error: upd.error });
+    auth.audit(upd.user.username, 'reset_completed', 'tek kullanımlık bağlantı');
+    return sendJson(res, 200, { ok: true, username: upd.user.username });
+  }
+
+  if (urlPath === '/api/auth/2fa/verify' && method === 'POST') {
+    const body = await readBody(req);
+    if (throttled('otp:' + String(body.challenge ?? '').slice(0, 16))) {
+      return sendJson(res, 429, { ok: false, error: 'çok fazla deneme — 1 dakika sonra tekrar deneyin' });
+    }
+    const hours = Number(loadSettings().session_hours) || 8;
+    const r = auth.verifyOtp(String(body.challenge ?? ''), body.code, hours);
+    if (!r.ok) {
+      recordFailure('otp:' + String(body.challenge ?? '').slice(0, 16));
+      return sendJson(res, 401, { ok: false, error: r.error });
+    }
+    setCookie(res, req, r.token, hours * 3600);
+    return sendJson(res, 200, { ok: true, user: r.user });
   }
 
   const me = getUser(req);
