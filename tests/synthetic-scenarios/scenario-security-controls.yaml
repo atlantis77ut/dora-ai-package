@@ -65,6 +65,10 @@ then:
       control: CTL-RSK-007
       deadline_days: 1
       fail_if: "dormant_accounts_closed < 12 veya kayıt yok"
+      check:
+        file: access-review-record.json
+        path: dormant_accounts_closed
+        eq: 12
 
     - id: A2
       statement: "Onaysız açılan ayrıcalıklı hesap dört-göz onayına düşer"
@@ -73,6 +77,10 @@ then:
       control: CTL-RSK-007
       deadline_days: 1
       fail_if: "hesap aktif kaldı veya onay kaydı sonradan üretildi"
+      check:
+        file: access-review-record.json
+        path: revoked_count
+        gte: 1
 
     - id: A3
       statement: "Kritik varlıkta eksik in-transit şifreleme için 30 günlük plan açılır"
@@ -81,6 +89,10 @@ then:
       control: CTL-RSK-008
       deadline_days: 30
       fail_if: "plan yok veya süre 30 günü aşıyor"
+      check:
+        all_of:
+          - { file: crypto-inventory.yaml, path: assets.AST-001.in_transit, eq: false }
+          - { file: crypto-inventory.yaml, path: assets.AST-001.remediation_due_days, lte: 30 }
 
     - id: A4
       statement: "Default-allow zone bulgusu segmentasyon kaydına işlenir ve kapatılır"
@@ -89,6 +101,10 @@ then:
       control: CTL-RSK-009
       deadline_days: 30
       fail_if: "default_deny hâlâ false veya risk kaydı yok"
+      check:
+        file: segmentation-evidence.json
+        path: zones.DMZ-01.default_deny
+        eq: true
 
     - id: A5
       statement: "CVSS 9.4 zafiyet 30 gün içinde kapatılır veya gerekçeli istisna alınır"
@@ -97,6 +113,10 @@ then:
       control: CTL-RSK-010
       deadline_days: 30
       fail_if: "30 günü aşmış, istisnasız, açık kayıt"
+      check:
+        any_of:
+          - { file: vulnerability-closure.json, path: closed_at, exists: true }
+          - { file: vulnerability-closure.json, path: exception_ref, exists: true }
 
     - id: A6
       statement: "Yetkisiz erişim denemesi olay olarak açılır (PRC-INC-01)"
@@ -105,6 +125,10 @@ then:
       control: CTL-INC-001
       deadline_minutes: 60
       fail_if: "olay kaydı yok veya sınıflandırma boş"
+      check:
+        file: incident-record.json
+        path: source
+        eq: siem
 
 negative_tests:
   - id: N1

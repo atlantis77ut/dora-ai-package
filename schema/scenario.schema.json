@@ -182,6 +182,9 @@
               "deadline_hours": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "check": {
+                "$ref": "#/$defs/Check"
               }
             }
           }
@@ -236,6 +239,47 @@
       "type": "array",
       "items": {
         "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "Check": {
+      "type": "object",
+      "description": "Deterministik assertion kontrolü: dosya + alan + işlem",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "exists": {
+          "type": "boolean"
+        },
+        "eq": {},
+        "ne": {},
+        "gte": {
+          "type": "number"
+        },
+        "lte": {
+          "type": "number"
+        },
+        "truthy": {
+          "type": "boolean"
+        },
+        "contains": {},
+        "all_of": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Check"
+          }
+        },
+        "any_of": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Check"
+          }
+        }
       }
     }
   }

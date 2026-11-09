@@ -5,6 +5,31 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.1.0] — 2026-11-09
+
+### Eklendi
+
+**Senaryo çalıştırıcısı**
+- `dora-onboard scenario --session <id> --file <yaml> | --all`: assertion'ları oturum artefaktları
+  üzerinde deterministik olarak değerlendirir
+- `src/corf/scenario.mjs`: `check` DSL — exists, eq, ne, gte, lte, truthy, contains, `all_of`, `any_of`
+- Sonuç `scenario-<id>-results.json` olarak oturuma yazılır ve kanıt paketine girer
+- `SCN-04`'ün 6 assertion'ı check ile bağlandı (erişim, şifreleme, segmentasyon, zafiyet, olay)
+- `tools/demo-scenario.mjs` + CI adımı
+- `docs/SENARYO-CALISTIRICI.md`
+
+### Değişti
+
+- `scenario.schema.json`: `check` bloğu şemaya eklendi (katı modda geçerli)
+- Sürüm 1.1.0
+
+### Notlar
+
+- Kalan 21 assertion `check` tanımsız olduğu için **manuel** sayılıyor; "tümü geçti" ifadesi
+  yalnızca çalıştırılabilir assertion'lar için geçerlidir.
+
+---
+
 ## [1.0.0] — 2026-11-08
 
 ### Eklendi

@@ -17,6 +17,7 @@ yapay zeka ajanları ile otomatikleştiren modüler paket.
 - Yönetim kurulu MI paketi (aylık tek sayfa) ve 9 kalemlik düzenleyici takvim
 - Katalog doğrulaması: 14 dosya 8 JSON Schema ile denetlenir (CI kapısı)
 - Dış veri alımı: dosya bırakma sözleşmesi (`ingest`), sha256 alım kaydı
+- Senaryo çalıştırıcısı: `check` DSL ile assertion'lar artefaktlar üzerinde koşar (SCN-04 pilot)
 - Lisans anahtarı (Ed25519, çevrimdışı doğrulama)
 
 ## Hızlı Başlangıç
@@ -38,6 +39,7 @@ node bin/dora-onboard.mjs notify --session ob-2026-xxxxx --phase initial   # bil
 node bin/dora-onboard.mjs mi --session ob-2026-xxxxx --period 2026-11      # MI paketi
 node bin/dora-onboard.mjs calendar --next 90 --anchors data/calendar-anchors.example.yaml
 node bin/dora-onboard.mjs ingest --session ob-2026-xxxxx --from ./drop   # dış veri alımı
+node bin/dora-onboard.mjs scenario --session ob-2026-xxxxx --all          # senaryoları koş
 ```
 
 Lisans anahtarı olmadan **30 gün deneme modu** çalışır (C1-C5); üretime geçiş (C6) ticari
@@ -124,7 +126,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **1.0.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.1.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

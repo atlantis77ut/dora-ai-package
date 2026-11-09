@@ -49,3 +49,7 @@ jobs:
       - name: Dış veri alımı ve takvim (0.8)
         working-directory: onboarding/cli
         run: node tools/demo-ingest.mjs
+
+      - name: Senaryo çalıştırıcısı (1.1)
+        working-directory: onboarding/cli
+        run: node tools/demo-scenario.mjs

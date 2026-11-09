@@ -1,6 +1,6 @@
 # DORA AI Ajan Paketi — Uygulama Raporu
 
-**Sürüm:** 1.0.0 · **Tarih:** 8 Kasım 2026 · **Sahip:** ustauretim
+**Sürüm:** 1.1.0 · **Tarih:** 9 Kasım 2026 · **Sahip:** ustauretim
 **Depo:** https://github.com/atlantis77ut/dora-ai-package · **Canlı dashboard:** https://atlantis77ut.github.io/dora-ai-package/
 
 ---
@@ -218,7 +218,7 @@ dashboard aynı zamanda bir **bütünlük testidir**. PNG kopyası Pillow ile ü
 
 ## 8. Doğrulama ve kalite
 
-Yedi kontrol her push'ta GitHub Actions'ta çalışır (Ubuntu + Windows × Node 18/20/22 matrisi):
+Sekiz kontrol her push'ta GitHub Actions'ta çalışır (Ubuntu + Windows × Node 18/20/22 matrisi):
 
 | Kontrol | Ne yapar |
 |---|---|
@@ -229,6 +229,7 @@ Yedi kontrol her push'ta GitHub Actions'ta çalışır (Ubuntu + Windows × Node
 | `demo.mjs` | Altı fazı örnek veriyle uçtan uca çalıştırır |
 | `demo-export.mjs` | Kanıt paketi + doğrulama + kurcalama testi + üç bildirim formu + MI |
 | `demo-ingest.mjs` | Dış veri alımı, ret davranışı, sha256 kaydı, takvim tarihleri |
+| `demo-scenario.mjs` | Senaryo çalıştırıcısı: SCN-04'ün 6 assertion'ı, bozuk veride fail |
 
 Ek olarak `build-coverage-summary.mjs` kapsam tablosunu (`docs/KAPSAM-OZETI.md`) üretir.
 
@@ -305,7 +306,8 @@ Dürüst bir rapor, sınırları da yazmalı:
    uygulama adımıdır.
 6. **Kanıt paketi şifrelenmez ve PKI yok.** Bütünlük (hash zinciri + imza) kanıtlanır; gizlilik
    ve anahtar sahipliği kanıtlanmaz. Bildirim formu resmi XBRL taksonomisine bağlanmaz.
-7. **Yönetim kurulu MI paketi tanımlı değil.**
+7. **Senaryo çalıştırıcısı yalnızca `check` tanımlı assertion'ları koşar.** Bugün 27 assertion'ın
+   6'sı çalıştırılabilir; kalanı manuel. SLA/zaman ölçümü ayrı bir iş.
 
 ---
 
@@ -313,10 +315,13 @@ Dürüst bir rapor, sınırları da yazmalı:
 
 | Sürüm | İş |
 |---|---|
-| 0.5 (ertelendi) | Yönetim kurulu MI paketi + düzenleyici takvim + RoI yıllık sunum formatı |
-| ~~0.6~~ | **Tamamlandı** — kanıt paketi (export/verify) + bildirim formu (notify) |
-| 0.7 | Splunk / ServiceNow / Archer konnektörleri, GOLDENHORN adaptörü |
-| 1.0 | Deterministik kural motoru (CEL/Rego), üretim sertleştirmesi |
+| 0.5 | **Tamamlandı (0.7.0)** — MI paketi + düzenleyici takvim |
+| 0.6 | **Tamamlandı** — kanıt paketi (export/verify) + bildirim formu (notify) |
+| 0.8–0.13 | **Tamamlandı** — konnektör sözleşmesi, şema doğrulaması, timeline denetimi |
+| 1.0 | **Tamamlandı** — katı doğrulama, CI matrisi, üretim kontrol listesi |
+| 1.1 | **Tamamlandı** — senaryo çalıştırıcısı (SCN-04 pilot) |
+| 1.2 | Kalan 21 assertion'a check yazımı; SLA/zaman ölçümü |
+| 1.3 | Deterministik kural motoru (CEL/Rego) |
 
 ---
 

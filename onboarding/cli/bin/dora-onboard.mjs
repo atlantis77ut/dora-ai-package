@@ -17,6 +17,7 @@ import { buildNotification, PHASES as NOTIFY_PHASES } from '../src/corf/notify.m
 import { buildMi, loadCalendar, loadAnchors, upcoming, fmtDate } from '../src/corf/mi.mjs';
 import { ingest } from '../src/corf/ingest.mjs';
 import { validateCatalogs } from '../src/corf/catalog.mjs';
+import { runScenario } from '../src/corf/scenario.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEV_KEY = path.resolve(HERE, '../../license/dev-private.pem');
@@ -71,6 +72,11 @@ ${color.bold}Komutlar${color.reset}
   verify                      Kanıt paketini doğrula
     --bundle <dosya.zip>         Paket yolu (zorunlu)
     --pubkey <public.pem>        Açık anahtar (varsayılan: kurulumun açık anahtarı)
+
+  scenario                    Kabul senaryosunu oturum artefaktları üzerinde çalıştır
+    --session <id>               Oturum kimliği (zorunlu)
+    --file <yaml>                Senaryo dosyası
+    --all                        Tüm senaryoları çalıştır
 
   validate                    Katalog verisini şemalara göre doğrula
     --json                       Makine okunur çıktı
@@ -169,6 +175,8 @@ const { values: opts } = parseArgs({
     lenient: { type: 'boolean' },
     json: { type: 'boolean' },
     strict: { type: 'boolean' },
+    file: { type: 'string' },
+    all: { type: 'boolean' },
   },
   allowPositionals: true,
 });
@@ -414,6 +422,42 @@ try {
     line(`\n${color.red}FORM EKSİK${color.reset} — zorunlu alanlar: ${r.payload.missing.join(', ')}`);
     line(`${color.dim}Eksik alanlar doldurulmadan bildirim gönderilmemeli.${color.reset}`);
     process.exit(2);
+  }
+
+  if (cmd === 'scenario') {
+    const session = requireSession(opts);
+    const dir = store.sessionDir(session.session_id);
+    const scenariosDir = path.resolve(HERE, '../../../tests/synthetic-scenarios');
+    const files = opts.all
+      ? fs.readdirSync(scenariosDir).filter((f) => f.endsWith('.yaml')).sort().map((f) => path.join(scenariosDir, f))
+      : opts.file
+        ? [opts.file]
+        : [];
+    if (!files.length) {
+      line(`${color.red}--file <yaml> veya --all gerekli${color.reset}`);
+      process.exit(1);
+    }
+
+    let totalFail = 0;
+    let totalManual = 0;
+    for (const f of files) {
+      const { payload } = runScenario({ file: f, dir });
+      line(`${color.bold}${payload.scenario}${color.reset} ${payload.name} ${color.dim}(${payload.file})${color.reset}`);
+      for (const r of payload.results) {
+        const mark = r.status === 'pass' ? color.green + '✔' + color.reset : r.status === 'fail' ? color.red + '✘' + color.reset : color.yellow + '–' + color.reset;
+        line(`  ${mark} ${r.id.padEnd(3)} ${r.status.padEnd(6)} ${color.dim}${r.detail}${color.reset}`);
+      }
+      line(`  ${payload.passed}/${payload.total} geçti${payload.manual ? ', ' + payload.manual + ' manuel' : ''}\n`);
+      totalFail += payload.failed;
+      totalManual += payload.manual;
+    }
+
+    if (totalFail) {
+      line(`${color.red}${totalFail} assertion başarısız${color.reset} — sonuç dosyaları oturuma yazıldı`);
+      process.exit(2);
+    }
+    line(`${color.green}✓ Tüm çalıştırılabilir assertion'lar geçti${color.reset}${totalManual ? ' (' + totalManual + ' manuel)' : ''}`);
+    process.exit(0);
   }
 
   if (cmd === 'validate') {
