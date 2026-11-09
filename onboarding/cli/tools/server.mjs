@@ -19,6 +19,7 @@ import { parse } from '../src/orl/yaml.mjs';
 import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 import { evaluatePhase } from '../src/orl/checks.mjs';
 import { verify as verifyLicense, loadPublicKey } from '../src/orl/license.mjs';
+import { fetchSiemEvents } from '../src/orl/connectors/siem.mjs';
 import { buildBundle } from '../src/orl/evidence.mjs';
 import { createResetStore } from '../src/orl/reset.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
@@ -899,7 +900,7 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { sessions: listSessions() });
   }
 
-  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export)(?:\/([\w.-]+))?)?$/);
+  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem)(?:\/([\w.-]+))?)?$/);
   if (sessMatch) {
     const id = sessMatch[1];
     const kind = sessMatch[2];
@@ -963,6 +964,35 @@ async function api(req, res, urlPath, method) {
         'Cache-Control': 'no-store',
       });
       return res.end(buf);
+    }
+
+    if (kind === 'siem' && artifact === 'fetch' && method === 'POST') {
+      const body = await readBody(req);
+      const cfg = loadSettings().integrations.find((i) => i.id === 'siem') ?? {};
+      const token = loadSecrets().siem;
+      if (!cfg.endpoint) return sendJson(res, 400, { ok: false, error: 'önce Entegrasyonlar sayfasında SIEM adresini kaydedin' });
+      try {
+        const result = await fetchSiemEvents(
+          { vendor: cfg.vendor, endpoint: cfg.endpoint, token },
+          {
+            limit: body.limit ?? 100,
+            sinceMinutes: body.since_minutes ?? 1440,
+            query: body.query,
+          },
+        );
+        writeJson(path.join(dir, 'siem-events.json'), result);
+        auth.audit(me.user.username, 'siem_fetch', `${result.vendor} ${result.count} olay`);
+        return sendJson(res, 200, { ok: true, ...result });
+      } catch (e) {
+        auth.audit(me.user.username, 'siem_fetch_failed', e.message);
+        return sendJson(res, 502, { ok: false, error: e.message });
+      }
+    }
+
+    if (kind === 'siem' && artifact === 'events' && method === 'GET') {
+      const stored = readJson(path.join(dir, 'siem-events.json'), null);
+      if (!stored) return sendJson(res, 404, { ok: false, error: 'henüz olay çekilmedi' });
+      return sendJson(res, 200, { ok: true, ...stored });
     }
 
     if (kind === 'mapping' && method === 'POST') {

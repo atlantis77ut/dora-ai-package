@@ -144,6 +144,7 @@ node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 - **Yönetici**: teknik panel (`/dashboard/`), kanıtlar, kullanıcı yönetimi, işlem kaydı,
   parola sıfırlama bağlantısı, oturum süresi, SSO ayarları
 - **Güvenlik**: iki adımlı doğrulama (TOTP) + kurtarma kodları, kurumsal giriş (OIDC)
+- **SIEM**: Splunk / Elastic / Sentinel / QRadar / generic — gerçek olay çekme
 - **Yedekleme**: `node onboarding/cli/tools/backup.mjs` → `web-data/` + oturumlar tek zip
 - **Kullanıcı**: Durum · Kurum bilgileri · Sistem bağlantıları · Varlıklarım · Sorumlular · Belgeler
 

@@ -1282,6 +1282,82 @@ async function loadStep6Values() {
   } catch { /* yok */ }
 }
 
+
+function viewSiem() {
+  const s = state.activeSession;
+  if (!s) return noSession('SIEM olaylarını görmek için kurulum oturumu gerekir.');
+  const siem = (state.settings.integrations || []).find((i) => i.id === 'siem');
+  return `
+    <div class="card">
+      <h2>SIEM olayları</h2>
+      <p class="sub">Bağlantı: ${siem?.vendor ? esc(siem.vendor) : 'ürün seçilmedi'} · ${siem?.endpoint ? esc(siem.endpoint) : 'adres yok'}</p>
+      <div class="grid k3">
+        <div><label class="sub">Sorgu (ürün dilinde, isteğe bağlı)</label><input id="siemQuery" placeholder="index=security severity=high"></div>
+        <div><label class="sub">Son kaç dakika</label><input id="siemSince" type="number" value="1440" min="5"></div>
+        <div><label class="sub">En fazla olay</label><input id="siemLimit" type="number" value="100" min="1" max="500"></div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="siemFetch">Olayları çek</button>
+        <a class="ghost" href="#entegrasyonlar" style="padding:8px 14px">Bağlantıyı düzenle</a>
+      </div>
+      <div id="siemResult"></div>
+    </div>`;
+}
+
+function bindSiem() {
+  const sid = state.activeSession?.session_id;
+  $('#siemFetch')?.addEventListener('click', async () => {
+    const btn = $('#siemFetch');
+    btn.disabled = true;
+    btn.textContent = 'çekiliyor…';
+    try {
+      const r = await api(`/api/sessions/${sid}/siem/fetch`, {
+        method: 'POST',
+        body: JSON.stringify({
+          query: $('#siemQuery').value.trim() || undefined,
+          since_minutes: Number($('#siemSince').value) || 1440,
+          limit: Number($('#siemLimit').value) || 100,
+        }),
+      });
+      toast(`${r.count} olay çekildi (${r.vendor})`, 'ok');
+      renderSiemTable(r);
+    } catch (e) {
+      toast('Çekilemedi: ' + e.message, 'bad');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Olayları çek';
+    }
+  });
+  loadSiem();
+}
+
+async function loadSiem() {
+  try {
+    const r = await api(`/api/sessions/${state.activeSession.session_id}/siem/events`);
+    renderSiemTable(r);
+  } catch {
+    /* henüz yok */
+  }
+}
+
+function renderSiemTable(payload) {
+  const box = $('#siemResult');
+  if (!box) return;
+  const events = payload.events ?? [];
+  box.innerHTML = events.length
+    ? `<table style="margin-top:14px"><thead><tr><th>Zaman</th><th>Önem</th><th>Kaynak</th><th>Başlık</th></tr></thead><tbody>
+        ${events
+          .map(
+            (e) => `<tr><td>${new Date(e.ts).toLocaleString('tr-TR')}</td>
+            <td><span class="pill ${e.severity === 'high' ? 'bad' : e.severity === 'medium' ? 'warn' : ''}">${esc(e.severity)}</span></td>
+            <td>${esc(e.source)}</td><td>${esc(e.title)}</td></tr>`,
+          )
+          .join('')}
+      </tbody></table>
+      <p class="sub" style="margin-top:10px">${payload.count} olay · ${new Date(payload.fetched_at ?? Date.now()).toLocaleString('tr-TR')}${payload.truncated ? ' · sınır nedeniyle kesildi' : ''}</p>`
+    : '<p class="sub" style="margin-top:12px">Henüz olay çekilmedi.</p>';
+}
+
 function bindKurulumSteps(sid) {
   $('#mapBuild')?.addEventListener('click', async () => {
     try {
@@ -1512,6 +1588,7 @@ const ROUTES = {
   ajanlar: { title: 'Sorumlular', sub: 'Görev atamaları', render: viewSorumlular, bind: bindSorumlular, roles: ['user', 'admin'] },
   belgeler: { title: 'Belgeler', sub: 'Kurulum kayıtları', render: viewBelgeler, bind: () => { loadArtifacts(); bindBelgeExport(); }, roles: ['user', 'admin'] },
   kanitlar: { title: 'Kanıtlar', sub: 'Oturum artefaktları', render: viewBelgeler, bind: () => { loadArtifacts(); bindBelgeExport(); }, roles: ['admin'] },
+  siem: { title: 'SIEM olayları', sub: 'Gerçek olay çekme', render: viewSiem, bind: bindSiem, roles: ['admin'] },
   yonetim: { title: 'Yönetim', sub: 'Kullanıcılar ve işlem kaydı', render: viewYonetim, bind: bindYonetim, roles: ['admin'] },
 };
 
@@ -1526,6 +1603,7 @@ function navItems() {
         ['envanter', 'Envanter'],
         ['ajanlar', 'Ajanlar'],
         ['kanitlar', 'Kanıtlar'],
+        ['siem', 'SIEM olayları'],
         ['guvenlik', 'Güvenlik'],
         ['yonetim', 'Yönetim'],
       ]

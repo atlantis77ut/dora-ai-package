@@ -5,6 +5,35 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.14.0] — 2026-11-09
+
+### Eklendi — gerçek SIEM konnektörü
+
+Bağlantı testi yerine **gerçek olay çekme**. Beş ürün destekleniyor:
+
+| Ürün | Yöntem |
+|---|---|
+| Splunk | `POST /services/search/jobs/export` (NDJSON akışı) |
+| Elastic | `POST /_search` (`@timestamp` aralığı veya `query_string`) |
+| Sentinel | Log Analytics sorgu ucu (tablo → satır eşleme) |
+| QRadar | `GET /api/ariel/searches` |
+| generic | `GET <endpoint>?limit=…` — `{events:[]}` veya dizi bekler |
+
+- `src/orl/connectors/siem.mjs`: ürün adaptörleri, olay normalizasyonu (zaman, önem, kaynak, başlık),
+  15 sn zaman aşımı, 5 MB yanıt sınırı, bulut meta veri adresine istek engeli
+- `POST /api/sessions/:id/siem/fetch` (ayarlardaki SIEM bağlantısını kullanır)
+- `GET /api/sessions/:id/siem/events` (çekilen olaylar)
+- Arayüz: **SIEM olayları** sayfası (yönetici) — sorgu, zaman aralığı, limit, olay tablosu
+
+### Doğrulama
+
+```
+birim: 11 test (generic/elastic/sentinel/splunk/qradar, hata, limit, meta veri engeli)
+uçtan uca: 3 olay çekildi → kaydedildi → hatalı uç 502 + açık mesaj
+```
+
+---
+
 ## [1.13.1] — 2026-11-09
 
 ### Düzeltildi

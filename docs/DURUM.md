@@ -1009,3 +1009,41 @@ Birim testleri: 67 test, 67 pass
 - SSO `state` HMAC ile imzalı ve 10 dk ömürlü; `nonce` id_token içinde doğrulanıyor
 - `auto_provision` kapalıyken tanınmayan SSO kullanıcısı **reddedilir**
 - Yedek zip'i anahtar dosyalarını düz metin taşır: şifreli saklayın
+
+---
+
+## 35. SIEM konnektörü — 1.14.0 (2026-11-09)
+
+Önceki durumda entegrasyon yalnızca `HEAD/GET` ile erişilebilirlik testi yapıyordu; veri çekmiyordu.
+Artık beş ürün için gerçek olay çekme var.
+
+| Ürün | Uç | Normalizasyon |
+|---|---|---|
+| splunk | `services/search/jobs/export` (form) | NDJSON satırları → `result` |
+| elastic | `_search` (JSON) | `hits.hits[]._source` |
+| sentinel | query ucu (JSON) | `tables[0].columns/rows` |
+| qradar | `api/ariel/searches` | `events[]` |
+| generic | `endpoint?limit=` | dizi veya `events/data/items` |
+
+Ürünler arası alan farkları büyük/küçük harf duyarsız eşlemeyle çözülüyor
+(`TimeGenerated`, `@timestamp`, `_time`, `starttime` → `ts`).
+
+### Güvenlik sınırları
+
+- Yalnız `http/https`; `169.254.169.254` ve `metadata.google.internal` reddedilir
+- 15 saniye zaman aşımı, 5 MB yanıt sınırı (bellek koruması)
+- Kimlik bilgisi `secrets.json` içinde; arayüze dönmez
+
+### Doğrulama
+
+```
+birim testleri: 11/11
+uçtan uca: generic SIEM → 3 olay (high/medium/low) → siem-events.json
+hatalı uç: 502 + 'SIEM yanıtı: HTTP 404'
+```
+
+### Sınırlar
+
+- Olaylar **okunur**, otomatik olay kaydı açılmaz; eşleme kuralları ayrı iş (C4 senaryoları).
+- QRadar akışı temel düzeyde: arama başlatma + sonuç sayfalama yok.
+- Kimlik doğrulama yöntemleri: Splunk/Sentinel/QRadar `Bearer`, QRadar `SEC`, Elastic `ApiKey`/`Basic`.
