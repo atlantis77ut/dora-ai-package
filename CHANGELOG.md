@@ -5,6 +5,15 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.13.1] — 2026-11-09
+
+### Düzeltildi
+
+- `GET /api/audit.csv` yönlendirme koşulunda yer almadığı için 404 dönüyordu; yönetici denetim
+  bloğuna eklendi (oturumsuz istek 401 döner)
+
+---
+
 ## [1.13.0] — 2026-11-09
 
 ### Eklendi — self-service parola sıfırlama

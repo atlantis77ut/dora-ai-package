@@ -655,7 +655,7 @@ async function api(req, res, urlPath, method) {
   const isAdmin = me.role === 'admin';
 
   // ── yönetici uçları ────────────────────────────────────
-  if (urlPath.startsWith('/api/users') || urlPath === '/api/audit') {
+  if (urlPath.startsWith('/api/users') || urlPath === '/api/audit' || urlPath === '/api/audit.csv') {
     if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
     if (urlPath === '/api/users' && method === 'GET') return sendJson(res, 200, { users: auth.users() });
     if (urlPath === '/api/users' && method === 'POST') {
