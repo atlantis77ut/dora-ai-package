@@ -125,7 +125,7 @@ export function createAuthStore(dataDir) {
     };
     saveUsers([u]);
     audit(u.username, 'bootstrap', 'ilk yönetici');
-    const token = sign({ uid: u.id, role: 'admin', exp: Date.now() + SESSION_TTL_S * 1000 });
+    const token = sign({ uid: u.id, role: 'admin', pv: u.hash.slice(0, 8), exp: Date.now() + SESSION_TTL_S * 1000 });
     return { ok: true, token, user: publicUser(u) };
   }
 

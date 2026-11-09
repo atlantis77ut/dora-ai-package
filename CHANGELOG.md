@@ -1,4 +1,4 @@
-﻿# Changelog
+# Changelog
 
 Bu dosya, paketin sÃ¼rÃ¼m geÃ§miÅŸini tutar. BiÃ§im: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/),
 sÃ¼rÃ¼mleme: [SemVer](https://semver.org/lang/tr/).
