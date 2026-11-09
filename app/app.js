@@ -1751,9 +1751,14 @@ function bindGuvenlik() {
       $('#tfaBox').innerHTML = `
         <div class="card" style="background:#0f1626;margin-top:14px">
           <h2>1) Uygulamaya ekleyin</h2>
-          <p class="sub">Google Authenticator, Microsoft Authenticator veya 1Password ile bu bağlantıyı açın:</p>
-          <p class="mono" style="word-break:break-all">${esc(r.otpauth)}</p>
-          <p class="sub">Manuel giriş için anahtar: <span class="mono">${esc(r.secret)}</span></p>
+          <p class="sub">Telefonunuzda Google Authenticator, Microsoft Authenticator veya 1Password açın;
+            <b>“Kurulum anahtarını gir”</b> seçeneğini kullanıp aşağıdaki anahtarı yazın (4’lü gruplar halinde,
+            boşluklar önemsiz).</p>
+          <p class="sub">Manuel anahtar:</p>
+          <p class="mono" style="font-size:16px;letter-spacing:1px;word-break:break-all;background:#0c1322;
+             border:1px solid var(--line);border-radius:10px;padding:12px">${esc((r.secret.match(/.{1,4}/g) ?? [r.secret]).join(' '))}</p>
+          <p class="sub">Bazı uygulamalar bağlantıyı doğrudan kabul eder:
+            <span class="mono" style="word-break:break-all;font-size:11px">${esc(r.otpauth)}</span></p>
           <h2>2) Kodu doğrulayın</h2>
           <div class="row"><label>6 haneli kod</label><input id="tfaCode" placeholder="123456"></div>
           <div class="actions"><button class="primary" id="tfaConfirm">Etkinleştir</button></div>
@@ -1764,7 +1769,17 @@ function bindGuvenlik() {
           const e = await api('/api/auth/2fa/enable', { method: 'POST', body: JSON.stringify({ code: $('#tfaCode').value }) });
           $('#tfaCodes').innerHTML = `<h2>3) Kurtarma kodları</h2>
             <p class="sub">Bu kodları güvenli bir yerde saklayın; her biri bir kez kullanılabilir.</p>
-            <pre class="mono" style="background:#0c1322;border:1px solid var(--line);border-radius:10px;padding:12px">${e.recovery_codes.join('\n')}</pre>`;
+            <pre class="mono" id="recCodes" style="background:#0c1322;border:1px solid var(--line);border-radius:10px;padding:12px">${e.recovery_codes.join('\n')}</pre>
+            <div class="actions"><button class="ghost-btn" id="recCopy">Kodları kopyala</button>
+            <span class="sub">Yazdırın veya parola yöneticinize kaydedin — bir daha gösterilmez.</span></div>`;
+          document.getElementById('recCopy')?.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(e.recovery_codes.join('\n'));
+              toast('Kurtarma kodları kopyalandı', 'ok');
+            } catch {
+              toast('Kopyalanamadı — elle seçip kopyalayın', 'bad');
+            }
+          });
           toast('İki adımlı doğrulama açıldı', 'ok');
           await loadState();
         } catch (err) {

@@ -5,6 +5,16 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.17.2] — 2026-11-09
+
+### Değişti
+
+- İki adımlı doğrulama kurulum ekranı: anahtar 4’lü gruplar halinde gösteriliyor (elle giriş kolaylığı),
+  "telefonda kurulum anahtarını gir" yönlendirmesi netleşti
+- Kurtarma kodları için "Kodları kopyala" düğmesi ve "bir daha gösterilmez" uyarısı
+
+---
+
 ## [1.17.1] — 2026-11-09
 
 ### Eklendi
