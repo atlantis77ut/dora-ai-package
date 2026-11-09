@@ -77,6 +77,9 @@ sudo rm -rf /opt/dora-ai-package
 
 ## 5. Yedekten geri yükleme (test edilmiş adım)
 
+En kısa yol (araç): `node tools/restore.mjs --zip <yedek> --target <dizin>` — ayrıntı:
+`docs/YEDEKLEME.md`. Aşağıdaki elle adımlar, aracın yaptığını açıklar.
+
 ```bash
 # 1) yedeği aç
 unzip -l /var/backups/dora/2026-11-09.zip     # manifest + dosyalar

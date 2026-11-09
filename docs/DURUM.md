@@ -1190,3 +1190,34 @@ Gerçek IdP ile denenmedi — test yalnız yerel sahte sağlayıcıyla yapıldı
 - Silme ve geri yükleme adımları **test edilmedi** — bir test kurulumunda çalıştırılmalı
 - Ticari lisans fiyat/SLA alanları hâlâ boş (`LICENSE-COMMERCIAL.md`)
 
+---
+
+## 41. Yedekleme ve geri yükleme — 1.19.0 (2026-11-09)
+
+Önceki durum: `backup.mjs` yalnız zip üretiyordu; doğrulama ve geri yükleme yoktu, tatbikat
+yapılmamıştı. Artık üç parça var:
+
+| Parça | Görev |
+|---|---|
+| `tools/backup.mjs` | yedek al, `--verify` ile doğrula, `--keep` ile saklama uygula |
+| `tools/restore.mjs` | güvenli geri yükleme (manifest + sha256 + zip-slip + izinler) |
+| `docs/YEDEKLEME.md` | systemd timer/cron, tatbikat prosedürü, kayıt tablosu |
+
+### Gerçek veriyle tatbikat sonucu
+
+```
+yedek: 7 dosya · 5.2 KB · sha256 bcb1dd00bef3…
+doğrulama: GEÇERLİ
+geri yükleme: BAŞARILI
+kullanıcı 1→1 · denetim 6→6 · oturum 1→1
+```
+
+### Testler
+
+8 yeni birim testi (toplam 97): manifest, bozuk zip yakalama, zip-slip reddi, dolu hedef reddi,
+saklama sayısı, boş kurulum hatası, uçtan uca geri yükleme.
+
+### Kalan
+
+- Yedek **şifrelenmiyor** (düz zip); şifreli disk/kasa gerekiyor
+- Tatbikat henüz üç aylık takvime bağlanmadı

@@ -130,6 +130,11 @@ Varlıklarım, Sorumlular, Belgeler — süreç kodu, JSON veya teknik sayaç yo
 Entra ID veya Keycloak bağlamak için: [`SSO-KURULUM.md`](SSO-KURULUM.md).
 TLS olmadan SSO çalışmaz; önce §5'teki ters vekil kurulumunu tamamlayın.
 
+## 4d. Yedekleme
+
+`node tools/backup.mjs --out /var/backups/dora/$(date +%F).zip --keep 8` — systemd timer ve
+geri yükleme adımları: [`YEDEKLEME.md`](YEDEKLEME.md).
+
 ## 5. Nginx arkasına alma (opsiyonel)
 
 Doğrudan 8080 yerine 80/443 üzerinden yayınlamak isterseniz:

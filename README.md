@@ -146,7 +146,8 @@ node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 - **Güvenlik**: iki adımlı doğrulama (TOTP) + kurtarma kodları, kurumsal giriş (OIDC)
 - **SIEM**: Splunk / Elastic / Sentinel / QRadar / generic — gerçek olay çekme
 - **Olay kaydı**: SIEM olayından taslak DORA kaydı, alan doldurma, aktif kayda yükseltme
-- **Yedekleme**: `node onboarding/cli/tools/backup.mjs` → `web-data/` + oturumlar tek zip
+- **Yedekleme**: `node onboarding/cli/tools/backup.mjs` → `web-data/` + oturumlar tek zip;
+  `--verify` ile doğrula, `tools/restore.mjs` ile geri yükle ([YEDEKLEME.md](docs/YEDEKLEME.md))
 - **Kullanıcı**: Durum · Kurum bilgileri · Sistem bağlantıları · Varlıklarım · Sorumlular · Belgeler
 
 Veriler `web-data/` (ayarlar, kullanıcılar, anahtarlar) ve `.dora-onboarding/` (oturumlar) altında;

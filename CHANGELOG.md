@@ -5,6 +5,28 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.19.0] — 2026-11-09
+
+### Eklendi — yedekleme ve geri yükleme
+
+- `tools/backup.mjs` yeniden yazıldı: `--verify`, `--keep N` (saklama), `--root`, şifreleme yok
+  (düz zip) ama sha256 doğrulamalı manifest
+- `tools/restore.mjs`: güvenli geri yükleme — yalnız manifestteki dosyalar, sha256 eşleşmesi,
+  zip-slip engeli, dolu hedef için `--force`, hassas dosyalara `0600`, `oturumlar/` → `.dora-onboarding/`
+- `docs/YEDEKLEME.md`: yedek/doğrulama/geri yükleme, systemd timer, cron, tatbikat prosedürü
+- 8 birim testi: manifest, bozuk zip, zip-slip, dolu hedef, saklama sayısı, boş kurulum
+
+### Doğrulandı — gerçek veriyle
+
+```
+yedek: 7 dosya · 5.2 KB · sha256 bcb1dd00…
+doğrulama: GEÇERLİ (7/7)
+geri yükleme: BAŞARILI (7 dosya)
+karşılaştırma: kullanıcı 1→1 · denetim 6→6 · oturum 1→1
+```
+
+---
+
 ## [1.18.0] — 2026-11-09
 
 ### Eklendi — hukuk ve uyum belgeleri
