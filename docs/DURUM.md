@@ -1297,3 +1297,36 @@ bekleyen 0 · toplam 1 · birim 110/110
 - Bekleyen talep için **e-posta bildirimi yok** (SMTP altyapısı hazır, bağlanmadı)
 - Onay süresi/eskime yok; talep süresiz bekler
 - Arayüzde yalnız olay ve go-live akışı bağlı; `assessment_accept` API'den kullanılabilir
+
+---
+
+## 44. Raporlama süreleri — 1.22.0 (2026-11-09)
+
+| Adım | Süre | Dayanak |
+|---|---|---|
+| İlk bildirim | **4 saat** | DR-001 (indirilemez) |
+| Ara rapor | **72 saat** | DORA olay raporlama |
+| Nihai rapor | **1 ay (30 gün)** | DORA olay raporlama |
+
+### Davranış
+
+- Süreler olayın `detected_at` alanından hesaplanır (SIEM olay zamanı)
+- Durum: `upcoming` · `due_soon` (kalan ≤ pencerenin %25'i) · `overdue` · `done` (+ `late`)
+- `POST /reporting/:step` iki kaydı birlikte günceller: `incidents.json` ve (aynı olay ise) `incident-record.json`
+- Arayüzde üç rozet: yeşil gönderildi, turuncu yaklaşıyor, kırmızı gecikti; kalan süre `3s 20dk` biçiminde
+
+### Doğrulama
+
+```
+5 saat önce tespit → ilk bildirim overdue
+mark initial → done, late=true, referans BDDK-2026-1 kalıcı
+120 birim testi geçti
+```
+
+### Sınırlar
+
+- Süre **tespit anından** sayılıyor; DORA'da bazı yorumlar "farkına varma" anını esas alır —
+  kurum kendi politikasına göre `detected_at` alanını düzeltmeli
+- Bildirim **gönderilmiyor**: paket yalnız sayaç ve kayıt tutar; gerçek gönderim düzenleyici kanalından
+- Otomatik hatırlatma/e-posta yok (SMTP hazır, bağlanmadı)
+- Tatil/iş günü takvimi yok; süreler takvim saatine göre

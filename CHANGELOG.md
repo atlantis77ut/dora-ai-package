@@ -5,6 +5,29 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.22.0] — 2026-11-09
+
+### Eklendi — olay bazında DORA raporlama süreleri
+
+- `src/orl/deadlines.mjs`: tespit anından itibaren **ilk bildirim 4 saat**, **ara rapor 72 saat**,
+  **nihai rapor 1 ay**; durumlar `upcoming` / `due_soon` (son %25) / `overdue` / `done` (+`late`)
+- Taslak olay kayıtları oluşturulurken raporlama bloğu eklenir (`reporting`), `incident-record.json`'a da geçer
+- `POST /api/sessions/:id/reporting/:step` — `initial|intermediate|final` adımını gönderildi işaretler
+  (referans numarası opsiyonel), `incidents.json` ve aktif kayıt birlikte güncellenir
+- `GET /api/sessions/:id/incidents` yanıtına `reporting_status` eklendi
+- Arayüz: SIEM sayfasında **Raporlama süreleri** kartı — üç adım için kalan süre/gecikme rozetleri,
+  "gönderildi" düğmeleri
+
+### Doğrulama
+
+```
+5 saat önce tespit edilen olay → ilk bildirim: overdue (doğru)
+mark initial → done · late=true · ara rapor done · referans kalıcı
+10 birim testi eklendi (toplam 120)
+```
+
+---
+
 ## [1.21.0] — 2026-11-09
 
 ### Eklendi — dört göz onay akışı

@@ -24,6 +24,7 @@ import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq, norma
 import { buildBundle } from '../src/orl/evidence.mjs';
 import { createResetStore } from '../src/orl/reset.mjs';
 import { createApprovalStore } from '../src/orl/approvals.mjs';
+import { createReporting, reportingStatus, markSent } from '../src/orl/deadlines.mjs';
 import { sendMail, createOutbox } from '../src/orl/mailer.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
 import { discover, buildAuthUrl, exchangeCode, fetchJwks, verifyIdToken, makeState, verifyState } from '../src/orl/oidc.mjs';
@@ -341,7 +342,11 @@ async function runScheduledFetch({ reason = 'manual' } = {}) {
       const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
       const existing = stored.incidents ?? [];
       let seq = nextSeq(existing);
-      const drafts = pool.map((e) => incidentFromEvent(e, { sessionId: s.session_id, seq: seq++, rules }));
+      const drafts = pool.map((e) => {
+        const inc = incidentFromEvent(e, { sessionId: s.session_id, seq: seq++, rules });
+        inc.reporting = createReporting(inc.detected_at);
+        return inc;
+      });
       const merged = mergeIncidents(existing, drafts);
       if (merged.added.length) {
         writeJson(path.join(dir, 'incidents.json'), { incidents: merged.all, updated_at: new Date().toISOString() });
@@ -1254,7 +1259,7 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { sessions: listSessions() });
   }
 
-  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem|incidents|approvals)(?:\/([\w.-]+))?)?$/);
+  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem|incidents|approvals|reporting)(?:\/([\w.-]+))?)?$/);
   if (sessMatch) {
     const id = sessMatch[1];
     const kind = sessMatch[2];
@@ -1320,6 +1325,35 @@ async function api(req, res, urlPath, method) {
       return res.end(buf);
     }
 
+    if (kind === 'reporting' && method === 'POST') {
+      const step = artifact;
+      if (!['initial', 'intermediate', 'final'].includes(step)) {
+        return sendJson(res, 400, { ok: false, error: 'adım initial|intermediate|final olmalı' });
+      }
+      const body = await readBody(req);
+      const targetId = String(body.incident_id ?? '');
+      const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
+      const list = stored.incidents ?? [];
+      const inc = list.find((x) => x.incident_id === targetId);
+      if (!inc) return sendJson(res, 404, { ok: false, error: 'olay kaydı yok' });
+      inc.reporting = markSent(inc.reporting ?? createReporting(inc.detected_at), step, {
+        at: body.sent_at,
+        reference: body.reference,
+      });
+      inc.updated_at = new Date().toISOString();
+      writeJson(path.join(dir, 'incidents.json'), { incidents: list, updated_at: inc.updated_at });
+
+      // aktif kayıt aynı olay ise onu da güncelle
+      const recFile = path.join(dir, 'incident-record.json');
+      const rec = readJson(recFile, null);
+      if (rec?.incident_id === targetId) {
+        rec.reporting = inc.reporting;
+        writeJson(recFile, rec);
+      }
+      auth.audit(me.user.username, 'reporting_mark', `${targetId}:${step}`);
+      return sendJson(res, 200, { ok: true, incident: inc, status: reportingStatus(inc.reporting) });
+    }
+
     if (kind === 'approvals' && method === 'GET') {
       const st = approvalStore(dir);
       return sendJson(res, 200, {
@@ -1364,7 +1398,12 @@ async function api(req, res, urlPath, method) {
 
     if (kind === 'incidents' && method === 'GET') {
       const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
-      return sendJson(res, 200, { ok: true, incidents: stored.incidents ?? [] });
+      const now = Date.now();
+      const incidents = (stored.incidents ?? []).map((i) => ({
+        ...i,
+        reporting_status: i.reporting ? reportingStatus(i.reporting, now) : null,
+      }));
+      return sendJson(res, 200, { ok: true, incidents });
     }
 
     if (kind === 'incidents' && method === 'POST') {
@@ -1382,7 +1421,11 @@ async function api(req, res, urlPath, method) {
       const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
       const existing = stored.incidents ?? [];
       let seq = nextSeq(existing);
-      const created = pool.map((e) => incidentFromEvent(e, { sessionId: id, seq: seq++, rules }));
+      const created = pool.map((e) => {
+        const inc = incidentFromEvent(e, { sessionId: id, seq: seq++, rules });
+        inc.reporting = createReporting(inc.detected_at);
+        return inc;
+      });
       const merged = mergeIncidents(existing, created);
       writeJson(path.join(dir, 'incidents.json'), { incidents: merged.all, updated_at: new Date().toISOString() });
       auth.audit(me.user.username, 'incident_draft', `${id}: ${merged.added.length} yeni`);
@@ -1443,6 +1486,7 @@ async function api(req, res, urlPath, method) {
           affected_member_states: inc.affected_member_states,
           promoted_at: new Date().toISOString(),
         };
+        if (!record.reporting) record.reporting = inc.reporting ?? createReporting(record.detected_at);
         writeJson(path.join(dir, 'incident-record.json'), record);
         inc.status = 'open';
         auth.audit(me.user.username, 'incident_promote', inc.incident_id);

@@ -1498,6 +1498,14 @@ function viewSiem() {
     </div>
 
     <div class="card">
+      <h2>Raporlama süreleri</h2>
+      <p class="sub">DORA: ilk bildirim 4 saat, ara rapor 72 saat, nihai rapor 1 ay (tespit anından itibaren).
+        Geçen süreler kırmızı, son %25 turuncu gösterilir.</p>
+      <div class="actions"><button class="ghost-btn" id="dlRefresh">Yenile</button></div>
+      <div id="dlList" class="sub" style="margin-top:12px">yükleniyor…</div>
+    </div>
+
+    <div class="card">
       <h2>Olay kuralları</h2>
       <p class="sub">Hangi olayların kayıt açacağını belirleyen anahtar kelimeler. Virgülle birden fazla yazılabilir.</p>
       <div id="rulesList" class="sub">yükleniyor…</div>
@@ -1551,6 +1559,8 @@ function bindSiem() {
   });
   loadSiem();
   loadIncidents();
+  loadDeadlines();
+  $('#dlRefresh')?.addEventListener('click', loadDeadlines);
   loadRules();
   loadSchedule();
 
@@ -1619,6 +1629,76 @@ function bindSiem() {
       toast('Oluşturulamadı: ' + e.message, 'bad');
     }
   });
+}
+
+const DL_STEPS = [
+  ['initial', 'İlk (4s)'],
+  ['intermediate', 'Ara (72s)'],
+  ['final', 'Nihai (1 ay)'],
+];
+
+function dlChip(state, label, remaining) {
+  const cls = state === 'done' ? 'ok' : state === 'overdue' ? 'bad' : state === 'due_soon' ? 'warn' : '';
+  const text = state === 'done' ? 'gönderildi' : state === 'overdue' ? 'GECİKTİ ' + remaining : remaining;
+  return `<span class="pill ${cls}" title="${esc(label)}">${esc(label)}: ${esc(text)}</span>`;
+}
+
+async function loadDeadlines() {
+  const box = $('#dlList');
+  const sid = state.activeSession?.session_id;
+  if (!box || !sid) return;
+  try {
+    const r = await api(`/api/sessions/${sid}/incidents`);
+    const list = (r.incidents ?? []).filter((i) => i.reporting_status);
+    if (!list.length) {
+      box.innerHTML = '<span class="sub">Raporlama takibi olan olay yok (önce taslak kayıt oluşturun).</span>';
+      return;
+    }
+    const human = (ms) => {
+      if (ms === null || ms === undefined) return '—';
+      const abs = Math.abs(ms);
+      const h = Math.floor(abs / 3600000);
+      const d = Math.floor(h / 24);
+      return (ms < 0 ? '-' : '') + (d > 0 ? `${d}g ${h % 24}s` : `${h}s`);
+    };
+    box.innerHTML = `<table><thead><tr><th>Kayıt</th><th>Durum</th><th>Süreler</th><th></th></tr></thead><tbody>
+      ${list
+        .map((i) => {
+          const st = i.reporting_status;
+          const chips = DL_STEPS.map(([k, label]) => dlChip(st[k]?.state, label, human(st[k]?.remaining_ms))).join(' ');
+          const open = DL_STEPS.filter(([k]) => st[k]?.state !== 'done');
+          return `<tr data-id="${esc(i.incident_id)}">
+            <td class="mono">${esc(i.incident_id)}<br><span class="sub">${esc((i.title ?? '').slice(0, 36))}</span></td>
+            <td><span class="pill ${i.status === 'open' ? 'ok' : ''}">${esc(i.status ?? 'draft')}</span></td>
+            <td>${chips}</td>
+            <td>${open
+              .map(([k, label]) => `<button class="ghost-btn dl-mark" data-step="${k}">${esc(label)} gönderildi</button>`)
+              .join(' ')}</td>
+          </tr>`;
+        })
+        .join('')}
+    </tbody></table>`;
+
+    box.querySelectorAll('tr[data-id]').forEach((tr) => {
+      tr.querySelectorAll('.dl-mark').forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          try {
+            await api(`/api/sessions/${sid}/reporting/${btn.dataset.step}`, {
+              method: 'POST',
+              body: JSON.stringify({ incident_id: tr.dataset.id }),
+            });
+            toast('Rapor gönderildi olarak işaretlendi', 'ok');
+            loadDeadlines();
+            loadIncidents();
+          } catch (e) {
+            toast('İşaretlenemedi: ' + e.message, 'bad');
+          }
+        }),
+      );
+    });
+  } catch (e) {
+    box.textContent = 'Süreler yüklenemedi: ' + e.message;
+  }
 }
 
 async function loadRules() {
