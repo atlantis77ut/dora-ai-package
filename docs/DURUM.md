@@ -624,3 +624,31 @@ $ node tools/demo-rules.mjs
 3. **Adaptör açık tablo**: hangi kanıt alanının hangi olguya gittiği `docs/KURAL-MOTORU.md`'de
    tek tek yazılı; eşlenmeyen dosya uyarı olarak basılır.
 4. **Motor uygulamaz**: `action` metni raporlanır; bildirim/kayıt açma ajan katmanının işi.
+
+---
+
+## 24. Sunucu kurulumu ve genel test — 1.4.1 (2026-11-09)
+
+Paket artık bir Ubuntu sunucusuna kurulup tarayıcıdan görülebilir; kurulum ve test uçtan uca
+betiklenmiş durumda.
+
+| Dosya | Görev |
+|---|---|
+| `onboarding/cli/tools/serve.mjs` | Bağımlılıksız statik sunucu (`/`, `/dashboard/`, `/site/`, `/healthz`) |
+| `scripts/install-ubuntu.sh` | Ön koşul → klon/offline kopya → test → (opsiyonel) systemd |
+| `scripts/smoke-test.sh` | 8 adımlı genel test, PASS/FAIL özeti, çıkış kodu |
+| `deploy/dora-ai-package.service` | systemd unit: ayrı kullanıcı, salt-okunur dosya sistemi, 256 MB bellek sınırı |
+| `docs/KURULUM-UBUNTU.md` | Gereksinimler, sunucu seçimi, nginx, offline, sorun giderme |
+
+### Kaynak gerçeği
+
+Ölçülen ihtiyaç: 1 çekirdek, ~40 MB RAM, ~50 MB disk, GPU **yok**, `npm install` **yok**,
+dış ağ bağlantısı **yok**. İki sunucu da (5700X3D / Ryzen 7900) bu iş için fazlasıyla yeterli;
+seçim disk ve operasyonel rahatlıkla yapılmalı — 1 TB NVMe'li makine önerildi.
+
+### Doğrulama
+
+- `serve.mjs` yerelde çalıştırıldı: `/`, `/dashboard/`, `dashboard.png`, `/healthz` → 200;
+  yol dışına çıkma denemesi engellendi.
+- `install-ubuntu.sh` ve `smoke-test.sh`: bu ortamda bash başlatılamadığı için **çalıştırılamadı**.
+  LF satır sonu doğrulandı; ilk gerçek koşu sunucuda.

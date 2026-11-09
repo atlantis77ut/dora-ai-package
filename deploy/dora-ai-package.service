@@ -1,0 +1,33 @@
+[Unit]
+Description=DORA AI Ajan Paketi — statik dashboard sunucusu
+Documentation=file:///opt/dora-ai-package/docs/KURULUM-UBUNTU.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dora
+Group=dora
+WorkingDirectory=/opt/dora-ai-package
+Environment=PORT=8080
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node /opt/dora-ai-package/onboarding/cli/tools/serve.mjs --port 8080 --host 0.0.0.0
+Restart=always
+RestartSec=3
+
+# Sertleştirme: paket yalnızca dosya okur, ağ dinler.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/opt/dora-ai-package
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryMax=256M
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

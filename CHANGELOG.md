@@ -5,6 +5,29 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.4.1] — 2026-11-09
+
+### Eklendi — sunucu kurulumu ve genel test
+
+- `onboarding/cli/tools/serve.mjs`: bağımlılıksız statik sunucu. `/` yönlendirme, `/dashboard/`,
+  `/site/`, `/healthz`; yol dışına çıkma engelli; `--port` / `--host`.
+- `scripts/smoke-test.sh`: 8 adımlı genel test (şema, kural motoru, 6 faz, 27 senaryo,
+  kanıt paketi, veri alımı, DORA eşlemesi, dashboard+site üretimi). Çıkış kodu 0/1.
+- `scripts/install-ubuntu.sh`: ön koşul kontrolü, klonlama veya offline kopyalama, test,
+  isteğe bağlı systemd kurulumu (`--service`), port seçimi.
+- `deploy/dora-ai-package.service`: systemd unit'i (ayrı kullanıcı, `ProtectSystem=strict`,
+  `MemoryMax=256M`).
+- `docs/KURULUM-UBUNTU.md`: gereksinimler, sunucu seçimi, nginx arkasına alma, offline kurulum,
+  sorun giderme.
+
+### Notlar
+
+- Paket **GPU kullanmaz**, `npm install` gerektirmez, dış CDN'e bağlanmaz — kapalı ağda çalışır.
+- `install-ubuntu.sh` ve `smoke-test.sh` bu geliştirme ortamında çalıştırılamadı (sandbox bash
+  sürecini engelliyor); satır sonları LF doğrulandı, ilk çalıştırma sunucuda yapılacak.
+
+---
+
 ## [1.4.0] — 2026-11-09
 
 ### Eklendi — kural motoru

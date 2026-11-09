@@ -129,6 +129,16 @@ Satın alma görüşmesinde ilk sorulan soru bu; cevabı baştan yazılı olsun:
 | Ticari bir ürünün yerine geçen platform | Süreç kodlarıyla eşleşir, platformun yerini almaz; entegrasyon port/adapter olarak soyutlanmıştır. |
 | Sıfır kurulum | Kurulum + 6 fazlı onboarding gerekir (tipik 95 gün, `orl-lifecycle.yaml`). |
 
+## Sunucuya kurulum
+
+```bash
+git clone https://github.com/atlantis77ut/dora-ai-package.git /opt/dora-ai-package
+bash /opt/dora-ai-package/scripts/smoke-test.sh            # genel test
+sudo bash /opt/dora-ai-package/scripts/install-ubuntu.sh --service --port 8080
+```
+
+Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı: [`docs/KURULUM-UBUNTU.md`](docs/KURULUM-UBUNTU.md).
+
 ## Dizin Yapısı
 
 | Dizin | İçerik |
@@ -140,11 +150,12 @@ Satın alma görüşmesinde ilk sorulan soru bu; cevabı baştan yazılı olsun:
 | `pilots/` | Pilot seçim, sözleşme, başarı kriterleri, vaka şablonu |
 | `docs/` | Mimari, DORA eşlemesi, TR mevzuatı, lisanslama, fiyatlandırma, kararlar |
 | `dashboard/` | Üretilen site: `index.html` · `processes.html` · `controls.html` · `data.json` · `dashboard.png` |
-| `scripts/` | Windows başlatıcıları: `dashboard.cmd`, `demo.cmd`, `validate.cmd` |
+| `scripts/` | Başlatıcılar: `dashboard.cmd`, `demo.cmd`, `validate.cmd`, `install-ubuntu.sh`, `smoke-test.sh` |
+| `deploy/` | systemd unit (`dora-ai-package.service`) |
 
 ## Durum
 
-Sürüm **1.4.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.4.1**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans
