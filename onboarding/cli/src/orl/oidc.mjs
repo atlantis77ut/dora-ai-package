@@ -7,7 +7,16 @@
 import crypto from 'node:crypto';
 
 /** Keşif belgesini okur (issuer + /.well-known/openid-configuration). */
+function assertIssuer(issuer) {
+  const u = new URL(String(issuer));
+  if (!/^https?:$/.test(u.protocol)) throw new Error('yalnız http/https issuer desteklenir');
+  if (['169.254.169.254', 'metadata.google.internal'].includes(u.hostname)) {
+    throw new Error('bulut meta veri adresine istek yasak');
+  }
+}
+
 export async function discover(issuer, fetchImpl = fetch) {
+  assertIssuer(issuer);
   const url = String(issuer).replace(/\/+$/, '') + '/.well-known/openid-configuration';
   const r = await fetchImpl(url, { headers: { accept: 'application/json' } });
   if (!r.ok) throw new Error(`keşif belgesi alınamadı: HTTP ${r.status}`);

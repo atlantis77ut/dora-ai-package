@@ -73,7 +73,7 @@ export function createAuthStore(dataDir) {
     const line = `${new Date().toISOString()}\t${user ?? '-'}\t${action}\t${target}\n`;
     try {
       fs.mkdirSync(dataDir, { recursive: true });
-      fs.appendFileSync(AUDIT, line);
+      fs.appendFileSync(AUDIT, line, { mode: 0o600 });
     } catch {
       /* denetim yazılamazsa akış durmasın */
     }

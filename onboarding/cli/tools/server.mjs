@@ -43,6 +43,14 @@ const { values } = parseArgs({
 const PORT = Number(values.port);
 const HOST = values.host;
 
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'no-referrer',
+  'Content-Security-Policy':
+    "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'",
+};
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -338,6 +346,8 @@ async function readBody(req, limit = 5 * 1024 * 1024) {
 // ── API ──────────────────────────────────────────────────
 async function api(req, res, urlPath, method) {
   // ── kimlik doğrulama (herkese açık uçlar) ──────────────
+  if (urlPath === '/api/health') return sendJson(res, 200, { ok: true, version });
+
   if (urlPath === '/api/auth/status' && method === 'GET') {
     return sendJson(res, 200, { needsBootstrap: !auth.hasUsers(), version });
   }
@@ -726,7 +736,6 @@ async function api(req, res, urlPath, method) {
     });
   }
 
-  if (urlPath === '/api/health') return sendJson(res, 200, { ok: true, version });
 
   if (urlPath === '/api/catalog/roles' && method === 'GET') {
     const doc = parse(fs.readFileSync(path.join(ROOT, 'data/roles/roles-catalog.yaml'), 'utf8'));
@@ -1255,6 +1264,9 @@ async function testIntegration(item, token) {
     return { ok: false, detail: 'endpoint geçerli bir URL değil' };
   }
   if (!/^https?:$/.test(url.protocol)) return { ok: false, detail: 'yalnız http/https desteklenir' };
+  if (['169.254.169.254', 'metadata.google.internal'].includes(url.hostname)) {
+    return { ok: false, detail: 'bulut meta veri adresine istek yasak' };
+  }
 
   const headers = { 'User-Agent': 'dora-ai-package/' + version };
   if (token && item.auth_type === 'token') headers.Authorization = 'Bearer ' + token;
@@ -1323,6 +1335,7 @@ ensureDirs();
 
 const server = http.createServer(async (req, res) => {
   const urlPath = decodeURIComponent(new URL(req.url, `http://${HOST}`).pathname);
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.setHeader(k, v);
   const method = req.method ?? 'GET';
   try {
     if (urlPath.startsWith('/api/')) return await api(req, res, urlPath, method);

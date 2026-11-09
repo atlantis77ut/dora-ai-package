@@ -5,6 +5,35 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.15.0] — 2026-11-09
+
+### Eklendi — güvenlik taraması
+
+- `tools/security-scan.mjs`: statik desen taraması (eval/child_process/gömülü sır, innerHTML,
+  bağımlılık yüzeyi) + canlı HTTP kontrolleri (401/403, güvenlik başlıkları, yol dışına çıkma)
+- `npm run security` · çıkış kodu yüksek bulguda 1
+- `docs/GUVENLIK-TARAMASI.md`: bulgular, giderimler, kalan riskler
+
+### Düzeltildi
+
+- Güvenlik başlıkları eklendi: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
+  sıkı `Content-Security-Policy` (`script-src 'self'`)
+- `/api/health` artık kimlik doğrulaması istemiyor (izleme için)
+- `audit.log` 0600 izniyle yazılıyor
+- `unzipStore`: 100 MB açılmış boyut ve 5000 girdi sınırı (zip bomb)
+- SSRF: entegrasyon testi ve OIDC `issuer` bulut meta veri adresini reddediyor
+
+### Doğrulama
+
+```
+tarama: yüksek 0 · orta 0 · düşük 1 (elle incelenmiş sezgisel uyarı)
+başlıklar: nosniff · DENY · no-referrer · CSP
+/api/health: 200 (oturumsuz)
+birim testleri: 78/78
+```
+
+---
+
 ## [1.14.0] — 2026-11-09
 
 ### Eklendi — gerçek SIEM konnektörü

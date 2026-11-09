@@ -1,6 +1,6 @@
 {
   "name": "@dora-package/onboard-cli",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "DORA AI Ajan Paketi — ORL 6 fazlı onboarding sihirbazı (bağımlılıksız)",
   "license": "AGPL-3.0-only",
   "private": true,
@@ -14,6 +14,7 @@
     "test": "node --test tests/unit",
     "test:sandbox": "node --test --test-isolation=none \"tests/unit/*.test.mjs\"",
     "test:demo": "node tools/demo.mjs",
-    "phases": "node bin/dora-onboard.mjs phases"
+    "phases": "node bin/dora-onboard.mjs phases",
+    "security": "node tools/security-scan.mjs"
   }
 }

@@ -154,9 +154,12 @@ ikisi de `.gitignore`'da.
 ## Testler
 
 ```bash
-cd onboarding/cli && node --test tests/unit     # 45 birim testi
+cd onboarding/cli && node --test tests/unit     # birim testleri
 node tools/demo.mjs                             # 6 fazlı uçtan uca demo
+node tools/security-scan.mjs                    # güvenlik taraması (yüksek bulguda çıkış 1)
 ```
+
+Bulgular ve kalan riskler: [`docs/GUVENLIK-TARAMASI.md`](docs/GUVENLIK-TARAMASI.md)
 
 ## Sunucuya kurulum
 

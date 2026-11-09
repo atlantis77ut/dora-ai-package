@@ -1047,3 +1047,31 @@ hatalı uç: 502 + 'SIEM yanıtı: HTTP 404'
 - Olaylar **okunur**, otomatik olay kaydı açılmaz; eşleme kuralları ayrı iş (C4 senaryoları).
 - QRadar akışı temel düzeyde: arama başlatma + sonuç sayfalama yok.
 - Kimlik doğrulama yöntemleri: Splunk/Sentinel/QRadar `Bearer`, QRadar `SEC`, Elastic `ApiKey`/`Basic`.
+
+---
+
+## 36. Güvenlik taraması — 1.15.0 (2026-11-09)
+
+Araç: `tools/security-scan.mjs` (statik + canlı). Rapor: `docs/GUVENLIK-TARAMASI.md`.
+
+| Önem | İlk | Sonra |
+|---|---|---|
+| Yüksek | 2 (yanlış pozitif) | 0 |
+| Orta | 6 | 0 |
+| Düşük | 2 | 1 (elle incelendi) |
+
+### Giderilenler
+
+1. Güvenlik başlıkları (nosniff, DENY, no-referrer, CSP)
+2. `/api/health` herkese açık
+3. `audit.log` 0600
+4. ZIP açma sınırları (100 MB / 5000 girdi)
+5. SSRF: meta veri adresi engeli (entegrasyon testi + OIDC)
+
+### Kalan riskler (kabul edilmiş)
+
+- TLS yok → ters vekil arkasında çalıştırılmalı
+- Sırlar diskte düz metin (0600) → KMS önerilir
+- Giriş sınırı kullanıcı adı bazlı → vekilde IP sınırı
+- Login CSRF muafiyeti (oturumsuz CSRF anlamsız)
+- SSO yalnız sahte sağlayıcıyla test edildi

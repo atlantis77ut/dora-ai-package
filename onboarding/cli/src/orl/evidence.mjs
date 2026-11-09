@@ -122,6 +122,9 @@ export function zipStore(entries, now = new Date()) {
 }
 
 /** ZIP Buffer → [{ name, data }] (yalnızca store yöntemi) */
+const MAX_UNZIP_BYTES = 100 * 1024 * 1024; // 100 MB açılmış veri sınırı
+const MAX_UNZIP_ENTRIES = 5000;
+
 export function unzipStore(buf) {
   let eocd = -1;
   for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) {
