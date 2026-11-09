@@ -61,3 +61,6 @@ jobs:
       - name: Birim testleri (1.12)
         working-directory: onboarding/cli
         run: node --test tests/unit
+
+      - name: Kullanici el kitabi (1.26)
+        run: node docs/tools/build-manual.mjs --check

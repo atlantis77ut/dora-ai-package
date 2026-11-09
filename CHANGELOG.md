@@ -5,6 +5,26 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.26.0] — 2026-11-09
+
+### Eklendi — kullanıcı el kitabı
+
+- `docs/KULLANICI-EL-KITABI.md`: iki bölüm — **Kullanıcı** (ilk giriş, 2FA, kurulum adımları,
+  CSV, olay kaydı ve süreler, geçmiş, kanıt paketi, arama, sık sorunlar) ve **Yönetici**
+  (kullanıcılar, SMTP, bildirimler, dört göz, entegrasyonlar, SSO, yedekleme, denetim)
+- `docs/tools/build-manual.mjs`: bağımlılıksız Markdown→HTML (başlık, tablo, kod, liste, alıntı),
+  üstte iki SVG akış şeması (kurulum, olay→raporlama), içindekiler
+- Üretilen sayfa: `app/el-kitabi.html` — uygulama menüsünde **El kitabı** (tüm roller)
+
+### Doğrulama
+
+```
+sayfa: 200 · 17 KB · 3 h2 + 22 h3 + 6 tablo + 2 SVG · 25 içindekiler bağlantısı
+CI: build-manual --check (üretilen dosya güncel mi)
+```
+
+---
+
 ## [1.25.0] — 2026-11-09
 
 ### Eklendi — genel arama

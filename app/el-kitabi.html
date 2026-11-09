@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kullanıcı El Kitabı — DORA Ajan Paketi</title>
+<style>
+:root{--bg:#0a0e18;--panel:#121a2b;--line:#223049;--fg:#e9eefb;--muted:#93a3c4;--accent:#5b9cff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 "Segoe UI",system-ui,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:32px 22px 80px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px}
+header a{color:var(--accent);text-decoration:none;font-size:13px;border:1px solid var(--line);padding:6px 12px;border-radius:8px}
+h1{font-size:26px;margin:14px 0 6px}
+h2{font-size:19px;margin:32px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
+h3{font-size:15px;margin:22px 0 6px;color:#cfe0ff}
+p,li{color:#dbe4f7}
+code{background:#0c1322;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:13px}
+pre{background:#0c1322;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto}
+pre code{border:0;background:none;padding:0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+blockquote{border-left:3px solid var(--accent);margin:14px 0;padding:8px 14px;background:#131c30;border-radius:0 8px 8px 0;color:#cfe0ff}
+hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+figure{margin:18px 0}
+a{color:var(--accent)}
+.toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:14px}
+.toc a{display:inline-block;margin:3px 10px 3px 0}
+.toc a.t3{margin-left:16px;font-size:13px;color:#9db4d6}
+</style></head>
+<body><div class="wrap">
+<header><strong>DORA Ajan Paketi · El Kitabı</strong>
+<span><a href="/app/">← Uygulamaya dön</a></span></header>
+
+<figure>
+<svg viewBox="0 0 760 120" width="100%" height="120" role="img" aria-label="Kurulum akışı">
+  <g font-family="Segoe UI, sans-serif" font-size="12" fill="#e9eefb">
+    <rect x="10" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="65" y="58" text-anchor="middle">Hizmetler</text>
+        <path d="M122 53 L132 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="135" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="190" y="58" text-anchor="middle">Toleranslar</text>
+        <path d="M247 53 L257 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="260" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="315" y="58" text-anchor="middle">Varlık/Sorumlu</text>
+        <path d="M372 53 L382 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="385" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="440" y="58" text-anchor="middle">Senaryolar</text>
+        <path d="M497 53 L507 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="510" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="565" y="58" text-anchor="middle">Öz değerlendirme</text>
+        <path d="M622 53 L632 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="635" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="690" y="58" text-anchor="middle">Canlıya geçiş</text>
+        
+    <defs><marker id="a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#5b9cff"/></marker></defs>
+    <text x="10" y="105" fill="#93a3c4">Adım 1 → 6 · her adımda "adımı denetle"</text>
+  </g>
+</svg>
+</figure>
+<figure>
+<svg viewBox="0 0 760 130" width="100%" height="130" role="img" aria-label="Olay ve raporlama akışı">
+  <g font-family="Segoe UI, sans-serif" font-size="12" fill="#e9eefb">
+    <rect x="10" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+    <text x="85" y="47" text-anchor="middle">SIEM olayı</text>
+    <path d="M162 42 L210 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
+    <rect x="212" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+    <text x="287" y="47" text-anchor="middle">Taslak kayıt</text>
+    <path d="M364 42 L412 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
+    <rect x="414" y="20" width="160" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+    <text x="494" y="47" text-anchor="middle">Aktif kayıt + süreler</text>
+    <path d="M576 42 L624 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
+    <rect x="626" y="20" width="124" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+    <text x="688" y="47" text-anchor="middle">Raporlama</text>
+    <text x="10" y="95" fill="#93a3c4">4 saat ilk bildirim · 72 saat ara rapor · 1 ay nihai rapor (tespit anından)</text>
+    <defs><marker id="b" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#5b9cff"/></marker></defs>
+  </g>
+</svg>
+</figure>
+
+<div class="toc"><strong>İçindekiler</strong><br><a class="t2" href="#bölüm-1-kullanıcı">Bölüm 1 — Kullanıcı</a><a class="t2" href="#bölüm-2-yönetici">Bölüm 2 — Yönetici</a><a class="t2" href="#ek-terimler">Ek: Terimler</a><a class="t3" href="#1-1-i-lk-giriş">1.1 İlk giriş</a><a class="t3" href="#1-2-i-ki-adımlı-doğrulama-2fa">1.2 İki adımlı doğrulama (2FA)</a><a class="t3" href="#1-3-durum-sayfası">1.3 Durum sayfası</a><a class="t3" href="#1-4-kurum-bilgileri">1.4 Kurum bilgileri</a><a class="t3" href="#1-5-kurulum-adımları">1.5 Kurulum adımları</a><a class="t3" href="#1-6-envanter-yükleme-csv">1.6 Envanter yükleme (CSV)</a><a class="t3" href="#1-7-olay-kaydı-ve-raporlama-süreleri">1.7 Olay kaydı ve raporlama süreleri</a><a class="t3" href="#1-8-olay-geçmişi">1.8 Olay geçmişi</a><a class="t3" href="#1-9-belgeler-ve-kanıt-paketi">1.9 Belgeler ve kanıt paketi</a><a class="t3" href="#1-10-ara">1.10 Ara</a><a class="t3" href="#1-11-parola-değiştirme">1.11 Parola değiştirme</a><a class="t3" href="#1-12-sık-sorunlar">1.12 Sık sorunlar</a><a class="t3" href="#2-1-kullanıcı-yönetimi">2.1 Kullanıcı yönetimi</a><a class="t3" href="#2-2-e-posta-smtp">2.2 E-posta (SMTP)</a><a class="t3" href="#2-3-bildirimler">2.3 Bildirimler</a><a class="t3" href="#2-4-dört-göz-onayı">2.4 Dört göz onayı</a><a class="t3" href="#2-5-entegrasyonlar">2.5 Entegrasyonlar</a><a class="t3" href="#2-6-siem-olay-kuralları-ve-zamanlanmış-çekme">2.6 SIEM olay kuralları ve zamanlanmış çekme</a><a class="t3" href="#2-7-sso-kurumsal-giriş">2.7 SSO (kurumsal giriş)</a><a class="t3" href="#2-8-yedekleme">2.8 Yedekleme</a><a class="t3" href="#2-9-denetim-kaydı">2.9 Denetim kaydı</a><a class="t3" href="#2-10-teknik-panel">2.10 Teknik panel</a></div>
+<h1 id="kullanıcı-el-kitabı">Kullanıcı El Kitabı</h1>
+<p>DORA Ajan Paketi · Sürüm 1.26.0 · Bu kitap iki bölümden oluşur: <strong>Kullanıcı</strong> ve <strong>Yönetici</strong>.</p>
+<hr>
+<h2 id="bölüm-1-kullanıcı">Bölüm 1 — Kullanıcı</h2>
+<h3 id="1-1-i-lk-giriş">1.1 İlk giriş</h3>
+<ol><li>Tarayıcıda <code>https://&lt;sunucu&gt;/app/</code> adresini açın.</li><li>Kullanıcı adı ve parolanızı girin.</li><li>Yönetici size <strong>davet e-postası</strong> gönderdiyse bağlantıya tıklayıp parolanızı belirleyin</li></ol>
+<p>   (bağlantı 30 dakika geçerlidir, tek kullanımlıktır).</p>
+<ol><li>İlk girişten sonra <strong>Güvenlik → Kurulumu başlat</strong> ile iki adımlı doğrulamayı açın.</li></ol>
+<blockquote>Parolanızı unuttuysanız yöneticinizden <strong>sıfırlama bağlantısı</strong> isteyin. E-postanıza gelmişse bağlantıyı açıp yeni parolanızı belirleyin.</blockquote>
+<h3 id="1-2-i-ki-adımlı-doğrulama-2fa">1.2 İki adımlı doğrulama (2FA)</h3>
+<table><thead><tr><th>Adım</th><th>Ne yapılır</th></tr></thead><tbody><tr><td>1</td><td>Güvenlik sayfasında <strong>Kurulumu başlat</strong></td></tr><tr><td>2</td><td>Telefonunuzda Google/Microsoft Authenticator → <strong>Kurulum anahtarını gir</strong></td></tr><tr><td>3</td><td>Ekrandaki anahtarı 4'lü gruplar halinde yazın</td></tr><tr><td>4</td><td>Uygulamanın verdiği 6 haneli kodu girin → <strong>Etkinleştir</strong></td></tr><tr><td>5</td><td><strong>10 kurtarma kodunu</strong> kaydedin (bir daha gösterilmez)</td></tr></tbody></table>
+<p>Sonraki girişlerde paroladan sonra 6 haneli kod istenir. Kod gelmezse kurtarma kodlarından birini kullanın — her kod <strong>tek kullanım</strong>.</p>
+<h3 id="1-3-durum-sayfası">1.3 Durum sayfası</h3>
+<p>Girişte gördüğünüz <strong>Durum</strong> sayfası üç şeyi gösterir:</p>
+<ul><li>Kaç adım tamamlandı (6 adım)</li><li>Kurum büyüklüğü ve denetleyici kurum</li><li>Kaç sistem bağlı (olay, destek, uyum, envanter)</li></ul>
+<h3 id="1-4-kurum-bilgileri">1.4 Kurum bilgileri</h3>
+<p><strong>Kurum bilgileri</strong> sayfasında kurum adı, büyüklük (tier), denetleyici kurum, faaliyet ülkesi ve faaliyet alanları girilir. Bu bilgiler raporlarda ve kanıt paketinde kullanılır.</p>
+<h3 id="1-5-kurulum-adımları">1.5 Kurulum adımları</h3>
+<table><thead><tr><th>Adım</th><th>Ne girilir</th></tr></thead><tbody><tr><td>1</td><td><strong>Hizmetleriniz</strong> — kritik hizmetler, sahipleri, kritiklik</td></tr><tr><td>2</td><td><strong>Kesinti toleransları</strong> — her hizmet için MTD / RTO / RPO (saat)</td></tr><tr><td>3</td><td><strong>Varlıklarım</strong> — sunucu/sistem listesi (CSV yükleme veya yapıştırma) + <strong>Sorumlular</strong></td></tr><tr><td>4</td><td><strong>Senaryo testleri</strong> — üç senaryo için doğruluk, SLA ihlali, hash zinciri</td></tr><tr><td>5</td><td><strong>Öz değerlendirme</strong> — 28 DORA maddesi için kapsama ve bağımsız doğrulayan</td></tr><tr><td>6</td><td><strong>Canlıya geçiş</strong> — ajan otonomi seviyeleri, gölge/yarı-otomatik gün sayısı</td></tr></tbody></table>
+<p>Her adımda <strong>"adımı denetle"</strong> düğmesi vardır: eksik varsa kırmızı çarpı ile listeler.</p>
+<h3 id="1-6-envanter-yükleme-csv">1.6 Envanter yükleme (CSV)</h3>
+<ol><li><strong>Varlıklarım</strong> → <strong>Şablon indir</strong></li><li>Excel'de doldurun: <code>id, ad, kritiklik, tedarikçi</code></li><li>Dosyayı seçin → otomatik yüklenir</li></ol>
+<p>Kritiklik: <code>kritik</code>, <code>önemli</code>, <code>standart</code> (İngilizceleri de kabul edilir).</p>
+<h3 id="1-7-olay-kaydı-ve-raporlama-süreleri">1.7 Olay kaydı ve raporlama süreleri</h3>
+<p>SIEM bağlıysa olaylar otomatik gelir; gelmiyorsa yönetici <strong>SIEM olayları → Olayları çek</strong> der.</p>
+<ol><li><strong>Olay kayıtları</strong> tablosunda olay satırını görün.</li><li>Müşteri sayısı, kesinti dakikası, ekonomik etki alanlarını doldurun.</li><li><strong>kaydet</strong> → <strong>aktif yap</strong> (dört göz açıksa ikinci yöneticinin onayına gider).</li><li><strong>Raporlama süreleri</strong> kartında üç sayaç görünür:</li></ol>
+<table><thead><tr><th>Adım</th><th>Süre</th><th>Renk</th></tr></thead><tbody><tr><td>İlk bildirim</td><td>4 saat</td><td>yeşil = gönderildi, turuncu = yaklaşıyor, kırmızı = gecikti</td></tr><tr><td>Ara rapor</td><td>72 saat</td><td>aynı</td></tr><tr><td>Nihai rapor</td><td>1 ay</td><td>aynı</td></tr></tbody></table>
+<ol><li>Raporu dışarıda gönderdikten sonra <strong>"… gönderildi"</strong> düğmesine basın; referans numarası</li></ol>
+<p>   girebilirsiniz.</p>
+<h3 id="1-8-olay-geçmişi">1.8 Olay geçmişi</h3>
+<p>Olay satırında <strong>geçmiş</strong> düğmesi: kim, ne zaman, ne yaptı (oluşturma, güncelleme, raporlama, onay).</p>
+<h3 id="1-9-belgeler-ve-kanıt-paketi">1.9 Belgeler ve kanıt paketi</h3>
+<ul><li><strong>Belgeler</strong> sayfası oturumda üretilen kayıtları listeler.</li><li><strong>Kanıt paketi oluştur</strong> → tüm kayıtlar tek zip'te, imzalı.</li><li><strong>Yönetim raporu (PDF)</strong> → kurum, fazlar, olaylar, süreler, onaylar, kapsama özeti.</li></ul>
+<h3 id="1-10-ara">1.10 Ara</h3>
+<p><strong>Ara</strong> sayfası süreç, kontrol, ajan, terim ve DORA maddelerinde arama yapar. Türkçe karakter duyarsızdır (<code>siniflandirma</code> = <code>sınıflandırma</code>).</p>
+<h3 id="1-11-parola-değiştirme">1.11 Parola değiştirme</h3>
+<p><strong>Parolamı değiştir</strong> → mevcut parola + yeni parola (en az 8 karakter). Değişince diğer cihazlardaki oturumlar kapanır.</p>
+<h3 id="1-12-sık-sorunlar">1.12 Sık sorunlar</h3>
+<table><thead><tr><th>Belirti</th><th>Çözüm</th></tr></thead><tbody><tr><td>Giriş yapamıyorum</td><td>Yöneticiden sıfırlama bağlantısı isteyin</td></tr><tr><td>6 haneli kod geçersiz</td><td>Telefon saati doğru mu? Kurtarma kodunu deneyin</td></tr><tr><td>"bu hesap için yetki tanımlı değil"</td><td>Yönetici sizi kullanıcı olarak eklemeli</td></tr><tr><td>Dosya yüklenmiyor</td><td>Şablonu kullanın; <code>ad</code> sütunu boş olmamalı</td></tr><tr><td>Kanıt paketi indirilmiyor</td><td>Önce <strong>Paketi oluştur</strong>, sonra <strong>İndir</strong></td></tr><tr><td>Sayfa boş görünüyor</td><td>Tarayıcıyı yenileyin; oturum süresi dolmuş olabilir</td></tr></tbody></table>
+<hr>
+<h2 id="bölüm-2-yönetici">Bölüm 2 — Yönetici</h2>
+<h3 id="2-1-kullanıcı-yönetimi">2.1 Kullanıcı yönetimi</h3>
+<p><strong>Yönetim → Kullanıcılar</strong></p>
+<table><thead><tr><th>İşlem</th><th>Not</th></tr></thead><tbody><tr><td>Kullanıcı ekle</td><td>kullanıcı adı + parola + rol; <strong>davet e-postası gönder</strong> seçilebilir</td></tr><tr><td>Rol değiştir</td><td>kullanıcı ↔ yönetici</td></tr><tr><td>Parola sıfırla</td><td>geçici parola belirleyin</td></tr><tr><td>Sıfırlama bağlantısı</td><td>30 dk, tek kullanım; panoya kopyalanır</td></tr><tr><td>Davet gönder</td><td>e-posta ile sıfırlama bağlantısı</td></tr><tr><td>Sil</td><td>son yönetici silinemez</td></tr></tbody></table>
+<h3 id="2-2-e-posta-smtp">2.2 E-posta (SMTP)</h3>
+<p><strong>Yönetim → E-posta (SMTP)</strong>: sunucu, port, gönderen, kullanıcı, parola, SSL seçenekleri. <strong>Test gönder</strong> ile doğrulayın. Gönderilemeyen iletiler <strong>kuyruğa</strong> düşer; <strong>Kuyruğu gönder</strong> ile tekrar denenir.</p>
+<h3 id="2-3-bildirimler">2.3 Bildirimler</h3>
+<p><strong>Yönetim → Bildirimler</strong>: etkin, alıcılar (virgülle). Açıkken:</p>
+<ul><li>Raporlama süresi yaklaşan/geçen olaylar</li><li>Bekleyen onay talepleri</li></ul>
+<p>için e-posta gider. <strong>Şimdi tara</strong> ile elle denersiniz. Aynı uyarı ikinci kez gönderilmez.</p>
+<h3 id="2-4-dört-göz-onayı">2.4 Dört göz onayı</h3>
+<p><strong>Yönetim → Onay akışı</strong> → <strong>Etkin</strong>. Açıkken olay sınıflandırması ve canlıya geçiş ikinci yöneticinin onayına gider; <strong>talep eden kendi talebini onaylayamaz</strong>.</p>
+<blockquote>Tek yönetici varsa açmayın — talep onaylanamaz. Önce ikinci bir yönetici oluşturun.</blockquote>
+<h3 id="2-5-entegrasyonlar">2.5 Entegrasyonlar</h3>
+<p><strong>Entegrasyonlar</strong>: SIEM / ITSM / GRC / CMDB için ürün, adres, kimlik doğrulama, anahtar. <strong>Bağlantıyı dene</strong> erişimi sınar; <strong>SIEM olayları</strong> sayfasında olayları çekersiniz.</p>
+<h3 id="2-6-siem-olay-kuralları-ve-zamanlanmış-çekme">2.6 SIEM olay kuralları ve zamanlanmış çekme</h3>
+<ul><li><strong>Olay kuralları</strong>: hangi anahtar kelimelerin kayıt açacağı, veri kaybı/yetkisiz erişim işaretleri.</li><li><strong>Zamanlanmış çekme</strong>: etkin + aralık (dakika) → sunucu kendisi çeker, taslak kayıt üretir.</li></ul>
+<h3 id="2-7-sso-kurumsal-giriş">2.7 SSO (kurumsal giriş)</h3>
+<p><strong>Yönetim → Kurumsal giriş (SSO / OIDC)</strong>: issuer, client ID, redirect URI, secret. Ayrıntı: <code>docs/SSO-KURULUM.md</code>. TLS olmadan çalışmaz.</p>
+<h3 id="2-8-yedekleme">2.8 Yedekleme</h3>
+<pre><code class="lang-bash">node tools/backup.mjs --out /var/backups/dora/$(date +%F).zip --keep 8
+node tools/backup.mjs --verify /var/backups/dora/2026-11-09.zip
+node tools/restore.mjs --zip /var/backups/dora/2026-11-09.zip --target /opt/dora-restore</code></pre>
+<p>Ayrıntı: <code>docs/YEDEKLEME.md</code>.</p>
+<h3 id="2-9-denetim-kaydı">2.9 Denetim kaydı</h3>
+<p><strong>Yönetim → İşlem kaydı</strong> son 150 işlemi gösterir; <strong>CSV indir</strong> ile tamamı alınır.</p>
+<h3 id="2-10-teknik-panel">2.10 Teknik panel</h3>
+<p>Sol menüde <strong>Teknik panel</strong> → statik rapor panosu (süreçler, kontroller, ajanlar, sözlük, DORA eşlemesi). <strong>Canlı pano</strong> ise anlık veriyi gösterir.</p>
+<hr>
+<h2 id="ek-terimler">Ek: Terimler</h2>
+<table><thead><tr><th>Terim</th><th>Anlam</th></tr></thead><tbody><tr><td>Tier</td><td>Kurum büyüklüğü sınıfı (tier1 büyük, tier3 küçük)</td></tr><tr><td>MTD</td><td>Azami tolere edilebilir kesinti süresi</td></tr><tr><td>RTO</td><td>Hedef toparlanma süresi</td></tr><tr><td>RPO</td><td>Hedef veri kaybı süresi</td></tr><tr><td>Kanıt paketi</td><td>İmzalı zip; manifest + hash zinciri</td></tr><tr><td>Dört göz</td><td>İki farklı yöneticinin onayı</td></tr><tr><td>Ara rapor</td><td>İlk bildirimden 72 saat sonraki rapor</td></tr></tbody></table>
+</div></body></html>

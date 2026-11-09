@@ -1434,3 +1434,39 @@ pano: 24/36/11 · %100 (28/28) · fazlar · son işlemler
 - Arama **kataloglarla** sınırlı; oturum artefaktları ve denetim kaydı aranmıyor
 - Pano yöneticiye açık; kullanıcı rolü görmüyor
 - Pano 5 sn'de bir kendini yenilemiyor (elle **Yenile**)
+
+---
+
+## 48. Kullanıcı el kitabı — 1.26.0 (2026-11-09)
+
+| Parça | Dosya |
+|---|---|
+| Kaynak (Markdown) | `docs/KULLANICI-EL-KITABI.md` |
+| Dönüştürücü | `docs/tools/build-manual.mjs` |
+| Yayınlanan sayfa | `app/el-kitabi.html` (menüde **El kitabı**) |
+
+### Kapsam
+
+- **Kullanıcı**: ilk giriş, davet bağlantısı, 2FA, durum, kurum bilgileri, altı adım, CSV,
+  olay kaydı + 4s/72s/1ay sayaçları, geçmiş, belgeler, kanıt paketi, PDF rapor, arama,
+  parola değiştirme, sık sorunlar
+- **Yönetici**: kullanıcı işlemleri, SMTP, bildirimler, dört göz, entegrasyonlar, SIEM kuralları
+  ve zamanlama, SSO, yedekleme, denetim, panolar
+
+### Tasarım notu
+
+Ekran görüntüsü yerine **SVG akış şemaları** kullanıldı (gerçek ekranların taklidi değil):
+kurulum 1→6 ve SIEM olayı → taslak → aktif kayıt → raporlama.
+
+### Doğrulama
+
+```
+200 · 17 KB · 3 h2 + 22 h3 + 6 tablo + 2 SVG · 25 TOC bağlantısı
+CI: build-manual --check
+```
+
+### Sınırlar
+
+- **Ekran görüntüsü yok** (tarayıcı otomasyonu yok); SVG şemalar metin akışını anlatıyor
+- El kitabı **Türkçe**; İngilizce sürüm yok
+- Üretilen HTML elle düzenlenmez; kaynak Markdown'dır

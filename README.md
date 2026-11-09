@@ -169,6 +169,8 @@ node tools/demo.mjs                             # 6 fazlı uçtan uca demo
 node tools/security-scan.mjs                    # güvenlik taraması (yüksek bulguda çıkış 1)
 ```
 
+Kullanıcı el kitabı: [`app/el-kitabi.html`](app/el-kitabi.html) veya kaynak [`docs/KULLANICI-EL-KITABI.md`](docs/KULLANICI-EL-KITABI.md)
+
 Bulgular ve kalan riskler: [`docs/GUVENLIK-TARAMASI.md`](docs/GUVENLIK-TARAMASI.md)
 
 SSO kurulumu (Entra / Keycloak): [`docs/SSO-KURULUM.md`](docs/SSO-KURULUM.md)

@@ -2368,7 +2368,7 @@ function navItems() {
         ['ajanlar', 'Sorumlular'],
         ['belgeler', 'Belgeler'],
         ['guvenlik', 'Güvenlik'],
-      ];
+      ].concat([['__kitap', 'El kitabı']]);
 }
 
 function currentTab() {
@@ -2395,7 +2395,13 @@ function renderShell() {
   if (key !== navKey) {
     navKey = key;
     $('#nav').innerHTML =
-      items.map(([id, label]) => `<a href="#${id}" data-tab="${id}">${label}</a>`).join('') +
+      items
+        .map(([id, label]) =>
+          id === '__kitap'
+            ? `<a href="/app/el-kitabi.html" data-tab="kitap">${label}</a>`
+            : `<a href="#${id}" data-tab="${id}">${label}</a>`,
+        )
+        .join('') +
       (isAdmin() ? `<a href="/dashboard/" data-tab="panel">Teknik panel</a>` : '') +
       `<a href="#" id="logout" data-tab="cikis">Çıkış</a>`;
     $('#logout').addEventListener('click', async (e) => {
