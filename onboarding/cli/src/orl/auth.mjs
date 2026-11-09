@@ -52,6 +52,7 @@ export function createAuthStore(dataDir) {
   }
 
   function saveUsers(list) {
+    fs.mkdirSync(dataDir, { recursive: true });
     fs.writeFileSync(USERS, JSON.stringify(list, null, 2) + '\n', { mode: 0o600 });
   }
 
@@ -61,7 +62,12 @@ export function createAuthStore(dataDir) {
 
   function audit(user, action, target = '') {
     const line = `${new Date().toISOString()}\t${user ?? '-'}\t${action}\t${target}\n`;
-    fs.appendFileSync(AUDIT, line);
+    try {
+      fs.mkdirSync(dataDir, { recursive: true });
+      fs.appendFileSync(AUDIT, line);
+    } catch {
+      /* denetim yazılamazsa akış durmasın */
+    }
   }
 
   function sign(payload) {
@@ -86,14 +92,15 @@ export function createAuthStore(dataDir) {
     }
   }
 
-  function login(username, password) {
+  function login(username, password, hours = 8) {
     const list = users();
     const u = list.find((x) => x.username.toLowerCase() === String(username ?? '').toLowerCase());
     if (!u) return { ok: false, error: 'kullanıcı adı veya parola hatalı' };
     if (!verifyPassword(password, u.salt, u.hash)) return { ok: false, error: 'kullanıcı adı veya parola hatalı' };
     u.last_login = new Date().toISOString();
     saveUsers(list);
-    const token = sign({ uid: u.id, role: u.role, exp: Date.now() + SESSION_TTL_S * 1000 });
+    const ttl = Math.max(1, Math.min(168, Number(hours) || 8)) * 3600 * 1000;
+    const token = sign({ uid: u.id, role: u.role, exp: Date.now() + ttl });
     audit(u.username, 'login');
     return { ok: true, token, user: publicUser(u) };
   }

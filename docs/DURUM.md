@@ -794,3 +794,45 @@ user    PUT /api/institution → 200 (izinli)
 
 `web-data/` ve `.dora-onboarding/` silindi; sunucu **ilk yönetici ekranıyla** açılıyor.
 Test kullanıcıları kalmadı.
+
+---
+
+## 29. Parola yönetimi, oturum süresi ve kurulum sihirbazı — 1.8.0 (2026-11-09)
+
+| Konu | Uç / dosya | Not |
+|---|---|---|
+| Kendi parolasını değiştirme | `POST /api/auth/password` | mevcut parola doğrulanır, scrypt yeniden üretilir |
+| Yönetici parola sıfırlama | `PATCH /api/users/:id` `{password}` | işlem kaydına yazılır |
+| Oturum süresi | `PUT /api/settings/session` `{session_hours}` | 1-168 saat, girişte uygulanır |
+| Giriş denemesi sınırı | bellek içi | 5 hata → 60 sn kilit; `login_failed` denetim kaydı |
+| Hizmet listesi | `POST /api/sessions/:id/services` | `business-service-catalogue.json` |
+| Toleranslar | `POST /api/sessions/:id/tolerances` | `impact-tolerances.json` + `risk-appetite.json` |
+| Adım denetimi | `POST /api/sessions/:id/gate/:phase` | `evaluatePhase()`; 200 geçti, 422 eksik |
+
+### Doğrulama (gerçek HTTP, 8080)
+
+```
+bootstrap                     → 201
+session_hours=12              → 200
+kullanıcı ekle                → 201
+admin parola sıfırlama        → 200
+kullanıcı girişi              → 200
+kendi parolasını değiştirme   → 200
+hizmetler (2)                 → 200
+toleranslar (1)               → 200
+C1 kapısı                     → 200 (LIC, C1-1…C1-4 hepsi ✔)
+C2 kapısı                     → 200
+6 hatalı giriş                → 429
+```
+
+### Bilinen eksikler (bu sürümden sonra)
+
+1. **C3-C6 formları yok** — varlık ve sorumlu girişi var; senaryo sonuçları, öz değerlendirme,
+   canlıya geçiş ekranları henüz yok (CLI `--demo` ile dolduruluyor).
+2. **Self-service parola sıfırlama yok** (e-posta ile); yalnız yönetici sıfırlar.
+3. **2FA / SSO yok** — kurumsal kurulumda SAML/OIDC gerekir.
+4. **CSV dosya yükleme yok** — envanter yapıştırma ile; dosya seçici eklenebilir.
+5. **Tek aktif oturum** — en yeni oturum kullanılır, seçim ekranı yok.
+6. **Kanıt paketi indirme arayüzde yok** — CLI `export` ile alınıyor.
+7. **Konnektörler yalnız test eder**, veri çekmez (SIEM/ITSM gerçek entegrasyonu yok).
+8. **Birim testi yok** — CI demo adımlarıyla sınırlı.

@@ -17,6 +17,7 @@ import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { parse } from '../src/orl/yaml.mjs';
 import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
+import { evaluatePhase } from '../src/orl/checks.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../..');
@@ -50,6 +51,27 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
+const loginAttempts = new Map(); // anahtar: kullanıcı adı → {count, until}
+
+function throttled(username) {
+  const rec = loginAttempts.get(String(username ?? '').toLowerCase());
+  if (!rec) return false;
+  if (rec.until && rec.until > Date.now()) return true;
+  if (rec.until && rec.until <= Date.now()) loginAttempts.delete(String(username ?? '').toLowerCase());
+  return false;
+}
+
+function recordFailure(username) {
+  const key = String(username ?? '').toLowerCase();
+  const rec = loginAttempts.get(key) ?? { count: 0, until: 0 };
+  rec.count += 1;
+  if (rec.count >= 5) {
+    rec.until = Date.now() + 60_000;
+    rec.count = 0;
+  }
+  loginAttempts.set(key, rec);
+}
+
 const version = (() => {
   try {
     return JSON.parse(fs.readFileSync(path.join(ROOT, 'onboarding/cli/package.json'), 'utf8')).version;
@@ -72,6 +94,7 @@ const DEFAULT_SETTINGS = {
     { id: 'grc', type: 'grc', label: 'GRC (uyum)', vendor: '', endpoint: '', auth_type: 'token', status: 'not_configured', last_test: null },
     { id: 'cmdb', type: 'cmdb', label: 'CMDB (varlık)', vendor: '', endpoint: '', auth_type: 'token', status: 'not_configured', last_test: null },
   ],
+  session_hours: 8,
   updated_at: null,
 };
 
@@ -289,9 +312,18 @@ async function api(req, res, urlPath, method) {
 
   if (urlPath === '/api/auth/login' && method === 'POST') {
     const body = await readBody(req);
-    const r = auth.login(body.username, body.password);
-    if (!r.ok) return sendJson(res, 401, { ok: false, error: r.error });
-    setCookie(res, r.token);
+    if (throttled(body.username)) {
+      return sendJson(res, 429, { ok: false, error: 'çok fazla deneme — 1 dakika sonra tekrar deneyin' });
+    }
+    const hours = Number(loadSettings().session_hours) || 8;
+    const r = auth.login(body.username, body.password, hours);
+    if (!r.ok) {
+      recordFailure(body.username);
+      auth.audit(body.username || '-', 'login_failed');
+      return sendJson(res, 401, { ok: false, error: r.error });
+    }
+    loginAttempts.delete(String(body.username).toLowerCase());
+    setCookie(res, r.token, hours * 3600);
     return sendJson(res, 200, { ok: true, user: r.user });
   }
 
@@ -303,6 +335,17 @@ async function api(req, res, urlPath, method) {
   }
 
   const me = getUser(req);
+
+  if (urlPath === '/api/auth/password' && method === 'POST') {
+    if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
+    const body = await readBody(req);
+    const check = auth.login(me.user.username, body.current);
+    if (!check.ok) return sendJson(res, 400, { ok: false, error: 'mevcut parola hatalı' });
+    const upd = auth.updateUser(me.user.id, { password: body.password });
+    if (!upd.ok) return sendJson(res, 400, { ok: false, error: upd.error });
+    auth.audit(me.user.username, 'password_change', 'kendi hesabı');
+    return sendJson(res, 200, { ok: true });
+  }
 
   if (urlPath === '/api/auth/me' && method === 'GET') {
     if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
@@ -383,6 +426,20 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { lifecycle: doc.lifecycle, phases });
   }
 
+  if (urlPath === '/api/settings/session' && method === 'PUT') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const body = await readBody(req);
+    const hours = Number(body.session_hours);
+    if (!Number.isFinite(hours) || hours < 1 || hours > 168) {
+      return sendJson(res, 400, { ok: false, error: 'oturum süresi 1-168 saat arası olmalı' });
+    }
+    const s = loadSettings();
+    s.session_hours = Math.round(hours);
+    saveSettings(s);
+    auth.audit(me.user.username, 'session_hours_update', String(s.session_hours));
+    return sendJson(res, 200, { ok: true, session_hours: s.session_hours });
+  }
+
   // kurum profili
   if (urlPath === '/api/institution' && method === 'PUT') {
     const body = await readBody(req);
@@ -448,7 +505,7 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { sessions: listSessions() });
   }
 
-  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory)(?:\/([\w.-]+))?)?$/);
+  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances)(?:\/([\w.-]+))?)?$/);
   if (sessMatch) {
     const id = sessMatch[1];
     const kind = sessMatch[2];
@@ -482,6 +539,61 @@ async function api(req, res, urlPath, method) {
         writeJson(path.join(dir, path.basename(artifact)), body);
         return sendJson(res, 200, { ok: true, name: path.basename(artifact), artifacts: listArtifacts(id) });
       }
+    }
+
+    if (kind === 'gate' && method === 'POST') {
+      const phase = artifact; // /gate/:phase
+      const session = readJson(path.join(dir, 'session.json'), {});
+      const resPhase = evaluatePhase(phase, { dir, session });
+      session.phases = session.phases ?? {};
+      session.phases[phase] = {
+        status: resPhase.passed ? 'completed' : 'blocked',
+        gate: resPhase.passed ? 'pass' : 'fail',
+        at: new Date().toISOString(),
+      };
+      if (resPhase.passed) {
+        const order = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'];
+        const i = order.indexOf(phase);
+        session.current_phase = order[i + 1] ?? phase;
+      }
+      writeJson(path.join(dir, 'session.json'), session);
+      auth.audit(me.user.username, 'gate_check', `${id}/${phase}:${resPhase.passed ? 'pass' : 'fail'}`);
+      return sendJson(res, resPhase.passed ? 200 : 422, { ok: resPhase.passed, phase, results: resPhase.results });
+    }
+
+    if (kind === 'services' && method === 'POST') {
+      const body = await readBody(req);
+      const services = Array.isArray(body.services) ? body.services : [];
+      if (!services.length) return sendJson(res, 400, { ok: false, error: 'en az bir hizmet gerekli' });
+      const clean = services.slice(0, 200).map((s, i) => ({
+        id: String(s.id ?? `SVC-${String(i + 1).padStart(3, '0')}`).slice(0, 40),
+        name: String(s.name ?? '').slice(0, 120),
+        owner: String(s.owner ?? '').slice(0, 80),
+        critical: Boolean(s.critical),
+        assets: [],
+      }));
+      writeJson(path.join(dir, 'business-service-catalogue.json'), { services: clean });
+      return sendJson(res, 200, { ok: true, count: clean.length, services: clean });
+    }
+
+    if (kind === 'tolerances' && method === 'POST') {
+      const body = await readBody(req);
+      const rows = Array.isArray(body.tolerances) ? body.tolerances : [];
+      if (!rows.length) return sendJson(res, 400, { ok: false, error: 'en az bir tolerans satırı gerekli' });
+      const clean = rows.slice(0, 200).map((r) => ({
+        service: String(r.service ?? '').slice(0, 40),
+        mtd_hours: Number(r.mtd_hours) || 0,
+        rto_hours: Number(r.rto_hours) || 0,
+        rpo_hours: Number(r.rpo_hours) || 0,
+      }));
+      writeJson(path.join(dir, 'impact-tolerances.json'), { tolerances: clean });
+      const thresholds = Array.isArray(body.thresholds) ? body.thresholds : [];
+      if (thresholds.length) {
+        writeJson(path.join(dir, 'risk-appetite.json'), {
+          thresholds: thresholds.map((t) => ({ metric: String(t.metric ?? 'esik').slice(0, 60), max: Number(t.max) || 0 })),
+        });
+      }
+      return sendJson(res, 200, { ok: true, count: clean.length });
     }
 
     if (kind === 'agents' && method === 'POST') {

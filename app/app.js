@@ -406,6 +406,14 @@ function viewYonetim() {
       <div class="actions"><button class="primary" id="uAdd">Kullanıcı ekle</button></div>
     </div>
     <div class="card">
+      <h2>Oturum süresi</h2>
+      <p class="sub">Giriş yaptıktan sonra oturumun kaç saat açık kalacağı (1-168).</p>
+      <div class="grid k3">
+        <div><label class="sub">Saat</label><input id="sHours" type="number" min="1" max="168" value="${esc(state.settings.session_hours ?? 8)}"></div>
+        <div style="display:flex;align-items:flex-end"><button class="primary" id="sSave">Kaydet</button></div>
+      </div>
+    </div>
+    <div class="card">
       <h2>İşlem kaydı</h2>
       <p class="sub">Son 150 işlem (giriş, kayıt, kullanıcı değişikliği).</p>
       <div id="auditBody" class="sub">Yükleniyor…</div>
@@ -605,6 +613,15 @@ async function loadArtifacts() {
 function bindYonetim() {
   loadUsers();
   loadAudit();
+  $('#sSave')?.addEventListener('click', async () => {
+    try {
+      const r = await api('/api/settings/session', { method: 'PUT', body: JSON.stringify({ session_hours: Number($('#sHours').value) }) });
+      toast('Oturum süresi ' + r.session_hours + ' saat olarak kaydedildi', 'ok');
+      state.settings.session_hours = r.session_hours;
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
   $('#uAdd')?.addEventListener('click', async () => {
     try {
       await api('/api/users', {
@@ -631,9 +648,25 @@ async function loadUsers() {
         (u) => `<tr><td class="mono">${esc(u.username)}</td><td>${esc(u.name ?? '')}</td>
         <td><span class="pill ${u.role === 'admin' ? 'warn' : ''}">${u.role === 'admin' ? 'yönetici' : 'kullanıcı'}</span></td>
         <td>${u.last_login ? new Date(u.last_login).toLocaleString('tr-TR') : '—'}</td>
-        <td>${u.username === state.user.username ? '<span class="sub">siz</span>' : `<button class="ghost-btn u-del" data-id="${esc(u.id)}">sil</button>`}</td></tr>`,
+        <td>${u.username === state.user.username
+          ? '<span class="sub">siz</span>'
+          : `<button class="ghost-btn u-pw" data-id="${esc(u.id)}" data-name="${esc(u.username)}">parola sıfırla</button>
+             <button class="ghost-btn u-del" data-id="${esc(u.id)}">sil</button>`}</td></tr>`,
       )
       .join('');
+    document.querySelectorAll('.u-pw').forEach((b) =>
+      b.addEventListener('click', async () => {
+        const yeni = prompt(`${b.dataset.name} için yeni parola (en az 8 karakter):`);
+        if (!yeni) return;
+        try {
+          await api('/api/users/' + b.dataset.id, { method: 'PATCH', body: JSON.stringify({ password: yeni }) });
+          toast('Parola sıfırlandı', 'ok');
+          loadAudit();
+        } catch (e) {
+          toast('Sıfırlanamadı: ' + e.message, 'bad');
+        }
+      }),
+    );
     document.querySelectorAll('.u-del').forEach((b) =>
       b.addEventListener('click', async () => {
         try {
@@ -666,12 +699,216 @@ async function loadAudit() {
   }
 }
 
+
+function viewKurulum() {
+  const s = state.activeSession;
+  if (!s) return noSession('Kuruluma başlamak için bir oturum gerekir.');
+  const step = (s.current_phase || 'C1').replace('C', '');
+  return `
+    <div class="card">
+      <h2>Kurulum sihirbazı</h2>
+      <p class="sub">Sıradaki adım: <b>${esc(s.current_phase || 'C1')}</b> · ${esc(PHASE_LABELS[s.current_phase] || '')}</p>
+      <div class="actions">
+        <button class="ghost-btn" data-gate="C1">1. adımı denetle</button>
+        <button class="ghost-btn" data-gate="C2">2. adımı denetle</button>
+        <button class="ghost-btn" data-gate="C3">3. adımı denetle</button>
+        <button class="ghost-btn" data-gate="C4">4. adımı denetle</button>
+        <button class="ghost-btn" data-gate="C5">5. adımı denetle</button>
+        <button class="ghost-btn" data-gate="C6">6. adımı denetle</button>
+      </div>
+      <div id="gateResult" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <h2>Adım 1 · Hizmetleriniz</h2>
+      <p class="sub">Kritik hizmetlerinizi ve sahiplerini girin. En az bir hizmet gerekir.</p>
+      <table id="svcTable">
+        <thead><tr><th>Hizmet adı</th><th>Sahibi</th><th>Kritik mi</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><input class="svc-name" placeholder="Ödeme hizmetleri"></td><td><input class="svc-owner" placeholder="Ödeme Direktörü"></td>
+            <td><input type="checkbox" class="svc-crit" checked></td><td><button class="ghost-btn svc-del">sil</button></td></tr>
+          <tr><td><input class="svc-name" placeholder="Mevduat işlemleri"></td><td><input class="svc-owner" placeholder="Bireysel Bankacılık"></td>
+            <td><input type="checkbox" class="svc-crit" checked></td><td><button class="ghost-btn svc-del">sil</button></td></tr>
+        </tbody>
+      </table>
+      <div class="actions">
+        <button class="ghost-btn" id="svcAdd">+ satır ekle</button>
+        <button class="primary" id="svcSave">Hizmetleri kaydet</button>
+      </div>
+      <div id="svcResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Adım 2 · Kesinti toleransları</h2>
+      <p class="sub">Her hizmet için kabul edilebilir kesinti süreleri (saat).</p>
+      <div id="tolRows"></div>
+      <div class="actions">
+        <button class="ghost-btn" id="tolLoad">Hizmetleri getir</button>
+        <button class="primary" id="tolSave">Toleransları kaydet</button>
+      </div>
+      <div class="row" style="margin-top:14px"><label>Yıllık kesinti sınırı (dakika)</label><input id="tolRisk" type="number" value="240"></div>
+      <div id="tolResult"></div>
+    </div>`;
+}
+
+function bindKurulum() {
+  const sid = state.activeSession?.session_id;
+  const rowHtml = (name = '', owner = '', crit = true) => `
+    <tr><td><input class="svc-name" value="${esc(name)}" placeholder="Hizmet adı"></td>
+    <td><input class="svc-owner" value="${esc(owner)}" placeholder="Sahibi"></td>
+    <td><input type="checkbox" class="svc-crit" ${crit ? 'checked' : ''}></td>
+    <td><button class="ghost-btn svc-del">sil</button></td></tr>`;
+
+  $('#svcAdd')?.addEventListener('click', () => {
+    $('#svcTable tbody').insertAdjacentHTML('beforeend', rowHtml());
+    document.querySelectorAll('.svc-del').forEach((b) => (b.onclick = () => b.closest('tr').remove()));
+  });
+  document.querySelectorAll('.svc-del').forEach((b) => (b.onclick = () => b.closest('tr').remove()));
+
+  $('#svcSave')?.addEventListener('click', async () => {
+    const services = [...document.querySelectorAll('#svcTable tbody tr')]
+      .map((tr) => ({
+        name: tr.querySelector('.svc-name').value.trim(),
+        owner: tr.querySelector('.svc-owner').value.trim(),
+        critical: tr.querySelector('.svc-crit').checked,
+      }))
+      .filter((s) => s.name);
+    if (!services.length) return toast('En az bir hizmet adı girin', 'bad');
+    try {
+      const r = await api(`/api/sessions/${sid}/services`, { method: 'POST', body: JSON.stringify({ services }) });
+      toast(`${r.count} hizmet kaydedildi`, 'ok');
+      $('#svcResult').innerHTML = `<div class="sub" style="margin-top:10px">Kaydedildi: ${r.count} hizmet</div>`;
+      loadTolerances();
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#tolLoad')?.addEventListener('click', loadTolerances);
+  $('#tolSave')?.addEventListener('click', async () => {
+    const rows = [...document.querySelectorAll('.tol-row')].map((tr) => ({
+      service: tr.dataset.service,
+      mtd_hours: Number(tr.querySelector('.tol-mtd').value) || 0,
+      rto_hours: Number(tr.querySelector('.tol-rto').value) || 0,
+      rpo_hours: Number(tr.querySelector('.tol-rpo').value) || 0,
+    }));
+    if (!rows.length) return toast('Önce hizmetleri yükleyin', 'bad');
+    try {
+      await api(`/api/sessions/${sid}/tolerances`, {
+        method: 'POST',
+        body: JSON.stringify({
+          tolerances: rows,
+          thresholds: [{ metric: 'yillik_kesinti_dk', max: Number($('#tolRisk')?.value) || 240 }],
+        }),
+      });
+      toast('Toleranslar kaydedildi', 'ok');
+      await loadState();
+      render();
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  document.querySelectorAll('[data-gate]').forEach((b) =>
+    b.addEventListener('click', async () => {
+      b.disabled = true;
+      try {
+        const r = await api(`/api/sessions/${sid}/gate/${b.dataset.gate}`, { method: 'POST', body: '{}' });
+        showGate(b.dataset.gate, r.results, true);
+      } catch (e) {
+        // 422 gövdesinde sonuçlar var
+        const msg = String(e.message || '');
+        toast('Kapı geçilmedi', 'bad');
+        try {
+          const raw = await fetch(`/api/sessions/${sid}/gate/${b.dataset.gate}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+          const body = await raw.json();
+          showGate(b.dataset.gate, body.results ?? [], Boolean(body.ok));
+        } catch {
+          showGate(b.dataset.gate, [{ id: '-', passed: false, detail: msg }], false);
+        }
+      } finally {
+        b.disabled = false;
+      }
+    }),
+  );
+  loadTolerances();
+}
+
+function showGate(phase, results, ok) {
+  const box = $('#gateResult');
+  if (!box) return;
+  box.innerHTML = `<div class="card" style="background:#0f1626">
+    <h2>${esc(PHASE_LABELS[phase] || phase)} · ${ok ? '<span class="ok">geçti</span>' : '<span class="bad">eksik var</span>'}</h2>
+    <table><tbody>
+      ${(results || [])
+        .map(
+          (r) => `<tr><td style="width:30px">${r.passed ? '<span class="ok">✔</span>' : '<span class="bad">✘</span>'}</td>
+          <td>${esc(r.detail)}</td>${isAdmin() ? `<td class="mono" style="width:70px">${esc(r.id)}</td>` : ''}</tr>`,
+        )
+        .join('')}
+    </tbody></table>
+  </div>`;
+}
+
+async function loadTolerances() {
+  const box = $('#tolRows');
+  if (!box) return;
+  try {
+    const r = await api(`/api/sessions/${state.activeSession.session_id}/artifacts/business-service-catalogue.json`);
+    const services = r.value.services || [];
+    box.innerHTML = services.length
+      ? `<table><thead><tr><th>Hizmet</th><th>MTD (saat)</th><th>RTO (saat)</th><th>RPO (saat)</th></tr></thead><tbody>
+        ${services
+          .map(
+            (s) => `<tr class="tol-row" data-service="${esc(s.id)}">
+          <td>${esc(s.name)}</td>
+          <td><input class="tol-mtd" type="number" value="24" min="1"></td>
+          <td><input class="tol-rto" type="number" value="4" min="1"></td>
+          <td><input class="tol-rpo" type="number" value="0" min="0"></td>
+        </tr>`,
+          )
+          .join('')}</tbody></table>`
+      : '<div class="sub">Önce 1. adımda hizmetleri kaydedin.</div>';
+  } catch {
+    box.innerHTML = '<div class="sub">Önce 1. adımda hizmetleri kaydedin.</div>';
+  }
+}
+
+function viewParola() {
+  return `
+    <div class="card" style="max-width:460px">
+      <h2>Parolamı değiştir</h2>
+      <p class="sub">En az 8 karakter kullanın.</p>
+      <div class="row"><label>Mevcut parola</label><input id="pCur" type="password" autocomplete="current-password"></div>
+      <div class="row"><label>Yeni parola</label><input id="pNew" type="password" autocomplete="new-password"></div>
+      <div class="row"><label>Yeni parola (tekrar)</label><input id="pNew2" type="password" autocomplete="new-password"></div>
+      <div class="actions"><button class="primary" id="pSave">Değiştir</button><span class="sub" id="pErr"></span></div>
+    </div>`;
+}
+
+function bindParola() {
+  $('#pSave')?.addEventListener('click', async () => {
+    const cur = $('#pCur').value;
+    const nw = $('#pNew').value;
+    if (nw !== $('#pNew2').value) return toast('Yeni parolalar aynı değil', 'bad');
+    try {
+      await api('/api/auth/password', { method: 'POST', body: JSON.stringify({ current: cur, password: nw }) });
+      toast('Parola değiştirildi', 'ok');
+      $('#pCur').value = $('#pNew').value = $('#pNew2').value = '';
+    } catch (e) {
+      toast('Değiştirilemedi: ' + e.message, 'bad');
+    }
+  });
+}
+
 /* ── router ───────────────────────────────────────────── */
 
 const ROUTES = {
   durum: { title: 'Durum', sub: 'Kurulumunuzun durumu', render: viewDurum, bind: bindCommon, roles: ['user', 'admin'] },
   genel: { title: 'Genel bakış', sub: 'Teknik özet', render: viewGenel, bind: bindCommon, roles: ['admin'] },
+  kurulum: { title: 'Kurulum', sub: 'Hizmetler, toleranslar ve adım denetimi', render: viewKurulum, bind: bindKurulum, roles: ['user', 'admin'] },
   kurum: { title: 'Kurum bilgileri', sub: 'Temel bilgiler', render: viewKurum, bind: bindKurum, roles: ['user', 'admin'] },
+  parola: { title: 'Parolamı değiştir', sub: 'Hesap güvenliği', render: viewParola, bind: bindParola, roles: ['user', 'admin'] },
   baglantilar: { title: 'Sistem bağlantıları', sub: 'Olay, destek, uyum ve envanter sistemleri', render: viewBaglantilar, bind: bindBaglantilar, roles: ['user', 'admin'] },
   entegrasyonlar: { title: 'Entegrasyonlar', sub: 'Teknik bağlantı ayarları', render: viewBaglantilar, bind: bindBaglantilar, roles: ['admin'] },
   envanter: { title: 'Varlıklarım', sub: 'Sunucu ve sistem listesi', render: viewVarliklar, bind: bindVarliklar, roles: ['user', 'admin'] },
@@ -687,6 +924,7 @@ function navItems() {
     ? [
         ['genel', 'Genel bakış'],
         ['kurum', 'Kurum profili'],
+        ['kurulum', 'Kurulum'],
         ['entegrasyonlar', 'Entegrasyonlar'],
         ['envanter', 'Envanter'],
         ['ajanlar', 'Ajanlar'],
@@ -695,6 +933,7 @@ function navItems() {
       ]
     : [
         ['durum', 'Durum'],
+        ['kurulum', 'Kurulum'],
         ['kurum', 'Kurum bilgileri'],
         ['baglantilar', 'Sistem bağlantıları'],
         ['envanter', 'Varlıklarım'],

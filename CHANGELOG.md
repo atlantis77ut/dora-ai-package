@@ -5,6 +5,35 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.8.0] — 2026-11-09
+
+### Eklendi
+
+**Parola yönetimi**
+- Kullanıcı kendi parolasını değiştirir: `POST /api/auth/password` (mevcut parola doğrulanır)
+- Yönetici, kullanıcı satırından **parola sıfırlar** (`PATCH /api/users/:id`), işlem kaydına yazılır
+- Arayüzde "Parolamı değiştir" sayfası
+
+**Oturum güvenliği**
+- Oturum süresi ayarlanabilir (`/api/settings/session`, 1-168 saat); giriş anında uygulanır
+- Hatalı giriş sınırı: 5 başarısız denemeden sonra 60 saniye kilit (bellekte), denemeler
+  `audit.log`'a `login_failed` olarak düşer
+
+**Kurulum sihirbazı (arayüz)**
+- `#kurulum` sayfası: hizmet listesi (ad, sahip, kritiklik) → `business-service-catalogue.json`
+- Kesinti toleransları (MTD/RTO/RPO + yıllık kesinti sınırı) → `impact-tolerances.json` +
+  `risk-appetite.json`
+- Altı adım için **"adımı denetle"** düğmeleri: `POST /api/sessions/:id/gate/:phase` gerçek
+  `evaluatePhase()` çalıştırır, sonuçları döner ve faz durumunu günceller
+- Kullanıcı rolünde denetim sonuçları yalnız açıklama metniyle gösterilir (kriter kodları gizli)
+
+### Düzeltildi
+
+- `web-data/` çalışma anında silinirse kullanıcı kaydı hata veriyordu; yazma öncesi dizin
+  oluşturuluyor (`auth.mjs`)
+
+---
+
 ## [1.7.0] — 2026-11-09
 
 ### Eklendi — kimlik doğrulama ve yetkilendirme
