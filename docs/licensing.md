@@ -68,7 +68,8 @@ ticari lisans altında sunulabilir. Aksi hâlde çift lisans modeli hukuken çal
 ## 4. Yapılacaklar (yayın öncesi)
 
 - [x] Telif sahibi belirlendi: **ustauretim** (13 dosyada başlık güncellendi)
-- [ ] Lisans katman fiyatlarını belirle — çerçeve: [`pricing.md`](pricing.md)
+- [x] Lisans katman fiyatları **öneri olarak** dolduruldu: 15k / 45k / 110k / 28k € — onay bekliyor
+      ([`LICENSE-COMMERCIAL.md`](../LICENSE-COMMERCIAL.md) §2, [`SATIS-PAKETI.md`](SATIS-PAKETI.md) §5)
 - [x] CLA metnini hazırla → [`CLA.md`](../CLA.md)
 - [ ] Ticari lisans maddelerini avukata incelettir
 - [ ] `package.json` `license` alanı: `AGPL-3.0-only` ✔
