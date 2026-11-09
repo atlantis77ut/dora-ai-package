@@ -750,3 +750,47 @@ Paket artık salt-okunur rapor değil: kurum kendi verisini tarayıcıdan giriyo
 - `POST …/agents` → 200, 4 bağımsızlık kontrolü PASS kaydı
 - `POST /api/integrations/siem/test` → 422 (ulaşılamaz uç), hata durumu kaydedildi
 - Token yanıtta yok; `secrets.json` diskte 0600
+
+---
+
+## 28. Kimlik doğrulama ve roller — 1.7.0 (2026-11-09)
+
+| Konu | Karar |
+|---|---|
+| Parola | scrypt (N=16384), kullanıcı başına 16 bayt tuz |
+| Oturum | HMAC-SHA256 imzalı çerez, 8 saat, HttpOnly, SameSite=Lax |
+| İlk kurulum | Kullanıcı yoksa `/api/auth/bootstrap`; ikinci çağrı reddedilir |
+| Roller | `admin` (teknik) · `user` (iş arayüzü) |
+| Denetim | `web-data/audit.log`: giriş, çıkış, kayıt, kullanıcı işlemleri |
+| Dosya izinleri | `users.json`, `secret.key`, `audit.log` → 0600 |
+
+### Rol ayrımı
+
+| | Yönetici | Kullanıcı |
+|---|---|---|
+| Teknik panel `/dashboard/` | ✔ | ✖ (302 → /app/#giris) |
+| Süreç/kontrol sayaçları | ✔ | ✖ (state'te gönderilmez) |
+| Kanıt JSON görüntüleme | ✔ | ✖ (yalnız indirme) |
+| Kullanıcı yönetimi / işlem kaydı | ✔ | ✖ (403) |
+| Kurum, bağlantılar, envanter, sorumlular | ✔ | ✔ (sadeleştirilmiş dil) |
+
+### Doğrulama (gerçek HTTP)
+
+```
+anonim  /api/state        → 401
+anonim  /dashboard/       → 302 /app/#giris
+bootstrap (ilk)           → 201 + çerez
+bootstrap (ikinci)        → 400
+admin   /api/state        → 200, counts var
+admin   /dashboard/       → 200
+user    /api/state        → 200, counts YOK
+user    /api/users        → 403
+user    /api/audit        → 403
+user    /dashboard/       → 302
+user    PUT /api/institution → 200 (izinli)
+```
+
+### Temizlik
+
+`web-data/` ve `.dora-onboarding/` silindi; sunucu **ilk yönetici ekranıyla** açılıyor.
+Test kullanıcıları kalmadı.

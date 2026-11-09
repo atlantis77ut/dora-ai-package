@@ -5,6 +5,40 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.7.0] — 2026-11-09
+
+### Eklendi — kimlik doğrulama ve yetkilendirme
+
+- `src/orl/auth.mjs`: scrypt parola özeti, HMAC imzalı oturum çerezi (8 saat, HttpOnly,
+  SameSite=Lax), kullanıcı deposu, işlem kaydı
+- İlk kurulum: kullanıcı yoksa `/api/auth/bootstrap` ile **ilk yönetici** oluşturulur
+  (ikinci çağrı 400 döner)
+- Uçlar: `/api/auth/{status,bootstrap,login,logout,me}`, `/api/users` (GET/POST/PATCH/DELETE),
+  `/api/audit`
+- **Roller**:
+  - `admin` → teknik her şey: süreç/kontrol sayaçları, `/dashboard/` rapor panosu, kanıt JSON'ları,
+    kullanıcı yönetimi, işlem kaydı
+  - `user` → yalnız iş arayüzü: Durum, Kurum bilgileri, Sistem bağlantıları, Varlıklarım,
+    Sorumlular, Belgeler. Teknik terim, süreç kodu ve JSON görünmez.
+- Statik kapılar: `/dashboard/`, `/site/`, `/docs/` yalnız yönetici (aksi hâlde `/app/#giris`'e 302)
+- Arayüzde giriş/çıkış, kullanıcı ekleme, rol rozeti; kullanıcı sayfalarında sadeleştirilmiş dil
+  ("Adım 1 · Hizmetlerin belirlenmesi", "Varlıklarım" gibi)
+
+### Değişti
+
+- Demo verileri temizlendi: `web-data/` ve `.dora-onboarding/` silindi; kurulum
+  **ilk yönetici oluşturma ekranıyla** başlıyor
+- `web-data/users.json`, `secret.key`, `audit.log` 0600 izniyle yazılır
+
+### Güvenlik notları
+
+- `/api/*` artık oturum ister; yönetici uçları ayrıca rol kontrolünden geçer
+- Çerez `HttpOnly` — JavaScript okuyamaz; oturum süresi 8 saat
+- Tek kullanıcı/yerel varsayımı sürüyor: sunucu `127.0.0.1`; ağa açılacaksa TLS + ters vekil
+  önerilir
+
+---
+
 ## [1.6.0] — 2026-11-09
 
 ### Eklendi — uygulama arayüzü (veri girişi)

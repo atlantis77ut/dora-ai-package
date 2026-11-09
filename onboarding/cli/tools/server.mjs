@@ -16,11 +16,13 @@ import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { parse } from '../src/orl/yaml.mjs';
+import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../..');
 const DATA = path.join(ROOT, 'web-data');
 const SESSIONS = path.join(ROOT, '.dora-onboarding');
+const auth = createAuthStore(DATA);
 
 const { values } = parseArgs({
   options: {
@@ -217,6 +219,33 @@ function sendFile(res, file) {
   res.end(body);
 }
 
+
+function parseCookies(req) {
+  const out = {};
+  for (const part of String(req.headers.cookie ?? '').split(';')) {
+    const i = part.indexOf('=');
+    if (i > 0) out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
+  }
+  return out;
+}
+
+function getUser(req) {
+  try {
+    return auth.verify(parseCookies(req)[COOKIE]);
+  } catch {
+    return null;
+  }
+}
+
+function setCookie(res, token, maxAge = 8 * 3600) {
+  const c = `${COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
+  res.setHeader('Set-Cookie', c);
+}
+
+function clearCookie(res) {
+  res.setHeader('Set-Cookie', `${COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`);
+}
+
 async function readBody(req, limit = 5 * 1024 * 1024) {
   return new Promise((resolve, reject) => {
     let size = 0;
@@ -245,15 +274,84 @@ async function readBody(req, limit = 5 * 1024 * 1024) {
 
 // ── API ──────────────────────────────────────────────────
 async function api(req, res, urlPath, method) {
+  // ── kimlik doğrulama (herkese açık uçlar) ──────────────
+  if (urlPath === '/api/auth/status' && method === 'GET') {
+    return sendJson(res, 200, { needsBootstrap: !auth.hasUsers(), version });
+  }
+
+  if (urlPath === '/api/auth/bootstrap' && method === 'POST') {
+    const body = await readBody(req);
+    const r = auth.bootstrap(body);
+    if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+    setCookie(res, r.token);
+    return sendJson(res, 201, { ok: true, user: r.user });
+  }
+
+  if (urlPath === '/api/auth/login' && method === 'POST') {
+    const body = await readBody(req);
+    const r = auth.login(body.username, body.password);
+    if (!r.ok) return sendJson(res, 401, { ok: false, error: r.error });
+    setCookie(res, r.token);
+    return sendJson(res, 200, { ok: true, user: r.user });
+  }
+
+  if (urlPath === '/api/auth/logout' && method === 'POST') {
+    const me = getUser(req);
+    if (me) auth.audit(me.user.username, 'logout');
+    clearCookie(res);
+    return sendJson(res, 200, { ok: true });
+  }
+
+  const me = getUser(req);
+
+  if (urlPath === '/api/auth/me' && method === 'GET') {
+    if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
+    return sendJson(res, 200, { user: me.user });
+  }
+
+  if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
+  const isAdmin = me.role === 'admin';
+
+  // ── yönetici uçları ────────────────────────────────────
+  if (urlPath.startsWith('/api/users') || urlPath === '/api/audit') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    if (urlPath === '/api/users' && method === 'GET') return sendJson(res, 200, { users: auth.users() });
+    if (urlPath === '/api/users' && method === 'POST') {
+      const body = await readBody(req);
+      const r = auth.createUser(body);
+      if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+      auth.audit(me.user.username, 'user_create', body.username);
+      return sendJson(res, 201, { ok: true, user: r.user });
+    }
+    const um = urlPath.match(/^\/api\/users\/([\w-]+)$/);
+    if (um && method === 'PATCH') {
+      const body = await readBody(req);
+      const r = auth.updateUser(um[1], body);
+      if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+      auth.audit(me.user.username, 'user_update', um[1]);
+      return sendJson(res, 200, { ok: true, user: r.user });
+    }
+    if (um && method === 'DELETE') {
+      const r = auth.removeUser(um[1]);
+      if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+      auth.audit(me.user.username, 'user_delete', um[1]);
+      return sendJson(res, 200, { ok: true });
+    }
+    if (urlPath === '/api/audit' && method === 'GET') return sendJson(res, 200, { entries: auth.listAudit(150) });
+    return sendJson(res, 405, { ok: false, error: 'desteklenmeyen metot' });
+  }
+
   // durum
   if (urlPath === '/api/state' && method === 'GET') {
     const sessions = listSessions();
     return sendJson(res, 200, {
       version,
+      user: me.user,
+      role: me.role,
       settings: publicSettings(),
       sessions,
       activeSession: sessions[0] ?? null,
-      counts: metaCounts(),
+      counts: isAdmin ? metaCounts() : undefined,
     });
   }
 
@@ -297,6 +395,7 @@ async function api(req, res, urlPath, method) {
       licenses: Array.isArray(body.licenses) ? body.licenses.map((x) => String(x).slice(0, 40)).slice(0, 12) : s.institution.licenses,
     };
     saveSettings(s);
+    auth.audit(me.user.username, 'institution_update', s.institution.name);
     return sendJson(res, 200, { ok: true, institution: s.institution });
   }
 
@@ -323,6 +422,7 @@ async function api(req, res, urlPath, method) {
       }
       if (body.endpoint && item.vendor && item.status === 'not_configured') item.status = 'configured';
       saveSettings(s);
+      auth.audit(me.user.username, 'integration_update', id);
       return sendJson(res, 200, { ok: true, integration: { ...item, has_token: Boolean(loadSecrets()[id]) } });
     }
     if (method === 'POST' && isTest) {
@@ -511,6 +611,19 @@ const server = http.createServer(async (req, res) => {
   const method = req.method ?? 'GET';
   try {
     if (urlPath.startsWith('/api/')) return await api(req, res, urlPath, method);
+
+    // teknik panel ve tanıtım sitesi yalnız yöneticiye
+    const adminArea =
+      urlPath === '/dashboard' || urlPath.startsWith('/dashboard/') ||
+      urlPath === '/site' || urlPath.startsWith('/site/') ||
+      urlPath === '/docs' || urlPath.startsWith('/docs/');
+    if (adminArea) {
+      const me = getUser(req);
+      if (!me || me.role !== 'admin') {
+        res.writeHead(302, { Location: '/app/#giris' });
+        return res.end();
+      }
+    }
     return staticFile(res, urlPath);
   } catch (e) {
     return sendJson(res, 400, { ok: false, error: e.message });

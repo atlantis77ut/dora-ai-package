@@ -137,8 +137,13 @@ Satın alma görüşmesinde ilk sorulan soru bu; cevabı baştan yazılı olsun:
 node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 ```
 
-`http://127.0.0.1:8080/app/` — kurum profili, API bağlantıları (SIEM/ITSM/GRC/CMDB), envanter
-(CSV), ajan aktivasyonu ve kanıt görüntüleme. Veriler `web-data/` ve `.dora-onboarding/` altında.
+`http://127.0.0.1:8080/app/` — giriş ekranıyla açılır. İlk açılışta **yönetici hesabı** oluşturulur.
+
+- **Yönetici**: teknik panel (`/dashboard/`), kanıtlar, kullanıcı yönetimi, işlem kaydı
+- **Kullanıcı**: Durum · Kurum bilgileri · Sistem bağlantıları · Varlıklarım · Sorumlular · Belgeler
+
+Veriler `web-data/` (ayarlar, kullanıcılar, anahtarlar) ve `.dora-onboarding/` (oturumlar) altında;
+ikisi de `.gitignore`'da.
 
 ## Sunucuya kurulum
 
@@ -168,7 +173,7 @@ Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı: [`docs/KURULUM-
 
 ## Durum
 
-Sürüm **1.6.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.7.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

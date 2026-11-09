@@ -110,6 +110,21 @@ sudo systemctl restart dora-ai-package
 
 ---
 
+## 4b. İlk açılış ve kullanıcılar
+
+`http://<sunucu-ip>:8080/app/` ilk açıldığında **yönetici hesabı** oluşturmanızı ister
+(kullanıcı adı + en az 8 karakterli parola). Bu hesap:
+
+- teknik paneli (`/dashboard/`) ve kanıt JSON'larını görür,
+- **Yönetim** sekmesinden kullanıcı ekler (rol: yönetici / kullanıcı),
+- işlem kaydını (giriş, kayıt, kullanıcı değişikliği) görür.
+
+Kullanıcı rolü yalnız iş arayüzünü görür: Durum, Kurum bilgileri, Sistem bağlantıları,
+Varlıklarım, Sorumlular, Belgeler — süreç kodu, JSON veya teknik sayaç yok.
+
+`web-data/users.json`, `web-data/secret.key`, `web-data/audit.log` 0600 izniyle yazılır;
+`web-data/` dizinini yedeklerken bu dosyaları da koruyun.
+
 ## 5. Nginx arkasına alma (opsiyonel)
 
 Doğrudan 8080 yerine 80/443 üzerinden yayınlamak isterseniz:
