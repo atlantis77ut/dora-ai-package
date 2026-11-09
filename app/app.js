@@ -2215,6 +2215,111 @@ function bindParola() {
   });
 }
 
+
+function viewAra() {
+  return `
+    <div class="card">
+      <h2>Ara</h2>
+      <p class="sub">Süreç, kontrol, ajan, terim ve DORA maddeleri içinde metin arama. Türkçe karakterler duyarsızdır.</p>
+      <div class="actions">
+        <input id="q" placeholder="ör. sınıflandırma, segmentasyon, 72 saat" style="max-width:420px">
+        <button class="primary" id="qGo">Ara</button>
+        <span class="sub" id="qInfo"></span>
+      </div>
+      <div id="qResult" style="margin-top:14px"></div>
+    </div>`;
+}
+
+const TYPE_LABEL_TR = { process: 'Süreç', control: 'Kontrol', role: 'Ajan', term: 'Terim', article: 'DORA' };
+
+function bindAra() {
+  const go = async () => {
+    const q = $('#q').value.trim();
+    if (!q) return;
+    try {
+      const r = await api('/api/search?q=' + encodeURIComponent(q));
+      $('#qInfo').textContent = `${r.count} sonuç`;
+      const box = $('#qResult');
+      if (!r.count) {
+        box.innerHTML = '<span class="sub">Sonuç yok.</span>';
+        return;
+      }
+      box.innerHTML = `<table><thead><tr><th>Tür</th><th>Kimlik</th><th>Başlık</th><th>Bağlam</th></tr></thead><tbody>
+        ${r.results
+          .map(
+            (x) => `<tr><td><span class="pill">${esc(TYPE_LABEL_TR[x.type] ?? x.type)}</span></td>
+            <td class="mono">${esc(x.id)}</td><td>${esc(x.title)}</td>
+            <td class="sub">${esc(x.snippet ?? '')}</td></tr>`,
+          )
+          .join('')}
+      </tbody></table>`;
+    } catch (e) {
+      toast('Arama başarısız: ' + e.message, 'bad');
+    }
+  };
+  $('#qGo')?.addEventListener('click', go);
+  $('#q')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') go();
+  });
+}
+
+function viewPano() {
+  return `
+    <div class="card">
+      <h2>Canlı pano</h2>
+      <p class="sub">Veriler API'den anlık gelir; statik dashboard üretimi gerekmez.</p>
+      <div class="actions"><button class="ghost-btn" id="panoRefresh">Yenile</button>
+        <span class="sub" id="panoAt"></span></div>
+      <div id="panoBody" style="margin-top:14px">yükleniyor…</div>
+    </div>`;
+}
+
+async function loadPano() {
+  try {
+    const d = await api('/api/dashboard');
+    const box = $('#panoBody');
+    const at = $('#panoAt');
+    if (at) at.textContent = 'güncellendi: ' + new Date().toLocaleTimeString('tr-TR');
+    const phaseCells = (d.phases ?? [])
+      .map((p) => {
+        const cls = p.status === 'completed' ? 'ok' : p.status === 'blocked' ? 'bad' : '';
+        return `<div class="phase"><div class="id">${esc(p.id)}</div><div class="st"><span class="pill ${cls}">${esc(p.status)}</span></div></div>`;
+      })
+      .join('');
+    const overdue = (d.incidents?.items ?? [])
+      .map((o) => `<tr><td class="mono">${esc(o.incident_id)}</td><td>${esc(o.step)}</td><td>${new Date(o.due_at).toLocaleString('tr-TR')}</td></tr>`)
+      .join('');
+    const audit = (d.audit ?? [])
+      .map((a) => `<tr><td>${new Date(a.at).toLocaleString('tr-TR')}</td><td>${esc(a.user)}</td><td>${esc(a.action)}</td></tr>`)
+      .join('');
+    box.innerHTML = `
+      <div class="grid k4">
+        ${stat(d.counts?.processes, 'Süreç', 'katalog')}
+        ${stat(d.counts?.controls, 'Kontrol', 'katalog')}
+        ${stat(d.counts?.roles, 'Ajan', 'katalog')}
+        ${stat((d.coverage?.percent ?? 0) + '%', 'DORA kapsama', `${d.coverage?.covered ?? 0}/${d.coverage?.total ?? 0} madde`)}
+      </div>
+      <h2 style="margin-top:18px">Fazlar</h2>
+      <div class="phases">${phaseCells}</div>
+      <div class="grid k3" style="margin-top:18px">
+        ${stat(d.incidents?.total ?? 0, 'Olay kaydı', `yüksek: ${d.incidents?.by_severity?.high ?? 0}`)}
+        ${stat(d.incidents?.overdue ?? 0, 'Gecikmiş adım', 'raporlama')}
+        ${stat(d.approvals?.pending ?? 0, 'Bekleyen onay', 'dört göz')}
+      </div>
+      ${overdue ? `<h2 style="margin-top:18px">Gecikmiş raporlama</h2><table><thead><tr><th>Olay</th><th>Adım</th><th>Son tarih</th></tr></thead><tbody>${overdue}</tbody></table>` : ''}
+      <h2 style="margin-top:18px">Son işlemler</h2>
+      <table><thead><tr><th>Zaman</th><th>Kullanıcı</th><th>İşlem</th></tr></thead><tbody>${audit}</tbody></table>`;
+  } catch (e) {
+    const box = $('#panoBody');
+    if (box) box.textContent = 'Pano yüklenemedi: ' + e.message;
+  }
+}
+
+function bindPano() {
+  $('#panoRefresh')?.addEventListener('click', loadPano);
+  loadPano();
+}
+
 /* ── router ───────────────────────────────────────────── */
 
 const ROUTES = {
@@ -2224,6 +2329,8 @@ const ROUTES = {
   kurum: { title: 'Kurum bilgileri', sub: 'Temel bilgiler', render: viewKurum, bind: bindKurum, roles: ['user', 'admin'] },
   parola: { title: 'Parolamı değiştir', sub: 'Hesap güvenliği', render: viewParola, bind: bindParola, roles: ['user', 'admin'] },
   guvenlik: { title: 'Güvenlik', sub: 'İki adımlı doğrulama', render: viewGuvenlik, bind: bindGuvenlik, roles: ['user', 'admin'] },
+  ara: { title: 'Ara', sub: 'Kataloglarda metin arama', render: viewAra, bind: bindAra, roles: ['user', 'admin'] },
+  pano: { title: 'Canlı pano', sub: 'Anlık durum', render: viewPano, bind: bindPano, roles: ['admin'] },
   baglantilar: { title: 'Sistem bağlantıları', sub: 'Olay, destek, uyum ve envanter sistemleri', render: viewBaglantilar, bind: bindBaglantilar, roles: ['user', 'admin'] },
   entegrasyonlar: { title: 'Entegrasyonlar', sub: 'Teknik bağlantı ayarları', render: viewBaglantilar, bind: bindBaglantilar, roles: ['admin'] },
   envanter: { title: 'Varlıklarım', sub: 'Sunucu ve sistem listesi', render: viewVarliklar, bind: bindVarliklar, roles: ['user', 'admin'] },
@@ -2238,6 +2345,7 @@ function navItems() {
   const admin = isAdmin();
   return admin
     ? [
+        ['pano', 'Canlı pano'],
         ['genel', 'Genel bakış'],
         ['kurum', 'Kurum profili'],
         ['kurulum', 'Kurulum'],
@@ -2246,11 +2354,13 @@ function navItems() {
         ['ajanlar', 'Ajanlar'],
         ['kanitlar', 'Kanıtlar'],
         ['siem', 'SIEM olayları'],
+        ['ara', 'Ara'],
         ['guvenlik', 'Güvenlik'],
         ['yonetim', 'Yönetim'],
       ]
     : [
         ['durum', 'Durum'],
+        ['ara', 'Ara'],
         ['kurulum', 'Kurulum'],
         ['kurum', 'Kurum bilgileri'],
         ['baglantilar', 'Sistem bağlantıları'],

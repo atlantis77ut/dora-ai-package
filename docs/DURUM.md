@@ -1397,3 +1397,40 @@ rapor 200 · %PDF-1.4 · 1 sayfa · xref tutarlı · başlık metni okundu
 - PDF **Türkçe karakterleri ASCII'ye çevirir** (ı→i, ş→s, ğ→g…) — WinAnsi sınırı
 - Rapor metin tabanlı: logo, grafik, renk yok; 25 olayla sınırlı liste
 - Rapor **anlık** üretilir; arşivlenmez (indirilen dosya saklanır)
+
+---
+
+## 47. Genel arama ve canlı pano — 1.25.0 (2026-11-09)
+
+| Parça | Dosya / uç |
+|---|---|
+| Arama motoru | `src/orl/search.mjs` (fold + skor + snippet) |
+| Arama ucu | `GET /api/search?q=` |
+| Pano ucu | `GET /api/dashboard` |
+| Arayüz | **Ara** (tüm roller) · **Canlı pano** (yönetici) |
+
+### Arama
+
+- Kapsam: 24 süreç, 36 kontrol, 11 ajan, 60 terim, 28 DORA maddesi (toplam ~159 kayıt)
+- Türkçe duyarsız: `sınıflandırma` = `siniflandirma`
+- Başlık eşleşmesi 5 puan, metin eşleşmesi occurrence başına 1 (en fazla 5)
+
+### Pano
+
+- Katalog sayıları, kapsama yüzdesi, altı fazın durumu
+- Olay toplamı + önem dağılımı, gecikmiş raporlama adımları, bekleyen onay
+- Son 8 denetim kaydı
+
+### Doğrulama
+
+```
+arama: "siniflandirma" 9 · "segmentasyon" 3 · "bildirim" 19
+pano: 24/36/11 · %100 (28/28) · fazlar · son işlemler
+144 birim testi geçti
+```
+
+### Sınırlar
+
+- Arama **kataloglarla** sınırlı; oturum artefaktları ve denetim kaydı aranmıyor
+- Pano yöneticiye açık; kullanıcı rolü görmüyor
+- Pano 5 sn'de bir kendini yenilemiyor (elle **Yenile**)

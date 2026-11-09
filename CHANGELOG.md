@@ -5,6 +5,31 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.25.0] — 2026-11-09
+
+### Eklendi — genel arama
+
+- `src/orl/search.mjs`: süreç, kontrol, ajan, terim ve DORA maddesi kataloglarında arama
+- **Türkçe duyarsız** eşleşme (`ı/i`, `ş/s`, `ğ/g`, `ç/c`, `ö/o`, `ü/u`), başlık eşleşmesi öne çıkar
+- `GET /api/search?q=…` — tür, kimlik, başlık, bağlam cümlesi (snippet)
+- Arayüz: **Ara** sayfası (tüm roller)
+
+### Eklendi — canlı pano
+
+- `GET /api/dashboard` — katalog sayıları, DORA kapsaması, faz durumları, olay/gecikme/onay sayaçları,
+  son işlemler
+- Arayüz: **Canlı pano** (yönetici) — statik dashboard üretimi gerekmeden anlık veri
+
+### Doğrulama
+
+```
+arama "siniflandirma" → 9 · "segmentasyon" → 3 · "bildirim" → 19 sonuç
+pano: 24 süreç / 36 kontrol / 11 ajan · kapsama %100 (28/28) · fazlar C1..C6 · son işlemler
+9 yeni birim testi (toplam 144)
+```
+
+---
+
 ## [1.24.0] — 2026-11-09
 
 ### Eklendi — olay zaman çizelgesi

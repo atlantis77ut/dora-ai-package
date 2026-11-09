@@ -27,6 +27,7 @@ import { createApprovalStore } from '../src/orl/approvals.mjs';
 import { createReporting, reportingStatus, markSent } from '../src/orl/deadlines.mjs';
 import { scanAlerts, resolveRecipients } from '../src/orl/alerts.mjs';
 import { buildManagementReport } from '../src/orl/report.mjs';
+import { buildIndex, search as searchIndex } from '../src/orl/search.mjs';
 import { sendMail, createOutbox } from '../src/orl/mailer.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
 import { discover, buildAuthUrl, exchangeCode, fetchJwks, verifyIdToken, makeState, verifyState } from '../src/orl/oidc.mjs';
@@ -568,6 +569,87 @@ function alertsTick() {
   if (Date.now() - lastAlertScan < 5 * 60 * 1000) return;
   lastAlertScan = Date.now();
   runAlertScan({ reason: 'tick' }).catch(() => {});
+}
+
+let catalogCache = null;
+
+function loadCatalogs() {
+  if (catalogCache) return catalogCache;
+  const readYaml = (rel) => {
+    try {
+      return parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
+    } catch {
+      return {};
+    }
+  };
+  const procDir = path.join(ROOT, 'data/processes');
+  const processes = fs.existsSync(procDir)
+    ? fs
+        .readdirSync(procDir)
+        .filter((f) => f.endsWith('.yaml'))
+        .flatMap((f) => readYaml('data/processes/' + f).processes ?? [])
+    : [];
+  catalogCache = {
+    processes,
+    controls: readYaml('data/controls/controls-catalog.yaml').controls ?? [],
+    roles: readYaml('data/roles/roles-catalog.yaml').roles ?? [],
+    terms: readYaml('data/glossary/glossary-full.yaml').terms ?? [],
+    articles: readYaml('data/mapping/dora-articles.yaml').articles ?? [],
+  };
+  return catalogCache;
+}
+
+function searchIndexCached() {
+  if (!searchIndexCached._idx) {
+    searchIndexCached._idx = buildIndex(loadCatalogs());
+  }
+  return searchIndexCached._idx;
+}
+
+/** Canlı pano için özet. */
+function dashboardSummary(sessionId) {
+  const catalogs = loadCatalogs();
+  const articles = catalogs.articles ?? [];
+  const covered = articles.filter((a) => a.status === 'covered').length;
+  const partial = articles.filter((a) => a.status === 'partial').length;
+  const gap = articles.filter((a) => a.status === 'gap').length;
+
+  let session = null;
+  let incidents = [];
+  let approvals = [];
+  let artifacts = 0;
+  if (sessionId) {
+    const dir = path.join(SESSIONS, sessionId.replace(/[^a-zA-Z0-9._-]/g, ''));
+    session = readJson(path.join(dir, 'session.json'), null);
+    incidents = readJson(path.join(dir, 'incidents.json'), { incidents: [] }).incidents ?? [];
+    approvals = readJson(path.join(dir, 'approvals.json'), { approvals: [] }).approvals ?? [];
+    artifacts = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => /\.(json|yaml|yml|zip|pdf)$/i.test(f)).length : 0;
+  }
+
+  const now = Date.now();
+  const overdue = [];
+  for (const i of incidents) {
+    if (!i.reporting) continue;
+    const st = reportingStatus(i.reporting, now);
+    for (const k of ['initial', 'intermediate', 'final']) {
+      if (st[k]?.state === 'overdue') overdue.push({ incident_id: i.incident_id, step: k, due_at: st[k].due_at });
+    }
+  }
+  const bySeverity = incidents.reduce((m, i) => {
+    m[i.severity ?? 'low'] = (m[i.severity ?? 'low'] ?? 0) + 1;
+    return m;
+  }, {});
+
+  return {
+    counts: metaCounts(),
+    coverage: { total: articles.length, covered, partial, gap, percent: articles.length ? Math.round((covered / articles.length) * 100) : 0 },
+    phases: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'].map((p) => ({ id: p, status: session?.phases?.[p]?.status ?? 'başlanmadı' })),
+    incidents: { total: incidents.length, by_severity: bySeverity, overdue: overdue.length, items: overdue.slice(0, 10) },
+    approvals: { pending: approvals.filter((a) => a.status === 'pending').length },
+    artifacts,
+    session_id: sessionId ?? null,
+    audit: auth.listAudit(8),
+  };
 }
 
 function parseCookies(req) {
@@ -1285,6 +1367,18 @@ async function api(req, res, urlPathRaw, method) {
     if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
     const r = await runAlertScan({ reason: 'manual' });
     return sendJson(res, r.ok ? 200 : 400, r);
+  }
+
+  if (urlPath === '/api/search' && method === 'GET' && new URL(req.url, 'http://x').searchParams.has('q')) {
+    const q = new URL(req.url, 'http://x').searchParams.get('q') ?? '';
+    const results = searchIndex(searchIndexCached(), q, 40);
+    return sendJson(res, 200, { ok: true, query: q, count: results.length, results });
+  }
+
+  if (urlPath === '/api/dashboard' && method === 'GET') {
+    const sessions = listSessions();
+    const active = sessions.find((x) => x.session_id === loadSettings().active_session) ?? sessions[0] ?? null;
+    return sendJson(res, 200, { ok: true, ...dashboardSummary(active?.session_id ?? null) });
   }
 
   // kurum profili
