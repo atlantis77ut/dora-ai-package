@@ -137,6 +137,8 @@ bash /opt/dora-ai-package/scripts/smoke-test.sh            # genel test
 sudo bash /opt/dora-ai-package/scripts/install-ubuntu.sh --service --port 8080
 ```
 
+Windows'ta tek makinede denemek için: `scripts\serve.cmd` (çift tıkla) → http://127.0.0.1:8080/dashboard/
+
 Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı: [`docs/KURULUM-UBUNTU.md`](docs/KURULUM-UBUNTU.md).
 
 ## Dizin Yapısı
@@ -155,7 +157,7 @@ Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı: [`docs/KURULUM-
 
 ## Durum
 
-Sürüm **1.4.1**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.4.2**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

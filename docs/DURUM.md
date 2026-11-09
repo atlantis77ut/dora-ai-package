@@ -652,3 +652,33 @@ seçim disk ve operasyonel rahatlıkla yapılmalı — 1 TB NVMe'li makine öner
   yol dışına çıkma denemesi engellendi.
 - `install-ubuntu.sh` ve `smoke-test.sh`: bu ortamda bash başlatılamadığı için **çalıştırılamadı**.
   LF satır sonu doğrulandı; ilk gerçek koşu sunucuda.
+
+---
+
+## 25. Bu cihazda yerel çalıştırma (2026-11-09)
+
+Ubuntu sunucusuna erişim beklemeden paket bu Windows makinesinde çalıştırıldı.
+
+| Adres | Durum |
+|---|---|
+| `http://127.0.0.1:8080/` | 200 — yönlendirme sayfası |
+| `http://127.0.0.1:8080/dashboard/` | 200 — KPI, fazlar, süreçler, kontroller |
+| `.../dashboard/processes.html` | 200 — 24 süreç |
+| `.../dashboard/controls.html` | 200 — 36 kontrol |
+| `.../dashboard/dashboard.png` | 200 — 80 KB |
+| `.../site/` | 200 — landing |
+| `.../healthz` | 200 — `{"ok":true,"version":"1.4.2"}` |
+
+Sunucu `onboarding/cli/tools/serve.mjs --port 8080 --host 127.0.0.1` ile çalışıyor; yalnız yerel
+makineden erişilebilir (ağa açık değil).
+
+### Kalıcı kullanım
+
+- Tek seferlik: `scripts\serve.cmd` (çift tıkla) — Node'u bulur, sunucuyu başlatır, tarayıcıyı açar.
+- Farklı port: `serve.cmd 8081`.
+- Ağdan erişim istenirse: `serve.mjs --host 0.0.0.0` + Windows güvenlik duvarı kuralı.
+
+### Doğrulama
+
+`validate --strict`, `rules --audit` (49/49), 6 fazlı demo, 27/27 senaryo, kanıt paketi, veri alımı,
+DORA eşlemesi (%100) — bu makinede çalıştırıldı, hepsi geçti.

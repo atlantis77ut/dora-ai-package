@@ -5,6 +5,21 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.4.2] — 2026-11-09
+
+### Eklendi
+
+- `scripts/serve.cmd`: Windows'ta çift tıkla çalıştırma. Node'u PATH'te arar, yoksa DSH ile gelen
+  çalışma zamanını kullanır; sunucuyu `127.0.0.1:8080` üzerinde başlatır ve tarayıcıyı açar.
+  Port parametresi: `serve.cmd 8081`.
+
+### Notlar
+
+- Yerel kullanım (tek makine) için `--host 127.0.0.1`; ağdaki başka cihazlardan erişim için
+  `serve.mjs --host 0.0.0.0` ve güvenlik duvarı kuralı gerekir.
+
+---
+
 ## [1.4.1] — 2026-11-09
 
 ### Eklendi — sunucu kurulumu ve genel test
