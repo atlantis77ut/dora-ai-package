@@ -18,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { parse } from '../src/orl/yaml.mjs';
 import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 import { evaluatePhase } from '../src/orl/checks.mjs';
+import { verify as verifyLicense, loadPublicKey } from '../src/orl/license.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../..');
@@ -440,6 +441,19 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { roles });
   }
 
+  if (urlPath === '/api/catalog/articles' && method === 'GET') {
+    const doc = parse(fs.readFileSync(path.join(ROOT, 'data/mapping/dora-articles.yaml'), 'utf8'));
+    const articles = (doc.articles ?? []).map((a) => ({
+      id: a.id,
+      title: a.title,
+      chapter: a.chapter,
+      status: a.status,
+      processes: a.processes ?? [],
+      controls: a.controls ?? [],
+    }));
+    return sendJson(res, 200, { articles, count: articles.length });
+  }
+
   if (urlPath === '/api/lifecycle' && method === 'GET') {
     const doc = parse(fs.readFileSync(path.join(ROOT, 'onboarding/orl-lifecycle.yaml'), 'utf8'));
     const phases = (doc.phases ?? []).map((p) => ({
@@ -543,7 +557,7 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { sessions: listSessions() });
   }
 
-  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances)(?:\/([\w.-]+))?)?$/);
+  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license)(?:\/([\w.-]+))?)?$/);
   if (sessMatch) {
     const id = sessMatch[1];
     const kind = sessMatch[2];
@@ -577,6 +591,134 @@ async function api(req, res, urlPath, method) {
         writeJson(path.join(dir, path.basename(artifact)), body);
         return sendJson(res, 200, { ok: true, name: path.basename(artifact), artifacts: listArtifacts(id) });
       }
+    }
+
+    if (kind === 'mapping' && method === 'POST') {
+      const doc = parse(fs.readFileSync(path.join(ROOT, 'data/orl-integration/agent-to-orl-mapping.yaml'), 'utf8'));
+      const rows = doc.agent_process_mappings ?? [];
+      const allCodes = new Set();
+      const byAgent = new Map();
+      for (const r of rows) {
+        const codes = (r.owned_processes ?? []).map((p) => p.process_code).filter(Boolean);
+        byAgent.set(r.agent_id, codes);
+        codes.forEach((c) => allCodes.add(c));
+      }
+      const act = readJson(path.join(dir, 'agent-activation.json'), {});
+      const activated = act.activated ?? [];
+      const owned = new Set();
+      for (const a of activated) for (const c of byAgent.get(a) ?? []) owned.add(c);
+      const payload = {
+        owned_codes: [...owned].sort(),
+        all_codes: [...allCodes].sort(),
+        activated_agents: activated,
+        unowned_codes: [...allCodes].filter((c) => !owned.has(c)).sort(),
+        generated_at: new Date().toISOString(),
+      };
+      writeJson(path.join(dir, 'orl-mapping.json'), payload);
+      return sendJson(res, 200, { ok: true, ...payload });
+    }
+
+    if (kind === 'scenarios' && method === 'POST') {
+      const body = await readBody(req);
+      const runs = Array.isArray(body.runs) ? body.runs : [];
+      if (!runs.length) return sendJson(res, 400, { ok: false, error: 'en az bir senaryo sonucu gerekli' });
+      const clean = runs.slice(0, 20).map((r) => ({
+        scenario: String(r.scenario ?? '').slice(0, 60),
+        accuracy: Math.max(0, Math.min(100, Number(r.accuracy) || 0)),
+        sla_violations: Math.max(0, Number(r.sla_violations) || 0),
+        audit_chain: Boolean(r.audit_chain),
+        ran_at: String(r.ran_at ?? new Date().toISOString()).slice(0, 30),
+      }));
+      const payload = {
+        runs: clean,
+        classification_accuracy: Math.round(clean.reduce((s, r) => s + r.accuracy, 0) / clean.length),
+        sla_violations: clean.reduce((s, r) => s + r.sla_violations, 0),
+        audit_chain_verified: clean.every((r) => r.audit_chain),
+        generated_at: new Date().toISOString(),
+      };
+      writeJson(path.join(dir, 'scenario-results.json'), payload);
+      return sendJson(res, 200, { ok: true, ...payload });
+    }
+
+    if (kind === 'assessment' && method === 'POST') {
+      const body = await readBody(req);
+      const rows = Array.isArray(body.articles) ? body.articles : [];
+      if (!rows.length) return sendJson(res, 400, { ok: false, error: 'madde listesi gerekli' });
+      const articles = rows.slice(0, 100).map((a) => ({
+        id: String(a.id ?? '').slice(0, 20),
+        status: ['covered', 'partial', 'gap'].includes(a.status) ? a.status : 'gap',
+        note: String(a.note ?? '').slice(0, 300),
+      }));
+      const high = articles.filter((a) => a.status === 'gap').length;
+      const partial = articles.filter((a) => a.status === 'partial').length;
+      const accepted = Array.isArray(body.risk_acceptance)
+        ? body.risk_acceptance.map((x) => String(x).slice(0, 200)).slice(0, 20)
+        : [];
+      const reviewer = String(body.reviewer ?? '').slice(0, 80);
+
+      writeJson(path.join(dir, 'coverage-matrix.json'), {
+        articles,
+        summary: { covered: articles.length - high - partial, partial, gap: high },
+        generated_at: new Date().toISOString(),
+      });
+      writeJson(path.join(dir, 'gap-analysis.json'), {
+        high_severity: high,
+        partial_count: partial,
+        risk_acceptance: accepted,
+        independent_review_signed_by: reviewer || null,
+        reviewed_at: new Date().toISOString(),
+      });
+      return sendJson(res, 200, { ok: true, high_severity: high, partial, accepted: accepted.length });
+    }
+
+    if (kind === 'autonomy' && method === 'POST') {
+      const body = await readBody(req);
+      const rows = Array.isArray(body.grants) ? body.grants : [];
+      if (!rows.length) return sendJson(res, 400, { ok: false, error: 'en az bir atama gerekli' });
+      const levels = ['observe', 'recommend', 'act_with_approval', 'act_autonomous'];
+      const grants = rows.slice(0, 50).map((g) => ({
+        role: String(g.role ?? '').slice(0, 20),
+        level: levels.includes(g.level) ? g.level : 'observe',
+        approved_by: String(g.approved_by ?? '').slice(0, 80),
+      }));
+      writeJson(path.join(dir, 'autonomy-grant.json'), { grants, generated_at: new Date().toISOString() });
+      return sendJson(res, 200, { ok: true, count: grants.length, grants });
+    }
+
+    if (kind === 'golive' && method === 'POST') {
+      const body = await readBody(req);
+      const payload = {
+        shadow_days: Math.max(0, Number(body.shadow_days) || 0),
+        semi_auto_days: Math.max(0, Number(body.semi_auto_days) || 0),
+        mos_dashboard: Boolean(body.mos_dashboard),
+        regwatch_agent: Boolean(body.regwatch_agent),
+        annual_review_date: String(body.annual_review_date ?? '').slice(0, 10),
+        decided_at: new Date().toISOString(),
+      };
+      writeJson(path.join(dir, 'go-live.json'), payload);
+      return sendJson(res, 200, { ok: true, ...payload });
+    }
+
+    if (kind === 'license' && method === 'POST') {
+      const body = await readBody(req);
+      const token = String(body.token ?? '').trim();
+      if (!token) return sendJson(res, 400, { ok: false, error: 'lisans anahtarı boş' });
+      let pem = null;
+      try {
+        pem = loadPublicKey();
+      } catch {
+        pem = null;
+      }
+      const res_ = verifyLicense(token, pem);
+      if (!res_.valid) {
+        return sendJson(res, 400, { ok: false, error: 'lisans geçersiz: ' + res_.reason });
+      }
+      const session = readJson(path.join(dir, 'session.json'), {});
+      session.license = { mode: 'commercial', token, claims: res_.claims, activated_at: new Date().toISOString() };
+      writeJson(path.join(dir, 'session.json'), session);
+      writeJson(path.join(dir, 'license-activation.json'), { claims: res_.claims, activated_at: session.license.activated_at });
+      auth.audit(me.user.username, 'license_activate', id);
+      return sendJson(res, 200, { ok: true, claims: res_.claims });
     }
 
     if (kind === 'gate' && method === 'POST') {

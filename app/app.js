@@ -791,6 +791,65 @@ function viewKurulum() {
       </div>
       <div class="row" style="margin-top:14px"><label>Yıllık kesinti sınırı (dakika)</label><input id="tolRisk" type="number" value="240"></div>
       <div id="tolResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Adım 3 · Varlık ve sorumlu eşlemesi</h2>
+      <p class="sub">Envanter ve sorumlular tamamsa görev eşlemesini oluşturun.</p>
+      <div id="step3Info" class="sub">yükleniyor…</div>
+      <div class="actions">
+        <button class="primary" id="mapBuild">Görev eşlemesini oluştur</button>
+        <a class="ghost" href="#envanter" style="padding:8px 14px">Envanter</a>
+        <a class="ghost" href="#ajanlar" style="padding:8px 14px">Sorumlular</a>
+      </div>
+      <div id="mapResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Adım 4 · Senaryo testleri</h2>
+      <p class="sub">Her senaryo için ölçüm sonucunu girin. Üç senaryo tamamlanınca adım kapanır.</p>
+      <table id="scnTable">
+        <thead><tr><th>Senaryo</th><th>Doğruluk %</th><th>SLA ihlali</th><th>Hash zinciri</th></tr></thead>
+        <tbody>
+          <tr><td>Büyük olay</td><td><input class="scn-acc" type="number" min="0" max="100" value="100"></td><td><input class="scn-sla" type="number" min="0" value="0"></td><td><input type="checkbox" class="scn-chain" checked></td></tr>
+          <tr><td>Tedarikçi çıkışı</td><td><input class="scn-acc" type="number" min="0" max="100" value="100"></td><td><input class="scn-sla" type="number" min="0" value="0"></td><td><input type="checkbox" class="scn-chain" checked></td></tr>
+          <tr><td>Regülatör talebi</td><td><input class="scn-acc" type="number" min="0" max="100" value="100"></td><td><input class="scn-sla" type="number" min="0" value="0"></td><td><input type="checkbox" class="scn-chain" checked></td></tr>
+        </tbody>
+      </table>
+      <div class="actions"><button class="primary" id="scnSave">Sonuçları kaydet</button></div>
+      <div id="scnResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Adım 5 · Öz değerlendirme</h2>
+      <p class="sub">Her DORA maddesi için kapsama durumunu işaretleyin, bağımsız doğrulayanı yazın.</p>
+      <div id="artList" class="sub">yükleniyor…</div>
+      <div class="row" style="margin-top:12px"><label>Bağımsız doğrulayan</label><input id="revName" placeholder="ad soyad"></div>
+      <div class="row"><label>Kabul edilen riskler</label><input id="riskAcc" placeholder="virgülle ayırın (boş bırakılabilir)"></div>
+      <div class="actions"><button class="primary" id="asmSave">Değerlendirmeyi kaydet</button></div>
+      <div id="asmResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Adım 6 · Canlıya geçiş</h2>
+      <p class="sub">Ajan otonomi seviyeleri ve geçiş ölçütleri. Üretim için ticari lisans gerekir.</p>
+      <div id="autoList" class="sub">yükleniyor…</div>
+      <div class="grid k3" style="margin-top:14px">
+        <div><label class="sub">Gölge mod (gün)</label><input id="shadowDays" type="number" min="0" value="14"></div>
+        <div><label class="sub">Yarı-otomatik (gün)</label><input id="semiDays" type="number" min="0" value="30"></div>
+        <div><label class="sub">Yıllık gözden geçirme</label><input id="reviewDate" type="date"></div>
+      </div>
+      <div class="actions">
+        <label class="sub"><input type="checkbox" id="mosChk" style="width:auto"> MOS panosu hazır</label>
+        <label class="sub"><input type="checkbox" id="regChk" style="width:auto"> Düzenleme izleme ajanı aktif</label>
+        <button class="primary" id="liveSave">Geçiş kaydını kaydet</button>
+      </div>
+      <div id="liveResult"></div>
+      <h2 style="margin-top:18px">Lisans</h2>
+      <p class="sub">Ticari lisans anahtarını yapıştırın (DORA-LIC-v1…). Deneme modunda 6. adım kapanmaz.</p>
+      <textarea id="licToken" placeholder="DORA-LIC-v1.…" style="min-height:80px"></textarea>
+      <div class="actions"><button class="ghost-btn" id="licSave">Lisansı etkinleştir</button></div>
+      <div id="licResult"></div>
     </div>`;
 }
 
@@ -875,6 +934,11 @@ function bindKurulum() {
     }),
   );
   loadTolerances();
+  loadStep3();
+  loadArticles();
+  loadAutonomy();
+  loadStep6Values();
+  bindKurulumSteps(sid);
 }
 
 function showGate(phase, results, ok) {
@@ -891,6 +955,183 @@ function showGate(phase, results, ok) {
         .join('')}
     </tbody></table>
   </div>`;
+}
+
+
+const SCENARIO_NAMES = ['Büyük olay', 'Tedarikçi çıkışı', 'Regülatör talebi'];
+const AUTONOMY_LABELS = {
+  observe: 'Yalnız izler',
+  recommend: 'Önerir',
+  act_with_approval: 'Onayla uygular',
+  act_autonomous: 'Otonom',
+};
+
+async function loadStep3() {
+  const sid = state.activeSession?.session_id;
+  if (!sid) return;
+  let inv = 0, agents = 0;
+  try {
+    const a = await api(`/api/sessions/${sid}/artifacts/ict-inventory.json`);
+    inv = (a.value.assets ?? []).length;
+  } catch { /* yok */ }
+  try {
+    const b = await api(`/api/sessions/${sid}/artifacts/agent-activation.json`);
+    agents = (b.value.activated ?? []).length;
+  } catch { /* yok */ }
+  const box = $('#step3Info');
+  if (box) box.innerHTML = `Envanterde <b>${inv}</b> varlık · <b>${agents}</b> sorumlu ajan tanımlı`;
+}
+
+async function loadArticles() {
+  const box = $('#artList');
+  if (!box) return;
+  try {
+    const r = await api('/api/catalog/articles');
+    const sid = state.activeSession?.session_id;
+    let existing = {};
+    try {
+      const c = await api(`/api/sessions/${sid}/artifacts/coverage-matrix.json`);
+      existing = Object.fromEntries((c.value.articles ?? []).map((a) => [a.id, a.status]));
+    } catch { /* yok */ }
+    box.innerHTML = `<table><thead><tr><th>Madde</th><th>Başlık</th><th>Durum</th></tr></thead><tbody>
+      ${r.articles
+        .map(
+          (a) => `<tr><td class="mono">${esc(a.id)}</td><td>${esc(a.title)}</td>
+          <td><select class="art-status" data-id="${esc(a.id)}">
+            ${['covered', 'partial', 'gap']
+              .map((s) => `<option value="${s}" ${(existing[a.id] ?? a.status) === s ? 'selected' : ''}>${{ covered: 'kapsandı', partial: 'kısmi', gap: 'boşluk' }[s]}</option>`)
+              .join('')}
+          </select></td></tr>`,
+        )
+        .join('')}
+    </tbody></table>`;
+  } catch (e) {
+    box.textContent = 'Maddeler yüklenemedi: ' + e.message;
+  }
+}
+
+function loadAutonomy() {
+  const box = $('#autoList');
+  if (!box) return;
+  box.innerHTML = `<table><thead><tr><th>Görev</th><th>Otonomi seviyesi</th></tr></thead><tbody>
+    ${state.roles
+      .map(
+        (r) => `<tr><td>${esc(r.name?.tr ?? r.id)}</td>
+        <td><select class="auto-level" data-id="${esc(r.id)}">
+          ${Object.entries(AUTONOMY_LABELS)
+            .map(([v, l]) => `<option value="${v}" ${v === 'recommend' ? 'selected' : ''}>${l}</option>`)
+            .join('')}
+        </select></td></tr>`,
+      )
+      .join('')}
+  </tbody></table>`;
+}
+
+async function loadStep6Values() {
+  const sid = state.activeSession?.session_id;
+  if (!sid) return;
+  try {
+    const g = await api(`/api/sessions/${sid}/artifacts/go-live.json`);
+    if ($('#shadowDays')) $('#shadowDays').value = g.value.shadow_days ?? 14;
+    if ($('#semiDays')) $('#semiDays').value = g.value.semi_auto_days ?? 30;
+    if ($('#reviewDate')) $('#reviewDate').value = g.value.annual_review_date ?? '';
+    if ($('#mosChk')) $('#mosChk').checked = Boolean(g.value.mos_dashboard);
+    if ($('#regChk')) $('#regChk').checked = Boolean(g.value.regwatch_agent);
+  } catch { /* yok */ }
+  try {
+    const a = await api(`/api/sessions/${sid}/artifacts/autonomy-grant.json`);
+    const map = Object.fromEntries((a.value.grants ?? []).map((g) => [g.role, g.level]));
+    document.querySelectorAll('.auto-level').forEach((sel) => {
+      if (map[sel.dataset.id]) sel.value = map[sel.dataset.id];
+    });
+  } catch { /* yok */ }
+}
+
+function bindKurulumSteps(sid) {
+  $('#mapBuild')?.addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/sessions/${sid}/mapping`, { method: 'POST', body: '{}' });
+      toast(`Eşleme oluşturuldu: ${r.owned_codes.length}/${r.all_codes.length} kod`, 'ok');
+      const missing = r.unowned_codes ?? [];
+      $('#mapResult').innerHTML = `<div class="sub" style="margin-top:10px">Sahipli <b>${r.owned_codes.length}</b> / <b>${r.all_codes.length}</b> kod` +
+        (missing.length
+          ? `<br>Sahipsiz ${missing.length} kod: <span class="mono">${missing.slice(0, 8).join(', ')}</span>${missing.length > 8 ? '…' : ''}` +
+            `<br><a href="#ajanlar" style="color:var(--accent)">Sorumlular sayfasından eksik ajanları aktive edin</a>`
+          : ' · tüm kodlar sahipli') + `</div>`;
+    } catch (e) {
+      toast('Oluşturulamadı: ' + e.message, 'bad');
+    }
+  });
+
+  $('#scnSave')?.addEventListener('click', async () => {
+    const rows = [...document.querySelectorAll('#scnTable tbody tr')];
+    const runs = rows.map((tr, i) => ({
+      scenario: SCENARIO_NAMES[i],
+      accuracy: Number(tr.querySelector('.scn-acc').value),
+      sla_violations: Number(tr.querySelector('.scn-sla').value),
+      audit_chain: tr.querySelector('.scn-chain').checked,
+    }));
+    try {
+      const r = await api(`/api/sessions/${sid}/scenarios`, { method: 'POST', body: JSON.stringify({ runs }) });
+      toast(`Kaydedildi: doğruluk %${r.classification_accuracy}`, 'ok');
+      $('#scnResult').innerHTML = `<div class="sub" style="margin-top:10px">Doğruluk %${r.classification_accuracy} · SLA ihlali ${r.sla_violations} · hash zinciri ${r.audit_chain_verified ? 'doğrulandı' : 'DOĞRULANMADI'}</div>`;
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#asmSave')?.addEventListener('click', async () => {
+    const articles = [...document.querySelectorAll('.art-status')].map((s) => ({ id: s.dataset.id, status: s.value }));
+    const payload = {
+      articles,
+      reviewer: $('#revName')?.value.trim() ?? '',
+      risk_acceptance: ($('#riskAcc')?.value ?? '').split(',').map((x) => x.trim()).filter(Boolean),
+    };
+    try {
+      const r = await api(`/api/sessions/${sid}/assessment`, { method: 'POST', body: JSON.stringify(payload) });
+      toast(`Değerlendirme kaydedildi: ${r.high_severity} boşluk`, 'ok');
+      $('#asmResult').innerHTML = `<div class="sub" style="margin-top:10px">Boşluk: ${r.high_severity} · kısmi: ${r.partial} · kabul edilen risk: ${r.accepted}</div>`;
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#liveSave')?.addEventListener('click', async () => {
+    const grants = [...document.querySelectorAll('.auto-level')].map((s) => ({
+      role: s.dataset.id,
+      level: s.value,
+      approved_by: state.user?.name ?? '',
+    }));
+    try {
+      await api(`/api/sessions/${sid}/autonomy`, { method: 'POST', body: JSON.stringify({ grants }) });
+      const r = await api(`/api/sessions/${sid}/golive`, {
+        method: 'POST',
+        body: JSON.stringify({
+          shadow_days: Number($('#shadowDays').value),
+          semi_auto_days: Number($('#semiDays').value),
+          mos_dashboard: $('#mosChk').checked,
+          regwatch_agent: $('#regChk').checked,
+          annual_review_date: $('#reviewDate').value,
+        }),
+      });
+      toast('Geçiş kaydı kaydedildi', 'ok');
+      $('#liveResult').innerHTML = `<div class="sub" style="margin-top:10px">Gölge ${r.shadow_days}g · yarı-otomatik ${r.semi_auto_days}g · inceleme ${r.annual_review_date || '—'}</div>`;
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#licSave')?.addEventListener('click', async () => {
+    const token = $('#licToken').value.trim();
+    if (!token) return toast('Lisans anahtarı boş', 'bad');
+    try {
+      const r = await api(`/api/sessions/${sid}/license`, { method: 'POST', body: JSON.stringify({ token }) });
+      toast('Lisans etkinleştirildi', 'ok');
+      $('#licResult').innerHTML = `<div class="sub" style="margin-top:10px">Müşteri: ${esc(r.claims.customer ?? '—')} · geçerlilik: ${esc(r.claims.expires_at ?? '—')}</div>`;
+    } catch (e) {
+      toast('Etkinleştirilemedi: ' + e.message, 'bad');
+    }
+  });
 }
 
 async function loadTolerances() {

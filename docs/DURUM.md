@@ -862,3 +862,46 @@ parola sıfırlama → eski oturum 401
 refresh → 200 · oturum süresi 4 saat → 200
 aktif oturum seçimi → 200
 ```
+
+---
+
+## 31. Kurulum sihirbazı tamamlandı — 1.10.0 (2026-11-09)
+
+Önceki sürümde 1-2. adımlar arayüzdeydi; 3-6 CLI'ya bağlıydı. Artık altı adım da tarayıcıdan
+yürütülüyor ve her adım gerçek `evaluatePhase()` denetiminden geçiyor.
+
+| Adım | Girdi | Üretilen dosya | Kapı kriterleri |
+|---|---|---|---|
+| 3 | Envanter + ajan aktivasyonu | `orl-mapping.json` | C3-1…C3-4 |
+| 4 | 3 senaryo ölçümü | `scenario-results.json` | C4-1…C4-4 |
+| 5 | 28 madde kapsama + doğrulayan | `coverage-matrix.json`, `gap-analysis.json` | C5-1…C5-3 |
+| 6 | Otonomi + geçiş ölçütleri + lisans | `autonomy-grant.json`, `go-live.json`, `session.license` | C6-0…C6-4 |
+
+### Uçtan uca doğrulama
+
+```
+bootstrap → oturum → hizmetler → toleranslar
+inventory + 11 ajan → mapping (21/21 kod sahipli)
+3 senaryo (doğruluk %98, 0 ihlal, zincir doğrulandı)
+28 madde kapsama + bağımsız doğrulayan
+otonomi + go-live + ticari lisans
+→ C1 TAMAM · C2 TAMAM · C3 TAMAM · C4 TAMAM · C5 TAMAM · C6 TAMAM
+```
+
+### Tasarım notları
+
+- **C3-4 yönlendirmesi**: eşleme sonucunda sahipsiz OR kodları listeleniyor ve "Sorumlular
+  sayfasından eksik ajanları aktive edin" bağlantısı veriliyor (21 kodun tamamı 11 ajanla kapanıyor).
+- **Lisans**: anahtar oturumda saklanıyor, `verify()` ile her kapı denetiminde yeniden doğrulanıyor;
+  deneme modunda C6-0 açıkça reddediyor ("üretime geçiş için ticari lisans gerekli").
+- **Kapsama**: kullanıcı maddeleri tek tek işaretliyor; `gap-analysis.high_severity` boşluk sayısından
+  hesaplanıyor, kabul edilen riskler ayrı alanda tutuluyor.
+
+### Bilinen eksikler (güncel)
+
+1. Self-service parola sıfırlama (e-posta) yok — yönetici sıfırlıyor.
+2. 2FA / SSO yok.
+3. CSV dosya yükleme yok (yapıştırma var).
+4. Kanıt paketi (zip) indirme arayüzde yok.
+5. Konnektörler yalnız bağlantı testi yapıyor, veri çekmiyor.
+6. Birim testi yok.
