@@ -905,3 +905,38 @@ otonomi + go-live + ticari lisans
 4. Kanıt paketi (zip) indirme arayüzde yok.
 5. Konnektörler yalnız bağlantı testi yapıyor, veri çekmiyor.
 6. Birim testi yok.
+
+---
+
+## 32. Kanıt paketi — 1.11.0 (2026-11-09)
+
+Altı adım tamamlandığında kurulumun tüm kayıtları tek bir imzalı zip'e dönüşüyor.
+
+| Parça | İçerik |
+|---|---|
+| `manifest.json` | format, oturum bilgisi, lisans, her dosyanın `sha256` + `bytes`, hash zinciri, imza |
+| `README.txt` | insan tarafından okunur özet + doğrulama komutu |
+| `evidence/*` | oturumun tüm JSON artefaktları (services, tolerances, inventory, mapping, scenarios, coverage, gaps, autonomy, go-live, lisans) |
+| `evidence/evidence-public.pem` | paketi doğrulamak için genel anahtar |
+
+### İmza zinciri
+
+1. İlk dışa aktarımda `web-data/evidence-key.pem` (Ed25519, `0600`) üretilir
+2. Manifest imzalanır: `payload = FORMAT|generated_at|session_id|chain_head`
+3. Genel anahtar paketin içine konur → alıcı başka bir şey istemeden doğrular
+4. `verifyBundle()` dosya sayısını, her `sha256`'yı, zincir başını ve imzayı ayrı ayrı kontrol eder
+
+### Doğrulama
+
+```
+export   → 200 · 5 dosya · imzalı · 4160 B
+download → 200 · application/zip
+verify   → GEÇERLİ · imza geçerli · 5 dosya
+```
+
+### Notlar
+
+- Paket, oturum dizinindeki **her** JSON'u alır; üretildikten sonra yeni artefakt eklenirse
+  yeniden oluşturmak gerekir (arayüzdeki düğme bunu yapar).
+- İmza anahtarı `web-data/` içinde; bu dizin yedeklenmezse paket yine doğrulanır (genel anahtar
+  pakette) ama yeni paketler farklı anahtarla imzalanır.

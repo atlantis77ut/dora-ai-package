@@ -341,6 +341,10 @@ function viewBelgeler() {
     <div class="card">
       <h2>Belgeler</h2>
       <p class="sub">Kurulum sırasında üretilen kayıtlar. İndirip denetim dosyanıza ekleyebilirsiniz.</p>
+      <div class="actions">
+        <button class="primary" id="expBuild2">Kanıt paketi oluştur</button>
+        <a class="ghost" id="expDownload2" style="display:none;padding:8px 14px" href="#">Kanıt paketini indir</a>
+      </div>
       <table>
         <thead><tr><th>Belge</th><th class="num">Boyut</th><th>Tarih</th><th></th></tr></thead>
         <tbody id="artBody"><tr><td colspan="4" class="sub">Yükleniyor…</td></tr></tbody>
@@ -617,6 +621,25 @@ const ART_LABELS = {
   'session.json': 'Oturum',
 };
 
+function bindBelgeExport() {
+  const sid = state.activeSession?.session_id;
+  if (!sid) return;
+  const btn = $('#expBuild2');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/sessions/${sid}/export`, { method: 'POST', body: '{}' });
+      const dl = $('#expDownload2');
+      dl.href = r.download;
+      dl.style.display = 'inline-block';
+      toast(`Kanıt paketi hazır: ${r.files} dosya`, 'ok');
+    } catch (e) {
+      toast('Oluşturulamadı: ' + e.message, 'bad');
+    }
+  });
+  if ($('#expDownload2')) $('#expDownload2').addEventListener('click', () => {});
+}
+
 async function loadArtifacts() {
   const body = $('#artBody');
   if (!body) return;
@@ -850,6 +873,17 @@ function viewKurulum() {
       <textarea id="licToken" placeholder="DORA-LIC-v1.…" style="min-height:80px"></textarea>
       <div class="actions"><button class="ghost-btn" id="licSave">Lisansı etkinleştir</button></div>
       <div id="licResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Kanıt paketi</h2>
+      <p class="sub">Altı adımın tüm kayıtlarını tek zip dosyasında toplar; her dosyanın sha256 özeti ve
+        hash zinciri manifestte yer alır, paket kurumun kanıt anahtarıyla imzalanır.</p>
+      <div class="actions">
+        <button class="primary" id="expBuild">Paketi oluştur</button>
+        <a class="ghost" id="expDownload" style="display:none;padding:8px 14px" href="#">İndir</a>
+      </div>
+      <div id="expResult"></div>
     </div>`;
 }
 
@@ -1096,6 +1130,22 @@ function bindKurulumSteps(sid) {
     }
   });
 
+  $('#expBuild')?.addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/sessions/${sid}/export`, { method: 'POST', body: '{}' });
+      const dl = $('#expDownload');
+      dl.href = r.download;
+      dl.style.display = 'inline-block';
+      $('#expResult').innerHTML = `<div class="sub" style="margin-top:10px">
+        ${r.files} dosya · ${(r.size / 1024).toFixed(1)} KB ·
+        zincir başı <span class="mono">${esc(String(r.chain_head).slice(0, 16))}…</span> ·
+        imza ${r.signed ? '<span class="ok">Ed25519</span>' : '<span class="bad">yok</span>'}</div>`;
+      toast('Kanıt paketi oluşturuldu', 'ok');
+    } catch (e) {
+      toast('Oluşturulamadı: ' + e.message, 'bad');
+    }
+  });
+
   $('#liveSave')?.addEventListener('click', async () => {
     const grants = [...document.querySelectorAll('.auto-level')].map((s) => ({
       role: s.dataset.id,
@@ -1197,8 +1247,8 @@ const ROUTES = {
   entegrasyonlar: { title: 'Entegrasyonlar', sub: 'Teknik bağlantı ayarları', render: viewBaglantilar, bind: bindBaglantilar, roles: ['admin'] },
   envanter: { title: 'Varlıklarım', sub: 'Sunucu ve sistem listesi', render: viewVarliklar, bind: bindVarliklar, roles: ['user', 'admin'] },
   ajanlar: { title: 'Sorumlular', sub: 'Görev atamaları', render: viewSorumlular, bind: bindSorumlular, roles: ['user', 'admin'] },
-  belgeler: { title: 'Belgeler', sub: 'Kurulum kayıtları', render: viewBelgeler, bind: loadArtifacts, roles: ['user', 'admin'] },
-  kanitlar: { title: 'Kanıtlar', sub: 'Oturum artefaktları', render: viewBelgeler, bind: loadArtifacts, roles: ['admin'] },
+  belgeler: { title: 'Belgeler', sub: 'Kurulum kayıtları', render: viewBelgeler, bind: () => { loadArtifacts(); bindBelgeExport(); }, roles: ['user', 'admin'] },
+  kanitlar: { title: 'Kanıtlar', sub: 'Oturum artefaktları', render: viewBelgeler, bind: () => { loadArtifacts(); bindBelgeExport(); }, roles: ['admin'] },
   yonetim: { title: 'Yönetim', sub: 'Kullanıcılar ve işlem kaydı', render: viewYonetim, bind: bindYonetim, roles: ['admin'] },
 };
 

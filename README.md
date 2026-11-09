@@ -140,7 +140,7 @@ node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 `http://127.0.0.1:8080/app/` — giriş ekranıyla açılır. İlk açılışta **yönetici hesabı** oluşturulur.
 
 - **Kurulum sihirbazı (6 adım)**: hizmetler → toleranslar → varlık/sorumlu eşlemesi → senaryo
-  testleri → öz değerlendirme → canlıya geçiş + lisans etkinleştirme
+  testleri → öz değerlendirme → canlıya geçiş + lisans etkinleştirme → **imzalı kanıt paketi (zip)**
 - **Yönetici**: teknik panel (`/dashboard/`), kanıtlar, kullanıcı yönetimi, işlem kaydı,
   parola sıfırlama, oturum süresi
 - **Kullanıcı**: Durum · Kurum bilgileri · Sistem bağlantıları · Varlıklarım · Sorumlular · Belgeler

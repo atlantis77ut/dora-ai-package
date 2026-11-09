@@ -19,6 +19,8 @@ import { parse } from '../src/orl/yaml.mjs';
 import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 import { evaluatePhase } from '../src/orl/checks.mjs';
 import { verify as verifyLicense, loadPublicKey } from '../src/orl/license.mjs';
+import { buildBundle } from '../src/orl/evidence.mjs';
+import crypto from 'node:crypto';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../..');
@@ -243,6 +245,20 @@ function sendFile(res, file) {
   res.end(body);
 }
 
+
+
+/** Kurulumun kanıt imza anahtarı: ilk kullanımda üretilir (0600). */
+function evidenceKeyPair() {
+  const priv = path.join(DATA, 'evidence-key.pem');
+  const pub = path.join(DATA, 'evidence-public.pem');
+  if (!fs.existsSync(priv)) {
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('ed25519');
+    fs.mkdirSync(DATA, { recursive: true });
+    fs.writeFileSync(priv, privateKey.export({ type: 'pkcs8', format: 'pem' }), { mode: 0o600 });
+    fs.writeFileSync(pub, publicKey.export({ type: 'spki', format: 'pem' }));
+  }
+  return { priv, pub };
+}
 
 function parseCookies(req) {
   const out = {};
@@ -557,7 +573,7 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { sessions: listSessions() });
   }
 
-  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license)(?:\/([\w.-]+))?)?$/);
+  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export)(?:\/([\w.-]+))?)?$/);
   if (sessMatch) {
     const id = sessMatch[1];
     const kind = sessMatch[2];
@@ -591,6 +607,36 @@ async function api(req, res, urlPath, method) {
         writeJson(path.join(dir, path.basename(artifact)), body);
         return sendJson(res, 200, { ok: true, name: path.basename(artifact), artifacts: listArtifacts(id) });
       }
+    }
+
+    if (kind === 'export' && method === 'POST') {
+      const session = readJson(path.join(dir, 'session.json'), {});
+      const keys = evidenceKeyPair();
+      const outFile = path.join(dir, 'evidence-bundle.zip');
+      const res_ = buildBundle({ dir, session, outFile, keyFile: keys.priv, extraFiles: [keys.pub] });
+      auth.audit(me.user.username, 'evidence_export', `${id} (${res_.files} dosya)`);
+      return sendJson(res, 200, {
+        ok: true,
+        files: res_.files,
+        chain_head: res_.chainHead,
+        signed: res_.signed,
+        size: fs.statSync(res_.outFile).size,
+        generated_at: res_.manifest.generated_at,
+        download: `/api/sessions/${id}/export/download`,
+      });
+    }
+
+    if (kind === 'export' && method === 'GET') {
+      const file = path.join(dir, 'evidence-bundle.zip');
+      if (!fs.existsSync(file)) return sendJson(res, 404, { ok: false, error: 'önce paketi oluşturun' });
+      const buf = fs.readFileSync(file);
+      res.writeHead(200, {
+        'Content-Type': 'application/zip',
+        'Content-Length': buf.length,
+        'Content-Disposition': `attachment; filename="kanit-paketi-${id}.zip"`,
+        'Cache-Control': 'no-store',
+      });
+      return res.end(buf);
     }
 
     if (kind === 'mapping' && method === 'POST') {
