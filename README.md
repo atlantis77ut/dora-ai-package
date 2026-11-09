@@ -148,6 +148,13 @@ node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 Veriler `web-data/` (ayarlar, kullanıcılar, anahtarlar) ve `.dora-onboarding/` (oturumlar) altında;
 ikisi de `.gitignore`'da.
 
+## Testler
+
+```bash
+cd onboarding/cli && node --test tests/unit     # 45 birim testi
+node tools/demo.mjs                             # 6 fazlı uçtan uca demo
+```
+
 ## Sunucuya kurulum
 
 ```bash

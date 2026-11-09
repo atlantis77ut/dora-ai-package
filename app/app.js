@@ -291,6 +291,10 @@ function viewVarliklar() {
     <div class="card">
       <h2>Varlıklarım</h2>
       <p class="sub">Sunucu ve sistemlerinizi satır satır girin: <b>ad, kritiklik, tedarikçi</b></p>
+      <div class="actions" style="margin-bottom:10px">
+        <input type="file" id="csvFile" accept=".csv,text/csv" style="max-width:320px">
+        <a class="ghost" href="/api/templates/inventory.csv" style="padding:8px 14px">Şablon indir</a>
+      </div>
       <textarea id="csv" placeholder="Core Banking, kritik, Vendor X
 API Gateway, önemli, Vendor Y
 Raporlama, standart, iç ekip"></textarea>
@@ -530,6 +534,26 @@ function bindBaglantilar() {
 }
 
 function bindVarliklar() {
+  const fileInput = $('#csvFile');
+  if (fileInput) {
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      const text = await file.text();
+      $('#csv').value = text.trim();
+      try {
+        const r = await api(`/api/sessions/${state.activeSession.session_id}/inventory/csv`, {
+          method: 'POST',
+          body: JSON.stringify({ csv: text }),
+        });
+        toast(`${r.count} varlık dosyadan yüklendi`, 'ok');
+        renderInvTable(r);
+      } catch (e) {
+        toast('Dosya yüklenemedi: ' + e.message, 'bad');
+      }
+    });
+  }
+
   const parseCsv = (raw) =>
     raw
       .split(/\r?\n/)

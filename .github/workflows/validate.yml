@@ -54,6 +54,10 @@ jobs:
         working-directory: onboarding/cli
         run: node tools/demo-scenario.mjs
 
-      - name: Kural moturu (1.4)
+      - name: Kural motoru (1.4)
         working-directory: onboarding/cli
         run: node tools/demo-rules.mjs
+
+      - name: Birim testleri (1.12)
+        working-directory: onboarding/cli
+        run: node --test tests/unit

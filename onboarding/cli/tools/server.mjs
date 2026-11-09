@@ -20,6 +20,7 @@ import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 import { evaluatePhase } from '../src/orl/checks.mjs';
 import { verify as verifyLicense, loadPublicKey } from '../src/orl/license.mjs';
 import { buildBundle } from '../src/orl/evidence.mjs';
+import { parseInventoryCsv, INVENTORY_CSV_TEMPLATE } from '../src/orl/csv.mjs';
 import crypto from 'node:crypto';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -497,6 +498,15 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { ok: true, session_hours: s.session_hours });
   }
 
+  if (urlPath === '/api/templates/inventory.csv' && method === 'GET') {
+    res.writeHead(200, {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': 'attachment; filename="envanter-sablonu.csv"',
+      'Cache-Control': 'no-store',
+    });
+    return res.end('\uFEFF' + INVENTORY_CSV_TEMPLATE);
+  }
+
   // kurum profili
   if (urlPath === '/api/institution' && method === 'PUT') {
     const body = await readBody(req);
@@ -839,6 +849,27 @@ async function api(req, res, urlPath, method) {
       };
       writeJson(path.join(dir, 'agent-activation.json'), payload);
       return sendJson(res, 200, { ok: true, ...payload });
+    }
+
+    if (kind === 'inventory' && method === 'POST' && artifact === 'csv') {
+      const body = await readBody(req);
+      const assets = parseInventoryCsv(String(body.csv ?? ''));
+      if (!assets.length) {
+        return sendJson(res, 400, { ok: false, error: 'CSV içinde geçerli satır bulunamadı (ad sütunu gerekli)' });
+      }
+      const payload = {
+        assets: assets.slice(0, 2000),
+        assets_by_provider: assets.reduce((m, a) => {
+          const k = a.provider || 'bilinmiyor';
+          m[k] = (m[k] ?? 0) + 1;
+          return m;
+        }, {}),
+        source: 'csv',
+        reconciled_at: new Date().toISOString(),
+      };
+      writeJson(path.join(dir, 'ict-inventory.json'), payload);
+      auth.audit(me.user.username, 'inventory_csv', String(assets.length));
+      return sendJson(res, 200, { ok: true, count: assets.length, ...payload });
     }
 
     if (kind === 'inventory' && method === 'POST') {

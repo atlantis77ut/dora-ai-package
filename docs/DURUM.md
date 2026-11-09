@@ -940,3 +940,40 @@ verify   → GEÇERLİ · imza geçerli · 5 dosya
   yeniden oluşturmak gerekir (arayüzdeki düğme bunu yapar).
 - İmza anahtarı `web-data/` içinde; bu dizin yedeklenmezse paket yine doğrulanır (genel anahtar
   pakette) ama yeni paketler farklı anahtarla imzalanır.
+
+---
+
+## 33. CSV yükleme ve birim testleri — 1.12.0 (2026-11-09)
+
+### CSV
+
+Envanter artık dosyadan yüklenebiliyor. Ayrıştırıcı `src/orl/csv.mjs` içinde ve testlerle korunuyor:
+
+| Durum | Davranış |
+|---|---|
+| Ayırıcı | `,` veya `;` — ilk satırdaki yoğunluğa göre otomatik |
+| Tırnaklı alan | virgül içeren hizmet adı tek alan kalır |
+| Kaçışlı tırnak | iki tırnak tek tırnağa iner |
+| BOM | temizlenir (Excel) |
+| Başlık | varsa sütun adından eşlenir, yoksa sıra: ad, kritiklik, tedarikçi |
+| Kritiklik | kritik/önemli/standart ↔ critical/important/standard |
+| Boş ad | satır atlanır |
+
+Şablon: `GET /api/templates/inventory.csv` (BOM'lu, Excel'de doğru açılır).
+
+### Birim testleri
+
+45 test, 5 dosya. `node --test tests/unit` (CI: Node 18/20/22 × Ubuntu/Windows).
+
+Kapsanan kritik davranışlar:
+
+- parola değişiminde eski oturumun düşmesi
+- son yöneticinin silinememesi
+- deneme lisansıyla C6'nın kapanmaması
+- kurcalanmış kanıt paketinin yakalanması
+- eksik olgu varken kuralın tetiklenmemesi ve eksik alanın raporlanması
+
+### Not
+
+Kural motorunda `AND`/`OR` kısa devre yapmıyor; bu, eksik alan raporlamasını tamamlamak için
+bilinçli bir tercih (test bunu doğruluyor).

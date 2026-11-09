@@ -252,10 +252,17 @@ function evalNode(node, facts, missing) {
     }
     case 'not':
       return !truthy(evalNode(node.expr, facts, missing));
-    case 'and':
-      return truthy(evalNode(node.left, facts, missing)) && truthy(evalNode(node.right, facts, missing));
-    case 'or':
-      return truthy(evalNode(node.left, facts, missing)) || truthy(evalNode(node.right, facts, missing));
+    // Kısa devre yok: her iki taraf da değerlendirilir ki eksik alanlar raporlanabilsin
+    case 'and': {
+      const l = truthy(evalNode(node.left, facts, missing));
+      const r = truthy(evalNode(node.right, facts, missing));
+      return l && r;
+    }
+    case 'or': {
+      const l = truthy(evalNode(node.left, facts, missing));
+      const r = truthy(evalNode(node.right, facts, missing));
+      return l || r;
+    }
     case 'cmp': {
       const a = evalNode(node.left, facts, missing);
       const b = evalNode(node.right, facts, missing);
