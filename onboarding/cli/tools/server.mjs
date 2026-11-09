@@ -20,6 +20,7 @@ import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 import { evaluatePhase } from '../src/orl/checks.mjs';
 import { verify as verifyLicense, loadPublicKey } from '../src/orl/license.mjs';
 import { fetchSiemEvents } from '../src/orl/connectors/siem.mjs';
+import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq } from '../src/orl/incident.mjs';
 import { buildBundle } from '../src/orl/evidence.mjs';
 import { createResetStore } from '../src/orl/reset.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
@@ -909,7 +910,7 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { sessions: listSessions() });
   }
 
-  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem)(?:\/([\w.-]+))?)?$/);
+  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem|incidents)(?:\/([\w.-]+))?)?$/);
   if (sessMatch) {
     const id = sessMatch[1];
     const kind = sessMatch[2];
@@ -973,6 +974,83 @@ async function api(req, res, urlPath, method) {
         'Cache-Control': 'no-store',
       });
       return res.end(buf);
+    }
+
+    if (kind === 'incidents' && method === 'GET') {
+      const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
+      return sendJson(res, 200, { ok: true, incidents: stored.incidents ?? [] });
+    }
+
+    if (kind === 'incidents' && method === 'POST') {
+      const body = await readBody(req);
+      const siem = readJson(path.join(dir, 'siem-events.json'), null);
+      if (!siem?.events?.length) return sendJson(res, 400, { ok: false, error: 'önce SIEM olaylarını çekin' });
+
+      const wanted = Array.isArray(body.event_ids) ? new Set(body.event_ids.map(String)) : null;
+      const minSeverity = ['low', 'medium', 'high'].includes(body.min_severity) ? body.min_severity : 'high';
+      const pool = siem.events.filter((e) =>
+        wanted ? wanted.has(String(e.id)) : shouldCreateIncident(e, { minSeverity }).yes,
+      );
+
+      const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
+      const existing = stored.incidents ?? [];
+      let seq = nextSeq(existing);
+      const created = pool.map((e) => incidentFromEvent(e, { sessionId: id, seq: seq++ }));
+      const merged = mergeIncidents(existing, created);
+      writeJson(path.join(dir, 'incidents.json'), { incidents: merged.all, updated_at: new Date().toISOString() });
+      auth.audit(me.user.username, 'incident_draft', `${id}: ${merged.added.length} yeni`);
+      return sendJson(res, 200, {
+        ok: true,
+        added: merged.added.length,
+        total: merged.all.length,
+        incidents: merged.added,
+        skipped: pool.length - merged.added.length,
+      });
+    }
+
+    if (kind === 'incidents' && method === 'PATCH' && artifact) {
+      const body = await readBody(req);
+      const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
+      const list = stored.incidents ?? [];
+      const inc = list.find((x) => x.incident_id === artifact);
+      if (!inc) return sendJson(res, 404, { ok: false, error: 'olay kaydı yok' });
+
+      const num = (v) => (v === null || v === undefined || v === '' ? null : Math.max(0, Number(v) || 0));
+      if ('affected_customers' in body) inc.affected_customers = num(body.affected_customers);
+      if ('outage_minutes' in body) inc.outage_minutes = num(body.outage_minutes);
+      if ('economic_impact_eur' in body) inc.economic_impact_eur = num(body.economic_impact_eur);
+      if ('data_loss' in body) inc.data_loss = Boolean(body.data_loss);
+      if ('unauthorized_access' in body) inc.unauthorized_access = Boolean(body.unauthorized_access);
+      if (Array.isArray(body.affected_member_states)) {
+        inc.affected_member_states = body.affected_member_states.map((x) => String(x).slice(0, 4)).slice(0, 30);
+      }
+      if (['unclassified', 'major', 'not_major'].includes(body.classification)) inc.classification = body.classification;
+      if (['draft', 'open', 'closed'].includes(body.status)) inc.status = body.status;
+      inc.updated_at = new Date().toISOString();
+
+      if (body.promote === true) {
+        const record = {
+          incident_id: inc.incident_id,
+          detected_at: inc.detected_at,
+          source: inc.origin ?? 'siem',
+          siem_event_id: inc.siem_event_id,
+          classification: inc.classification,
+          affected_customers: inc.affected_customers,
+          outage_minutes: inc.outage_minutes,
+          economic_impact_eur: inc.economic_impact_eur,
+          data_loss: inc.data_loss,
+          unauthorized_access: inc.unauthorized_access,
+          affected_member_states: inc.affected_member_states,
+          promoted_at: new Date().toISOString(),
+        };
+        writeJson(path.join(dir, 'incident-record.json'), record);
+        inc.status = 'open';
+        auth.audit(me.user.username, 'incident_promote', inc.incident_id);
+      }
+
+      writeJson(path.join(dir, 'incidents.json'), { incidents: list, updated_at: inc.updated_at });
+      auth.audit(me.user.username, 'incident_update', inc.incident_id);
+      return sendJson(res, 200, { ok: true, incident: inc, promoted: body.promote === true });
     }
 
     if (kind === 'siem' && artifact === 'fetch' && method === 'POST') {

@@ -1075,3 +1075,39 @@ Araç: `tools/security-scan.mjs` (statik + canlı). Rapor: `docs/GUVENLIK-TARAMA
 - Giriş sınırı kullanıcı adı bazlı → vekilde IP sınırı
 - Login CSRF muafiyeti (oturumsuz CSRF anlamsız)
 - SSO yalnız sahte sağlayıcıyla test edildi
+
+---
+
+## 37. SIEM olayından olay kaydına — 1.16.0 (2026-11-09)
+
+Kapanan döngü: **SIEM olayı → taslak kayıt → insan doğrulaması → `incident-record.json` →
+kural motoru (INC-R1…R5) → sınıflandırma**.
+
+| Parça | Dosya |
+|---|---|
+| Eşleme kuralları | `src/orl/incident.mjs` |
+| Taslak kayıtlar | `<oturum>/incidents.json` |
+| Aktif kayıt | `<oturum>/incident-record.json` |
+| Kural değerlendirmesi | `rules --session <id>` (mevcut) |
+
+### Kurallar
+
+- **Eşik**: varsayılan `high`; `medium`/`low` seçilebilir
+- **Anahtar kelimeler**: ransomware/fidye (veri kaybı + yetkisiz), breach/sızıntı (veri kaybı),
+  unauthorized/yetkisiz/brute (yetkisiz), outage/kesinti, ddos
+- **Öneri**: yetkisiz erişim veya veri kaybı ya da `high` → `suggested_classification: major`
+- **Tekrar**: aynı `siem_event_id` ikinci kez kayıt açmaz
+
+### Neden insan adımı var
+
+Etkilenen müşteri sayısı, kesinti süresi ve ekonomik etki SIEM'de yok. Bu alanlar boş
+bırakılırsa kural motoru **tetiklenmez** (eksik olgu) — yanlış sınıflandırma yerine görünür eksik.
+
+### Doğrulama
+
+```
+3 SIEM olayı → 2 taslak (düşük atlandı) → tekrar çalıştırma 0 yeni
+PATCH: 250000 müşteri, 45 dk, 750000 EUR, major → promote
+incident-record.json: 200
+birim: 86 test, 86 pass
+```

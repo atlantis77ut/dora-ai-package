@@ -1301,6 +1301,21 @@ function viewSiem() {
         <a class="ghost" href="#entegrasyonlar" style="padding:8px 14px">Bağlantıyı düzenle</a>
       </div>
       <div id="siemResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Olay kayıtları</h2>
+      <p class="sub">Yüksek önemli olaylardan taslak DORA kaydı üretin; eksik alanları doldurup aktif kayda yükseltin.</p>
+      <div class="actions">
+        <label class="sub">En düşük önem</label>
+        <select id="incSev" style="max-width:140px">
+          <option value="high" selected>yüksek</option>
+          <option value="medium">orta</option>
+          <option value="low">düşük</option>
+        </select>
+        <button class="primary" id="incDraft">Taslak kayıt oluştur</button>
+      </div>
+      <div id="incResult"></div>
     </div>`;
 }
 
@@ -1329,6 +1344,96 @@ function bindSiem() {
     }
   });
   loadSiem();
+  loadIncidents();
+
+  $('#incDraft')?.addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/sessions/${sid}/incidents`, {
+        method: 'POST',
+        body: JSON.stringify({ min_severity: $('#incSev').value }),
+      });
+      toast(`${r.added} taslak kayıt (${r.total} toplam)`, 'ok');
+      renderIncidents(r.incidents.length ? r.incidents : await fetchIncidents());
+    } catch (e) {
+      toast('Oluşturulamadı: ' + e.message, 'bad');
+    }
+  });
+}
+
+async function fetchIncidents() {
+  try {
+    const r = await api(`/api/sessions/${state.activeSession.session_id}/incidents`);
+    return r.incidents ?? [];
+  } catch {
+    return [];
+  }
+}
+
+async function loadIncidents() {
+  renderIncidents(await fetchIncidents());
+}
+
+function renderIncidents(list) {
+  const box = $('#incResult');
+  if (!box) return;
+  if (!list.length) {
+    box.innerHTML = '<p class="sub" style="margin-top:12px">Henüz olay kaydı yok.</p>';
+    return;
+  }
+  box.innerHTML = `<table style="margin-top:14px"><thead><tr>
+      <th>Kayıt</th><th>Önem</th><th>Müşteri</th><th>Kesinti (dk)</th><th>Etki (EUR)</th>
+      <th>Veri</th><th>Yetkisiz</th><th>Sınıf</th><th></th></tr></thead><tbody>
+      ${list
+        .map(
+          (i) => `<tr data-id="${esc(i.incident_id)}">
+            <td class="mono">${esc(i.incident_id)}<br><span class="sub">${esc((i.title ?? '').slice(0, 40))}</span></td>
+            <td><span class="pill ${i.severity === 'high' ? 'bad' : i.severity === 'medium' ? 'warn' : ''}">${esc(i.severity)}</span></td>
+            <td><input class="inc-num" data-f="affected_customers" type="number" value="${i.affected_customers ?? ''}" style="width:110px"></td>
+            <td><input class="inc-num" data-f="outage_minutes" type="number" value="${i.outage_minutes ?? ''}" style="width:90px"></td>
+            <td><input class="inc-num" data-f="economic_impact_eur" type="number" value="${i.economic_impact_eur ?? ''}" style="width:120px"></td>
+            <td><input type="checkbox" class="inc-chk" data-f="data_loss" ${i.data_loss ? 'checked' : ''}></td>
+            <td><input type="checkbox" class="inc-chk" data-f="unauthorized_access" ${i.unauthorized_access ? 'checked' : ''}></td>
+            <td><select class="inc-cls" style="width:110px">
+              ${['unclassified', 'major', 'not_major']
+                .map((c) => `<option value="${c}" ${i.classification === c ? 'selected' : ''}>${c}</option>`)
+                .join('')}
+            </select></td>
+            <td><button class="ghost-btn inc-save">kaydet</button>
+                <button class="ghost-btn inc-promote">aktif yap</button></td>
+          </tr>`,
+        )
+        .join('')}
+    </tbody></table>`;
+
+  box.querySelectorAll('tr[data-id]').forEach((tr) => {
+    const id = tr.dataset.id;
+    const collect = () => {
+      const body = { classification: tr.querySelector('.inc-cls').value };
+      tr.querySelectorAll('.inc-num').forEach((i) => (body[i.dataset.f] = i.value === '' ? null : Number(i.value)));
+      tr.querySelectorAll('.inc-chk').forEach((c) => (body[c.dataset.f] = c.checked));
+      return body;
+    };
+    tr.querySelector('.inc-save')?.addEventListener('click', async () => {
+      try {
+        await api(`/api/sessions/${state.activeSession.session_id}/incidents/${id}`, { method: 'PATCH', body: JSON.stringify(collect()) });
+        toast('Kayıt güncellendi', 'ok');
+      } catch (e) {
+        toast('Kaydedilemedi: ' + e.message, 'bad');
+      }
+    });
+    tr.querySelector('.inc-promote')?.addEventListener('click', async () => {
+      try {
+        await api(`/api/sessions/${state.activeSession.session_id}/incidents/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ ...collect(), promote: true }),
+        });
+        toast('Aktif olay kaydı oluşturuldu', 'ok');
+        loadIncidents();
+      } catch (e) {
+        toast('Yükseltilemedi: ' + e.message, 'bad');
+      }
+    });
+  });
 }
 
 async function loadSiem() {

@@ -1,6 +1,6 @@
 {
   "name": "@dora-package/onboard-cli",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "description": "DORA AI Ajan Paketi — ORL 6 fazlı onboarding sihirbazı (bağımlılıksız)",
   "license": "AGPL-3.0-only",
   "private": true,

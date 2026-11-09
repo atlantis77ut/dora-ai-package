@@ -5,6 +5,39 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.16.0] — 2026-11-09
+
+### Eklendi — SIEM olayından olay kaydına
+
+- `src/orl/incident.mjs`: olay → taslak DORA kaydı (anahtar kelime kuralları, önem eşiği,
+  tekrar engelleme, sıralı `INC-YYYY-NNNN` kimliği)
+- `POST /api/sessions/:id/incidents` — SIEM olaylarından taslak üretir (varsayılan eşik: yüksek)
+- `GET /api/sessions/:id/incidents` — kayıt listesi
+- `PATCH /api/sessions/:id/incidents/:id` — alan güncelleme + `promote` ile `incident-record.json`
+- Arayüz: SIEM sayfasında **Olay kayıtları** tablosu — müşteri/kesinti/etki girişi, sınıf seçimi,
+  "aktif yap" düğmesi
+
+### Nasıl çalışıyor
+
+| Adım | Davranış |
+|---|---|
+| Eşik | `high` varsayılan; `medium`/`low` seçilebilir |
+| Anahtar kelimeler | ransomware, breach, unauthorized, outage, ddos → kayıt açılır |
+| Otomatik alanlar | `data_loss`, `unauthorized_access`, `suggested_classification` |
+| İnsan alanları | `affected_customers`, `outage_minutes`, `economic_impact_eur`, üye devletler |
+| Tekrar | aynı SIEM olayı ikinci kez kayıt açmaz |
+| Yükseltme | `promote` → `incident-record.json` (kural motoru ve kapılar bu dosyayı kullanır) |
+
+### Doğrulama
+
+```
+birim: 8 test (eşik, anahtar kelime, tekrar, sıra, kırpma)
+uçtan uca: 3 olay → 2 taslak (düşük atlandı) → tekrar 0 → alanlar dolduruldu
+           → promote → incident-record.json 200 (major, 250000 müşteri, 45 dk, 750000 EUR)
+```
+
+---
+
 ## [1.15.0] — 2026-11-09
 
 ### Eklendi — güvenlik taraması
