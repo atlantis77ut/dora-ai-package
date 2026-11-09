@@ -102,7 +102,7 @@ function renderLogin(mode = 'login') {
       state.needsBootstrap = false;
       navKey = null;
       await loadState();
-      if (!location.hash) location.hash = isAdmin() ? '#genel' : '#durum';
+      if (!location.hash || location.hash === '#giris') location.hash = isAdmin() ? '#genel' : '#durum';
       render();
     } catch (e) {
       $('#bErr').textContent = e.message;
@@ -1059,6 +1059,10 @@ function render() {
     return;
   }
   const tab = currentTab();
+  if (!tab) {
+    location.hash = isAdmin() ? '#genel' : '#durum';
+    return;
+  }
   const route = ROUTES[tab];
   renderShell();
   document.querySelectorAll('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.tab === tab));
