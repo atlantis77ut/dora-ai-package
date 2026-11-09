@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sözlük — DORA AI Ajan Paketi</title><style>
+  :root { --bg:#0b1020; --panel:#131a2e; --line:#24304d; --fg:#e8edf7; --muted:#93a1c0;
+    --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --accent:#60a5fa; --accent2:#a78bfa; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:30px; background:radial-gradient(1200px 600px at 20% -10%,#1a2542 0%,var(--bg) 55%);
+    color:var(--fg); font:14px/1.55 "Segoe UI",system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  header { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:6px; }
+  h1 { font-size:22px; margin:0; letter-spacing:.2px; }
+  .sub { color:var(--muted); font-size:12.5px; }
+  nav { display:flex; gap:8px; margin:16px 0 22px; flex-wrap:wrap; }
+  nav a { text-decoration:none; color:var(--muted); border:1px solid var(--line); border-radius:999px;
+    padding:5px 13px; font-size:12.5px; }
+  nav a.on, nav a:hover { color:var(--fg); border-color:#3b4d78; background:#18213a; }
+  .badge { display:inline-block; padding:2px 8px; border:1px solid var(--line); border-radius:999px; font-size:11.5px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin:4px 0 18px; }
+  .card { background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0)); border:1px solid var(--line);
+    border-radius:12px; padding:14px 16px; }
+  .card .label { color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:.6px; }
+  .card .value { font-size:26px; font-weight:650; margin-top:6px; }
+  .card .hint { color:var(--muted); font-size:11.5px; margin-top:2px; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
+  h2 { font-size:14px; margin:0 0 14px; letter-spacing:.3px; }
+  h2 span { color:var(--muted); font-weight:400; margin-left:8px; font-size:12px; }
+  .bar { display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); }
+  .bar > i { display:block; }
+  .b-ok{background:var(--ok)} .b-warn{background:var(--warn)} .b-bad{background:var(--bad)}
+  .legend { display:flex; gap:18px; margin-top:10px; color:var(--muted); font-size:12px; }
+  .legend b { color:var(--fg); }
+  table { width:100%; border-collapse:collapse; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid rgba(36,48,77,.7); font-size:12.5px; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.7px; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .mono { font-family:ui-monospace,"Cascadia Mono",Consolas,monospace; font-size:12px; color:var(--accent); }
+  .pill { border:1px solid var(--line); border-radius:999px; padding:1px 8px; font-size:11px; color:var(--muted); white-space:nowrap; }
+  .pill.ok { color:var(--ok); border-color:#1f5142; } .pill.warn { color:var(--warn); border-color:#5a4614; }
+  .pill.bad { color:var(--bad); border-color:#5b2626; }
+  .two { display:grid; grid-template-columns:1.35fr 1fr; gap:16px; }
+  .list { margin:0; padding-left:18px; color:var(--muted); font-size:12.5px; }
+  .list li { margin:6px 0; }
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+  details { border-top:1px solid rgba(36,48,77,.6); padding:8px 0; }
+  details summary { cursor:pointer; color:var(--muted); font-size:12px; }
+  details summary:hover { color:var(--fg); }
+  .kv { display:grid; grid-template-columns:130px 1fr; gap:4px 12px; margin:10px 0 4px; font-size:12.5px; }
+  .kv dt { color:var(--muted); } .kv dd { margin:0; }
+  footer { color:var(--muted); font-size:11.5px; text-align:center; margin-top:8px; }
+</style></head>
+<body><div class="wrap">
+  <header>
+    <div><h1>DORA Sözlüğü</h1><div class="sub">60 terim · DORA + RTS/ITS referanslı</div></div>
+    <span class="badge">09.11.2026 14:50:53</span>
+  </header>
+  
+  <nav>
+    <a href="index.html" class="">Genel bakış</a>
+    <a href="processes.html" class="">Süreçler (24)</a>
+    <a href="controls.html" class="">Kontroller (36)</a>
+    <a href="roles.html" class="">Ajanlar (11)</a>
+    <a href="glossary.html" class="on">Sözlük (60)</a>
+    <a href="mapping.html" class="">DORA eşlemesi (28)</a>
+    <a href="sources.html" class="">Veri kaynakları</a>
+  </nav>
+  <section>
+    <h2>Terimler <span>satıra tıklayın</span></h2>
+    <table><thead><tr><th>Terim</th><th>Ad</th><th>Kategori</th><th>DORA</th><th class="num">Rol</th><th class="num">Süreç</th></tr></thead>
+    <tbody><tr><td class="mono">TERM-RSK-001</td><td>ICT Riski</td>
+        <td><span class="pill">Risk</span></td>
+        <td>Madde 3(8)</td>
+        <td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">TERM-RSK-002</td><td>Dijital Operasyonel Dayanıklılık</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 3(1)</td>
+        <td class="num">2</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-RSK-003</td><td>Kritik veya Önemli İşlev</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 3(22)</td>
+        <td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-RSK-004</td><td>ICT Risk Yönetim Çerçevesi</td>
+        <td><span class="pill">Risk</span></td>
+        <td>Madde 6</td>
+        <td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-RSK-005</td><td>ICT Varlık Envanteri</td>
+        <td><span class="pill">Risk</span></td>
+        <td>Madde 8(1)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-RSK-006</td><td>Risk İştahı</td>
+        <td><span class="pill">Risk</span></td>
+        <td>Madde 6(5)</td>
+        <td class="num">1</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-RSK-007</td><td>İş Sürekliliği Planı</td>
+        <td><span class="pill">Risk</span></td>
+        <td>Madde 11</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-RSK-008</td><td>Kurtarma Planı</td>
+        <td><span class="pill">Risk</span></td>
+        <td>Madde 11(6)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-RSK-009</td><td>Kök Neden Analizi</td>
+        <td><span class="pill">Risk</span></td>
+        <td>Madde 13(2)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-RSK-010</td><td>Sürekli İyileştirme</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 6(6)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INC-001</td><td>ICT Olayı</td>
+        <td><span class="pill">Olay</span></td>
+        <td>Madde 3(8)</td>
+        <td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-INC-002</td><td>Büyük ICT Olayı</td>
+        <td><span class="pill">Olay</span></td>
+        <td>Madde 18(1)</td>
+        <td class="num">0</td>
+        <td class="num">3</td></tr><tr><td class="mono">TERM-INC-003</td><td>İlk Bildirim</td>
+        <td><span class="pill">Olay</span></td>
+        <td>Madde 19(4)(a)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-INC-004</td><td>Ara Rapor</td>
+        <td><span class="pill">Olay</span></td>
+        <td>Madde 19(4)(b)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-INC-005</td><td>Nihai Rapor</td>
+        <td><span class="pill">Olay</span></td>
+        <td>Madde 19(4)(c)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-INC-006</td><td>Gönüllü Bildirim</td>
+        <td><span class="pill">Olay</span></td>
+        <td>Madde 19(2)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-INC-007</td><td>Sınıflandırma Kriteri</td>
+        <td><span class="pill">Olay</span></td>
+        <td>—</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INC-008</td><td>Müşteri Etkisi</td>
+        <td><span class="pill">Olay</span></td>
+        <td>—</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INC-009</td><td>Ekonomik Etki</td>
+        <td><span class="pill">Olay</span></td>
+        <td>—</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INC-010</td><td>Coğrafi Yayılım</td>
+        <td><span class="pill">Olay</span></td>
+        <td>—</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INC-011</td><td>Hizmet Kesintisi Süresi</td>
+        <td><span class="pill">Olay</span></td>
+        <td>—</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INC-012</td><td>Veri Kaybı</td>
+        <td><span class="pill">Olay</span></td>
+        <td>—</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TST-001</td><td>Dijital Operasyonel Dayanıklılık Testi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 24</td>
+        <td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-TST-002</td><td>TLPT — Tehdit Odaklı Sızma Testi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 26-27</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-TST-003</td><td>Zafiyet Değerlendirmesi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 25(1)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-TST-004</td><td>Sızma Testi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 25(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TST-005</td><td>Ağ Güvenliği Değerlendirmesi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 25(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TST-006</td><td>Fiziksel Güvenlik İncelemesi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 25(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TST-007</td><td>Kaynak Kod İncelemesi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 25(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TST-008</td><td>Senaryo Bazlı Test</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 25(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TST-009</td><td>Uyumluluk Testi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 25(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TST-010</td><td>Performans Testi</td>
+        <td><span class="pill">Test</span></td>
+        <td>Madde 25(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TPP-001</td><td>ICT Üçüncü Taraf Hizmet Sağlayıcı</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 3(19)</td>
+        <td class="num">2</td>
+        <td class="num">2</td></tr><tr><td class="mono">TERM-TPP-002</td><td>Kritik ICT Üçüncü Taraf Hizmet Sağlayıcı (CTPP)</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 31</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-TPP-003</td><td>Bilgi Kaydı</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 28(3)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-TPP-004</td><td>Durum Tespiti</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 28(4)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-TPP-005</td><td>Çıkış Stratejisi</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 28(8)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-TPP-006</td><td>Alt Yüklenici</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 30(2)(a)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TPP-007</td><td>Hizmet Seviyesi Anlaşması (SLA)</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 30(2)(b)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TPP-008</td><td>Denetim Hakkı</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 30(3)(e)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TPP-009</td><td>Veri İadesi</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 30(3)(f)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TPP-010</td><td>Kritiklik Değerlendirmesi</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 28(2)</td>
+        <td class="num">0</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-TPP-011</td><td>Yedeklilik</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 28(8)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TPP-012</td><td>Yoğunlaşma Riski</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 29</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TPP-013</td><td>Doğrudan Gözetim</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 33-34</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-TPP-014</td><td>Tedarikçi Değişiklik Yönetimi</td>
+        <td><span class="pill">Üçüncü taraf</span></td>
+        <td>Madde 28(7)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INF-001</td><td>Siber Tehdit İstihbaratı</td>
+        <td><span class="pill">Bilgi paylaşımı</span></td>
+        <td>Madde 45</td>
+        <td class="num">2</td>
+        <td class="num">1</td></tr><tr><td class="mono">TERM-INF-002</td><td>Bilgi Paylaşımı Anlaşması</td>
+        <td><span class="pill">Bilgi paylaşımı</span></td>
+        <td>Madde 45(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INF-003</td><td>Güvenilir Topluluk</td>
+        <td><span class="pill">Bilgi paylaşımı</span></td>
+        <td>Madde 45(1)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-INF-004</td><td>Gizlilik Protokolü</td>
+        <td><span class="pill">Bilgi paylaşımı</span></td>
+        <td>Madde 45(2)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-001</td><td>Yönetim Organı</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 5</td>
+        <td class="num">1</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-002</td><td>Üç Savunma Hattı</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 6(4)</td>
+        <td class="num">3</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-003</td><td>Bağımsız Kontrol Fonksiyonu</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 6(4)</td>
+        <td class="num">1</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-004</td><td>İç Denetim Fonksiyonu</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 6(4)</td>
+        <td class="num">1</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-005</td><td>Yetkili Otorite</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 3(35)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-006</td><td>ESA — Avrupa Denetim Otoriteleri</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 3(36)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-007</td><td>JET — Ortak Denetim Ekibi</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 34</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-008</td><td>Orantılılık İlkesi</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 16</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-009</td><td>Denetim İzi</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 8(3)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr><tr><td class="mono">TERM-GOV-010</td><td>Siber Güvenlik Farkındalığı</td>
+        <td><span class="pill">Yönetişim</span></td>
+        <td>Madde 13(6)</td>
+        <td class="num">0</td>
+        <td class="num">0</td></tr></tbody></table>
+  </section>
+  <section><h2>Tanımlar</h2>
+  <details>
+    <summary><span class="mono">TERM-RSK-001</span> &nbsp;<b>ICT Riski</b> &nbsp;
+      <span class="pill">Risk</span>
+      <span class="pill">Madde 3(8)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Bilgi ve iletişim teknolojilerinin kullanımından kaynaklanan, dijital operasyonel dayanıklılığı tehlikeye atabilecek her türlü makul tanımlanabilir durum.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-CIO-01</span> · <span class="mono">ROL-RSK-01</span></dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-RSK-01</span> · <span class="mono">PRC-RSK-02</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-002</span> &nbsp;<b>Dijital Operasyonel Dayanıklılık</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 3(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Bir finansal kuruluşun, ICT ile ilgili kesintilere ve tehditlere dayanma, bunlara yanıt verme, bunlardan kurtulma ve bunları uyarlama kapasitesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-CEO-01</span> · <span class="mono">ROL-CIO-01</span></dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-003</span> &nbsp;<b>Kritik veya Önemli İşlev</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 3(22)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Bir finansal kuruluşun finansal performansını, hizmet sürekliliğini veya uyumluluğunu önemli ölçüde etkileyebilecek işlev.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-RSK-01</span> · <span class="mono">ROL-CIO-01</span></dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-RSK-03</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-004</span> &nbsp;<b>ICT Risk Yönetim Çerçevesi</b> &nbsp;
+      <span class="pill">Risk</span>
+      <span class="pill">Madde 6</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Kuruluşun ICT risklerini yönetmek için kullandığı strateji, politika, prosedür, protokol ve araçlar bütünü.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-CIO-01</span> · <span class="mono">ROL-CMP-01</span></dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-RSK-01</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-005</span> &nbsp;<b>ICT Varlık Envanteri</b> &nbsp;
+      <span class="pill">Risk</span>
+      <span class="pill">Madde 8(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT sistemleri, ağları, donanım, yazılım, veri ve hizmetlerin güncel kaydı.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-RSK-03</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-006</span> &nbsp;<b>Risk İştahı</b> &nbsp;
+      <span class="pill">Risk</span>
+      <span class="pill">Madde 6(5)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Kuruluşun ICT riski kapsamında kabul etmeye hazır olduğu risk düzeyi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-CEO-01</span></dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-007</span> &nbsp;<b>İş Sürekliliği Planı</b> &nbsp;
+      <span class="pill">Risk</span>
+      <span class="pill">Madde 11</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Kesintiler sırasında kritik işlevlerin sürekliliğini sağlamak için hazırlanan plan.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-RSK-02</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-008</span> &nbsp;<b>Kurtarma Planı</b> &nbsp;
+      <span class="pill">Risk</span>
+      <span class="pill">Madde 11(6)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT sistemlerinin ve verilerinin kesinti sonrası restore edilmesi için hazırlanan plan.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-RSK-02</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-009</span> &nbsp;<b>Kök Neden Analizi</b> &nbsp;
+      <span class="pill">Risk</span>
+      <span class="pill">Madde 13(2)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT olaylarının temel nedenlerini belirlemeye yönelik sistematik analiz.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-INC-04</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-RSK-010</span> &nbsp;<b>Sürekli İyileştirme</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 6(6)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT risk yönetim çerçevesinin düzenli gözden geçirilmesi ve iyileştirilmesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-001</span> &nbsp;<b>ICT Olayı</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill">Madde 3(8)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Bir finansal kuruluşun ağ ve bilgi sistemlerinde, güvenlik politikalarını, prosedürlerini veya kabul edilebilir kullanım politikalarını ihlal eden tek veya bağlantılı olay.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-INC-01</span> · <span class="mono">ROL-CIO-01</span></dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-INC-01</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-002</span> &nbsp;<b>Büyük ICT Olayı</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill">Madde 18(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Önemli olumsuz etkisi olan ve kritik veya önemli işlevleri etkileyen ICT olayı.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>100.000'den fazla etkilenen müşteri<br>24 saatten uzun süren kesinti<br>100.000 € üzeri ekonomik etki<br>İki veya daha fazla üye devleti etkileme<br>Veri kaybı veya yetkisiz erişim</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-INC-02</span> · <span class="mono">PRC-INC-03</span> · <span class="mono">PRC-INC-04</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-003</span> &nbsp;<b>İlk Bildirim</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill">Madde 19(4)(a)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Büyük olayın sınıflandırılmasından sonra 4 saat içinde ve tespitten en geç 24 saat içinde yapılan bildirim.</dd>
+      <dt>Kaynak</dt><dd>RTS</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-INC-02</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-004</span> &nbsp;<b>Ara Rapor</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill">Madde 19(4)(b)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>İlk bildirimden sonraki 72 saat içinde sunulan, etki ve geçici önlemleri içeren rapor.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-INC-03</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-005</span> &nbsp;<b>Nihai Rapor</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill">Madde 19(4)(c)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Olayın kök nedeni, kurtarma ve önleyici tedbirleri içeren, bir ay içinde sunulan rapor.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-INC-04</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-006</span> &nbsp;<b>Gönüllü Bildirim</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill">Madde 19(2)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Önemli siber tehditlerin yetkili otoriteye gönüllü olarak bildirilmesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-INC-05</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-007</span> &nbsp;<b>Sınıflandırma Kriteri</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill"></span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Bir olayın büyük olarak sınıflandırılması için kullanılan ölçütler.</dd>
+      <dt>Kaynak</dt><dd>RTS</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-008</span> &nbsp;<b>Müşteri Etkisi</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill"></span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Olaydan etkilenen müşteri veya karşı taraf sayısı.</dd>
+      <dt>Kaynak</dt><dd>RTS</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-009</span> &nbsp;<b>Ekonomik Etki</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill"></span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Olayın kuruluşa doğrudan ve dolaylı maliyeti.</dd>
+      <dt>Kaynak</dt><dd>RTS</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-010</span> &nbsp;<b>Coğrafi Yayılım</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill"></span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Olayın etkilediği üye devlet sayısı.</dd>
+      <dt>Kaynak</dt><dd>RTS</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-011</span> &nbsp;<b>Hizmet Kesintisi Süresi</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill"></span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Kritik hizmetin kesintiye uğradığı toplam süre.</dd>
+      <dt>Kaynak</dt><dd>RTS</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INC-012</span> &nbsp;<b>Veri Kaybı</b> &nbsp;
+      <span class="pill">Olay</span>
+      <span class="pill"></span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Olay nedeniyle verinin bütünlüğünün, gizliliğinin veya erişilebilirliğinin kaybı.</dd>
+      <dt>Kaynak</dt><dd>RTS</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-001</span> &nbsp;<b>Dijital Operasyonel Dayanıklılık Testi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 24</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT sistemlerinin dayanıklılığını doğrulamak için yapılan risk bazlı test programı.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-CTO-01</span> · <span class="mono">ROL-AUD-01</span></dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TST-01</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-002</span> &nbsp;<b>TLPT — Tehdit Odaklı Sızma Testi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 26-27</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Gerçek saldırgan taktiklerini kullanan, üretim ortamında yapılan gelişmiş sızma testi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TST-03</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-003</span> &nbsp;<b>Zafiyet Değerlendirmesi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 25(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT sistemlerindeki bilinen zafiyetlerin sistematik taranması.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TST-02</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-004</span> &nbsp;<b>Sızma Testi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 25(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Sistemlere yetkisiz erişim denemesiyle güvenlik kontrollerinin test edilmesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-005</span> &nbsp;<b>Ağ Güvenliği Değerlendirmesi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 25(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Ağ altyapısının güvenlik yapılandırmasının değerlendirilmesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-006</span> &nbsp;<b>Fiziksel Güvenlik İncelemesi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 25(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Veri merkezleri ve fiziksel altyapının güvenlik incelemesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-007</span> &nbsp;<b>Kaynak Kod İncelemesi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 25(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Kritik yazılım bileşenlerinin kaynak kodunun güvenlik incelemesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-008</span> &nbsp;<b>Senaryo Bazlı Test</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 25(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Kritik iş senaryolarının dayanıklılığının test edilmesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-009</span> &nbsp;<b>Uyumluluk Testi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 25(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Sistemlerin ve bileşenlerin birlikte çalışabilirliğinin test edilmesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TST-010</span> &nbsp;<b>Performans Testi</b> &nbsp;
+      <span class="pill">Test</span>
+      <span class="pill">Madde 25(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Sistemlerin yük altında performansının test edilmesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-001</span> &nbsp;<b>ICT Üçüncü Taraf Hizmet Sağlayıcı</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 3(19)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT hizmetleri sunan işletme.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-TPP-01</span> · <span class="mono">ROL-CTO-01</span></dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TPP-01</span> · <span class="mono">PRC-TPP-02</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-002</span> &nbsp;<b>Kritik ICT Üçüncü Taraf Hizmet Sağlayıcı (CTPP)</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 31</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Sistemik öneme sahip, ESA'lar tarafından doğrudan gözetim altına alınan ICT hizmet sağlayıcısı.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TPP-05</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-003</span> &nbsp;<b>Bilgi Kaydı</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 28(3)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Tüm ICT üçüncü taraf sözleşmelerini içeren, yetkili otoriteye sunulan kayıt.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TPP-04</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-004</span> &nbsp;<b>Durum Tespiti</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 28(4)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Sözleşme öncesi tedarikçinin değerlendirilmesi süreci.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TPP-01</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-005</span> &nbsp;<b>Çıkış Stratejisi</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 28(8)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Tedarikçiden ayrılma durumunda hizmet sürekliliğini sağlayan plan.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TPP-06</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-006</span> &nbsp;<b>Alt Yüklenici</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 30(2)(a)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Tedarikçinin hizmetin bir kısmını devrettiği üçüncü taraf.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-007</span> &nbsp;<b>Hizmet Seviyesi Anlaşması (SLA)</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 30(2)(b)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Hizmet kalitesi ve erişilebilirlik taahhütlerini içeren sözleşme eki.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-008</span> &nbsp;<b>Denetim Hakkı</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 30(3)(e)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Kuruluşun ve denetçilerinin tedarikçiyi denetleme hakkı.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-009</span> &nbsp;<b>Veri İadesi</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 30(3)(f)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Sözleşme sonunda verinin kuruluşa iade edilmesi yükümlülüğü.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-010</span> &nbsp;<b>Kritiklik Değerlendirmesi</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 28(2)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Tedarikçinin kritik veya önemli işlevlere etkisinin değerlendirilmesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-TPP-02</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-011</span> &nbsp;<b>Yedeklilik</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 28(8)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Tek tedarikçiye bağımlılığı azaltmak için alternatif çözüm.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-012</span> &nbsp;<b>Yoğunlaşma Riski</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 29</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Az sayıda tedarikçiye aşırı bağımlılıktan kaynaklanan risk.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-013</span> &nbsp;<b>Doğrudan Gözetim</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 33-34</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ESA'ların CTPP üzerindeki gözetim çerçevesi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-TPP-014</span> &nbsp;<b>Tedarikçi Değişiklik Yönetimi</b> &nbsp;
+      <span class="pill">Üçüncü taraf</span>
+      <span class="pill">Madde 28(7)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Tedarikçi değişikliğinin kontrollü yönetimi süreci.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INF-001</span> &nbsp;<b>Siber Tehdit İstihbaratı</b> &nbsp;
+      <span class="pill">Bilgi paylaşımı</span>
+      <span class="pill">Madde 45</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Siber tehditler hakkında toplanan, işlenen ve paylaşılan bilgi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-CEO-01</span> · <span class="mono">ROL-CMP-01</span></dd>
+      <dt>İlgili süreçler</dt><dd><span class="mono">PRC-INF-01</span></dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INF-002</span> &nbsp;<b>Bilgi Paylaşımı Anlaşması</b> &nbsp;
+      <span class="pill">Bilgi paylaşımı</span>
+      <span class="pill">Madde 45(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Kuruluşlar arasında siber tehdit bilgisi paylaşımı için yapılan anlaşma.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INF-003</span> &nbsp;<b>Güvenilir Topluluk</b> &nbsp;
+      <span class="pill">Bilgi paylaşımı</span>
+      <span class="pill">Madde 45(1)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Bilgi paylaşımı için oluşturulan güvenilir kuruluş grubu.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-INF-004</span> &nbsp;<b>Gizlilik Protokolü</b> &nbsp;
+      <span class="pill">Bilgi paylaşımı</span>
+      <span class="pill">Madde 45(2)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Bilgi paylaşımında ticari sır ve kişisel veri koruması.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-001</span> &nbsp;<b>Yönetim Organı</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 5</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT risk yönetiminden nihai sorumlu olan yönetim kurulu veya eşdeğeri organ.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-CEO-01</span></dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-002</span> &nbsp;<b>Üç Savunma Hattı</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 6(4)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Operasyon, kontrol ve denetim fonksiyonlarının birbirinden bağımsız yapılandırılması.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-INC-01</span> · <span class="mono">ROL-CMP-01</span> · <span class="mono">ROL-AUD-01</span></dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-003</span> &nbsp;<b>Bağımsız Kontrol Fonksiyonu</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 6(4)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT risk yönetiminden bağımsız olarak uyumu kontrol eden fonksiyon.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-CMP-01</span></dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-004</span> &nbsp;<b>İç Denetim Fonksiyonu</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 6(4)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>ICT risk yönetim çerçevesinin bağımsız denetimini yapan fonksiyon.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd><span class="mono">ROL-AUD-01</span></dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-005</span> &nbsp;<b>Yetkili Otorite</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 3(35)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>DORA kapsamında kuruluşu denetleyen ulusal otorite.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-006</span> &nbsp;<b>ESA — Avrupa Denetim Otoriteleri</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 3(36)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>EBA, ESMA ve EIOPA'nın ortak adı.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-007</span> &nbsp;<b>JET — Ortak Denetim Ekibi</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 34</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>CTPP gözetiminde yer alan ESA ve ulusal otorite temsilcileri ekibi.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-008</span> &nbsp;<b>Orantılılık İlkesi</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 16</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Gerekliliklerin kuruluşun büyüklüğü, risk profili ve karmaşıklığına göre uygulanması.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-009</span> &nbsp;<b>Denetim İzi</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 8(3)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Tüm ICT faaliyetlerinin değiştirilemez kaydı.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">TERM-GOV-010</span> &nbsp;<b>Siber Güvenlik Farkındalığı</b> &nbsp;
+      <span class="pill">Yönetişim</span>
+      <span class="pill">Madde 13(6)</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>Personelin siber güvenlik eğitimi ve farkındalığı.</dd>
+      <dt>Kaynak</dt><dd>DORA</dd>
+      <dt>Kriterler</dt><dd>—</dd>
+      <dt>İlgili roller</dt><dd>—</dd>
+      <dt>İlgili süreçler</dt><dd>—</dd>
+    </dl>
+  </details></section>
+  <footer>Depodaki YAML dosyalarından üretildi · <span class="mono">node docs/tools/build-dashboard.mjs</span></footer>
+</div></body></html>

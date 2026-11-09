@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ajanlar — DORA AI Ajan Paketi</title><style>
+  :root { --bg:#0b1020; --panel:#131a2e; --line:#24304d; --fg:#e8edf7; --muted:#93a1c0;
+    --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --accent:#60a5fa; --accent2:#a78bfa; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:30px; background:radial-gradient(1200px 600px at 20% -10%,#1a2542 0%,var(--bg) 55%);
+    color:var(--fg); font:14px/1.55 "Segoe UI",system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  header { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:6px; }
+  h1 { font-size:22px; margin:0; letter-spacing:.2px; }
+  .sub { color:var(--muted); font-size:12.5px; }
+  nav { display:flex; gap:8px; margin:16px 0 22px; flex-wrap:wrap; }
+  nav a { text-decoration:none; color:var(--muted); border:1px solid var(--line); border-radius:999px;
+    padding:5px 13px; font-size:12.5px; }
+  nav a.on, nav a:hover { color:var(--fg); border-color:#3b4d78; background:#18213a; }
+  .badge { display:inline-block; padding:2px 8px; border:1px solid var(--line); border-radius:999px; font-size:11.5px; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin:4px 0 18px; }
+  .card { background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0)); border:1px solid var(--line);
+    border-radius:12px; padding:14px 16px; }
+  .card .label { color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:.6px; }
+  .card .value { font-size:26px; font-weight:650; margin-top:6px; }
+  .card .hint { color:var(--muted); font-size:11.5px; margin-top:2px; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
+  h2 { font-size:14px; margin:0 0 14px; letter-spacing:.3px; }
+  h2 span { color:var(--muted); font-weight:400; margin-left:8px; font-size:12px; }
+  .bar { display:flex; height:12px; border-radius:999px; overflow:hidden; border:1px solid var(--line); }
+  .bar > i { display:block; }
+  .b-ok{background:var(--ok)} .b-warn{background:var(--warn)} .b-bad{background:var(--bad)}
+  .legend { display:flex; gap:18px; margin-top:10px; color:var(--muted); font-size:12px; }
+  .legend b { color:var(--fg); }
+  table { width:100%; border-collapse:collapse; }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid rgba(36,48,77,.7); font-size:12.5px; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.7px; }
+  td.num,th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .mono { font-family:ui-monospace,"Cascadia Mono",Consolas,monospace; font-size:12px; color:var(--accent); }
+  .pill { border:1px solid var(--line); border-radius:999px; padding:1px 8px; font-size:11px; color:var(--muted); white-space:nowrap; }
+  .pill.ok { color:var(--ok); border-color:#1f5142; } .pill.warn { color:var(--warn); border-color:#5a4614; }
+  .pill.bad { color:var(--bad); border-color:#5b2626; }
+  .two { display:grid; grid-template-columns:1.35fr 1fr; gap:16px; }
+  .list { margin:0; padding-left:18px; color:var(--muted); font-size:12.5px; }
+  .list li { margin:6px 0; }
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+  details { border-top:1px solid rgba(36,48,77,.6); padding:8px 0; }
+  details summary { cursor:pointer; color:var(--muted); font-size:12px; }
+  details summary:hover { color:var(--fg); }
+  .kv { display:grid; grid-template-columns:130px 1fr; gap:4px 12px; margin:10px 0 4px; font-size:12.5px; }
+  .kv dt { color:var(--muted); } .kv dd { margin:0; }
+  footer { color:var(--muted); font-size:11.5px; text-align:center; margin-top:8px; }
+</style></head>
+<body><div class="wrap">
+  <header>
+    <div><h1>Ajan Kataloğu</h1><div class="sub">11 ajan · üç savunma hattı · CORF/ORL süreç kodları</div></div>
+    <span class="badge">09.11.2026 14:50:53</span>
+  </header>
+  
+  <nav>
+    <a href="index.html" class="">Genel bakış</a>
+    <a href="processes.html" class="">Süreçler (24)</a>
+    <a href="controls.html" class="">Kontroller (36)</a>
+    <a href="roles.html" class="on">Ajanlar (11)</a>
+    <a href="glossary.html" class="">Sözlük (60)</a>
+    <a href="mapping.html" class="">DORA eşlemesi (28)</a>
+    <a href="sources.html" class="">Veri kaynakları</a>
+  </nav>
+  <section>
+    <h2>Ajanlar <span>satıra tıklayın</span></h2>
+    <table><thead><tr><th>Ajan</th><th>Ad</th><th>Katman</th><th>Raporlar</th><th class="num">Beceri</th><th class="num">Kod</th></tr></thead>
+    <tbody><tr><td class="mono">ROL-CEO-01</td><td>DORA Uyum Lideri (CEO-Ajan)</td>
+        <td><span class="pill">strategic</span></td><td>Yönetim Kurulu</td>
+        <td class="num">3</td><td class="num">2</td></tr><tr><td class="mono">ROL-INC-01</td><td>Olay Müdahale Operatörü (Incident-Ajanı)</td>
+        <td><span class="pill">operational</span></td><td>ROL-CIO-01</td>
+        <td class="num">5</td><td class="num">4</td></tr><tr><td class="mono">ROL-RSK-01</td><td>ICT Risk Analisti (ICT-Risk-Ajanı)</td>
+        <td><span class="pill">operational</span></td><td>ROL-CIO-01</td>
+        <td class="num">4</td><td class="num">2</td></tr><tr><td class="mono">ROL-CIO-01</td><td>Bilgi ve Raporlama Lideri (CIO-Ajan)</td>
+        <td><span class="pill">control</span></td><td>ROL-CEO-01</td>
+        <td class="num">4</td><td class="num">3</td></tr><tr><td class="mono">ROL-CTO-01</td><td>Teknoloji ve Test Lideri (CTO-Ajan)</td>
+        <td><span class="pill">control</span></td><td>ROL-CEO-01</td>
+        <td class="num">4</td><td class="num">2</td></tr><tr><td class="mono">ROL-CMP-01</td><td>DORA Uyum Görevlisi (Compliance-Ajanı)</td>
+        <td><span class="pill">control</span></td><td>ROL-CEO-01</td>
+        <td class="num">4</td><td class="num">3</td></tr><tr><td class="mono">ROL-TPP-01</td><td>Tedarikçi Risk Yöneticisi (ThirdParty-Ajanı)</td>
+        <td><span class="pill">control</span></td><td>ROL-CTO-01</td>
+        <td class="num">5</td><td class="num">2</td></tr><tr><td class="mono">ROL-AUD-01</td><td>İç Denetim Ajanı (Audit-Ajanı)</td>
+        <td><span class="pill">audit</span></td><td>Yönetim Kurulu (doğrudan)</td>
+        <td class="num">4</td><td class="num">2</td></tr><tr><td class="mono">ROL-TLPT-01</td><td>TLPT Koordinatörü (TLPT-Ajanı)</td>
+        <td><span class="pill">control</span></td><td>ROL-CTO-01</td>
+        <td class="num">3</td><td class="num">1</td></tr><tr><td class="mono">ROL-CTPP-01</td><td>CTPP Gözetim Ajanı</td>
+        <td><span class="pill">control</span></td><td>ROL-CTO-01</td>
+        <td class="num">3</td><td class="num">1</td></tr><tr><td class="mono">ROL-INF-01</td><td>Bilgi Paylaşım Ajanı (InfoSharing-Ajanı)</td>
+        <td><span class="pill">control</span></td><td>ROL-CEO-01</td>
+        <td class="num">3</td><td class="num">1</td></tr></tbody></table>
+  </section>
+  <section><h2>Ayrıntılar</h2>
+  <details>
+    <summary><span class="mono">ROL-CEO-01</span> &nbsp;<b>DORA Uyum Lideri (CEO-Ajan)</b> &nbsp;
+      <span class="pill">strategic</span>
+      <span class="pill">2 süreç kodu</span>
+      <span class="pill">3 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>DORA kapsamında nihai hesap verebilirliği taşır, stratejik yön belirler ve yönetim kuruluna raporlar.</dd>
+      <dt>Raporlar</dt><dd>Yönetim Kurulu</dd>
+      <dt>İnsan muadili</dt><dd>Genel Müdür / CEO</dd>
+      <dt>Sorumluluklar</dt><dd>DORA stratejisini onaylamak ve yıllık gözden geçirmek <span class="pill">Madde 5(1)</span><br>ICT risk iştahını belirlemek ve yönetim kuruluna sunmak <span class="pill">Madde 6(5)</span><br>Kritik veya önemli işlevlerin belirlenmesini onaylamak <span class="pill">Madde 3(22)</span><br>Üçüncü taraf stratejisini ve yoğunlaşma risk politikasını onaylamak <span class="pill">Madde 29(2)</span><br>Yıllık DORA uyum raporunu yönetim kuruluna sunmak <span class="pill">Madde 6(4)</span><br>Büyük olay sonrası yönetim kurulu bilgilendirmesi <span class="pill">Madde 19(1)</span></dd>
+      <dt>Beceriler</dt><dd>Stratejik planlama <span class="pill">recommend</span> · Yönetim kurulu raporlaması <span class="pill">act_with_approval</span> · Kriz iletişimi <span class="pill">recommend</span></dd>
+      <dt>İnsan gözetimi</dt><dd>strategy_approval, risk_appetite_change, crisis_declaration · onaylayan: Yönetim Kurulu Başkanı</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.OVERS</span> · <span class="mono">OR.PERFM</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2</dd>
+      <dt>Bağımsızlık</dt><dd>yok</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-INC-01</span> &nbsp;<b>Olay Müdahale Operatörü (Incident-Ajanı)</b> &nbsp;
+      <span class="pill">operational</span>
+      <span class="pill">4 süreç kodu</span>
+      <span class="pill">5 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>ICT olaylarını tespit eder, sınıflandırır, ilk müdahaleyi başlatır ve regülatör bildirimlerini hazırlar.</dd>
+      <dt>Raporlar</dt><dd>ROL-CIO-01</dd>
+      <dt>İnsan muadili</dt><dd>ICT Olay Yöneticisi</dd>
+      <dt>Sorumluluklar</dt><dd>ICT olaylarını sürekli izleme ve tespit <span class="pill">Madde 10(1)</span><br>Olayı DORA kriterlerine göre sınıflandırma (büyük / büyük değil) <span class="pill">Madde 18(1)</span><br>İlk bildirimi 4 saat içinde hazırlamak ve onaya sunmak <span class="pill">Madde 19(4)(a)</span><br>Ara raporu 72 saat içinde hazırlamak <span class="pill">Madde 19(4)(b)</span><br>Nihai raporu 1 ay içinde hazırlamak <span class="pill">Madde 19(4)(c)</span><br>Gönüllü siber tehdit bildirimlerini değerlendirmek <span class="pill">Madde 19(2)</span><br>Kök neden analizini koordine etmek <span class="pill">Madde 13(2)</span></dd>
+      <dt>Beceriler</dt><dd>Olay tespiti ve izleme <span class="pill">act_autonomous</span> · Sınıflandırma (DORA kriterleri) <span class="pill">act_with_approval</span> · Regülatör bildirimi hazırlama <span class="pill">recommend</span> · Kök neden analizi <span class="pill">recommend</span> · Kriz iletişimi taslağı <span class="pill">recommend</span></dd>
+      <dt>İnsan gözetimi</dt><dd>classification, notification, closure, escalation · onaylayan: ROL-CIO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.EVNTM</span> · <span class="mono">OR.INCRM</span> · <span class="mono">OR.PRBLM</span> · <span class="mono">OR.CRSIS</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2, tier3</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-CMP-01, ROL-AUD-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-RSK-01</span> &nbsp;<b>ICT Risk Analisti (ICT-Risk-Ajanı)</b> &nbsp;
+      <span class="pill">operational</span>
+      <span class="pill">2 süreç kodu</span>
+      <span class="pill">4 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>ICT varlıklarını envanterler, riskleri sürekli izler, günlük risk değerlendirmesi yapar.</dd>
+      <dt>Raporlar</dt><dd>ROL-CIO-01</dd>
+      <dt>İnsan muadili</dt><dd>ICT Risk Yöneticisi</dd>
+      <dt>Sorumluluklar</dt><dd>ICT varlık envanterini güncel tutmak <span class="pill">Madde 8(1)</span><br>Kritik veya önemli işlevleri belirlemek ve güncellemek <span class="pill">Madde 8(2)</span><br>Günlük risk izleme ve anormallik tespiti <span class="pill">Madde 6(6)</span><br>Risk kayıt defterini (risk register) güncel tutmak <span class="pill">Madde 6(2)</span><br>Yıllık ICT risk değerlendirmesine katkı sağlamak <span class="pill">Madde 6(6)</span><br>Değişiklik yönetimi risklerini değerlendirmek <span class="pill">Madde 8(4)</span></dd>
+      <dt>Beceriler</dt><dd>Varlık envanterleme <span class="pill">act_autonomous</span> · Risk skorlama <span class="pill">act_with_approval</span> · Anormallik tespiti <span class="pill">act_autonomous</span> · Kritiklik değerlendirmesi <span class="pill">act_with_approval</span></dd>
+      <dt>İnsan gözetimi</dt><dd>classification · onaylayan: ROL-CIO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.RIA</span> · <span class="mono">OR.KIB.BSACM</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2, tier3</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-CMP-01, ROL-AUD-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-CIO-01</span> &nbsp;<b>Bilgi ve Raporlama Lideri (CIO-Ajan)</b> &nbsp;
+      <span class="pill">control</span>
+      <span class="pill">3 süreç kodu</span>
+      <span class="pill">4 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>ICT risk yönetim çerçevesinin sahibidir, olay raporlamasını onaylar, ICT operasyonlarını yönetir.</dd>
+      <dt>Raporlar</dt><dd>ROL-CEO-01</dd>
+      <dt>İnsan muadili</dt><dd>Bilgi İşlem Direktörü / CIO</dd>
+      <dt>Sorumluluklar</dt><dd>ICT risk yönetim çerçevesini dokümante etmek ve yılda en az bir kez gözden geçirmek <span class="pill">Madde 6(1)</span><br>Büyük olay sınıflandırmasını onaylamak <span class="pill">Madde 18(2)</span><br>Regülatör bildirimlerini onaylamak ve göndermek <span class="pill">Madde 19</span><br>İş sürekliliği ve kurtarma planlarını onaylamak <span class="pill">Madde 11</span><br>Yıllık ICT risk değerlendirmesini yürütmek <span class="pill">Madde 6(6)</span><br>Olay müdahale ve risk izleme ajanlarını yönetmek <span class="pill">Madde 6(4)</span></dd>
+      <dt>Beceriler</dt><dd>ICT risk çerçevesi yönetimi <span class="pill">act_with_approval</span> · Olay sınıflandırma onayı <span class="pill">act_with_approval</span> · Regülatör iletişimi <span class="pill">act_with_approval</span> · BCP/DRP onayı <span class="pill">act_with_approval</span></dd>
+      <dt>İnsan gözetimi</dt><dd>notification, escalation, strategy_approval · onaylayan: ROL-CEO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.STRAM</span> · <span class="mono">OR.PLAN</span> · <span class="mono">OR.KIB.ARCH</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2, tier3</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-CMP-01, ROL-AUD-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-CTO-01</span> &nbsp;<b>Teknoloji ve Test Lideri (CTO-Ajan)</b> &nbsp;
+      <span class="pill">control</span>
+      <span class="pill">2 süreç kodu</span>
+      <span class="pill">4 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>ICT sistem güvenliğini ve test programlarını yönetir, TLPT koordinasyonunu sağlar.</dd>
+      <dt>Raporlar</dt><dd>ROL-CEO-01</dd>
+      <dt>İnsan muadili</dt><dd>Teknoloji Direktörü / CTO</dd>
+      <dt>Sorumluluklar</dt><dd>Risk bazlı test programını oluşturmak ve yürütmek <span class="pill">Madde 24</span><br>Yıllık test takvimini oluşturmak <span class="pill">Madde 25(2)</span><br>TLPT kapsamındaki kuruluşlar için gelişmiş test koordinasyonu <span class="pill">Madde 26</span><br>Test bulgularının takibini ve kapatılmasını sağlamak <span class="pill">Madde 24(6)</span><br>Bağımsız testçilerin seçimini yapmak <span class="pill">Madde 27</span><br>Siber güvenlik yapılandırmasını izlemek <span class="pill">Madde 9</span></dd>
+      <dt>Beceriler</dt><dd>Test programı tasarımı <span class="pill">act_with_approval</span> · Test koordinasyonu <span class="pill">act_autonomous</span> · Bulgu takibi <span class="pill">act_autonomous</span> · TLPT planlaması <span class="pill">recommend</span></dd>
+      <dt>İnsan gözetimi</dt><dd>approval, escalation · onaylayan: ROL-CEO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.CT</span> · <span class="mono">OR.ESM</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-AUD-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-CMP-01</span> &nbsp;<b>DORA Uyum Görevlisi (Compliance-Ajanı)</b> &nbsp;
+      <span class="pill">control</span>
+      <span class="pill">3 süreç kodu</span>
+      <span class="pill">4 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>DORA uyumunu bağımsız olarak kontrol eder, denetim koordinasyonunu sağlar, düzenleyici değişiklikleri takip eder.</dd>
+      <dt>Raporlar</dt><dd>ROL-CEO-01</dd>
+      <dt>İnsan muadili</dt><dd>Uyum Müdürü</dd>
+      <dt>Sorumluluklar</dt><dd>ICT risk yönetiminden bağımsız kontrol fonksiyonu yürütmek <span class="pill">Madde 6(4)</span><br>DORA uyum durumunu sürekli izlemek <span class="pill">Madde 6(4)(c)</span><br>Yıllık uyum raporunu hazırlamak <span class="pill">Madde 6(4)</span><br>Düzenleyici değişiklikleri takip etmek ve etki analizi yapmak <span class="pill">Madde 6(5)</span><br>İç denetim ile koordinasyon sağlamak <span class="pill">Madde 6(4)</span><br>Bağımsız kontrol testlerini yürütmek <span class="pill">Madde 6(4)</span></dd>
+      <dt>Beceriler</dt><dd>Bağımsız kontrol testi <span class="pill">act_with_approval</span> · Uyum izleme <span class="pill">act_autonomous</span> · Regülasyon takibi <span class="pill">act_autonomous</span> · Etki analizi <span class="pill">recommend</span></dd>
+      <dt>İnsan gözetimi</dt><dd>approval, escalation · onaylayan: ROL-CEO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.IRR</span> · <span class="mono">OR.NC</span> · <span class="mono">OR.CSI</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2, tier3</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-INC-01, ROL-RSK-01, ROL-TPP-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-TPP-01</span> &nbsp;<b>Tedarikçi Risk Yöneticisi (ThirdParty-Ajanı)</b> &nbsp;
+      <span class="pill">control</span>
+      <span class="pill">2 süreç kodu</span>
+      <span class="pill">5 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>ICT üçüncü taraf risklerini değerlendirir, sözleşmeleri kontrol eder, bilgi kaydını yönetir, CTPP izlemesi yapar.</dd>
+      <dt>Raporlar</dt><dd>ROL-CTO-01</dd>
+      <dt>İnsan muadili</dt><dd>Tedarikçi Risk Yöneticisi</dd>
+      <dt>Sorumluluklar</dt><dd>Sözleşme öncesi durum tespiti (due diligence) <span class="pill">Madde 28(4)</span><br>Kritiklik analizi yapmak <span class="pill">Madde 28(2)</span><br>Sözleşmelerin DORA Madde 30 uyumunu kontrol etmek <span class="pill">Madde 30</span><br>Bilgi kaydını (Register of Information) tutmak ve yıllık sunmak <span class="pill">Madde 28(3)</span><br>CTPP gözetim önerilerini takip etmek <span class="pill">Madde 33</span><br>Çıkış stratejilerini gözden geçirmek <span class="pill">Madde 28(8)</span><br>Yoğunlaşma riskini izlemek <span class="pill">Madde 29</span></dd>
+      <dt>Beceriler</dt><dd>Durum tespiti <span class="pill">recommend</span> · Sözleşme kontrolü <span class="pill">act_autonomous</span> · Bilgi kaydı yönetimi <span class="pill">act_autonomous</span> · CTPP izleme <span class="pill">act_autonomous</span> · Yoğunlaşma analizi <span class="pill">act_autonomous</span></dd>
+      <dt>İnsan gözetimi</dt><dd>approval, contract_approval, escalation · onaylayan: ROL-CTO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.KIB.RMDM</span> · <span class="mono">OR.RIA</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-CMP-01, ROL-AUD-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-AUD-01</span> &nbsp;<b>İç Denetim Ajanı (Audit-Ajanı)</b> &nbsp;
+      <span class="pill">audit</span>
+      <span class="pill">2 süreç kodu</span>
+      <span class="pill">4 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>ICT risk yönetim çerçevesinin ve kontrol sistemlerinin bağımsız denetimini yürütür.</dd>
+      <dt>Raporlar</dt><dd>Yönetim Kurulu (doğrudan)</dd>
+      <dt>İnsan muadili</dt><dd>İç Denetim Başkanı</dd>
+      <dt>Sorumluluklar</dt><dd>ICT risk yönetim çerçevesinin bağımsız denetimi <span class="pill">Madde 6(4)</span><br>Denetçilerin yeterli ICT risk bilgisine sahip olmasını sağlamak <span class="pill">Madde 6(4)</span><br>Yıllık denetim planı oluşturmak <span class="pill">Madde 6(4)</span><br>Kontrol etkinliğini değerlendirmek <span class="pill">Madde 6(4)</span><br>Denetim bulgularını raporlamak ve takip etmek <span class="pill">Madde 6(4)</span><br>Yönetim kuruluna doğrudan raporlama <span class="pill">Madde 6(4)</span></dd>
+      <dt>Beceriler</dt><dd>Bağımsız denetim <span class="pill">act_with_approval</span> · Kontrol etkinlik değerlendirmesi <span class="pill">act_autonomous</span> · Bulgu raporlama <span class="pill">act_with_approval</span> · Takip denetimi <span class="pill">act_autonomous</span></dd>
+      <dt>İnsan gözetimi</dt><dd>approval, escalation · onaylayan: Denetim Komitesi Başkanı</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.OVERS</span> · <span class="mono">OR.FND.AR</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-CIO-01, ROL-CTO-01, ROL-INC-01, ROL-RSK-01, ROL-TPP-01, ROL-CMP-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-TLPT-01</span> &nbsp;<b>TLPT Koordinatörü (TLPT-Ajanı)</b> &nbsp;
+      <span class="pill">control</span>
+      <span class="pill">1 süreç kodu</span>
+      <span class="pill">3 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>Tehdit odaklı sızma testlerinin (TLPT) planlanması ve yürütülmesini koordine eder.</dd>
+      <dt>Raporlar</dt><dd>ROL-CTO-01</dd>
+      <dt>İnsan muadili</dt><dd>TLPT Proje Yöneticisi</dd>
+      <dt>Sorumluluklar</dt><dd>TLPT kapsamını belirlemek <span class="pill">Madde 26(2)</span><br>Bağımsız testçileri koordine etmek <span class="pill">Madde 27</span><br>Test senaryolarını yönetmek <span class="pill">Madde 26(4)</span><br>Sonuçları raporlamak ve iyileştirmeleri takip etmek <span class="pill">Madde 26(8)</span></dd>
+      <dt>Beceriler</dt><dd>TLPT planlama <span class="pill">recommend</span> · Test koordinasyonu <span class="pill">act_autonomous</span> · Bulgu takibi <span class="pill">act_autonomous</span></dd>
+      <dt>İnsan gözetimi</dt><dd>approval, scope_change · onaylayan: ROL-CTO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.CEP</span></dd>
+      <dt>Tier</dt><dd>tier1</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-AUD-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-CTPP-01</span> &nbsp;<b>CTPP Gözetim Ajanı</b> &nbsp;
+      <span class="pill">control</span>
+      <span class="pill">1 süreç kodu</span>
+      <span class="pill">3 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>Kritik ICT üçüncü taraf sağlayıcılar (CTPP) ile ilgili ESA önerilerini ve gözetim süreçlerini takip eder.</dd>
+      <dt>Raporlar</dt><dd>ROL-CTO-01</dd>
+      <dt>İnsan muadili</dt><dd>Kritik Tedarikçi Gözetim Sorumlusu</dd>
+      <dt>Sorumluluklar</dt><dd>ESA CTPP listesini takip etmek <span class="pill">Madde 31(1)</span><br>Gözetim önerilerinin uygulanmasını izlemek <span class="pill">Madde 35</span><br>CTPP ile ilgili bilgi taleplerini yönetmek <span class="pill">Madde 37</span><br>Yıllık CTPP raporunu hazırlamak <span class="pill">Madde 33(3)</span></dd>
+      <dt>Beceriler</dt><dd>CTPP izleme <span class="pill">act_autonomous</span> · Öneri takibi <span class="pill">act_autonomous</span> · Raporlama <span class="pill">recommend</span></dd>
+      <dt>İnsan gözetimi</dt><dd>approval, escalation · onaylayan: ROL-CTO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.REL</span></dd>
+      <dt>Tier</dt><dd>tier1</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-CMP-01, ROL-AUD-01</dd>
+    </dl>
+  </details>
+  <details>
+    <summary><span class="mono">ROL-INF-01</span> &nbsp;<b>Bilgi Paylaşım Ajanı (InfoSharing-Ajanı)</b> &nbsp;
+      <span class="pill">control</span>
+      <span class="pill">1 süreç kodu</span>
+      <span class="pill">3 beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>Siber tehdit istihbaratı paylaşımını yönetir, güvenilir topluluklarla koordinasyon sağlar.</dd>
+      <dt>Raporlar</dt><dd>ROL-CEO-01</dd>
+      <dt>İnsan muadili</dt><dd>Siber İstihbarat Sorumlusu</dd>
+      <dt>Sorumluluklar</dt><dd>Bilgi paylaşım topluluklarına katılım <span class="pill">Madde 45(1)</span><br>Siber tehdit istihbaratı toplama ve işleme <span class="pill">Madde 45(1)(a)</span><br>Gönüllü bildirim hazırlamak <span class="pill">Madde 19(2)</span><br>Gizlilik protokollerine uyumu sağlamak <span class="pill">Madde 45(2)</span></dd>
+      <dt>Beceriler</dt><dd>İstihbarat toplama <span class="pill">act_autonomous</span> · İstihbarat analizi <span class="pill">act_with_approval</span> · Paylaşım koordinasyonu <span class="pill">act_with_approval</span></dd>
+      <dt>İnsan gözetimi</dt><dd>approval, disclosure · onaylayan: ROL-CEO-01</dd>
+      <dt>Süreç kodları</dt><dd><span class="mono">OR.INTEL</span></dd>
+      <dt>Tier</dt><dd>tier1, tier2</dd>
+      <dt>Bağımsızlık</dt><dd>ROL-AUD-01</dd>
+    </dl>
+  </details></section>
+  <footer>Depodaki YAML dosyalarından üretildi · <span class="mono">node docs/tools/build-dashboard.mjs</span></footer>
+</div></body></html>

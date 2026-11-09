@@ -74,6 +74,8 @@ veya doğrudan `dashboard\index.html` dosyasını çift tıklayın. Üç sayfa v
 | Sayfa | Ne gösterir |
 |---|---|
 | `dashboard/index.html` | KPI'lar, DORA kapsama çubuğu, 6 ORL fazı, açık noktalar, senaryolar |
+| `dashboard/roles.html` · `glossary.html` · `mapping.html` | 11 ajan, 60 terim, 28 DORA maddesi — tam tanımlar |
+| `dashboard/sources.html` | Veri nereden girilir: dosya haritası, komutlar, düzenle→yayınla döngüsü |
 | `dashboard/processes.html` | **24 sürecin tamamı** — tetikleyici, SLA, karar kuralları, kontroller, bağımlılıklar |
 | `dashboard/controls.html` | **36 kontrol** — kanıt alanları, değiştirilemezlik, test prosedürü |
 
@@ -157,7 +159,7 @@ Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı: [`docs/KURULUM-
 
 ## Durum
 
-Sürüm **1.4.2**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.5.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

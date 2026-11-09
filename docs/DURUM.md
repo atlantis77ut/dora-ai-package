@@ -682,3 +682,32 @@ makineden erişilebilir (ağa açık değil).
 
 `validate --strict`, `rules --audit` (49/49), 6 fazlı demo, 27/27 senaryo, kanıt paketi, veri alımı,
 DORA eşlemesi (%100) — bu makinede çalıştırıldı, hepsi geçti.
+
+---
+
+## 26. Dashboard'da tam görünüm — 1.5.0 (2026-11-09)
+
+Paketin tamamı tarayıcıdan okunabilir hale geldi. Önce yalnızca özet + süreç/kontrol ayrıntısı
+vardı; tanımların geri kalanı (ajanlar, sözlük, DORA eşlemesi) yalnız YAML'da duruyordu.
+
+| Sayfa | Kaynak | Boyut |
+|---|---|---|
+| `roles.html` | `data/roles/roles-catalog.yaml` | 25 KB |
+| `glossary.html` | `data/glossary/glossary-full.yaml` | 51 KB |
+| `mapping.html` | `data/mapping/dora-articles.yaml` | 31 KB |
+| `sources.html` | sabit açıklama + canlı sayımlar | 9 KB |
+
+`nav` yedi sekmeye çıktı: Genel bakış · Süreçler (24) · Kontroller (36) · Ajanlar (11) ·
+Sözlük (60) · DORA eşlemesi (28) · Veri kaynakları.
+
+### "Veri nereden girilir" sorusunun cevabı (sources.html)
+
+1. **Tanımlar** depodaki YAML'larda: `data/processes`, `data/controls`, `data/roles`,
+   `data/glossary`, `data/mapping`, `onboarding/orl-lifecycle.yaml`, `tests/synthetic-scenarios`.
+2. **Oturum verisi** sihirbazla: `init` → `phase C1…C6` → `ingest` (CMDB/tedarikçi CSV) →
+   `rules` → `scenario` → `export`; çıktılar `.dora-onboarding/<oturum>/` altında JSON.
+3. **Döngü**: YAML düzenle → `validate --strict` → `render-mapping` → `build-dashboard` → yenile.
+
+### Doğrulama
+
+Dört yeni sayfa sunucudan 200 döndü; `site/dashboard/` kopyası da güncellendi (9 dosya).

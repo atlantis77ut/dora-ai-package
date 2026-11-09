@@ -171,6 +171,10 @@ const nav = (active) => `
     <a href="index.html" class="${active === 'index' ? 'on' : ''}">Genel bakış</a>
     <a href="processes.html" class="${active === 'processes' ? 'on' : ''}">Süreçler (${processes.length})</a>
     <a href="controls.html" class="${active === 'controls' ? 'on' : ''}">Kontroller (${controls.length})</a>
+    <a href="roles.html" class="${active === 'roles' ? 'on' : ''}">Ajanlar (${roles.length})</a>
+    <a href="glossary.html" class="${active === 'glossary' ? 'on' : ''}">Sözlük (${terms.length})</a>
+    <a href="mapping.html" class="${active === 'mapping' ? 'on' : ''}">DORA eşlemesi (${articles.length})</a>
+    <a href="sources.html" class="${active === 'sources' ? 'on' : ''}">Veri kaynakları</a>
   </nav>`;
 
 const page = (title, content) => `<!doctype html>
@@ -329,11 +333,200 @@ const controlsHtml = page(
   </section>`,
 );
 
+
+// ── roles ─────────────────────────────────────────────────
+const roleDetail = (r) => `
+  <details>
+    <summary><span class="mono">${r.id}</span> &nbsp;<b>${r.name?.tr ?? ''}</b> &nbsp;
+      <span class="pill">${r.layer ?? '—'}</span>
+      <span class="pill">${(r.process_codes ?? []).length} süreç kodu</span>
+      <span class="pill">${(r.skills ?? []).length} beceri</span></summary>
+    <dl class="kv">
+      <dt>Amaç</dt><dd>${r.purpose?.tr ?? '—'}</dd>
+      <dt>Raporlar</dt><dd>${r.reports_to ?? '—'}</dd>
+      <dt>İnsan muadili</dt><dd>${r.human_equivalent?.tr ?? '—'}</dd>
+      <dt>Sorumluluklar</dt><dd>${(r.responsibilities ?? [])
+        .map((x) => `${x.desc?.tr ?? ''} <span class="pill">${x.dora_ref?.article ?? ''}</span>`)
+        .join('<br>') || '—'}</dd>
+      <dt>Beceriler</dt><dd>${(r.skills ?? [])
+        .map((s) => `${s.name ?? s.skill_id} <span class="pill">${s.autonomy_level}</span>`)
+        .join(' · ')}</dd>
+      <dt>İnsan gözetimi</dt><dd>${(r.human_oversight?.required_for ?? []).join(', ') || '—'}${
+        r.human_oversight?.approver_role ? ` · onaylayan: ${r.human_oversight.approver_role}` : ''
+      }</dd>
+      <dt>Süreç kodları</dt><dd>${(r.process_codes ?? []).map((c) => `<span class="mono">${c}</span>`).join(' · ') || '—'}</dd>
+      <dt>Tier</dt><dd>${(r.tier_activation ?? []).join(', ') || '—'}</dd>
+      <dt>Bağımsızlık</dt><dd>${(r.independence_constraints ?? []).join(', ') || 'yok'}</dd>
+    </dl>
+  </details>`;
+
+const rolesHtml = page(
+  'Ajanlar — DORA AI Ajan Paketi',
+  `${head('Ajan Kataloğu', `${roles.length} ajan · üç savunma hattı · CORF/ORL süreç kodları`, stamp)}
+  ${nav('roles')}
+  <section>
+    <h2>Ajanlar <span>satıra tıklayın</span></h2>
+    <table><thead><tr><th>Ajan</th><th>Ad</th><th>Katman</th><th>Raporlar</th><th class="num">Beceri</th><th class="num">Kod</th></tr></thead>
+    <tbody>${roles
+      .map(
+        (r) => `<tr><td class="mono">${r.id}</td><td>${r.name?.tr ?? ''}</td>
+        <td><span class="pill">${r.layer ?? '—'}</span></td><td>${r.reports_to ?? '—'}</td>
+        <td class="num">${(r.skills ?? []).length}</td><td class="num">${(r.process_codes ?? []).length}</td></tr>`,
+      )
+      .join('')}</tbody></table>
+  </section>
+  <section><h2>Ayrıntılar</h2>${roles.map(roleDetail).join('')}</section>`,
+);
+
+// ── glossary ──────────────────────────────────────────────
+const catName = {
+  risk: 'Risk',
+  incident: 'Olay',
+  testing: 'Test',
+  third_party: 'Üçüncü taraf',
+  info_sharing: 'Bilgi paylaşımı',
+  governance: 'Yönetişim',
+};
+const termRow = (x) => `
+  <details>
+    <summary><span class="mono">${x.id}</span> &nbsp;<b>${x.name?.tr ?? ''}</b> &nbsp;
+      <span class="pill">${catName[x.category] ?? x.category ?? '—'}</span>
+      <span class="pill">${x.dora_ref?.article ?? ''}</span></summary>
+    <dl class="kv">
+      <dt>Tanım</dt><dd>${x.definition?.source_quote ?? '—'}</dd>
+      <dt>Kaynak</dt><dd>${x.definition?.source ?? '—'}</dd>
+      <dt>Kriterler</dt><dd>${(x.classification_criteria ?? []).join('<br>') || '—'}</dd>
+      <dt>İlgili roller</dt><dd>${(x.related_roles ?? []).map((c) => `<span class="mono">${c}</span>`).join(' · ') || '—'}</dd>
+      <dt>İlgili süreçler</dt><dd>${(x.related_processes ?? []).map((c) => `<span class="mono">${c}</span>`).join(' · ') || '—'}</dd>
+    </dl>
+  </details>`;
+
+const glossaryHtml = page(
+  'Sözlük — DORA AI Ajan Paketi',
+  `${head('DORA Sözlüğü', `${terms.length} terim · DORA + RTS/ITS referanslı`, stamp)}
+  ${nav('glossary')}
+  <section>
+    <h2>Terimler <span>satıra tıklayın</span></h2>
+    <table><thead><tr><th>Terim</th><th>Ad</th><th>Kategori</th><th>DORA</th><th class="num">Rol</th><th class="num">Süreç</th></tr></thead>
+    <tbody>${terms
+      .map(
+        (x) => `<tr><td class="mono">${x.id}</td><td>${x.name?.tr ?? ''}</td>
+        <td><span class="pill">${catName[x.category] ?? x.category ?? '—'}</span></td>
+        <td>${x.dora_ref?.article ?? '—'}</td>
+        <td class="num">${(x.related_roles ?? []).length}</td>
+        <td class="num">${(x.related_processes ?? []).length}</td></tr>`,
+      )
+      .join('')}</tbody></table>
+  </section>
+  <section><h2>Tanımlar</h2>${terms.map(termRow).join('')}</section>`,
+);
+
+// ── mapping ───────────────────────────────────────────────
+const mapRow = (a) => `
+  <details>
+    <summary><span class="mono">${a.id}</span> &nbsp;<b>${a.title}</b> &nbsp;
+      <span class="pill ${a.status === 'covered' ? 'ok' : a.status === 'partial' ? 'warn' : 'bad'}">${a.status}</span></summary>
+    <dl class="kv">
+      <dt>Bölüm</dt><dd>${a.chapter ?? '—'}</dd>
+      <dt>Yükümlülükler</dt><dd>${(a.obligations ?? []).map((o) => '• ' + o).join('<br>') || '—'}</dd>
+      <dt>Süreçler</dt><dd>${(a.processes ?? []).map((c) => `<span class="mono">${c}</span>`).join(' · ') || '—'}</dd>
+      <dt>Kontroller</dt><dd>${(a.controls ?? []).map((c) => `<span class="mono">${c}</span>`).join(' · ') || '—'}</dd>
+      <dt>Sahip roller</dt><dd>${(a.roles ?? []).map((c) => `<span class="mono">${c}</span>`).join(' · ') || '—'}</dd>
+      ${a.note ? `<dt>Not</dt><dd>${a.note}</dd>` : ''}
+    </dl>
+  </details>`;
+
+const mappingHtml = page(
+  'DORA eşlemesi — DORA AI Ajan Paketi',
+  `${head('DORA Madde Eşlemesi', `${articles.length} madde · ${byStatus.covered} kapsandı · ${byStatus.partial} kısmi · ${byStatus.gap} boşluk`, stamp)}
+  ${nav('mapping')}
+  <section>
+    <h2>Maddeler <span>satıra tıklayın</span></h2>
+    <table><thead><tr><th>Madde</th><th>Başlık</th><th>Süreçler</th><th>Kontroller</th><th>Durum</th></tr></thead>
+    <tbody>${articles
+      .map(
+        (a) => `<tr><td class="mono">${a.id}</td><td>${a.title}</td>
+        <td>${(a.processes ?? []).length}</td><td>${(a.controls ?? []).length}</td>
+        <td><span class="pill ${a.status === 'covered' ? 'ok' : a.status === 'partial' ? 'warn' : 'bad'}">${a.status}</span></td></tr>`,
+      )
+      .join('')}</tbody></table>
+  </section>
+  <section><h2>Ayrıntılar</h2>${articles.map(mapRow).join('')}</section>`,
+);
+
+// ── sources ───────────────────────────────────────────────
+const sourcesHtml = page(
+  'Veri kaynakları — DORA AI Ajan Paketi',
+  `${head('Veri Nereden Girilir', 'tanımlar dosyada · oturum verisi sihirbazda · kanıt oturum dizininde', stamp)}
+  ${nav('sources')}
+  <section>
+    <h2>1. Tanımlar — depodaki YAML dosyaları</h2>
+    <table><thead><tr><th>Ne</th><th>Dosya</th><th class="num">Kayıt</th><th>Nasıl değişir</th></tr></thead>
+    <tbody>
+      <tr><td>Süreçler</td><td class="mono">data/processes/pillar-*.yaml</td><td class="num">${processes.length}</td><td>YAML düzenle → \`build-dashboard\`</td></tr>
+      <tr><td>Kontroller</td><td class="mono">data/controls/controls-catalog.yaml</td><td class="num">${controls.length}</td><td>YAML düzenle</td></tr>
+      <tr><td>Ajan rolleri</td><td class="mono">data/roles/roles-catalog.yaml</td><td class="num">${roles.length}</td><td>YAML düzenle</td></tr>
+      <tr><td>Sözlük</td><td class="mono">data/glossary/glossary-full.yaml</td><td class="num">${terms.length}</td><td>YAML düzenle</td></tr>
+      <tr><td>DORA eşlemesi</td><td class="mono">data/mapping/dora-articles.yaml</td><td class="num">${articles.length}</td><td>YAML düzenle → \`render-mapping\`</td></tr>
+      <tr><td>Ajan → süreç kodu</td><td class="mono">data/orl-integration/agent-to-orl-mapping.yaml</td><td class="num">${roles.reduce((s, r) => s + (r.process_codes ?? []).length, 0)}</td><td>YAML düzenle</td></tr>
+      <tr><td>Kurulum fazları</td><td class="mono">onboarding/orl-lifecycle.yaml</td><td class="num">${phases.length}</td><td>YAML düzenle</td></tr>
+      <tr><td>Senaryolar</td><td class="mono">tests/synthetic-scenarios/*.yaml</td><td class="num">${scenarios.length}</td><td>YAML düzenle</td></tr>
+    </tbody></table>
+    <p class="sub" style="margin-top:12px">Şema doğrulaması: <span class="mono">node bin/dora-onboard.mjs validate --strict</span></p>
+  </section>
+
+  <section>
+    <h2>2. Oturum verisi — kurumun kendi bilgileri</h2>
+    <p class="sub">Sihirbaz çalıştırıldığında <span class="mono">.dora-onboarding/&lt;oturum&gt;/</span> altında JSON artefaktlar üretilir.</p>
+    <table><thead><tr><th>Komut</th><th>Ne yapar</th><th>Ürettiği dosya</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">init --tier tier2 --regulator BDDK</td><td>Oturum açar, profil ve yargı alanı</td><td>session.json · institution-profile.json · jurisdiction.json</td></tr>
+      <tr><td class="mono">phase C1 --demo</td><td>İş hizmetleri kataloğu</td><td>business-service-catalogue.json</td></tr>
+      <tr><td class="mono">phase C2 --demo</td><td>Etki toleransları, risk iştahı, SLA</td><td>impact-tolerances.json · risk-appetite.json · sla-overrides.json</td></tr>
+      <tr><td class="mono">phase C3 --demo</td><td>Envanter, ajan aktivasyonu, eşleme</td><td>ict-inventory.json · agent-activation.json · orl-mapping.json</td></tr>
+      <tr><td class="mono">ingest --inventory &lt;csv&gt; --providers &lt;csv&gt;</td><td>Dış veri alımı (CMDB/tedarikçi)</td><td>ict-inventory.json güncellenir</td></tr>
+      <tr><td class="mono">rules --session &lt;id&gt;</td><td>Karar kurallarını olgularla değerlendirir</td><td>rule-evaluation.json</td></tr>
+      <tr><td class="mono">scenario --all --golden</td><td>27 kabul assertion'ı</td><td>scenario-&lt;ID&gt;-results.json</td></tr>
+      <tr><td class="mono">export --session &lt;id&gt;</td><td>Kanıt paketi + manifest</td><td>evidence-bundle.zip</td></tr>
+    </tbody></table>
+  </section>
+
+  <section>
+    <h2>3. Düzenle → yayınla döngüsü</h2>
+    <ol class="list">
+      <li>YAML dosyasını düzenle (ör. <span class="mono">data/processes/pillar-2-incident.yaml</span>)</li>
+      <li><span class="mono">node bin/dora-onboard.mjs validate --strict</span> — şema hatası varsa burada durur</li>
+      <li><span class="mono">node docs/tools/render-mapping.mjs</span> — DORA eşlemesi dokümanı</li>
+      <li><span class="mono">node docs/tools/build-dashboard.mjs</span> — bu siteyi yeniden üretir</li>
+      <li>Tarayıcıyı yenile (sunucu dosyaları diskten okur, yeniden başlatma gerekmez)</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>4. Hangi dosyada ne var — tam liste</h2>
+    <table><thead><tr><th>Klasör</th><th>İçerik</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">schema/</td><td>${5} JSON Schema — tüm veri dosyalarının sözleşmesi</td></tr>
+      <tr><td class="mono">data/</td><td>Tanımlar: süreç, kontrol, rol, sözlük, eşleme</td></tr>
+      <tr><td class="mono">onboarding/</td><td>6 fazlı yaşam döngüsü tanımı + CLI</td></tr>
+      <tr><td class="mono">tests/</td><td>Kabul senaryoları + golden kanıtlar + fixture'lar</td></tr>
+      <tr><td class="mono">docs/</td><td>Mimari, DORA eşlemesi, TR mevzuatı, lisanslama, kararlar (${21}+ dosya)</td></tr>
+      <tr><td class="mono">pilots/</td><td>Pilot seçim, sözleşme, vaka şablonu</td></tr>
+      <tr><td class="mono">dashboard/ · site/</td><td>Bu site — üretilen çıktı, elle düzenlenmez</td></tr>
+      <tr><td class="mono">.dora-onboarding/</td><td>Oturum verisi (git'e girmez)</td></tr>
+    </tbody></table>
+  </section>`,
+);
+
 fs.writeFileSync(path.join(OUT, 'index.html'), indexHtml);
 fs.writeFileSync(path.join(OUT, 'processes.html'), processesHtml);
 fs.writeFileSync(path.join(OUT, 'controls.html'), controlsHtml);
+fs.writeFileSync(path.join(OUT, 'roles.html'), rolesHtml);
+fs.writeFileSync(path.join(OUT, 'glossary.html'), glossaryHtml);
+fs.writeFileSync(path.join(OUT, 'mapping.html'), mappingHtml);
+fs.writeFileSync(path.join(OUT, 'sources.html'), sourcesHtml);
 
-console.log(`dashboard: dashboard/ → index.html · processes.html · controls.html · data.json`);
+console.log(`dashboard: dashboard/ → index · processes · controls · roles · glossary · mapping · sources · data.json`);
 console.log(
   `süreç ${processes.length} · kontrol ${controls.length} · ajan ${roles.length} · senaryo ${scenarios.length} · kapsama %${coveragePct} · sağlık ${
     issues.length === 0 ? 'temiz' : issues.length + ' sorun'

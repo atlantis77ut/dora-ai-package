@@ -5,6 +5,23 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.5.0] — 2026-11-09
+
+### Eklendi — dashboard'da tam görünüm
+
+Dört yeni sayfa; paketin tamamı tarayıcıdan okunabilir:
+
+| Sayfa | İçerik |
+|---|---|
+| `dashboard/roles.html` | 11 ajan: amaç, raporlama, sorumluluklar (DORA maddesiyle), beceriler + otonomi, insan gözetimi, süreç kodları, tier |
+| `dashboard/glossary.html` | 60 terim: tanım (DORA alıntısı), kaynak, sınıflandırma kriterleri, ilgili rol/süreçler |
+| `dashboard/mapping.html` | 28 DORA maddesi: yükümlülükler, süreçler, kontroller, sahipler, kapsama durumu |
+| `dashboard/sources.html` | **Veri nereden girilir**: tanım dosyaları, oturum komutları, düzenle→yayınla döngüsü, klasör haritası |
+
+Navigasyon yedi sekmeye çıktı; sayfalar yine YAML'den üretiliyor, elle düzenlenmiyor.
+
+---
+
 ## [1.4.2] — 2026-11-09
 
 ### Eklendi
