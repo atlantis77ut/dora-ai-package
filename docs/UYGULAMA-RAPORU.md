@@ -1,6 +1,6 @@
 # DORA AI Ajan Paketi — Uygulama Raporu
 
-**Sürüm:** 1.1.0 · **Tarih:** 9 Kasım 2026 · **Sahip:** ustauretim
+**Sürüm:** 1.1.1 · **Tarih:** 9 Kasım 2026 · **Sahip:** ustauretim
 **Depo:** https://github.com/atlantis77ut/dora-ai-package · **Canlı dashboard:** https://atlantis77ut.github.io/dora-ai-package/
 
 ---

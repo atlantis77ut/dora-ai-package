@@ -55,7 +55,7 @@ node docs/tools/build-dashboard.mjs                          # dashboard/index.h
 
 ## Görmek için dört yol
 
-**Canlı dashboard:** <https://atlantis77ut.github.io/dora-ai-package/>
+**Site:** <https://atlantis77ut.github.io/dora-ai-package/> · **Dashboard:** <https://atlantis77ut.github.io/dora-ai-package/dashboard/>
 
 ### 1. Dashboard (tarayıcı)
 
@@ -126,7 +126,7 @@ faz tanımı, uçtan uca demo.
 
 ## Durum
 
-Sürüm **1.1.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.1.1**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

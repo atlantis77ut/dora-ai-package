@@ -6,6 +6,7 @@ node_modules/
 notifications/
 evidence-out/
 mi/
+site/dashboard/
 *.log
 .env
 .env.local

@@ -26,11 +26,14 @@ jobs:
       - name: Dashboard'u YAML'lardan yeniden üret
         run: node docs/tools/build-dashboard.mjs
 
+      - name: Siteyi kur (landing + dashboard)
+        run: node docs/tools/build-site.mjs
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dashboard
+          path: site
 
       - id: deployment
         uses: actions/deploy-pages@v4

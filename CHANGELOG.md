@@ -5,6 +5,21 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.1.1] — 2026-11-09
+
+### Eklendi
+
+- `site/index.html`: tek dosya landing sayfası (harici CDN/font yok, göreli bağlantılar)
+- `docs/tools/build-site.mjs`: landing + dashboard'u `site/` altında birleştirir
+- `docs/SITE.md`: site yapısı ve alan adı bağlama adımları
+
+### Değişti
+
+- GitHub Pages artık `site/` yayınlıyor: kök landing, dashboard `/dashboard/` altında
+- README'deki canlı bağlantılar ikiye ayrıldı (site + dashboard)
+
+---
+
 ## [1.1.0] — 2026-11-09
 
 ### Eklendi
