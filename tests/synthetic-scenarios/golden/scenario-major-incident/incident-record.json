@@ -9,5 +9,6 @@
   "affected_member_states": [
     "TR"
   ],
-  "data_loss": false
+  "data_loss": false,
+  "unauthorized_access": false
 }

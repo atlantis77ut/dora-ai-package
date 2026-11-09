@@ -587,3 +587,40 @@ Yeni ad: **ORL — Operational Resilience Lifecycle** (paketin kendi tanımı).
 
 Kırıcı: eski oturum dosyaları ve dış betikler `ORL_*` alanlarını kullanıyorsa güncellenmeli.
 CLI'ın ürettiği tüm artefaktlar yeni adlarla yeniden üretildi.
+
+---
+
+## 23. Kural motoru — 1.4.0 (2026-11-09)
+
+Süreçlerdeki karar kuralları 1.0'dan beri düz metindi (`"etkilenen_musteri > 100000"`). 1.4.0'da
+bu ifadeler deterministik olarak değerlendirilebilir hale geldi.
+
+| Dosya | Görev |
+|---|---|
+| `src/orl/rules.mjs` | İfade dili: karşılaştırma, AND/OR/NOT, `IN`, parantez, birimler, `%30`, noktalı yol |
+| `src/orl/facts.mjs` | Kanıt → olgu adaptörü (Türkçe kural alanı ↔ İngilizce kanıt alanı) |
+| `bin/dora-onboard.mjs` | `rules --audit`, `rules --session … [--process] [--facts]` |
+| `tools/demo-rules.mjs` | CI demosu: 49/49 sözdizimi, SCN-01 tetikleme, hata davranışı |
+| `docs/KURAL-MOTORU.md` | Söz dizimi + adaptör tablosu + sınırlar |
+
+### Ölçüm
+
+```
+$ node bin/dora-onboard.mjs rules --audit
+  49/49 kural makine tarafindan okunabilir
+
+$ node tools/demo-rules.mjs
+  adaptör: 7 kanıt dosyası eşlendi, 60 olgu
+  ✔ INC-R1 matched   ✔ INC-R3 matched
+  · INC-R2, INC-R4, INC-R5 not_matched
+  ✔ eksik alan varken tetiklenmiyor   ✔ bozuk ifade parse_error
+```
+
+### Tasarım kararları
+
+1. **Sessiz yanlış yok**: anlaşılmayan ifade `parse_error` döner, `false` sayılmaz.
+2. **Eksik olgu tetiklemez**: veri yoksa kural çalışmaz, alan raporlanır — "veri yokken alarm"
+   yerine "veri yokken sessiz + görünür eksik".
+3. **Adaptör açık tablo**: hangi kanıt alanının hangi olguya gittiği `docs/KURAL-MOTORU.md`'de
+   tek tek yazılı; eşlenmeyen dosya uyarı olarak basılır.
+4. **Motor uygulamaz**: `action` metni raporlanır; bildirim/kayıt açma ajan katmanının işi.

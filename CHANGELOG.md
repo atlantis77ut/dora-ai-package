@@ -5,6 +5,32 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.4.0] — 2026-11-09
+
+### Eklendi — kural motoru
+
+Süreçlerdeki 49 `decision_rules[].condition` ifadesi artık **çalıştırılabilir**.
+
+- `src/orl/rules.mjs`: küçük ifade dili (karşılaştırma, AND/OR/NOT, `IN`, parantez, birim
+  sözcükleri, `%30`, noktalı alan yolu). Desteklenmeyen sözdizimi `parse_error` döner —
+  sessizce yanlış sonuç üretmez.
+- `src/orl/facts.mjs`: kanıt → olgu adaptörü. Türkçe kural alanları (`etkilenen_musteri`) ile
+  İngilizce kanıt alanları (`affected_customers`) arasındaki eşleme açık tabloyla tanımlı.
+- CLI: `rules --audit` · `rules --session <id> [--process PRC-…] [--facts olgular.json]`;
+  sonuç `<oturum>/rule-evaluation.json` dosyasına yazılır.
+- `tools/demo-rules.mjs` + CI adımı: 49/49 sözdizimi, SCN-01 olgularıyla doğru tetikleme,
+  eksik olgu ve bozuk ifade davranışı.
+- `docs/KURAL-MOTORU.md`: söz dizimi, adaptör tablosu, sınırlar.
+
+### Davranış
+
+- Eksik olgu → kural **tetiklenmez**, alan `missing` olarak raporlanır.
+- `INC-R1` ve `INC-R3`, SCN-01 golden kanıtlarından üretilen olgularla tetikleniyor;
+  `INC-R2`, `INC-R4`, `INC-R5` doğru şekilde tetiklenmiyor.
+- Sürüm 1.4.0.
+
+---
+
 ## [1.3.0] — 2026-11-09
 
 ### Değişti — kırıcı: çerçeve adı ORL olarak yeniden adlandırıldı

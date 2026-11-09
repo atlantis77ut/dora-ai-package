@@ -138,3 +138,13 @@ export function validateCatalogs(root = ROOT, opts = {}) {
   }
   return results.concat(validateScenarios(root, opts));
 }
+
+/** data/processes/*.yaml dosyalarını parse edilmiş hâlde döner. */
+export function loadProcesses(root = ROOT) {
+  const dir = path.join(root, 'data', 'processes');
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.yaml'))
+    .sort()
+    .map((f) => parse(fs.readFileSync(path.join(dir, f), 'utf8')));
+}

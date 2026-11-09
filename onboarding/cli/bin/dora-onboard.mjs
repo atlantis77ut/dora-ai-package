@@ -18,6 +18,9 @@ import { buildMi, loadCalendar, loadAnchors, upcoming, fmtDate } from '../src/or
 import { ingest } from '../src/orl/ingest.mjs';
 import { validateCatalogs } from '../src/orl/catalog.mjs';
 import { runScenario, seedArtifacts } from '../src/orl/scenario.mjs';
+import { evaluateRules, auditRules } from '../src/orl/rules.mjs';
+import { factsFromDir } from '../src/orl/facts.mjs';
+import { loadProcesses } from '../src/orl/catalog.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEV_KEY = path.resolve(HERE, '../../license/dev-private.pem');
@@ -159,6 +162,9 @@ const { values: opts } = parseArgs({
     license: { type: 'string' },
     demo: { type: 'boolean' },
     golden: { type: 'boolean' },
+    facts: { type: 'string' },
+    process: { type: 'string' },
+    audit: { type: 'boolean' },
     out: { type: 'string' },
     key: { type: 'string' },
     bundle: { type: 'string' },
@@ -321,6 +327,63 @@ try {
     store.save(session);
     line(`\n${color.red}KAPI GEÇİLMEDİ${color.reset} — eksikleri tamamlayıp tekrar deneyin. Sonraki faz başlatılamaz.`);
     process.exit(2);
+  }
+
+  if (cmd === 'rules') {
+    const docs = loadProcesses();
+
+    if (opts.audit) {
+      const rows = docs.map((d) => auditRules(d));
+      const total = rows.reduce((s, a) => s + a.total, 0);
+      const parseable = rows.reduce((s, a) => s + a.parseable, 0);
+      line(`${color.bold}Kural sozdizimi taramasi${color.reset}`);
+      line(`  ${parseable}/${total} kural makine tarafindan okunabilir`);
+      const broken = rows.flatMap((a) => a.rows.filter((r) => !r.parseable));
+      for (const b of broken) line(`  ${color.red}x${color.reset} ${b.rule_id}: ${b.condition} ${color.dim}(${b.error})${color.reset}`);
+      process.exit(broken.length ? 2 : 0);
+    }
+
+    const session = requireSession(opts);
+    const dir = store.sessionDir(session.session_id);
+
+    // facts: --facts dosyası veya oturum artefaktlarının birleşimi
+    let facts = {};
+    let unmapped = [];
+    if (opts.facts) {
+      facts = JSON.parse(fs.readFileSync(opts.facts, 'utf8'));
+    } else {
+      const adapted = factsFromDir(dir);
+      facts = adapted.facts;
+      unmapped = adapted.unmapped;
+      if (adapted.used.length) {
+        line(`${color.dim}  kanit->olgu adaptoru: ${adapted.used.length} dosya eslendi${unmapped.length ? ', eslenmeyen: ' + unmapped.join(', ') : ''}${color.reset}`);
+      }
+    }
+
+    const results = docs.flatMap((d) => evaluateRules(d, facts));
+    const filtered = opts.process ? results.filter((r) => r.process === opts.process) : results;
+    const matched = filtered.filter((r) => r.status === 'matched');
+    const errors = filtered.filter((r) => r.status === 'parse_error');
+
+    line(`${color.bold}Kural degerlendirmesi${color.reset} ${color.dim}(${filtered.length} kural, ${Object.keys(facts).length} olgu)${color.reset}`);
+    for (const r of matched) {
+      line(`  ${color.green}+${color.reset} ${r.rule_id.padEnd(8)} ${r.process} ${color.dim}${r.condition}${color.reset}`);
+      line(`      ${color.dim}-> ${r.action}${color.reset}`);
+    }
+    if (errors.length) {
+      for (const r of errors) line(`  ${color.red}x${color.reset} ${r.rule_id}: ${r.detail}`);
+    }
+    line('');
+    line(`  tetiklenen: ${matched.length} · tetiklenmeyen: ${filtered.length - matched.length - errors.length} · hata: ${errors.length}`);
+
+    const outFile = path.join(dir, 'rule-evaluation.json');
+    fs.writeFileSync(
+      outFile,
+      JSON.stringify({ run_at: new Date().toISOString(), facts_keys: Object.keys(facts).length, results: filtered }, null, 2) + '\n',
+      'utf8',
+    );
+    line(`  ${color.dim}sonuc: ${path.relative(process.cwd(), outFile)}${color.reset}`);
+    process.exit(errors.length ? 2 : 0);
   }
 
   if (cmd === 'status') {

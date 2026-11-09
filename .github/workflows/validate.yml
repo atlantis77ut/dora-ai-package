@@ -53,3 +53,7 @@ jobs:
       - name: Senaryo çalıştırıcısı (1.1)
         working-directory: onboarding/cli
         run: node tools/demo-scenario.mjs
+
+      - name: Kural moturu (1.4)
+        working-directory: onboarding/cli
+        run: node tools/demo-rules.mjs

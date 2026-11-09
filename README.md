@@ -22,6 +22,7 @@ ne yapacağını, hangi kanıtı üreteceğini ve ne zaman duracağını tanıml
 - Yönetim kurulu MI paketi (aylık tek sayfa) ve 9 kalemlik düzenleyici takvim
 - Katalog doğrulaması: 14 dosya 8 JSON Schema ile denetlenir (CI kapısı)
 - Dış veri alımı: dosya bırakma sözleşmesi (`ingest`), sha256 alım kaydı
+- Kural motoru: 49 `decision_rules` koşulu çalıştırılabilir (`rules --audit`, `rules --session`)
 - Senaryo çalıştırıcısı: `check` DSL ile **27/27 assertion** artefaktlar üzerinde koşar (golden koşu)
 - Lisans anahtarı (Ed25519, çevrimdışı doğrulama)
 
@@ -143,7 +144,7 @@ Satın alma görüşmesinde ilk sorulan soru bu; cevabı baştan yazılı olsun:
 
 ## Durum
 
-Sürüm **1.3.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.4.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans
