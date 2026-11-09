@@ -150,6 +150,8 @@ node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 - **Raporlama süreleri**: 4 saat / 72 saat / 1 ay sayaçları, gecikme uyarısı, gönderildi işaretleme
 - **E-posta**: SMTP ile davet/parola bağlantısı; gönderilemezse kuyruk ([EPOSTA.md](docs/EPOSTA.md))
 - **Bildirimler**: süre yaklaşan/geçen olaylar ve bekleyen onaylar için otomatik e-posta
+- **Olay geçmişi**: her kayıtta kim-ne-zaman çizelgesi
+- **Yönetim raporu**: tek tıkla PDF (kurum, fazlar, olaylar, süreler, onaylar, kapsama)
 - **Yedekleme**: `node onboarding/cli/tools/backup.mjs` → `web-data/` + oturumlar tek zip;
   `--verify` ile doğrula, `tools/restore.mjs` ile geri yükle ([YEDEKLEME.md](docs/YEDEKLEME.md))
 - **Kullanıcı**: Durum · Kurum bilgileri · Sistem bağlantıları · Varlıklarım · Sorumlular · Belgeler

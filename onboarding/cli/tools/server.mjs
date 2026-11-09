@@ -26,6 +26,7 @@ import { createResetStore } from '../src/orl/reset.mjs';
 import { createApprovalStore } from '../src/orl/approvals.mjs';
 import { createReporting, reportingStatus, markSent } from '../src/orl/deadlines.mjs';
 import { scanAlerts, resolveRecipients } from '../src/orl/alerts.mjs';
+import { buildManagementReport } from '../src/orl/report.mjs';
 import { sendMail, createOutbox } from '../src/orl/mailer.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
 import { discover, buildAuthUrl, exchangeCode, fetchJwks, verifyIdToken, makeState, verifyState } from '../src/orl/oidc.mjs';
@@ -346,6 +347,7 @@ async function runScheduledFetch({ reason = 'manual' } = {}) {
       const drafts = pool.map((e) => {
         const inc = incidentFromEvent(e, { sessionId: s.session_id, seq: seq++, rules });
         inc.reporting = createReporting(inc.detected_at);
+        inc.timeline = [{ at: new Date().toISOString(), by: me.user.username, action: 'created', detail: 'SIEM olayından taslak' }];
         return inc;
       });
       const merged = mergeIncidents(existing, drafts);
@@ -427,6 +429,12 @@ function inviteText({ username, url, ttlMinutes = 30 }) {
     '',
     'DORA Ajan Paketi',
   ].join('\n');
+}
+
+/** Olay kaydına zaman çizelgesi girdisi ekler. */
+function addTimeline(inc, { by, action, detail = '' }) {
+  inc.timeline = [...(inc.timeline ?? []), { at: new Date().toISOString(), by, action, detail: String(detail).slice(0, 300) }];
+  return inc;
 }
 
 function approvalStore(dir) {
@@ -623,7 +631,9 @@ async function readBody(req, limit = 5 * 1024 * 1024) {
 }
 
 // ── API ──────────────────────────────────────────────────
-async function api(req, res, urlPath, method) {
+async function api(req, res, urlPathRaw, method) {
+  // .pdf uzantısı yolu eşleşmesini bozmasın
+  const urlPath = urlPathRaw.replace(/\/report\.pdf$/, '/report');
   // ── kimlik doğrulama (herkese açık uçlar) ──────────────
   if (urlPath === '/api/health') return sendJson(res, 200, { ok: true, version });
 
@@ -1353,7 +1363,7 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { sessions: listSessions() });
   }
 
-  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem|incidents|approvals|reporting)(?:\/([\w.-]+))?)?$/);
+  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem|incidents|approvals|reporting|report)(?:\/([\w.-]+))?)?$/);
   if (sessMatch) {
     const id = sessMatch[1];
     const kind = sessMatch[2];
@@ -1419,6 +1429,33 @@ async function api(req, res, urlPath, method) {
       return res.end(buf);
     }
 
+    if ((kind === 'report' || kind === 'report.pdf') && method === 'GET') {
+      const session = readJson(path.join(dir, 'session.json'), {});
+      const institution = loadSettings().institution ?? {};
+      const incidents = readJson(path.join(dir, 'incidents.json'), { incidents: [] }).incidents ?? [];
+      const approvals = readJson(path.join(dir, 'approvals.json'), { approvals: [] }).approvals ?? [];
+      const coverage = readJson(path.join(dir, 'coverage-matrix.json'), null);
+      const artifacts = listArtifacts(id);
+      const pdf = buildManagementReport({
+        session,
+        institution,
+        incidents,
+        approvals,
+        coverage,
+        artifacts,
+        generatedAt: new Date(),
+        version,
+      });
+      auth.audit(me.user.username, 'report_pdf', id);
+      res.writeHead(200, {
+        'Content-Type': 'application/pdf',
+        'Content-Length': pdf.length,
+        'Content-Disposition': `attachment; filename="dora-rapor-${id}.pdf"`,
+        'Cache-Control': 'no-store',
+      });
+      return res.end(pdf);
+    }
+
     if (kind === 'reporting' && method === 'POST') {
       const step = artifact;
       if (!['initial', 'intermediate', 'final'].includes(step)) {
@@ -1434,6 +1471,7 @@ async function api(req, res, urlPath, method) {
         at: body.sent_at,
         reference: body.reference,
       });
+      addTimeline(inc, { by: me.user.username, action: 'reporting:' + step, detail: body.reference ? 'ref ' + body.reference : '' });
       inc.updated_at = new Date().toISOString();
       writeJson(path.join(dir, 'incidents.json'), { incidents: list, updated_at: inc.updated_at });
 
@@ -1483,7 +1521,14 @@ async function api(req, res, urlPath, method) {
 
       let applied = null;
       if (r.approval.status === 'approved') {
-        if (r.approval.type === 'incident_update') applied = applyIncidentUpdate(dir, r.approval.payload);
+        if (r.approval.type === 'incident_update') {
+          applied = applyIncidentUpdate(dir, r.approval.payload);
+          if (applied?.incident) {
+            addTimeline(applied.incident, { by: me.user.username, action: 'approval_applied', detail: r.approval.id });
+            const st2 = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
+            writeJson(path.join(dir, 'incidents.json'), st2);
+          }
+        }
         else if (r.approval.type === 'go_live') applied = applyGoLive(dir, r.approval.payload);
         else if (r.approval.type === 'assessment_accept') applied = applyAssessmentAccept(dir, r.approval.payload);
       }
@@ -1519,6 +1564,7 @@ async function api(req, res, urlPath, method) {
       const created = pool.map((e) => {
         const inc = incidentFromEvent(e, { sessionId: id, seq: seq++, rules });
         inc.reporting = createReporting(inc.detected_at);
+        inc.timeline = [{ at: new Date().toISOString(), by: me.user.username, action: 'created', detail: 'SIEM olayından taslak' }];
         return inc;
       });
       const merged = mergeIncidents(existing, created);
@@ -1588,6 +1634,7 @@ async function api(req, res, urlPath, method) {
         auth.audit(me.user.username, 'incident_promote', inc.incident_id);
       }
 
+      addTimeline(inc, { by: me.user.username, action: body.promote === true ? 'promoted' : 'updated', detail: Object.keys(body).filter((k) => k !== 'promote').join(', ') });
       writeJson(path.join(dir, 'incidents.json'), { incidents: list, updated_at: inc.updated_at });
       auth.audit(me.user.username, 'incident_update', inc.incident_id);
       return sendJson(res, 200, { ok: true, incident: inc, promoted: body.promote === true });

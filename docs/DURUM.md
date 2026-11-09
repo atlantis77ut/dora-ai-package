@@ -1363,3 +1363,37 @@ ikinci tarama → 0 yeni
 - Uyarı durumu `alerts-state.json`'da; dosya silinirse aynı uyarılar yeniden gönderilir
 - Kişi bazlı abonelik yok (herkes aynı listeyi alır)
 - SMTP yoksa uyarılar kuyrukta birikir, kimse görmez (kuyruk arayüzden izlenebilir)
+
+---
+
+## 46. Olay geçmişi ve PDF rapor — 1.24.0 (2026-11-09)
+
+| Parça | Dosya / uç |
+|---|---|
+| Zaman çizelgesi | olay kaydında `timeline[]`, GET yanıtında döner |
+| PDF yazıcı | `src/orl/pdf.mjs` (A4, Helvetica, xref) |
+| Rapor içeriği | `src/orl/report.mjs` (8 bölüm) |
+| Uç | `GET /api/sessions/:id/report.pdf` |
+
+### Zaman çizelgesi olayları
+
+`created` · `updated` · `promoted` · `reporting:initial|intermediate|final` · `approval_applied`
+
+### PDF rapor bölümleri
+
+1. Kurum ve oturum  2. Fazlar  3. Olaylar + süreler  4. Gecikmiş adımlar  5. Dört göz onayları
+6. Kapsama  7. Kanıtlar  8. Not (resmî bildirim yerine geçmez)
+
+### Doğrulama
+
+```
+timeline 1 → 2 girdi (raporlama işaretlemesi eklendi)
+rapor 200 · %PDF-1.4 · 1 sayfa · xref tutarlı · başlık metni okundu
+142 birim testi geçti
+```
+
+### Sınırlar
+
+- PDF **Türkçe karakterleri ASCII'ye çevirir** (ı→i, ş→s, ğ→g…) — WinAnsi sınırı
+- Rapor metin tabanlı: logo, grafik, renk yok; 25 olayla sınırlı liste
+- Rapor **anlık** üretilir; arşivlenmez (indirilen dosya saklanır)

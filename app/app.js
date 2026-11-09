@@ -1352,6 +1352,10 @@ function viewKurulum() {
         <a class="ghost" id="expDownload" style="display:none;padding:8px 14px" href="#">İndir</a>
       </div>
       <div id="expResult"></div>
+      <div class="actions" style="margin-top:12px">
+        <a class="ghost" id="repPdf" style="padding:8px 14px" href="#">Yonetim raporu (PDF)</a>
+        <span class="sub">Kurum, fazlar, olaylar, sureler, onaylar, kapsama ozeti</span>
+      </div>
     </div>`;
 }
 
@@ -1583,6 +1587,7 @@ function viewSiem() {
         <button class="primary" id="incDraft">Taslak kayıt oluştur</button>
       </div>
       <div id="incResult"></div>
+      <div id="incHist" style="margin-top:12px"></div>
     </div>
 
     <div class="card">
@@ -1883,7 +1888,8 @@ function renderIncidents(list) {
                 .join('')}
             </select></td>
             <td><button class="ghost-btn inc-save">kaydet</button>
-                <button class="ghost-btn inc-promote">aktif yap</button></td>
+                <button class="ghost-btn inc-promote">aktif yap</button>
+                <button class="ghost-btn inc-hist">geçmiş</button></td>
           </tr>`,
         )
         .join('')}
@@ -1905,6 +1911,31 @@ function renderIncidents(list) {
         toast('Kaydedilemedi: ' + e.message, 'bad');
       }
     });
+    tr.querySelector('.inc-hist')?.addEventListener('click', async () => {
+      const box = $('#incHist');
+      if (!box) return;
+      try {
+        const r = await api(`/api/sessions/${state.activeSession.session_id}/incidents`);
+        const inc = (r.incidents ?? []).find((x) => x.incident_id === id);
+        const tl = inc?.timeline ?? [];
+        box.innerHTML = `<div class="card" style="background:#0f1626">
+          <h2>${esc(id)} · geçmiş</h2>
+          ${tl.length
+            ? `<table><thead><tr><th>Zaman</th><th>Kim</th><th>İşlem</th><th>Detay</th></tr></thead><tbody>
+                ${tl
+                  .slice()
+                  .reverse()
+                  .map((e) => `<tr><td>${new Date(e.at).toLocaleString('tr-TR')}</td><td>${esc(e.by)}</td>
+                    <td class="mono">${esc(e.action)}</td><td>${esc(e.detail ?? '')}</td></tr>`)
+                  .join('')}
+              </tbody></table>`
+            : '<span class="sub">Kayıt yok.</span>'}
+        </div>`;
+      } catch (e) {
+        toast('Geçmiş alınamadı: ' + e.message, 'bad');
+      }
+    });
+
     tr.querySelector('.inc-promote')?.addEventListener('click', async () => {
       try {
         const r = await api(`/api/sessions/${state.activeSession.session_id}/incidents/${id}`, {
@@ -1999,6 +2030,9 @@ function bindKurulumSteps(sid) {
       toast('Kaydedilemedi: ' + e.message, 'bad');
     }
   });
+
+  const repLink = $('#repPdf');
+  if (repLink) repLink.href = `/api/sessions/${sid}/report.pdf`;
 
   $('#expBuild')?.addEventListener('click', async () => {
     try {

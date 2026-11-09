@@ -5,6 +5,33 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.24.0] — 2026-11-09
+
+### Eklendi — olay zaman çizelgesi
+
+- Her olay kaydında `timeline`: kim, ne zaman, hangi işlem (`created`, `updated`, `promoted`,
+  `reporting:<adım>`, `approval_applied`) ve kısa detay
+- Liste API'si `timeline` alanını döner; arayüzde olay satırında **geçmiş** düğmesi ters kronolojik tablo açar
+
+### Eklendi — yönetim raporu (PDF)
+
+- `src/orl/pdf.mjs`: bağımlılıksız PDF yazıcı — A4, Helvetica/Helvetica-Bold, otomatik satır sarma,
+  sayfa sonu, tablo satırları, doğru xref/startxref
+- `src/orl/report.mjs`: oturum özeti → 8 bölüm (kurum, fazlar, olaylar + süreler, gecikmeler, onaylar,
+  kapsama, kanıtlar, not)
+- `GET /api/sessions/:id/report.pdf` — `application/pdf`, dosya adı `dora-rapor-<oturum>.pdf`
+- Arayüz: Kanıt paketi kartında **Yönetim raporu (PDF)** bağlantısı
+
+### Doğrulama
+
+```
+timeline: oluşturma 1 → raporlama işaretleme 2 girdi
+rapor: 200 application/pdf · 3.2 KB · %PDF-1.4 · 1 sayfa · xref tutarlı · başlık metni okundu
+7 + 7 yeni birim testi (toplam 142)
+```
+
+---
+
 ## [1.23.0] — 2026-11-09
 
 ### Eklendi — e-posta bildirimleri
