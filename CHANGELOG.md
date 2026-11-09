@@ -5,6 +5,31 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.20.0] — 2026-11-09
+
+### Eklendi — e-posta (SMTP)
+
+- `src/orl/mailer.mjs`: bağımlılıksız SMTP istemcisi — düz SMTP, **STARTTLS**, örtük TLS (465),
+  `AUTH PLAIN` / `AUTH LOGIN`, UTF-8 base64 gövde, 15 sn zaman aşımı
+- **Giden kutusu** (`web-data/outbox.json`): SMTP kapalı/başarısızsa ileti kuyruğa alınır, elle gönderilir
+- Yönetim → **E-posta (SMTP)** kartı: sunucu, port, gönderen, kullanıcı, parola, SSL, self-signed, test
+- **Hesap daveti**: kullanıcı eklerken veya satırdan "davet gönder" — 30 dk geçerli, tek kullanımlık bağlantı
+- Uçlar: `GET/PUT /api/settings/smtp`, `POST /api/settings/smtp/test`, `GET /api/outbox`,
+  `POST /api/outbox/flush`, `POST /api/outbox/clear`; `reset-link` ve kullanıcı oluşturma `send_email`/`send_invite` kabul eder
+- Sunucuya `--data-dir` / `--sessions-dir` (izole test kurulumu için)
+
+### Doğrulama (yerel sahte SMTP)
+
+```
+smtp ayarı 200 · test iletisi 200 (sent)
+kullanıcı + davet 201 → e-posta gönderildi · bağlantı ile parola 200
+SMTP'ye ulaşan: test iletisi, hesap daveti, parola bağlantısı (3 ileti)
+SMTP kapalı → kuyruk (1) · tekrar aç → flush 1 gönderildi, kuyruk 0
+6 birim testi (başlık/gövde, düz SMTP, AUTH, hatalar, outbox)
+```
+
+---
+
 ## [1.19.0] — 2026-11-09
 
 ### Eklendi — yedekleme ve geri yükleme

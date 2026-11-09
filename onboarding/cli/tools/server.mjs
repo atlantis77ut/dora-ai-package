@@ -23,6 +23,7 @@ import { fetchSiemEvents } from '../src/orl/connectors/siem.mjs';
 import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq, normalizeRules, DEFAULT_KEYWORD_RULES } from '../src/orl/incident.mjs';
 import { buildBundle } from '../src/orl/evidence.mjs';
 import { createResetStore } from '../src/orl/reset.mjs';
+import { sendMail, createOutbox } from '../src/orl/mailer.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
 import { discover, buildAuthUrl, exchangeCode, fetchJwks, verifyIdToken, makeState, verifyState } from '../src/orl/oidc.mjs';
 import { parseInventoryCsv, INVENTORY_CSV_TEMPLATE } from '../src/orl/csv.mjs';
@@ -30,17 +31,27 @@ import crypto from 'node:crypto';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../..');
-const DATA = path.join(ROOT, 'web-data');
-const SESSIONS = path.join(ROOT, '.dora-onboarding');
-const auth = createAuthStore(DATA);
-const resets = createResetStore(path.join(DATA, 'resets.json'), { readJson, writeJson });
+let DATA = process.env.DORA_DATA_DIR ? path.resolve(process.env.DORA_DATA_DIR) : path.join(ROOT, 'web-data');
+let SESSIONS = process.env.DORA_SESSIONS_DIR ? path.resolve(process.env.DORA_SESSIONS_DIR) : path.join(ROOT, '.dora-onboarding');
+let auth;
+let resets;
+let outbox;
 
 const { values } = parseArgs({
   options: {
     port: { type: 'string', default: process.env.PORT ?? '8080' },
     host: { type: 'string', default: process.env.HOST ?? '127.0.0.1' },
+    'data-dir': { type: 'string', default: process.env.DORA_DATA_DIR ?? '' },
+    'sessions-dir': { type: 'string', default: process.env.DORA_SESSIONS_DIR ?? '' },
   },
 });
+if (values['data-dir']) DATA = path.resolve(values['data-dir']);
+if (values['sessions-dir']) SESSIONS = path.resolve(values['sessions-dir']);
+
+auth = createAuthStore(DATA);
+resets = createResetStore(path.join(DATA, 'resets.json'), { readJson, writeJson });
+outbox = createOutbox(path.join(DATA, 'outbox.json'));
+
 const PORT = Number(values.port);
 const HOST = values.host;
 
@@ -362,6 +373,53 @@ function scheduleTick() {
   if (Date.now() - last >= interval) {
     runScheduledFetch({ reason: 'schedule' }).catch(() => {});
   }
+}
+
+function smtpConfig() {
+  const s = loadSettings().smtp ?? {};
+  return {
+    enabled: Boolean(s.enabled && s.host && s.from),
+    host: s.host ?? '',
+    port: Number(s.port) || 587,
+    secure: Boolean(s.secure),
+    allowSelfSigned: Boolean(s.allow_self_signed),
+    user: s.user ?? '',
+    from: s.from ?? '',
+    pass: loadSecrets().smtp_pass ?? '',
+  };
+}
+
+/** Gönderir; olmuyorsa kuyruğa alır. Dönen: { sent, queued, error } */
+async function sendOrQueue({ to, subject, text }) {
+  const cfg = smtpConfig();
+  if (!cfg.enabled) {
+    outbox.enqueue({ to, subject, text });
+    return { sent: false, queued: true, error: 'SMTP yapılandırılmamış — kuyruğa alındı' };
+  }
+  try {
+    await sendMail(cfg, { to, subject, text });
+    return { sent: true, queued: false };
+  } catch (e) {
+    outbox.enqueue({ to, subject, text });
+    return { sent: false, queued: true, error: e.message };
+  }
+}
+
+function inviteText({ username, url, ttlMinutes = 30 }) {
+  return [
+    'Merhaba,',
+    '',
+    'DORA Ajan Paketi kurulumu için bir hesap oluşturuldu.',
+    `Kullanıcı adı: ${username}`,
+    '',
+    'Parolanızı belirlemek için aşağıdaki bağlantıyı açın:',
+    url,
+    '',
+    `Bağlantı ${ttlMinutes} dakika geçerlidir ve tek kullanımlıktır.`,
+    'Bu isteği siz yapmadıysanız yöneticinize bildirin.',
+    '',
+    'DORA Ajan Paketi',
+  ].join('\n');
 }
 
 function parseCookies(req) {
@@ -755,21 +813,41 @@ async function api(req, res, urlPath, method) {
       const r = auth.createUser(body);
       if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
       auth.audit(me.user.username, 'user_create', body.username);
-      return sendJson(res, 201, { ok: true, user: r.user });
+      let email = null;
+      if (body.send_invite) {
+        const inv = resets.issue(r.user.id);
+        email = await sendOrQueue({
+          to: r.user.username,
+          subject: 'DORA Ajan Paketi — hesap daveti',
+          text: inviteText({ username: r.user.username, url: `/app/#reset=${inv.token}` }),
+        });
+      }
+      return sendJson(res, 201, { ok: true, user: r.user, email });
     }
     const rl = urlPath.match(/^\/api\/users\/([\w-]+)\/reset-link$/);
     if (rl && method === 'POST') {
+      const body = await readBody(req);
       const list = auth.users();
       const target = list.find((u) => u.id === rl[1]);
       if (!target) return sendJson(res, 404, { ok: false, error: 'kullanıcı yok' });
       const r = resets.issue(target.id);
+      const url = `/app/#reset=${r.token}`;
+      let mail = null;
+      if (body.send_email) {
+        mail = await sendOrQueue({
+          to: target.username,
+          subject: 'DORA Ajan Paketi — parola bağlantısı',
+          text: inviteText({ username: target.username, url }),
+        });
+      }
       auth.audit(me.user.username, 'reset_link', target.username);
       return sendJson(res, 200, {
         ok: true,
         username: target.username,
         token: r.token,
-        url: `/app/#reset=${r.token}`,
+        url,
         expires_at: r.expires_at,
+        email: mail,
       });
     }
 
@@ -949,6 +1027,74 @@ async function api(req, res, urlPath, method) {
     if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
     const r = await runScheduledFetch({ reason: 'manual' });
     return sendJson(res, r.ok ? 200 : 502, r);
+  }
+
+  if (urlPath === '/api/settings/smtp' && method === 'GET') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const s = loadSettings().smtp ?? {};
+    return sendJson(res, 200, { ...s, password_set: Boolean(loadSecrets().smtp_pass) });
+  }
+
+  if (urlPath === '/api/settings/smtp' && method === 'PUT') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const body = await readBody(req);
+    const s = loadSettings();
+    s.smtp = {
+      enabled: Boolean(body.enabled),
+      host: String(body.host ?? '').slice(0, 200),
+      port: Math.max(1, Math.min(65535, Number(body.port) || 587)),
+      secure: Boolean(body.secure),
+      allow_self_signed: Boolean(body.allow_self_signed),
+      user: String(body.user ?? '').slice(0, 200),
+      from: String(body.from ?? '').slice(0, 200),
+    };
+    saveSettings(s);
+    if (typeof body.password === 'string' && body.password) {
+      const sec = loadSecrets();
+      sec.smtp_pass = body.password;
+      writeJson(path.join(DATA, 'secrets.json'), sec);
+    }
+    auth.audit(me.user.username, 'smtp_update', s.smtp.host);
+    return sendJson(res, 200, { ok: true, smtp: s.smtp });
+  }
+
+  if (urlPath === '/api/settings/smtp/test' && method === 'POST') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const body = await readBody(req);
+    const to = String(body.to ?? '').trim();
+    if (!to) return sendJson(res, 400, { ok: false, error: 'alıcı adresi gerekli' });
+    const r = await sendOrQueue({ to, subject: 'DORA Ajan Paketi — test iletisi', text: 'Bu bir test iletisidir.' });
+    auth.audit(me.user.username, 'smtp_test', to);
+    return sendJson(res, r.sent ? 200 : 502, r);
+  }
+
+  if (urlPath === '/api/outbox' && method === 'GET') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    return sendJson(res, 200, { ok: true, messages: outbox.list() });
+  }
+
+  if (urlPath === '/api/outbox/flush' && method === 'POST') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const cfg = smtpConfig();
+    let sent = 0;
+    const failed = [];
+    for (const m of outbox.list()) {
+      try {
+        await sendMail(cfg, { to: m.to, subject: m.subject, text: m.text });
+        outbox.remove(m.id);
+        sent++;
+      } catch (e) {
+        outbox.markFailed(m.id, e.message);
+        failed.push({ id: m.id, error: e.message });
+      }
+    }
+    return sendJson(res, 200, { ok: true, sent, failed: failed.length, details: failed.slice(0, 5) });
+  }
+
+  if (urlPath === '/api/outbox/clear' && method === 'POST') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    outbox.clear();
+    return sendJson(res, 200, { ok: true });
   }
 
   // kurum profili
@@ -1668,7 +1814,7 @@ server.listen(PORT, HOST, () => {
   console.log(`  panel     : /app/`);
   console.log(`  dashboard : /dashboard/`);
   console.log(`  api       : /api/state`);
-  console.log(`  veri      : web-data/`);
+  console.log(`  veri      : ${DATA}`);
 });
 
 const schedTimer = setInterval(scheduleTick, 30_000);

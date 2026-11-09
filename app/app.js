@@ -528,7 +528,10 @@ function viewYonetim() {
         <div><label class="sub">Parola</label><input id="uPass" type="password" placeholder="en az 8"></div>
         <div><label class="sub">Rol</label><select id="uRole"><option value="user">Kullanıcı</option><option value="admin">Yönetici</option></select></div>
       </div>
-      <div class="actions"><button class="primary" id="uAdd">Kullanıcı ekle</button></div>
+      <div class="actions">
+        <button class="primary" id="uAdd">Kullanıcı ekle</button>
+        <label class="sub"><input type="checkbox" id="uInvite" style="width:auto"> davet e-postası gönder</label>
+      </div>
     </div>
     <div class="card">
       <h2>Kurumsal giriş (SSO / OIDC)</h2>
@@ -546,6 +549,32 @@ function viewYonetim() {
         <label class="sub"><input type="checkbox" id="oidcAuto" style="width:auto"> Bilinmeyen kullanıcıyı otomatik aç (rol: kullanıcı)</label>
         <button class="primary" id="oidcSave">Kaydet</button>
         <span class="sub" id="oidcMsg"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>E-posta (SMTP)</h2>
+      <p class="sub">Davet, parola bağlantısı ve bildirim gönderimi. Parola <code>web-data/secrets.json</code> içinde tutulur.</p>
+      <div class="grid k3">
+        <div><label class="sub">Sunucu</label><input id="smtpHost" placeholder="smtp.ornek.local"></div>
+        <div><label class="sub">Port</label><input id="smtpPort" type="number" value="587"></div>
+        <div><label class="sub">Gönderen</label><input id="smtpFrom" placeholder="dora@ornek.local"></div>
+      </div>
+      <div class="grid k3" style="margin-top:10px">
+        <div><label class="sub">Kullanıcı</label><input id="smtpUser" placeholder="kullanici@ornek.local"></div>
+        <div><label class="sub">Parola</label><input id="smtpPass" type="password" placeholder="boş bırakılırsa değişmez"></div>
+        <div><label class="sub">Seçenekler</label>
+          <label class="sub"><input type="checkbox" id="smtpSecure" style="width:auto"> SSL (465)</label>
+          <label class="sub"><input type="checkbox" id="smtpSelf" style="width:auto"> self-signed kabul</label>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="sub"><input type="checkbox" id="smtpOn" style="width:auto"> Etkin</label>
+        <button class="primary" id="smtpSave">Kaydet</button>
+        <input id="smtpTestTo" placeholder="test@ornek.local" style="max-width:220px">
+        <button class="ghost-btn" id="smtpTest">Test gönder</button>
+        <button class="ghost-btn" id="smtpFlush">Kuyruğu gönder</button>
+        <span class="sub" id="smtpMsg"></span>
       </div>
     </div>
 
@@ -820,6 +849,60 @@ async function loadArtifacts() {
 function bindYonetim() {
   loadUsers();
   loadAudit();
+  api('/api/settings/smtp')
+    .then((s) => {
+      if ($('#smtpHost')) $('#smtpHost').value = s.host ?? '';
+      if ($('#smtpPort')) $('#smtpPort').value = s.port ?? 587;
+      if ($('#smtpFrom')) $('#smtpFrom').value = s.from ?? '';
+      if ($('#smtpUser')) $('#smtpUser').value = s.user ?? '';
+      if ($('#smtpOn')) $('#smtpOn').checked = Boolean(s.enabled);
+      if ($('#smtpSecure')) $('#smtpSecure').checked = Boolean(s.secure);
+      if ($('#smtpSelf')) $('#smtpSelf').checked = Boolean(s.allow_self_signed);
+    })
+    .catch(() => {});
+
+  $('#smtpSave')?.addEventListener('click', async () => {
+    try {
+      await api('/api/settings/smtp', {
+        method: 'PUT',
+        body: JSON.stringify({
+          enabled: $('#smtpOn').checked,
+          host: $('#smtpHost').value.trim(),
+          port: Number($('#smtpPort').value),
+          from: $('#smtpFrom').value.trim(),
+          user: $('#smtpUser').value.trim(),
+          password: $('#smtpPass').value || undefined,
+          secure: $('#smtpSecure').checked,
+          allow_self_signed: $('#smtpSelf').checked,
+        }),
+      });
+      toast('SMTP ayarları kaydedildi', 'ok');
+      loadAudit();
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#smtpTest')?.addEventListener('click', async () => {
+    const to = $('#smtpTestTo').value.trim();
+    if (!to) return toast('Alıcı adresi girin', 'bad');
+    try {
+      const r = await api('/api/settings/smtp/test', { method: 'POST', body: JSON.stringify({ to }) });
+      toast(r.sent ? 'Test iletisi gönderildi' : 'Kuyruğa alındı: ' + r.error, r.sent ? 'ok' : 'bad');
+    } catch (e) {
+      toast('Gönderilemedi: ' + e.message, 'bad');
+    }
+  });
+
+  $('#smtpFlush')?.addEventListener('click', async () => {
+    try {
+      const r = await api('/api/outbox/flush', { method: 'POST', body: '{}' });
+      toast(`Kuyruk: ${r.sent} gönderildi · ${r.failed} başarısız`, r.failed ? 'bad' : 'ok');
+    } catch (e) {
+      toast('Kuyruk gönderilemedi: ' + e.message, 'bad');
+    }
+  });
+
   api('/api/settings/oidc')
     .then((c) => {
       if ($('#oidcIssuer')) $('#oidcIssuer').value = c.issuer ?? '';
@@ -863,7 +946,13 @@ function bindYonetim() {
     try {
       await api('/api/users', {
         method: 'POST',
-        body: JSON.stringify({ username: $('#uName').value, name: $('#uFull').value, password: $('#uPass').value, role: $('#uRole').value }),
+        body: JSON.stringify({
+          username: $('#uName').value,
+          name: $('#uFull').value,
+          password: $('#uPass').value,
+          role: $('#uRole').value,
+          send_invite: $('#uInvite')?.checked ?? false,
+        }),
       });
       toast('Kullanıcı eklendi', 'ok');
       $('#uName').value = $('#uFull').value = $('#uPass').value = '';
@@ -892,6 +981,7 @@ async function loadUsers() {
           ? '<span class="sub">siz</span>'
           : `<button class="ghost-btn u-pw" data-id="${esc(u.id)}" data-name="${esc(u.username)}">parola sıfırla</button>
              <button class="ghost-btn u-link" data-id="${esc(u.id)}" data-name="${esc(u.username)}">sıfırlama bağlantısı</button>
+             <button class="ghost-btn u-invite" data-id="${esc(u.id)}" data-name="${esc(u.username)}">davet gönder</button>
              <button class="ghost-btn u-del" data-id="${esc(u.id)}">sil</button>`}</td></tr>`,
       )
       .join('');
@@ -905,6 +995,22 @@ async function loadUsers() {
         } catch (e) {
           toast('Rol değiştirilemedi: ' + e.message, 'bad');
           loadUsers();
+        }
+      }),
+    );
+    document.querySelectorAll('.u-invite').forEach((b) =>
+      b.addEventListener('click', async () => {
+        try {
+          const r = await api('/api/users/' + b.dataset.id + '/reset-link', {
+            method: 'POST',
+            body: JSON.stringify({ send_email: true }),
+          });
+          if (r.email?.sent) toast('Davet e-postası gönderildi', 'ok');
+          else toast('E-posta gönderilemedi: ' + (r.email?.error ?? 'bilinmeyen') + ' — bağlantı panoya kopyalandı', 'bad');
+          if (r.url) await navigator.clipboard?.writeText(location.origin + r.url).catch(() => {});
+          loadAudit();
+        } catch (e) {
+          toast('Davet gönderilemedi: ' + e.message, 'bad');
         }
       }),
     );

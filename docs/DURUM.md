@@ -1221,3 +1221,37 @@ saklama sayısı, boş kurulum hatası, uçtan uca geri yükleme.
 
 - Yedek **şifrelenmiyor** (düz zip); şifreli disk/kasa gerekiyor
 - Tatbikat henüz üç aylık takvime bağlanmadı
+
+---
+
+## 42. E-posta (SMTP) — 1.20.0 (2026-11-09)
+
+| Parça | Dosya |
+|---|---|
+| SMTP istemcisi | `src/orl/mailer.mjs` (düz, STARTTLS, TLS 465, AUTH PLAIN/LOGIN) |
+| Giden kutusu | `web-data/outbox.json` (en fazla 200 ileti, deneme sayacı) |
+| Arayüz | Yönetim → E-posta (SMTP) + kullanıcı satırında "davet gönder" |
+| Belge | `docs/EPOSTA.md` (sağlayıcı örnekleri, sorun giderme, güvenlik) |
+
+### Akış
+
+```
+kullanıcı ekle → davet token'ı (30 dk, tek kullanım) → e-posta
+SMTP yok/başarısız → outbox → "Kuyruğu gönder"
+bağlantı her durumda ekranda gösterilir ve panoya kopyalanır
+```
+
+### Doğrulama
+
+```
+yerel sahte SMTP: 3 ileti (test, davet, parola bağlantısı)
+davet bağlantısı ile parola belirleme: 200
+kuyruk: SMTP kapalı → 1 ileti · açılınca flush → 1 gönderildi, 0 kaldı
+6 birim testi eklendi (toplam 103)
+```
+
+### Sınırlar
+
+- Gelen e-posta (IMAP/POP3) yok; ek dosya yok; şablon düzenleyici yok
+- Otomatik yeniden deneme yok (elle flush); SPF/DKIM mail altyapısının işi
+- TLS yolu (STARTTLS/465) kodda var ama **sertifikalı gerçek sunucuyla test edilmedi**
