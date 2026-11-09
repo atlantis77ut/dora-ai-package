@@ -5,6 +5,29 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.21.0] — 2026-11-09
+
+### Eklendi — dört göz onay akışı
+
+- `src/orl/approvals.mjs`: talep deposu; **kendi talebini onaylama engeli**, tek karar, tür doğrulama
+- Yönetim → **Onay akışı** kartı: aç/kapat, bekleyen talepler, onayla/reddet
+- `two_person` açıkken şu işlemler **ikinci yöneticinin onayına** gider (202 döner):
+  olay sınıflandırması / aktif kayda yükseltme, canlıya geçiş kaydı
+- Onaylanınca saklanan `payload` uygulanır: `incident-update`, `go-live`, `assessment-accept`
+- Uçlar: `GET/PUT /api/settings/approvals`, `GET/POST /api/sessions/:id/approvals`,
+  `POST /api/sessions/:id/approvals/:id` (karar)
+
+### Doğrulama (iki yönetici, izole kurulum)
+
+```
+talep 201 (apr-…) · talep eden kendi onayladı → 400 (dört göz kuralı)
+ikinci yönetici onayladı → 200 · uygulandı → go-live.json (14g/30g/pano)
+bekleyen 0 · toplam 1
+7 birim testi eklendi (toplam 110)
+```
+
+---
+
 ## [1.20.0] — 2026-11-09
 
 ### Eklendi — e-posta (SMTP)

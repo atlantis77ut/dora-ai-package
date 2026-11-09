@@ -553,6 +553,18 @@ function viewYonetim() {
     </div>
 
     <div class="card">
+      <h2>Onay akışı (dört göz)</h2>
+      <p class="sub">Açıkken olay sınıflandırması ve canlıya geçiş <b>ikinci bir yöneticinin</b> onayına gider.
+        Talebi oluşturan kişi kendi talebini onaylayamaz.</p>
+      <div class="actions">
+        <label class="sub"><input type="checkbox" id="aprOn" style="width:auto"> Etkin</label>
+        <button class="primary" id="aprSave">Kaydet</button>
+        <button class="ghost-btn" id="aprRefresh">Yenile</button>
+      </div>
+      <div id="aprList" class="sub" style="margin-top:12px">yükleniyor…</div>
+    </div>
+
+    <div class="card">
       <h2>E-posta (SMTP)</h2>
       <p class="sub">Davet, parola bağlantısı ve bildirim gönderimi. Parola <code>web-data/secrets.json</code> içinde tutulur.</p>
       <div class="grid k3">
@@ -849,6 +861,19 @@ async function loadArtifacts() {
 function bindYonetim() {
   loadUsers();
   loadAudit();
+  loadApprovals();
+
+  $('#aprSave')?.addEventListener('click', async () => {
+    try {
+      const r = await api('/api/settings/approvals', { method: 'PUT', body: JSON.stringify({ two_person: $('#aprOn').checked }) });
+      toast(r.two_person ? 'Dört göz onayı açık' : 'Dört göz onayı kapalı', 'ok');
+      loadAudit();
+    } catch (e) {
+      toast('Kaydedilemedi: ' + e.message, 'bad');
+    }
+  });
+  $('#aprRefresh')?.addEventListener('click', loadApprovals);
+
   api('/api/settings/smtp')
     .then((s) => {
       if ($('#smtpHost')) $('#smtpHost').value = s.host ?? '';
@@ -962,6 +987,54 @@ function bindYonetim() {
       toast('Eklenemedi: ' + e.message, 'bad');
     }
   });
+}
+
+async function loadApprovals() {
+  const box = $('#aprList');
+  const sid = state.activeSession?.session_id;
+  if (!box || !sid) return;
+  try {
+    const s = await api('/api/settings/approvals');
+    if ($('#aprOn')) $('#aprOn').checked = Boolean(s.two_person);
+    const r = await api(`/api/sessions/${sid}/approvals`);
+    const pending = r.pending ?? [];
+    box.innerHTML = pending.length
+      ? `<table><thead><tr><th>Talep</th><th>Hedef</th><th>Talep eden</th><th>Zaman</th><th></th></tr></thead><tbody>
+          ${pending
+            .map(
+              (a) => `<tr data-id="${esc(a.id)}">
+                <td>${esc(a.type)}</td>
+                <td class="mono">${esc(a.target)}</td>
+                <td>${esc(a.requested_by)}</td>
+                <td>${new Date(a.requested_at).toLocaleString('tr-TR')}</td>
+                <td><button class="ghost-btn apr-ok">onayla</button>
+                    <button class="ghost-btn apr-no">reddet</button></td>
+              </tr>`,
+            )
+            .join('')}
+        </tbody></table>`
+      : '<span class="sub">Bekleyen talep yok.</span>';
+
+    box.querySelectorAll('tr[data-id]').forEach((tr) => {
+      const decide = async (decision) => {
+        try {
+          await api(`/api/sessions/${sid}/approvals/${tr.dataset.id}`, {
+            method: 'POST',
+            body: JSON.stringify({ decision }),
+          });
+          toast(decision === 'approved' ? 'Talep onaylandı ve uygulandı' : 'Talep reddedildi', 'ok');
+          loadApprovals();
+          loadAudit();
+        } catch (e) {
+          toast('Karar verilemedi: ' + e.message, 'bad');
+        }
+      };
+      tr.querySelector('.apr-ok')?.addEventListener('click', () => decide('approved'));
+      tr.querySelector('.apr-no')?.addEventListener('click', () => decide('rejected'));
+    });
+  } catch (e) {
+    box.textContent = 'Talepler yüklenemedi: ' + e.message;
+  }
 }
 
 async function loadUsers() {
@@ -1666,11 +1739,15 @@ function renderIncidents(list) {
     });
     tr.querySelector('.inc-promote')?.addEventListener('click', async () => {
       try {
-        await api(`/api/sessions/${state.activeSession.session_id}/incidents/${id}`, {
+        const r = await api(`/api/sessions/${state.activeSession.session_id}/incidents/${id}`, {
           method: 'PATCH',
           body: JSON.stringify({ ...collect(), promote: true }),
         });
-        toast('Aktif olay kaydı oluşturuldu', 'ok');
+        if (r.pending) {
+          toast('Dört göz onayı için gönderildi (Yönetim → Onay akışı)', 'ok');
+        } else {
+          toast('Aktif olay kaydı oluşturuldu', 'ok');
+        }
         loadIncidents();
       } catch (e) {
         toast('Yükseltilemedi: ' + e.message, 'bad');

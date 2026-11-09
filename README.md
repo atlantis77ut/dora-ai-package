@@ -141,6 +141,7 @@ node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
 
 - **Kurulum sihirbazı (6 adım)**: hizmetler → toleranslar → varlık/sorumlu eşlemesi → senaryo
   testleri → öz değerlendirme → canlıya geçiş + lisans etkinleştirme → **imzalı kanıt paketi (zip)**
+- **Dört göz onayı**: sınıflandırma ve canlıya geçiş ikinci yöneticinin onayına gider
 - **Yönetici**: teknik panel (`/dashboard/`), kanıtlar, kullanıcı yönetimi, işlem kaydı,
   parola sıfırlama bağlantısı, oturum süresi, SSO ayarları
 - **Güvenlik**: iki adımlı doğrulama (TOTP) + kurtarma kodları, kurumsal giriş (OIDC)

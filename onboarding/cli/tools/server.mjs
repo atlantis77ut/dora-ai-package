@@ -23,6 +23,7 @@ import { fetchSiemEvents } from '../src/orl/connectors/siem.mjs';
 import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq, normalizeRules, DEFAULT_KEYWORD_RULES } from '../src/orl/incident.mjs';
 import { buildBundle } from '../src/orl/evidence.mjs';
 import { createResetStore } from '../src/orl/reset.mjs';
+import { createApprovalStore } from '../src/orl/approvals.mjs';
 import { sendMail, createOutbox } from '../src/orl/mailer.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
 import { discover, buildAuthUrl, exchangeCode, fetchJwks, verifyIdToken, makeState, verifyState } from '../src/orl/oidc.mjs';
@@ -420,6 +421,71 @@ function inviteText({ username, url, ttlMinutes = 30 }) {
     '',
     'DORA Ajan Paketi',
   ].join('\n');
+}
+
+function approvalStore(dir) {
+  return createApprovalStore(path.join(dir, 'approvals.json'), { readJson, writeJson });
+}
+
+function twoPersonEnabled() {
+  return Boolean(loadSettings().approvals?.two_person);
+}
+
+/** Onaylanan olay güncellemesini uygular (PATCH ile aynı kurallar). */
+function applyIncidentUpdate(dir, payload) {
+  const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
+  const list = stored.incidents ?? [];
+  const inc = list.find((x) => x.incident_id === payload.incident_id);
+  if (!inc) return { ok: false, error: 'olay kaydı yok' };
+  const num = (v) => (v === null || v === undefined || v === '' ? null : Math.max(0, Number(v) || 0));
+  for (const k of ['affected_customers', 'outage_minutes', 'economic_impact_eur']) {
+    if (k in payload) inc[k] = num(payload[k]);
+  }
+  if ('data_loss' in payload) inc.data_loss = Boolean(payload.data_loss);
+  if ('unauthorized_access' in payload) inc.unauthorized_access = Boolean(payload.unauthorized_access);
+  if (['unclassified', 'major', 'not_major'].includes(payload.classification)) inc.classification = payload.classification;
+  inc.updated_at = new Date().toISOString();
+  if (payload.promote === true) {
+    writeJson(path.join(dir, 'incident-record.json'), {
+      incident_id: inc.incident_id,
+      detected_at: inc.detected_at,
+      source: inc.origin ?? 'siem',
+      siem_event_id: inc.siem_event_id,
+      classification: inc.classification,
+      affected_customers: inc.affected_customers,
+      outage_minutes: inc.outage_minutes,
+      economic_impact_eur: inc.economic_impact_eur,
+      data_loss: inc.data_loss,
+      unauthorized_access: inc.unauthorized_access,
+      affected_member_states: inc.affected_member_states,
+      promoted_at: new Date().toISOString(),
+    });
+    inc.status = 'open';
+  }
+  writeJson(path.join(dir, 'incidents.json'), { incidents: list, updated_at: inc.updated_at });
+  return { ok: true, incident: inc };
+}
+
+function applyGoLive(dir, payload) {
+  const record = {
+    shadow_days: Math.max(0, Number(payload.shadow_days) || 0),
+    semi_auto_days: Math.max(0, Number(payload.semi_auto_days) || 0),
+    mos_dashboard: Boolean(payload.mos_dashboard),
+    regwatch_agent: Boolean(payload.regwatch_agent),
+    annual_review_date: String(payload.annual_review_date ?? '').slice(0, 10),
+    decided_at: new Date().toISOString(),
+  };
+  writeJson(path.join(dir, 'go-live.json'), record);
+  return { ok: true, record };
+}
+
+function applyAssessmentAccept(dir, payload) {
+  const file = path.join(dir, 'gap-analysis.json');
+  const doc = readJson(file, { high_severity: 0, risk_acceptance: [] });
+  doc.risk_acceptance = [...(doc.risk_acceptance ?? []), ...(payload.risks ?? []).map((r) => String(r).slice(0, 200))];
+  doc.updated_at = new Date().toISOString();
+  writeJson(file, doc);
+  return { ok: true, risk_acceptance: doc.risk_acceptance };
 }
 
 function parseCookies(req) {
@@ -1097,6 +1163,21 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { ok: true });
   }
 
+  if (urlPath === '/api/settings/approvals' && method === 'GET') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    return sendJson(res, 200, { ok: true, ...(loadSettings().approvals ?? { two_person: false }) });
+  }
+
+  if (urlPath === '/api/settings/approvals' && method === 'PUT') {
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
+    const body = await readBody(req);
+    const s = loadSettings();
+    s.approvals = { two_person: Boolean(body.two_person) };
+    saveSettings(s);
+    auth.audit(me.user.username, 'approvals_update', s.approvals.two_person ? 'açık' : 'kapalı');
+    return sendJson(res, 200, { ok: true, ...s.approvals });
+  }
+
   // kurum profili
   if (urlPath === '/api/institution' && method === 'PUT') {
     const body = await readBody(req);
@@ -1173,7 +1254,7 @@ async function api(req, res, urlPath, method) {
     return sendJson(res, 200, { sessions: listSessions() });
   }
 
-  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem|incidents)(?:\/([\w.-]+))?)?$/);
+  const sessMatch = urlPath.match(/^\/api\/sessions\/([a-zA-Z0-9._-]+)(?:\/(artifacts|agents|inventory|gate|services|tolerances|mapping|scenarios|assessment|autonomy|golive|license|export|siem|incidents|approvals)(?:\/([\w.-]+))?)?$/);
   if (sessMatch) {
     const id = sessMatch[1];
     const kind = sessMatch[2];
@@ -1239,6 +1320,48 @@ async function api(req, res, urlPath, method) {
       return res.end(buf);
     }
 
+    if (kind === 'approvals' && method === 'GET') {
+      const st = approvalStore(dir);
+      return sendJson(res, 200, {
+        ok: true,
+        two_person: twoPersonEnabled(),
+        pending: st.pending(),
+        approvals: st.list(),
+      });
+    }
+
+    if (kind === 'approvals' && method === 'POST' && !artifact) {
+      const body = await readBody(req);
+      const st = approvalStore(dir);
+      const r = st.request({
+        type: body.type,
+        target: body.target,
+        payload: body.payload,
+        by: me.user.username,
+        comment: body.comment,
+      });
+      if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+      auth.audit(me.user.username, 'approval_request', `${body.type}:${body.target}`);
+      return sendJson(res, 201, { ok: true, approval: r.approval });
+    }
+
+    if (kind === 'approvals' && method === 'POST' && artifact) {
+      if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'karar için yönetici yetkisi gerekli' });
+      const body = await readBody(req);
+      const st = approvalStore(dir);
+      const r = st.decide(artifact, { decision: body.decision, by: me.user.username, comment: body.comment });
+      if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+
+      let applied = null;
+      if (r.approval.status === 'approved') {
+        if (r.approval.type === 'incident_update') applied = applyIncidentUpdate(dir, r.approval.payload);
+        else if (r.approval.type === 'go_live') applied = applyGoLive(dir, r.approval.payload);
+        else if (r.approval.type === 'assessment_accept') applied = applyAssessmentAccept(dir, r.approval.payload);
+      }
+      auth.audit(me.user.username, 'approval_decision', `${r.approval.id}:${r.approval.status}`);
+      return sendJson(res, 200, { ok: true, approval: r.approval, applied });
+    }
+
     if (kind === 'incidents' && method === 'GET') {
       const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
       return sendJson(res, 200, { ok: true, incidents: stored.incidents ?? [] });
@@ -1274,6 +1397,19 @@ async function api(req, res, urlPath, method) {
 
     if (kind === 'incidents' && method === 'PATCH' && artifact) {
       const body = await readBody(req);
+      if (twoPersonEnabled() && (body.promote === true || 'classification' in body)) {
+        const st = approvalStore(dir);
+        const r = st.request({
+          type: 'incident_update',
+          target: artifact,
+          payload: { incident_id: artifact, ...body },
+          by: me.user.username,
+          comment: body.comment ?? 'olay kaydı güncellemesi',
+        });
+        if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+        auth.audit(me.user.username, 'approval_request', 'incident_update:' + artifact);
+        return sendJson(res, 202, { ok: true, pending: true, approval: r.approval });
+      }
       const stored = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
       const list = stored.incidents ?? [];
       const inc = list.find((x) => x.incident_id === artifact);
@@ -1440,6 +1576,12 @@ async function api(req, res, urlPath, method) {
 
     if (kind === 'golive' && method === 'POST') {
       const body = await readBody(req);
+      if (twoPersonEnabled()) {
+        const st = approvalStore(dir);
+        const r = st.request({ type: 'go_live', target: id, payload: body, by: me.user.username, comment: 'canlıya geçiş' });
+        if (!r.ok) return sendJson(res, 400, { ok: false, error: r.error });
+        return sendJson(res, 202, { ok: true, pending: true, approval: r.approval });
+      }
       const payload = {
         shadow_days: Math.max(0, Number(body.shadow_days) || 0),
         semi_auto_days: Math.max(0, Number(body.semi_auto_days) || 0),

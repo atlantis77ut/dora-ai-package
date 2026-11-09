@@ -1255,3 +1255,45 @@ kuyruk: SMTP kapalı → 1 ileti · açılınca flush → 1 gönderildi, 0 kald�
 - Gelen e-posta (IMAP/POP3) yok; ek dosya yok; şablon düzenleyici yok
 - Otomatik yeniden deneme yok (elle flush); SPF/DKIM mail altyapısının işi
 - TLS yolu (STARTTLS/465) kodda var ama **sertifikalı gerçek sunucuyla test edilmedi**
+
+---
+
+## 43. Dört göz onay akışı — 1.21.0 (2026-11-09)
+
+| Parça | Dosya / uç |
+|---|---|
+| Talep deposu | `src/orl/approvals.mjs` · `<oturum>/approvals.json` |
+| Ayar | `PUT /api/settings/approvals {two_person}` |
+| Talep | `POST /api/sessions/:id/approvals` |
+| Karar | `POST /api/sessions/:id/approvals/:id {decision}` |
+
+### Kurallar
+
+- **Kendi talebini onaylayamaz** (aynı kullanıcı → 400)
+- Karar yalnız **yönetici** tarafından verilir (403)
+- Talep bir kez karara bağlanır (ikinci karar 400)
+- Onaylanınca `payload` uygulanır: `incident_update`, `go_live`, `assessment_accept`
+- Reddedilen talep hiçbir şeyi değiştirmez
+
+### Zorunlu kılınan işlemler (two_person açıkken)
+
+| İşlem | Davranış |
+|---|---|
+| Olay sınıflandırması (`classification`) | 202 + onay talebi |
+| Aktif olay kaydı (`promote`) | 202 + onay talebi |
+| Canlıya geçiş (`POST /golive`) | 202 + onay talebi |
+| Kapsama/risk kabulü | API ile talep edilebilir (`assessment_accept`) |
+
+### Doğrulama
+
+```
+iki yönetici: talep 201 → kendi onayı 400 → ikinci onay 200 → go-live.json yazıldı
+bekleyen 0 · toplam 1 · birim 110/110
+```
+
+### Sınırlar
+
+- Varsayılan **kapalı** (`two_person: false`) — tek yöneticili kurulumda kilitlenme olmasın
+- Bekleyen talep için **e-posta bildirimi yok** (SMTP altyapısı hazır, bağlanmadı)
+- Onay süresi/eskime yok; talep süresiz bekler
+- Arayüzde yalnız olay ve go-live akışı bağlı; `assessment_accept` API'den kullanılabilir
