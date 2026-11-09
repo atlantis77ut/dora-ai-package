@@ -711,3 +711,42 @@ Sözlük (60) · DORA eşlemesi (28) · Veri kaynakları.
 ### Doğrulama
 
 Dört yeni sayfa sunucudan 200 döndü; `site/dashboard/` kopyası da güncellendi (9 dosya).
+
+---
+
+## 27. Uygulama arayüzü — 1.6.0 (2026-11-09)
+
+Paket artık salt-okunur rapor değil: kurum kendi verisini tarayıcıdan giriyor.
+
+| Sayfa | Ne yapar | Nereye yazar |
+|---|---|---|
+| Genel bakış | KPI, faz durumu, oturum listesi, oturum oluşturma | `.dora-onboarding/<id>/session.json` |
+| Kurum profili | ad, tier, regülatör, yargı alanı, lisanslar | `web-data/settings.json` |
+| Entegrasyonlar | SIEM/ITSM/GRC/CMDB: ürün, endpoint, auth, token, bağlantı testi | `settings.json` + `secrets.json` |
+| Envanter | CSV yapıştır → varlık listesi | `<oturum>/ict-inventory.json` |
+| Ajanlar | 11 rol için aktivasyon + insan muadili | `<oturum>/agent-activation.json` |
+| Kanıtlar | artefakt listesi + JSON görüntüleme | okuma |
+
+### API
+
+`/api/state`, `/api/institution`, `/api/integrations/:id`, `/api/integrations/:id/test`,
+`/api/sessions`, `/api/sessions/:id`, `/api/sessions/:id/artifacts/:name`,
+`/api/sessions/:id/agents`, `/api/sessions/:id/inventory`, `/api/catalog/roles`, `/api/lifecycle`.
+
+### Güvenlik kararları
+
+1. API anahtarları ayrı dosyada (`web-data/secrets.json`, `0600`) ve arayüze **dönmez**;
+   yalnızca `has_token` bayrağı görünür.
+2. Sunucu varsayılan `127.0.0.1`; ağa açmak bilinçli tercih.
+3. `/api/*` kimlik doğrulaması yok — yerel tek kullanıcı varsayımı. Ağa açılacaksa ters vekil
+   arkasında auth gerekir; `docs/KURULUM-UBUNTU.md`'de not edildi.
+4. `web-data/` `.gitignore`'da; systemd unit'i yalnız bu dizin ve `.dora-onboarding` için yazma izni verir.
+
+### Doğrulama (gerçek HTTP)
+
+- `PUT /api/institution` → 200, Türkçe karakterler korunuyor (Node fetch ile doğrulandı)
+- `POST /api/sessions` → 201, oturum dizini oluştu
+- `POST …/inventory` → 200, 2 varlık, tedarikçi sayımı üretildi
+- `POST …/agents` → 200, 4 bağımsızlık kontrolü PASS kaydı
+- `POST /api/integrations/siem/test` → 422 (ulaşılamaz uç), hata durumu kaydedildi
+- Token yanıtta yok; `secrets.json` diskte 0600

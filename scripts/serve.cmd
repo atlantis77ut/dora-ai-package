@@ -22,12 +22,13 @@ if errorlevel 1 (
 )
 
 echo DORA AI Ajan Paketi baslatiliyor...
-echo   http://127.0.0.1:%PORT%/dashboard/
+echo   Uygulama  : http://127.0.0.1:%PORT%/app/
+echo   Dashboard : http://127.0.0.1:%PORT%/dashboard/
 echo.
 echo Kapatmak icin bu pencerede Ctrl+C, sonra "Durdurulsun mu?" sorusuna Y.
 echo.
 
 rem Tarayiciyi 2 saniye sonra ac (sunucu ayaga kalksin)
-start "" /min cmd /c "timeout /t 2 >nul & start "" http://127.0.0.1:%PORT%/dashboard/"
+start "" /min cmd /c "timeout /t 2 >nul & start "" http://127.0.0.1:%PORT%/app/"
 
-"%NODE%" onboarding\cli\tools\serve.mjs --port %PORT% --host 127.0.0.1
+"%NODE%" onboarding\cli\tools\server.mjs --port %PORT% --host 127.0.0.1

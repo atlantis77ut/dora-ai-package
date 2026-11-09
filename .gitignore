@@ -16,5 +16,6 @@ coverage/
 .DS_Store
 *.swp
 
+web-data/
 onboarding/license/dev-private.pem
 *.key

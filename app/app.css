@@ -1,0 +1,182 @@
+:root {
+  --bg: #0a0e18;
+  --panel: #121a2b;
+  --panel-2: #0f1626;
+  --line: #223049;
+  --line-soft: #1a2438;
+  --fg: #e9eefb;
+  --muted: #93a3c4;
+  --dim: #6b7c9e;
+  --accent: #5b9cff;
+  --accent-2: #8b7bff;
+  --ok: #3ddc97;
+  --warn: #ffc04d;
+  --bad: #ff6b6b;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: radial-gradient(1100px 500px at 15% -10%, #16213c 0%, var(--bg) 55%);
+  color: var(--fg);
+  font: 14px/1.55 "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+
+/* ── sidebar ─────────────────────────────────────────── */
+.side {
+  border-right: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(19, 27, 45, 0.9), rgba(10, 14, 24, 0.9));
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.brand { display: flex; align-items: center; gap: 11px; padding: 0 6px; }
+.logo {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: grid; place-items: center; font-weight: 800; color: #08101f;
+}
+.brand b { display: block; font-size: 13.5px; letter-spacing: .2px; }
+.brand span { color: var(--dim); font-size: 11.5px; }
+
+.nav { display: flex; flex-direction: column; gap: 4px; }
+.nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 11px; border-radius: 10px;
+  color: var(--muted); text-decoration: none; font-size: 13.5px;
+  border: 1px solid transparent;
+}
+.nav a:hover { color: var(--fg); background: #16203a; }
+.nav a.on { color: var(--fg); background: #182343; border-color: #2a3a63; }
+.nav a::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; opacity: .45;
+}
+.nav a.on::before { opacity: 1; background: var(--accent); }
+
+.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+.ghost {
+  color: var(--accent); text-decoration: none; font-size: 12.5px;
+  border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; text-align: center;
+}
+.ghost:hover { background: #16203a; }
+.hint { color: var(--dim); font-size: 11px; line-height: 1.5; padding: 0 4px; }
+code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11.5px; color: #a9c2ff; }
+
+/* ── main ────────────────────────────────────────────── */
+.main { padding: 26px 32px 48px; max-width: 1120px; }
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+.top h1 { font-size: 21px; margin: 0 0 3px; letter-spacing: .2px; }
+.sub { color: var(--muted); font-size: 12.5px; margin: 0; }
+.top-right { display: flex; gap: 8px; align-items: center; }
+
+.pill {
+  border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px;
+  font-size: 11.5px; color: var(--muted); white-space: nowrap;
+}
+.pill.muted { color: var(--dim); }
+.pill.ok { color: var(--ok); border-color: #1d5343; background: #0f2a23; }
+.pill.warn { color: var(--warn); border-color: #5a4614; background: #241d0c; }
+.pill.bad { color: var(--bad); border-color: #5b2626; background: #241012; }
+
+.view { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── kartlar ─────────────────────────────────────────── */
+.card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.card h2 { font-size: 14px; margin: 0 0 4px; }
+.card h2 + .sub { margin-bottom: 14px; }
+.grid { display: grid; gap: 14px; }
+.grid.k4 { grid-template-columns: repeat(4, 1fr); }
+.grid.k3 { grid-template-columns: repeat(3, 1fr); }
+.grid.k2 { grid-template-columns: repeat(2, 1fr); }
+
+.stat { background: var(--panel-2); border: 1px solid var(--line-soft); border-radius: 12px; padding: 14px 16px; }
+.stat .n { font-size: 24px; font-weight: 650; }
+.stat .l { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .5px; }
+.stat .h { color: var(--dim); font-size: 11.5px; margin-top: 2px; }
+
+/* ── form ────────────────────────────────────────────── */
+.row { display: grid; grid-template-columns: 200px 1fr; gap: 14px; align-items: center; margin: 10px 0; }
+.row > label { color: var(--muted); font-size: 12.5px; }
+.row .help { grid-column: 2; color: var(--dim); font-size: 11.5px; margin-top: -6px; }
+
+input, select, textarea {
+  width: 100%; background: #0c1322; color: var(--fg);
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 11px; font: inherit; font-size: 13px;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: #3b5aa0; box-shadow: 0 0 0 3px rgba(91, 156, 255, .14);
+}
+input::placeholder, textarea::placeholder { color: #55648a; }
+textarea { min-height: 150px; resize: vertical; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+
+.actions { display: flex; gap: 10px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+button {
+  font: inherit; font-size: 13px; cursor: pointer;
+  border-radius: 10px; padding: 9px 16px;
+  border: 1px solid #2f4a7f; color: #e9f1ff;
+  background: linear-gradient(180deg, #24406fd9, #1b3055d9);
+}
+button:hover { border-color: #4368a8; }
+button.primary { background: linear-gradient(180deg, #3f7fe0, #2f63b8); border-color: #4a86e8; font-weight: 600; }
+button.ghost-btn { background: transparent; border-color: var(--line); color: var(--muted); }
+button.danger { background: #2a1416; border-color: #5b2626; color: #ffb3b3; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ── entegrasyon kartı ───────────────────────────────── */
+.int { border: 1px solid var(--line-soft); border-radius: 12px; padding: 16px; background: var(--panel-2); margin-bottom: 12px; }
+.int header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.int header b { font-size: 13.5px; }
+.int .meta { color: var(--dim); font-size: 11.5px; margin-top: 8px; }
+
+/* ── tablo ───────────────────────────────────────────── */
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line-soft); font-size: 12.5px; }
+th { color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: .6px; font-weight: 600; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: #9dc0ff; }
+
+/* ── faz kartları ────────────────────────────────────── */
+.phases { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.phase { border: 1px solid var(--line-soft); border-radius: 12px; padding: 12px; background: var(--panel-2); }
+.phase .id { color: var(--accent); font-family: ui-monospace, monospace; font-size: 11.5px; }
+.phase .nm { font-size: 12px; margin-top: 4px; line-height: 1.35; }
+.phase .st { margin-top: 8px; font-size: 10.5px; color: var(--dim); }
+
+/* ── toast ───────────────────────────────────────────── */
+.toast {
+  position: fixed; right: 22px; bottom: 22px; max-width: 380px;
+  background: #16203a; border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  color: var(--fg); padding: 12px 16px; border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .45);
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity .18s, transform .18s;
+  font-size: 13px;
+}
+.toast.show { opacity: 1; transform: none; }
+.toast.ok { border-left-color: var(--ok); }
+.toast.bad { border-left-color: var(--bad); }
+
+@media (max-width: 980px) {
+  .shell { grid-template-columns: 1fr; }
+  .side { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .nav { flex-direction: row; flex-wrap: wrap; }
+  .side-foot { margin: 0; flex-direction: row; }
+  .main { padding: 18px; }
+  .grid.k4, .grid.k3, .grid.k2, .phases { grid-template-columns: repeat(2, 1fr); }
+  .row { grid-template-columns: 1fr; }
+}

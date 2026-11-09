@@ -131,6 +131,15 @@ Satın alma görüşmesinde ilk sorulan soru bu; cevabı baştan yazılı olsun:
 | Ticari bir ürünün yerine geçen platform | Süreç kodlarıyla eşleşir, platformun yerini almaz; entegrasyon port/adapter olarak soyutlanmıştır. |
 | Sıfır kurulum | Kurulum + 6 fazlı onboarding gerekir (tipik 95 gün, `orl-lifecycle.yaml`). |
 
+## Uygulama (veri girişi)
+
+```bash
+node onboarding/cli/tools/server.mjs --port 8080     # veya scripts\serve.cmd
+```
+
+`http://127.0.0.1:8080/app/` — kurum profili, API bağlantıları (SIEM/ITSM/GRC/CMDB), envanter
+(CSV), ajan aktivasyonu ve kanıt görüntüleme. Veriler `web-data/` ve `.dora-onboarding/` altında.
+
 ## Sunucuya kurulum
 
 ```bash
@@ -159,7 +168,7 @@ Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı: [`docs/KURULUM-
 
 ## Durum
 
-Sürüm **1.5.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.6.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

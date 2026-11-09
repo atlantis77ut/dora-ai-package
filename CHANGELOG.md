@@ -5,6 +5,38 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.6.0] — 2026-11-09
+
+### Eklendi — uygulama arayüzü (veri girişi)
+
+Paket artık yalnızca rapor değil, **düzenlenebilir bir uygulama**: kurum kendi verisini tarayıcıdan
+girer, API bağlantılarını tanımlar, ajanları aktive eder.
+
+- `app/` — bağımlılıksız tek sayfa uygulama (`index.html`, `app.css`, `app.js`, ES modülü)
+  - **Genel bakış**: KPI'lar, faz durumu, oturum listesi, hızlı işlemler
+  - **Kurum profili**: ad, tier, regülatör, yargı alanı, lisanslar → `web-data/settings.json`
+  - **Entegrasyonlar**: SIEM/ITSM/GRC/CMDB için ürün, endpoint, kimlik doğrulama, token;
+    "Bağlantıyı test et" gerçek HTTP denemesi yapar (5 sn zaman aşımı)
+  - **Envanter**: CSV yapıştır → `ict-inventory.json` (kritiklik, tedarikçi, özet sayım)
+  - **Ajanlar**: 11 rol için aktivasyon + insan muadili → `agent-activation.json` + bağımsızlık kaydı
+  - **Kanıtlar**: oturum artefaktlarını listeler ve JSON olarak gösterir
+- `tools/server.mjs`: statik sunum + JSON API (`/api/state`, `/api/institution`,
+  `/api/integrations/:id`, `/api/sessions`, `/api/sessions/:id/artifacts|agents|inventory`,
+  `/api/catalog/roles`, `/api/lifecycle`)
+- API anahtarları `web-data/secrets.json` içinde, `0600`; arayüze **geri dönmez**, yalnızca
+  `has_token: true/false` görünür
+- `serve.cmd` artık uygulama sunucusunu açar (`/app/`); systemd unit'i `ReadWritePaths` ile
+  `web-data` ve `.dora-onboarding` dizinlerine yazma izni verir
+
+### Güvenlik
+
+- `web-data/` `.gitignore`'a eklendi (anahtarlar depoya girmesin)
+- Sunucu varsayılan olarak `127.0.0.1` dinler; ağa açmak bilinçli bir tercih
+- `/api/*` kimlik doğrulaması içermez — yerel/tek kullanıcı varsayımı; ağa açılacaksa ters
+  vekil arkasında kimlik doğrulama gerekir (dokümanda not)
+
+---
+
 ## [1.5.0] — 2026-11-09
 
 ### Eklendi — dashboard'da tam görünüm

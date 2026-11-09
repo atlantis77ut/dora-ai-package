@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DORA AI Ajan Paketi — Uygulama</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">D</div>
+      <div>
+        <b>DORA AI Paketi</b>
+        <span id="ver">v—</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <a href="#genel" data-tab="genel">Genel bakış</a>
+      <a href="#kurum" data-tab="kurum">Kurum profili</a>
+      <a href="#entegrasyonlar" data-tab="entegrasyonlar">Entegrasyonlar</a>
+      <a href="#envanter" data-tab="envanter">Envanter</a>
+      <a href="#ajanlar" data-tab="ajanlar">Ajanlar</a>
+      <a href="#kanitlar" data-tab="kanitlar">Kanıtlar</a>
+    </nav>
+
+    <div class="side-foot">
+      <a class="ghost" href="/dashboard/" target="_blank" rel="noopener">Rapor panosu ↗</a>
+      <div class="hint">Veriler <code>web-data/</code> ve <code>.dora-onboarding/</code> altında tutulur.</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div>
+        <h1 id="title">Genel bakış</h1>
+        <p id="subtitle" class="sub">Kurumun DORA kurulum durumu</p>
+      </div>
+      <div class="top-right">
+        <span id="sessionPill" class="pill">oturum yok</span>
+        <span id="saveState" class="pill muted">kaydedildi</span>
+      </div>
+    </header>
+
+    <div id="view" class="view"></div>
+  </main>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="app.js" type="module"></script>
+</body>
+</html>

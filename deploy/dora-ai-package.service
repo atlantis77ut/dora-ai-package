@@ -11,7 +11,7 @@ Group=dora
 WorkingDirectory=/opt/dora-ai-package
 Environment=PORT=8080
 Environment=NODE_ENV=production
-ExecStart=/usr/bin/node /opt/dora-ai-package/onboarding/cli/tools/serve.mjs --port 8080 --host 0.0.0.0
+ExecStart=/usr/bin/node /opt/dora-ai-package/onboarding/cli/tools/server.mjs --port 8080 --host 0.0.0.0
 Restart=always
 RestartSec=3
 
@@ -21,6 +21,8 @@ PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
 ReadOnlyPaths=/opt/dora-ai-package
+# uygulama verisi yazılabilir olmalı
+ReadWritePaths=/opt/dora-ai-package/web-data /opt/dora-ai-package/.dora-onboarding
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true

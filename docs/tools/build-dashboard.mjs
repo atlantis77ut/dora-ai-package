@@ -175,6 +175,7 @@ const nav = (active) => `
     <a href="glossary.html" class="${active === 'glossary' ? 'on' : ''}">Sözlük (${terms.length})</a>
     <a href="mapping.html" class="${active === 'mapping' ? 'on' : ''}">DORA eşlemesi (${articles.length})</a>
     <a href="sources.html" class="${active === 'sources' ? 'on' : ''}">Veri kaynakları</a>
+    <a href="../app/" class="nav-app">Uygulama ↗</a>
   </nav>`;
 
 const page = (title, content) => `<!doctype html>
