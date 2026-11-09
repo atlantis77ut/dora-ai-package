@@ -162,6 +162,8 @@ node tools/security-scan.mjs                    # güvenlik taraması (yüksek b
 
 Bulgular ve kalan riskler: [`docs/GUVENLIK-TARAMASI.md`](docs/GUVENLIK-TARAMASI.md)
 
+SSO kurulumu (Entra / Keycloak): [`docs/SSO-KURULUM.md`](docs/SSO-KURULUM.md)
+
 ## Sunucuya kurulum
 
 ```bash

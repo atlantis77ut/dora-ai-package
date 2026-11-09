@@ -5,6 +5,16 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.17.1] — 2026-11-09
+
+### Eklendi
+
+- `docs/SSO-KURULUM.md`: Entra ID ve Keycloak için adım adım SSO kurulumu, doğrulama komutları,
+  hata kodu tablosu, güvenlik notları ve bilinen sınırlar
+- `docs/KURULUM-UBUNTU.md` ve `README.md` bu belgeye bağlandı
+
+---
+
 ## [1.17.0] — 2026-11-09
 
 ### Eklendi — düzenlenebilir olay kuralları

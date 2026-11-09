@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-09T13:31:10.201Z",
+  "generated_at": "2026-11-09T15:16:48.336Z",
   "package": {
     "name": "DORA AI Ajan Paketi",
-    "version": "1.13.0",
+    "version": "1.17.1",
     "license": "AGPL-3.0 + ticari"
   },
   "kpis": {
@@ -116,7 +116,7 @@
     "issues": []
   },
   "changelog": {
-    "version": "1.13.0",
+    "version": "1.17.1",
     "date": "2026-11-09"
   }
 }

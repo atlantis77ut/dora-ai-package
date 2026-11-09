@@ -125,6 +125,11 @@ Varlıklarım, Sorumlular, Belgeler — süreç kodu, JSON veya teknik sayaç yo
 `web-data/users.json`, `web-data/secret.key`, `web-data/audit.log` 0600 izniyle yazılır;
 `web-data/` dizinini yedeklerken bu dosyaları da koruyun.
 
+## 4c. SSO (kurumsal giriş)
+
+Entra ID veya Keycloak bağlamak için: [`SSO-KURULUM.md`](SSO-KURULUM.md).
+TLS olmadan SSO çalışmaz; önce §5'teki ters vekil kurulumunu tamamlayın.
+
 ## 5. Nginx arkasına alma (opsiyonel)
 
 Doğrudan 8080 yerine 80/443 üzerinden yayınlamak isterseniz:

@@ -1149,3 +1149,22 @@ run → 2 olay / 2 kayıt · tekrar run → 0 (dedupe)
 
 - Zamanlayıcı süreç içi; sunucu durursa çalışmaz (kalıcı zamanlama için systemd timer/cron)
 - Tek SIEM yapılandırması tüm oturumlar için kullanılıyor
+
+---
+
+## 39. SSO kurulum belgesi — 1.17.1 (2026-11-09)
+
+`docs/SSO-KURULUM.md` eklendi: Entra ID ve Keycloak için uçtan uca kurulum.
+
+| Bölüm | İçerik |
+|---|---|
+| Ortak gereksinimler | redirect URI, kapsam, HTTPS, gizli istemci |
+| Entra ID | uygulama kaydı, client/tenant/secret, issuer, token talepleri, API izinleri |
+| Keycloak | realm, client, secret, e-posta eşleme |
+| Uygulama ayarı | Yönetim kartındaki alanlar |
+| Doğrulama | `curl` ile status/start, tarayıcı akışı |
+| Hata tablosu | `state`, `imza`, `audience`, `nonce`, yetkisiz hesap |
+| Güvenlik | secret saklama, TLS zorunluluğu, `auto_provision` kapalı önerisi, SSO kullanıcısının yönetici olamaması |
+| Sınırlar | tek IdP, grup→rol eşlemesi yok, SCIM yok, single logout yok |
+
+Gerçek IdP ile denenmedi — test yalnız yerel sahte sağlayıcıyla yapıldı (bkz. §34).
