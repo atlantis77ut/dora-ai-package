@@ -5,6 +5,25 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.31.0] — 2026-11-10
+
+### Düzeltildi / eklendi
+
+- **Sorumlular (Owners)**: görev adları katalogdaki `name.en` alanından geliyor (111 rol için)
+- **Olay kuralları**: varsayılan kural nedenleri İngilizceye çevrildi (fidye yazılımı, veri sızıntısı,
+  yetkisiz erişim, kesinti, DoS)
+- **Statik pano**: her sayfanın **EN ikizi** üretiliyor (`index.en.html` …); üstte TR/EN bağlantısı.
+  Menü, başlıklar, tablo başlıkları ve katalog adları çevriliyor
+
+### Doğrulama
+
+```
+173 test (4 yeni: EN ikiz dosyalar, Türkçe menü kalmadı, TR→EN bağlantısı, EN süreç adı)
+dashboard EN: 7 sayfa · /dashboard/index.en.html 200
+```
+
+---
+
 ## [1.30.1] — 2026-11-10
 
 ### Düzeltildi

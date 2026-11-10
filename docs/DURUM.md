@@ -1613,3 +1613,19 @@ Kullanıcı geri bildirimi: EN seçiliyken **form alt başlıkları Türkçe** k
 169 test · 4 yeni test (EN metinlerde Türkçe karakter, lang ataması, dosya seçici, anahtarlar)
 /app/app.js ve /app/i18n-ui.js güncel
 ```
+
+
+---
+
+## 54. Kalan Türkçe alanlar — 1.31.0 (2026-11-10)
+
+| Bildirim | Kaynak | Çözüm |
+|---|---|---|
+| Sorumlular'da görev adları Türkçe | katalog `name.tr` kullanılıyordu | EN'de `name.en` (YAML'da hazır) |
+| Olay kuralı açıklamaları Türkçe | varsayılan kural nedenleri (veri) | sözlüğe 6 kayıt |
+| Statik pano Türkçe | yalnız TR üretiliyordu | her sayfanın EN ikizi + TR/EN bağlantısı |
+
+### Sınır
+
+- Panonun EN ikizinde **etiketler ve adlar** çevrili; süreç/kontrol/terim **açıklamaları** Türkçe kalır
+  (veri katmanı, YAML'da yalnız `name` için `en` var)

@@ -537,3 +537,95 @@ if (issues.length) {
   for (const i of issues) console.error(' -', i);
   process.exitCode = 1;
 }
+
+// ── EN ikizleri ─────────────────────────────────────────────
+// Etiketler sözlükten, katalog adları YAML'daki name.en alanından çevrilir.
+// Açıklama metinleri (veri) Türkçe kalır; bu bilinçli bir sınırdır.
+
+function buildEnglishTwins() {
+  const nameMap = new Map();
+  const put = (obj, ...rest) => {
+    const trName = obj?.name?.tr;
+    const enName = obj?.name?.en;
+    if (trName && enName && trName !== enName) nameMap.set(trName, enName);
+  };
+  for (const p of processes) put(p);
+  for (const c of controls) put(c);
+  for (const r of roles) put(r);
+  for (const t of terms) put(t);
+  for (const a of articles) put(a);
+
+  const extra = [
+    [/Genel bakış/g, 'Overview'],
+    [/Süreçler \(/g, 'Processes ('],
+    [/Kontroller \(/g, 'Controls ('],
+    [/Ajanlar \(/g, 'Agents ('],
+    [/Sözlük \(/g, 'Glossary ('],
+    [/DORA eşlemesi \(/g, 'DORA mapping ('],
+    [/Veri kaynakları/g, 'Data sources'],
+    [/Uygulama ↗/g, 'App ↗'],
+    [/Depodaki YAML dosyalarından üretildi/g, 'Generated from the YAML files in the repository'],
+    [/Süreç Kütüphanesi/g, 'Process Library'],
+    [/Kontrol Kataloğu/g, 'Control Catalogue'],
+    [/Ajan Kataloğu/g, 'Agent Catalogue'],
+    [/DORA Eşlemesi/g, 'DORA Mapping'],
+    [/Sütun dağılımı/g, 'Pillar distribution'],
+    [/ORL fazı/g, 'ORL phase'],
+    [/ORL fazları/g, 'ORL phases'],
+    [/Geçiş kapıları/g, 'Gates'],
+    [/geçiş kapıları/g, 'gates'],
+    [/DORA kapsama/g, 'DORA coverage'],
+    [/sağlık: temiz/g, 'health: clean'],
+    [/sağlık: sorun var/g, 'health: issues'],
+    [/Tanım/g, 'Definition'],
+    [/İlgili roller/g, 'Related roles'],
+    [/İlgili süreçler/g, 'Related processes'],
+    [/Zorunlu alanlar/g, 'Required fields'],
+    [/Test prosedürü/g, 'Test procedure'],
+    [/Üçüncü taraf/g, 'Third party'],
+    [/Yükümlülükler/g, 'Obligations'],
+    [/Sahip roller/g, 'Owner roles'],
+    [/Yönetişim/g, 'Governance'],
+    [/Karar kuralları/g, 'Decision rules'],
+    [/Bağımlılık/g, 'Dependencies'],
+    [/İnsan muadili/g, 'Human counterpart'],
+    [/İnsan gözetimi/g, 'Human oversight'],
+    [/Süreç kodları/g, 'Process codes'],
+    [/Bağımsızlık/g, 'Independence'],
+    [/Bilgi paylaşımı/g, 'Information sharing'],
+    [/YAML düzenle/g, 'Edit YAML'],
+    [/Çıktı/g, 'Outputs'],
+    [/Kanıt/g, 'Evidence'],
+    [/Amaç/g, 'Purpose'],
+    [/Bölüm /g, 'Chapter '],
+    [/Madde /g, 'Article '],
+    [/süreç kodu/g, 'process codes'],
+    [/süreç/g, 'process'],
+    [/kontrol/g, 'control'],
+  ];
+
+  const switchBar = (en) => `<div class="langswitch"><a href="${en ? 'index.html' : 'index.en.html'}">${en ? 'Türkçe' : 'English'}</a></div>`;
+
+  for (const f of ['index', 'processes', 'controls', 'roles', 'glossary', 'mapping', 'sources']) {
+    const file = path.join(OUT, f + '.html');
+    if (!fs.existsSync(file)) continue;
+    let html = fs.readFileSync(file, 'utf8');
+
+    // TR sayfaya dil bağlantısı
+    if (!html.includes('class="langswitch"')) {
+      html = html.replace('<body><div class="wrap">', `<body><div class="wrap">${switchBar(false).replace('index.html', f + '.en.html')}`);
+      fs.writeFileSync(file, html);
+    }
+
+    let en = html.replace('lang="tr"', 'lang="en"').replace(/<div class="langswitch">[\s\S]*?<\/div>/, '');
+    // uzun adlar önce
+    const maps = [...nameMap.entries()].filter(([a, b]) => a && b).sort((a, b) => b[0].length - a[0].length);
+    for (const [tr, e] of maps) en = en.split(tr).join(e);
+    for (const [re, rep] of extra) en = en.replace(re, rep);
+    en = en.replace('<body><div class="wrap">', `<body><div class="wrap">${switchBar(true)}`);
+    fs.writeFileSync(path.join(OUT, f + '.en.html'), en);
+  }
+  console.log('dashboard EN: index.en.html · processes.en.html · controls.en.html · roles.en.html · glossary.en.html · mapping.en.html · sources.en.html');
+}
+
+buildEnglishTwins();

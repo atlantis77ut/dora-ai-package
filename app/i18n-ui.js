@@ -579,6 +579,14 @@ export const UI_EN = {
   'Dosya seç': 'Choose file',
   'Dosya seçilmedi': 'No file selected',
   'Dosya seçildi': 'File selected',
+
+  // ── SIEM kural nedenleri (varsayılan) ─────────────────
+  'fidye yazılımı işareti': 'ransomware indicator',
+  'veri sızıntısı işareti': 'data leakage indicator',
+  'yetkisiz erişim işareti': 'unauthorized access indicator',
+  'hizmet kesintisi işareti': 'service outage indicator',
+  'hizmet dışı bırakma işareti': 'denial-of-service indicator',
+  'anahtar kelime': 'keyword',
 };
 
 // Sayı içeren kalıplar (dinamik metinler)

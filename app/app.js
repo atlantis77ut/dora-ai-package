@@ -432,7 +432,7 @@ function viewSorumlular() {
             .map(
               (r) => `<tr>
                 <td><input type="checkbox" class="ag" data-id="${esc(r.id)}" ${['ROL-INC-01', 'ROL-CIO-01', 'ROL-RSK-01', 'ROL-CMP-01'].includes(r.id) ? 'checked' : ''}></td>
-                <td>${esc(r.name?.tr ?? r.id)}</td>
+                <td>${esc((state.lang === 'en' ? (r.name?.en ?? r.name?.tr) : (r.name?.tr ?? r.name?.en)) ?? r.id)}</td>
                 <td><input class="hm" data-id="${esc(r.id)}" placeholder="ad soyad"></td>
               </tr>`,
             )
