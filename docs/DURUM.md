@@ -1470,3 +1470,33 @@ CI: build-manual --check
 - **Ekran görüntüsü yok** (tarayıcı otomasyonu yok); SVG şemalar metin akışını anlatıyor
 - El kitabı **Türkçe**; İngilizce sürüm yok
 - Üretilen HTML elle düzenlenmez; kaynak Markdown'dır
+
+---
+
+## 49. Dil değiştirici ve Yardım sayfası — 1.27.0 (2026-11-10)
+
+| Parça | Dosya |
+|---|---|
+| Sözlük + yardım içeriği | `app/i18n.js` (TR/EN, 12 adım) |
+| Seçici | üst çubuk `#langBox` → `localStorage.dora_lang` |
+| Yardım rotası | `#yardim` (tüm roller) |
+| İlerleme | `localStorage.dora_help_done` |
+
+### Kapsam
+
+- Çevrilen: menü, sayfa başlıkları/alt başlıkları, Yardım sayfası (tam)
+- Çevrilmeyen: form etiketleri, düğmeler, tablo başlıkları (Türkçe kalıyor)
+- Yardım: 12 adım, her biri ilgili sayfaya bağlanır; ipucu ve ilerleme işareti
+
+### Doğrulama
+
+```
+8 i18n testi: anahtar eşitliği, boş çeviri yok, yedek davranışı, 12 adım × 2 dil, rota geçerliliği
+/app/i18n.js 200 · /app/app.js 200 · index.html'de langBox var
+```
+
+### Sınırlar
+
+- **Kısmi çeviri**: EN seçildiğinde form/düğme metinleri Türkçe kalır
+- Yardım ilerlemesi **tarayıcıya** bağlı (kullanıcı hesabına değil); cihaz değişince sıfırlanır
+- Statik `/dashboard/` sayfaları yalnız Türkçe

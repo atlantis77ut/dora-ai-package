@@ -1,10 +1,21 @@
 // DORA AI Ajan Paketi — uygulama arayüzü (bağımlılıksız ES modülü)
 // Roller: admin (teknik her şey) · user (iş arayüzü, teknik detay yok)
 
+import { t, LANGS, normalizeLang, helpSteps } from './i18n.js';
+
 const $ = (sel, root = document) => root.querySelector(sel);
 const view = $('#view');
 
+const savedLang = (() => {
+  try {
+    return localStorage.getItem('dora_lang');
+  } catch {
+    return null;
+  }
+})();
+
 const state = {
+  lang: normalizeLang(savedLang ?? (navigator.language || 'tr')),
   version: '—',
   user: null,
   role: null,
@@ -2320,6 +2331,73 @@ function bindPano() {
   loadPano();
 }
 
+
+function helpDone() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem('dora_help_done') ?? '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveHelpDone(set) {
+  try {
+    localStorage.setItem('dora_help_done', JSON.stringify([...set]));
+  } catch {
+    /* gizli mod */
+  }
+}
+
+function viewYardim() {
+  const steps = helpSteps(state.lang);
+  const done = helpDone();
+  const pct = Math.round((steps.filter((s) => done.has(s.id)).length / steps.length) * 100);
+  return `
+    <div class="card">
+      <h2>${t(state.lang, 'title.yardim')}</h2>
+      <p class="sub">${t(state.lang, 'help.intro')}</p>
+      <div class="actions">
+        <span class="pill ${pct === 100 ? 'ok' : ''}">${t(state.lang, 'help.progress')}: ${pct}%</span>
+        <button class="ghost-btn" id="helpReset">${t(state.lang, 'help.reset')}</button>
+        <span class="sub">${t(state.lang, 'help.lang_note')}</span>
+      </div>
+      <div style="height:6px;background:#0c1322;border-radius:4px;margin-top:12px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#5b9cff,#3ddc97)"></div>
+      </div>
+    </div>
+    ${steps
+      .map(
+        (s, i) => `
+      <div class="card" style="display:grid;grid-template-columns:26px 1fr auto;gap:14px;align-items:start">
+        <input type="checkbox" class="help-chk" data-id="${esc(s.id)}" ${done.has(s.id) ? 'checked' : ''}
+               style="width:auto;margin-top:3px">
+        <div>
+          <h2 style="margin:0 0 4px">${esc(s.title)}</h2>
+          <p class="sub" style="margin:0 0 6px">${esc(s.body)}</p>
+          <p class="sub" style="margin:0;color:#7f92b5">💡 ${esc(s.tip)}</p>
+        </div>
+        <a class="ghost" href="#${esc(s.route)}" style="padding:8px 14px;white-space:nowrap">${t(state.lang, 'help.go')} →</a>
+      </div>`,
+      )
+      .join('')}`;
+}
+
+function bindYardim() {
+  const done = helpDone();
+  document.querySelectorAll('.help-chk').forEach((c) =>
+    c.addEventListener('change', () => {
+      if (c.checked) done.add(c.dataset.id);
+      else done.delete(c.dataset.id);
+      saveHelpDone(done);
+      render();
+    }),
+  );
+  $('#helpReset')?.addEventListener('click', () => {
+    saveHelpDone(new Set());
+    render();
+  });
+}
+
 /* ── router ───────────────────────────────────────────── */
 
 const ROUTES = {
@@ -2330,6 +2408,7 @@ const ROUTES = {
   parola: { title: 'Parolamı değiştir', sub: 'Hesap güvenliği', render: viewParola, bind: bindParola, roles: ['user', 'admin'] },
   guvenlik: { title: 'Güvenlik', sub: 'İki adımlı doğrulama', render: viewGuvenlik, bind: bindGuvenlik, roles: ['user', 'admin'] },
   ara: { title: 'Ara', sub: 'Kataloglarda metin arama', render: viewAra, bind: bindAra, roles: ['user', 'admin'] },
+  yardim: { title: 'Yardım', sub: 'Adım adım kullanım rehberi', render: viewYardim, bind: bindYardim, roles: ['user', 'admin'] },
   pano: { title: 'Canlı pano', sub: 'Anlık durum', render: viewPano, bind: bindPano, roles: ['admin'] },
   baglantilar: { title: 'Sistem bağlantıları', sub: 'Olay, destek, uyum ve envanter sistemleri', render: viewBaglantilar, bind: bindBaglantilar, roles: ['user', 'admin'] },
   entegrasyonlar: { title: 'Entegrasyonlar', sub: 'Teknik bağlantı ayarları', render: viewBaglantilar, bind: bindBaglantilar, roles: ['admin'] },
@@ -2368,6 +2447,7 @@ function navItems() {
         ['ajanlar', 'Sorumlular'],
         ['belgeler', 'Belgeler'],
         ['guvenlik', 'Güvenlik'],
+        ['yardim', 'Yardım'],
       ].concat([['__kitap', 'El kitabı']]);
 }
 
@@ -2398,8 +2478,8 @@ function renderShell() {
       items
         .map(([id, label]) =>
           id === '__kitap'
-            ? `<a href="/app/el-kitabi.html" data-tab="kitap">${label}</a>`
-            : `<a href="#${id}" data-tab="${id}">${label}</a>`,
+            ? `<a href="/app/el-kitabi.html" data-tab="kitap">${t(state.lang, 'nav.kitap', label)}</a>`
+            : `<a href="#${id}" data-tab="${id}">${t(state.lang, 'nav.' + id, label)}</a>`,
         )
         .join('') +
       (isAdmin() ? `<a href="/dashboard/" data-tab="panel">Teknik panel</a>` : '') +
@@ -2417,6 +2497,23 @@ function renderShell() {
       navKey = null;
       location.hash = '';
       renderLogin('login');
+    });
+  }
+
+  const langBox = $('#langBox');
+  if (langBox) {
+    langBox.innerHTML = `<select id="lang" style="width:auto;padding:5px 8px;font-size:12.5px">
+      ${LANGS.map((l) => `<option value="${l.code}" ${state.lang === l.code ? 'selected' : ''}>${l.label}</option>`).join('')}
+    </select>`;
+    langBox.querySelector('#lang').addEventListener('change', (e) => {
+      state.lang = normalizeLang(e.target.value);
+      try {
+        localStorage.setItem('dora_lang', state.lang);
+      } catch {
+        /* gizli mod */
+      }
+      navKey = null;
+      render();
     });
   }
 
@@ -2463,8 +2560,8 @@ function render() {
   const route = ROUTES[tab];
   renderShell();
   document.querySelectorAll('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.tab === tab));
-  $('#title').textContent = route.title;
-  $('#subtitle').textContent = route.sub;
+  $('#title').textContent = t(state.lang, 'title.' + tab, route.title);
+  $('#subtitle').textContent = t(state.lang, 'sub.' + tab, route.sub);
   view.innerHTML = route.render();
   route.bind();
 }

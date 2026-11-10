@@ -5,6 +5,30 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.27.0] — 2026-11-10
+
+### Eklendi — dil değiştirici (TR/EN)
+
+- `app/i18n.js`: sözlük + `t()` + `normalizeLang` + yardım adımları (saf modül, test edilebilir)
+- Sağ üstte **TR / EN** seçici; seçim `localStorage`'da saklanır, sayfa yenilenince korunur
+- Menü, sayfa başlıkları ve Yardım sayfası iki dilde; diğer düğme etiketleri şimdilik Türkçe
+
+### Eklendi — Yardım sayfası (adım adım rehber)
+
+- Menüde **Yardım** (tüm roller): 12 adım — kurum, hizmetler, toleranslar, varlıklar, sorumlular,
+  senaryolar, öz değerlendirme, canlıya geçiş, kanıt/PDF, olaylar, onay akışı, hesap güvenliği
+- Her adımda: ne yapılacağı, ipucu, **Bu adıma git →** bağlantısı, **Yapıldı** işareti
+- İlerleme çubuğu ve yüzde; ilerleme tarayıcıda saklanır, **İlerlemeyi sıfırla**
+
+### Doğrulama
+
+```
+i18n: 8 test — iki dilde anahtar eşitliği, boş çeviri yok, t() yedeği, 12 adım iki dilde, rota geçerliliği
+sayfalar: /app/ 200 · /app/i18n.js 200 (10 KB) · /app/app.js 200 (109 KB)
+```
+
+---
+
 ## [1.26.1] — 2026-11-09
 
 ### Eklendi
