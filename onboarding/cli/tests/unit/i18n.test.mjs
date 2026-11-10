@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DICT, LANGS, t, normalizeLang, helpSteps, HELP_STEPS } from '../../../../app/i18n.js';
+import { loadApp } from './_load-app.mjs';
+
+const { DICT, LANGS, t, normalizeLang, helpSteps, HELP_STEPS } = loadApp('i18n.js');
 
 test('i18n: iki dil tanımlı', () => {
   assert.deepEqual(LANGS.map((l) => l.code), ['tr', 'en']);

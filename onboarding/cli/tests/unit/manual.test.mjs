@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(import.meta.dirname, '../../../..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
 const TR = fs.readFileSync(path.join(ROOT, 'docs/KULLANICI-EL-KITABI.md'), 'utf8');
 const EN = fs.readFileSync(path.join(ROOT, 'docs/KULLANICI-EL-KITABI.en.md'), 'utf8');
 const HTML = fs.readFileSync(path.join(ROOT, 'app/el-kitabi.html'), 'utf8');

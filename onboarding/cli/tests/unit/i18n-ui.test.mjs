@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { UI_EN, UI_PATTERNS, translateUi } from '../../../../app/i18n-ui.js';
+import { loadApp } from './_load-app.mjs';
+
+const { UI_EN, UI_PATTERNS, translateUi } = loadApp('i18n-ui.js');
 
 test('ui-i18n: sözlükte tekrar eden/boş anahtar yok', () => {
   for (const [k, v] of Object.entries(UI_EN)) {

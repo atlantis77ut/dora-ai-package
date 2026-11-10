@@ -2,10 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { UI_EN } from '../../../../app/i18n-ui.js';
-import { DICT, HELP_STEPS } from '../../../../app/i18n.js';
+import { fileURLToPath } from 'node:url';
+import { loadApp } from './_load-app.mjs';
 
-const ROOT = path.resolve(import.meta.dirname, '../../../..');
+const { UI_EN } = loadApp('i18n-ui.js');
+const { DICT, HELP_STEPS } = loadApp('i18n.js');
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
 const APP = fs.readFileSync(path.join(ROOT, 'app/app.js'), 'utf8');
 const TR_CHARS = /[İıŞşĞğÇçÖöÜü]/;
 
