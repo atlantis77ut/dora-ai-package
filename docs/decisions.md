@@ -165,3 +165,31 @@ geçiş) ticari lisans ister**.
 - Anlık iptal yok; telafi: yıllık süre, anahtar döndürme, sözleşme, `license_id` izleme
   (`docs/license-keys.md` §5).
 - Bu bir DRM değil: kod AGPL ile açık, doğrulama kaldırılabilir — amaç uyum kapısı.
+
+---
+
+## DR-009 — Çeviri kapsamı: arayüz tam, veri açıklamaları Türkçe
+
+**Tarih:** 2026-11-10
+**Durum:** kabul edildi
+
+**Bağlam.** Arayüz TR/EN olarak tam çevrildi (502 metin + 16 kalıp + panonun EN ikizleri).
+Katalog verisi (`data/`) tek dilli: süreç/control/terim `name` alanlarının `en` karşılığı var
+ama `description`, `test_procedure`, `definition` gibi açıklama alanları yalnız Türkçe.
+
+**Karar.** Ürün **kısmi çeviri** ile yayınlanır:
+
+- **Çevrilir**: menü, başlıklar, form etiketleri, düğmeler, tablo başlıkları, durum rozetleri,
+  yardım sayfası, el kitabı, panonun etiketleri ve katalog **adları**.
+- **Çevrilmez**: katalog **açıklamaları** (veri katmanı) ve kullanıcı verisi.
+
+**Gerekçe.** Açıklamaların çevirisi ~300 paragraf; hukuki/teknik terim tutarlılığı riski yüksek
+ve ürünün uyum değerini artırmıyor. Etiketler İngilizce olduğunda yabancı ekip ürünü
+kullanabiliyor; derin içerik için Türkçe kaynak yeterli.
+
+**Sonuç.**
+- EN arayüzde açıklama paragrafları Türkçe görünebilir — bu **bilinen ve kabul edilen** sınırdır.
+- Tam İngilizce istenirse ayrı iş: `data/` alanlarının `en` karşılıklarının yazılması ve
+  şema doğrulamasının güncellenmesi.
+- Dil denetimi: `node onboarding/cli/tools/missing-ui.mjs` (arayüz), `tests/unit/dashboard-en.test.mjs`
+  (pano ikizleri).
