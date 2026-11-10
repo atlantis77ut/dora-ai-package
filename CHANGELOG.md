@@ -5,6 +5,26 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.29.0] — 2026-11-10
+
+### Eklendi — iki dilli el kitabı
+
+- `docs/KULLANICI-EL-KITABI.en.md`: el kitabının **İngilizce** sürümü (bölüm bölüm eşdeğer)
+- `app/el-kitabi.html` artık **TR ve EN** bölümlerini birlikte taşır; üstteki **Türkçe / English**
+  düğmeleriyle geçiş yapılır
+- `app/el-kitabi.js`: dil seçimi `localStorage.dora_lang` (uygulamayla aynı anahtar) — uygulama EN ise
+  el kitabı da EN açılır
+- Şemalar (SVG) dile göre etiketlenir; **satır içi betik yok** (CSP uyumu)
+
+### Doğrulama
+
+```
+5 test: iki dilde eşit bölüm/tablo sayısı, kritik başlıklar, HTML bölümleri, CSP uyumu
+el-kitabi.html 200 · 32.4 KB · 12 tablo · 4 SVG · TR 203 satır / EN 205 satır
+```
+
+---
+
 ## [1.28.0] — 2026-11-10
 
 ### Eklendi — tam dil değişimi (formlar dahil)

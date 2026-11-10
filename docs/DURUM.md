@@ -1536,3 +1536,33 @@ i18n-ui.js 200 · 353 kayıt · 16 kalıp · app.js 111 KB
 - Çeviri **çalışma anında** yapılır; sunucu HTML'i Türkçe kalır (SEO/statik çıktı etkilenmez)
 - Kalıp dışı dinamik cümleler (ör. "3 varlık dosyadan yüklendi") Türkçe görünebilir
 - Çeviriler geliştirici tarafından yapıldı; ana dili İngilizce biri gözden geçirmeli
+
+---
+
+## 51. İki dilli el kitabı — 1.29.0 (2026-11-10)
+
+| Parça | Dosya |
+|---|---|
+| TR kaynak | `docs/KULLANICI-EL-KITABI.md` |
+| EN kaynak | `docs/KULLANICI-EL-KITABI.en.md` |
+| Üretilen sayfa | `app/el-kitabi.html` (TR + EN bölümleri) |
+| Dil betiği | `app/el-kitabi.js` (`localStorage.dora_lang`) |
+
+### Davranış
+
+- Sayfa iki `<section data-doc="tr|en">` taşır; düğmeler `hidden` ile geçiş yapar
+- Dil anahtarı uygulamayla ortak: uygulama EN ise el kitabı da EN açılır
+- SVG şemalar dile göre etiketlenir; `code` blokları çevrilmez
+- CSP uyumu: **satır içi betik/olay işleyici yok**, harici `el-kitabi.js`
+
+### Doğrulama
+
+```
+5 test: bölüm/tablo sayısı eşitliği, kritik başlıklar, HTML bölümleri, CSP uyumu
+el-kitabi.html 200 · 32.4 KB · 12 tablo · 4 SVG · TR 203 / EN 205 satır
+```
+
+### Sınırlar
+
+- İngilizce metin geliştirici çevirisi; kurumsal terim tercihleri gözden geçirilmeli
+- İç bağlantılar (ör. `docs/YEDEKLEME.md`) TR dosyalarına gider; EN karşılıkları yok

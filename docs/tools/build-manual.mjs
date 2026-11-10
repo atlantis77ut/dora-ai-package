@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (c) 2026 ustauretim
 //
-// El kitabını (Markdown) tek dosyalık HTML'e çevirir: app/el-kitabi.html
-// Desteklenen Markdown: h1-h3, paragraf, **kalın**, `kod`, kod bloğu, listeler, tablolar,
-// alıntı, yatay çizgi, bağlantı. Yeterli ve bağımlılıksız.
+// El kitabını (TR + EN Markdown) tek dosyalık HTML'e çevirir: app/el-kitabi.html
+// Sayfa iki bölüm içerir; üstteki TR/EN düğmeleri (app/el-kitabi.js) birini gösterir.
 //
 // Kullanım: node docs/tools/build-manual.mjs [--check]
 
@@ -14,7 +13,8 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
-const SRC = path.join(ROOT, 'docs/KULLANICI-EL-KITABI.md');
+const SRC_TR = path.join(ROOT, 'docs/KULLANICI-EL-KITABI.md');
+const SRC_EN = path.join(ROOT, 'docs/KULLANICI-EL-KITABI.en.md');
 const OUT = path.join(ROOT, 'app/el-kitabi.html');
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -41,7 +41,6 @@ export function renderMarkdown(md) {
       continue;
     }
 
-    // kod bloğu
     if (/^```/.test(line)) {
       const lang = line.slice(3).trim();
       const body = [];
@@ -52,24 +51,20 @@ export function renderMarkdown(md) {
       continue;
     }
 
-    // başlık
     const h = line.match(/^(#{1,3})\s+(.*)$/);
     if (h) {
       const level = h[1].length;
-      const text = h[2];
-      out.push(`<h${level} id="${slug(text)}">${inline(text)}</h${level}>`);
+      out.push(`<h${level} id="${slug(h[2])}">${inline(h[2])}</h${level}>`);
       i++;
       continue;
     }
 
-    // yatay çizgi
     if (/^---+$/.test(line.trim())) {
       out.push('<hr>');
       i++;
       continue;
     }
 
-    // alıntı
     if (/^>\s?/.test(line)) {
       const body = [];
       while (i < lines.length && /^>\s?/.test(lines[i])) body.push(lines[i++].replace(/^>\s?/, ''));
@@ -77,7 +72,6 @@ export function renderMarkdown(md) {
       continue;
     }
 
-    // tablo
     if (line.includes('|') && /^\s*\|/.test(line) && /^\s*\|?[\s:-]+\|/.test(lines[i + 1] ?? '')) {
       const head = line.split('|').map((c) => c.trim()).filter(Boolean);
       i += 2;
@@ -94,7 +88,6 @@ export function renderMarkdown(md) {
       continue;
     }
 
-    // sırasız liste
     if (/^[-*]\s+/.test(line)) {
       const items = [];
       while (i < lines.length && /^[-*]\s+/.test(lines[i])) items.push(lines[i++].replace(/^[-*]\s+/, ''));
@@ -102,7 +95,6 @@ export function renderMarkdown(md) {
       continue;
     }
 
-    // sıralı liste
     if (/^\d+\.\s+/.test(line)) {
       const items = [];
       while (i < lines.length && /^\d+\.\s+/.test(lines[i])) items.push(lines[i++].replace(/^\d+\.\s+/, ''));
@@ -110,7 +102,6 @@ export function renderMarkdown(md) {
       continue;
     }
 
-    // paragraf
     const para = [];
     while (i < lines.length && lines[i].trim() && !/^(#{1,3}\s|```|>|\||[-*]\s|\d+\.\s|---)/.test(lines[i])) {
       para.push(lines[i++]);
@@ -121,11 +112,29 @@ export function renderMarkdown(md) {
   return out.join('\n');
 }
 
-const DIAGRAM = `
+function tocFor(md, lang) {
+  const entries = [];
+  for (const m of md.matchAll(/^##\s+(.*)$/gm)) entries.push({ level: 2, text: m[1] });
+  for (const m of md.matchAll(/^###\s+(.*)$/gm)) entries.push({ level: 3, text: m[1] });
+  const title = lang === 'en' ? 'Contents' : 'İçindekiler';
+  return `<div class="toc"><strong>${title}</strong><br>${entries
+    .map((x) => `<a class="t${x.level}" href="#${slug(x.text)}">${inline(x.text)}</a>`)
+    .join('')}</div>`;
+}
+
+function diagrams(lang) {
+  const en = lang === 'en';
+  const setup = en
+    ? ['Services', 'Tolerances', 'Assets/Owners', 'Scenarios', 'Self-assessment', 'Go-live']
+    : ['Hizmetler', 'Toleranslar', 'Varlık/Sorumlu', 'Senaryolar', 'Öz değerlendirme', 'Canlıya geçiş'];
+  const flow = en
+    ? [['SIEM event', 10, 150], ['Draft record', 212, 150], ['Active record + deadlines', 414, 160], ['Reporting', 626, 124]]
+    : [['SIEM olayı', 10, 150], ['Taslak kayıt', 212, 150], ['Aktif kayıt + süreler', 414, 160], ['Raporlama', 626, 124]];
+  return `
 <figure>
-<svg viewBox="0 0 760 120" width="100%" height="120" role="img" aria-label="Kurulum akışı">
+<svg viewBox="0 0 760 120" width="100%" height="120" role="img" aria-label="${en ? 'Setup flow' : 'Kurulum akışı'}">
   <g font-family="Segoe UI, sans-serif" font-size="12" fill="#e9eefb">
-    ${['Hizmetler', 'Toleranslar', 'Varlık/Sorumlu', 'Senaryolar', 'Öz değerlendirme', 'Canlıya geçiş']
+    ${setup
       .map((label, idx) => {
         const x = 10 + idx * 125;
         return `<rect x="${x}" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
@@ -134,38 +143,36 @@ const DIAGRAM = `
       })
       .join('')}
     <defs><marker id="a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#5b9cff"/></marker></defs>
-    <text x="10" y="105" fill="#93a3c4">Adım 1 → 6 · her adımda "adımı denetle"</text>
+    <text x="10" y="105" fill="#93a3c4">${en ? 'Step 1 to 6 - each step has a "check this step" button' : 'Adım 1 → 6 · her adımda "adımı denetle"'}</text>
   </g>
 </svg>
 </figure>
 <figure>
-<svg viewBox="0 0 760 130" width="100%" height="130" role="img" aria-label="Olay ve raporlama akışı">
+<svg viewBox="0 0 760 130" width="100%" height="130" role="img" aria-label="${en ? 'Incident and reporting flow' : 'Olay ve raporlama akışı'}">
   <g font-family="Segoe UI, sans-serif" font-size="12" fill="#e9eefb">
-    <rect x="10" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
-    <text x="85" y="47" text-anchor="middle">SIEM olayı</text>
-    <path d="M162 42 L210 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
-    <rect x="212" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
-    <text x="287" y="47" text-anchor="middle">Taslak kayıt</text>
-    <path d="M364 42 L412 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
-    <rect x="414" y="20" width="160" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
-    <text x="494" y="47" text-anchor="middle">Aktif kayıt + süreler</text>
-    <path d="M576 42 L624 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
-    <rect x="626" y="20" width="124" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
-    <text x="688" y="47" text-anchor="middle">Raporlama</text>
-    <text x="10" y="95" fill="#93a3c4">4 saat ilk bildirim · 72 saat ara rapor · 1 ay nihai rapor (tespit anından)</text>
+    ${flow
+      .map(([label, x, w], i) => `<rect x="${x}" y="20" width="${w}" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="${x + w / 2}" y="47" text-anchor="middle">${label}</text>
+        ${i < 3 ? `<path d="M${x + w + 2} 42 L${x + w + 48} 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>` : ''}`)
+      .join('')}
+    <text x="10" y="95" fill="#93a3c4">${en ? '4h initial notification · 72h intermediate report · 1 month final report (from detection)' : '4 saat ilk bildirim · 72 saat ara rapor · 1 ay nihai rapor (tespit anından)'}</text>
     <defs><marker id="b" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#5b9cff"/></marker></defs>
   </g>
 </svg>
 </figure>
 `;
+}
 
 const CSS = `
 :root{--bg:#0a0e18;--panel:#121a2b;--line:#223049;--fg:#e9eefb;--muted:#93a3c4;--accent:#5b9cff}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 "Segoe UI",system-ui,sans-serif}
 .wrap{max-width:900px;margin:0 auto;padding:32px 22px 80px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
 header a{color:var(--accent);text-decoration:none;font-size:13px;border:1px solid var(--line);padding:6px 12px;border-radius:8px}
+.langs{display:flex;gap:6px;align-items:center}
+.langs button{cursor:pointer;background:#131c30;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px}
+.langs button.on{color:#08101f;background:var(--accent);border-color:var(--accent);font-weight:600}
 h1{font-size:26px;margin:14px 0 6px}
 h2{font-size:19px;margin:32px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
 h3{font-size:15px;margin:22px 0 6px;color:#cfe0ff}
@@ -183,30 +190,37 @@ a{color:var(--accent)}
 .toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:14px}
 .toc a{display:inline-block;margin:3px 10px 3px 0}
 .toc a.t3{margin-left:16px;font-size:13px;color:#9db4d6}
+[data-doc][hidden]{display:none}
 `;
 
-const md = fs.readFileSync(SRC, 'utf8');
-const body = renderMarkdown(md);
-const title = (md.match(/^#\s+(.*)$/m) ?? [, 'El kitabı'])[1];
+const mdTr = fs.readFileSync(SRC_TR, 'utf8');
+const mdEn = fs.readFileSync(SRC_EN, 'utf8');
 
-const toc = [
-  ...[...md.matchAll(/^##\s+(.*)$/gm)].map((m) => ({ level: 2, text: m[1] })),
-  ...[...md.matchAll(/^###\s+(.*)$/gm)].map((m) => ({ level: 3, text: m[1] })),
-]
-  .map((x) => `<a class="t${x.level}" href="#${slug(x.text)}">${inline(x.text)}</a>`)
-  .join('');
+const section = (lang, md) => `<section data-doc="${lang}" lang="${lang}"${lang === 'en' ? ' hidden' : ''}>
+${diagrams(lang)}
+${tocFor(md, lang)}
+${renderMarkdown(md)}
+</section>`;
+
 const html = `<!doctype html>
 <html lang="tr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)} — DORA Ajan Paketi</title>
+<title>User Handbook — DORA Agent Package</title>
 <style>${CSS}</style></head>
 <body><div class="wrap">
-<header><strong>DORA Ajan Paketi · El Kitabı</strong>
-<span><a href="/app/">← Uygulamaya dön</a></span></header>
-${DIAGRAM}
-<div class="toc"><strong>İçindekiler</strong><br>${toc}</div>
-${body}
-</div></body></html>
+<header>
+  <strong>DORA Agent Package · Handbook</strong>
+  <span class="langs">
+    <button data-lang-btn="tr" class="on">Türkçe</button>
+    <button data-lang-btn="en">English</button>
+    <a href="/app/">← Uygulamaya dön / Back to app</a>
+  </span>
+</header>
+${section('tr', mdTr)}
+${section('en', mdEn)}
+</div>
+<script src="/app/el-kitabi.js"></script>
+</body></html>
 `;
 
 const checkOnly = process.argv.includes('--check');
@@ -221,5 +235,5 @@ if (checkOnly) {
 
 fs.writeFileSync(OUT, html, 'utf8');
 console.log(`yazıldı: ${path.relative(ROOT, OUT)} (${(html.length / 1024).toFixed(1)} KB)`);
-console.log(`  başlık: ${title}`);
-console.log(`  bölüm: ${(md.match(/^##\s+/gm) ?? []).length}`);
+console.log(`  TR: ${mdTr.split('\n').length} satır · EN: ${mdEn.split('\n').length} satır`);
+console.log(`  h2: TR ${(mdTr.match(/^##\s+/gm) ?? []).length} · EN ${(mdEn.match(/^##\s+/gm) ?? []).length}`);

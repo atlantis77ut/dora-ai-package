@@ -1,14 +1,17 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kullanıcı El Kitabı — DORA Ajan Paketi</title>
+<title>User Handbook — DORA Agent Package</title>
 <style>
 :root{--bg:#0a0e18;--panel:#121a2b;--line:#223049;--fg:#e9eefb;--muted:#93a3c4;--accent:#5b9cff}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 "Segoe UI",system-ui,sans-serif}
 .wrap{max-width:900px;margin:0 auto;padding:32px 22px 80px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
 header a{color:var(--accent);text-decoration:none;font-size:13px;border:1px solid var(--line);padding:6px 12px;border-radius:8px}
+.langs{display:flex;gap:6px;align-items:center}
+.langs button{cursor:pointer;background:#131c30;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px}
+.langs button.on{color:#08101f;background:var(--accent);border-color:var(--accent);font-weight:600}
 h1{font-size:26px;margin:14px 0 6px}
 h2{font-size:19px;margin:32px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
 h3{font-size:15px;margin:22px 0 6px;color:#cfe0ff}
@@ -26,10 +29,18 @@ a{color:var(--accent)}
 .toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:14px}
 .toc a{display:inline-block;margin:3px 10px 3px 0}
 .toc a.t3{margin-left:16px;font-size:13px;color:#9db4d6}
+[data-doc][hidden]{display:none}
 </style></head>
 <body><div class="wrap">
-<header><strong>DORA Ajan Paketi · El Kitabı</strong>
-<span><a href="/app/">← Uygulamaya dön</a></span></header>
+<header>
+  <strong>DORA Agent Package · Handbook</strong>
+  <span class="langs">
+    <button data-lang-btn="tr" class="on">Türkçe</button>
+    <button data-lang-btn="en">English</button>
+    <a href="/app/">← Uygulamaya dön / Back to app</a>
+  </span>
+</header>
+<section data-doc="tr" lang="tr">
 
 <figure>
 <svg viewBox="0 0 760 120" width="100%" height="120" role="img" aria-label="Kurulum akışı">
@@ -56,16 +67,14 @@ a{color:var(--accent)}
 <svg viewBox="0 0 760 130" width="100%" height="130" role="img" aria-label="Olay ve raporlama akışı">
   <g font-family="Segoe UI, sans-serif" font-size="12" fill="#e9eefb">
     <rect x="10" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
-    <text x="85" y="47" text-anchor="middle">SIEM olayı</text>
-    <path d="M162 42 L210 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
-    <rect x="212" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
-    <text x="287" y="47" text-anchor="middle">Taslak kayıt</text>
-    <path d="M364 42 L412 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
-    <rect x="414" y="20" width="160" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
-    <text x="494" y="47" text-anchor="middle">Aktif kayıt + süreler</text>
-    <path d="M576 42 L624 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/>
-    <rect x="626" y="20" width="124" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
-    <text x="688" y="47" text-anchor="middle">Raporlama</text>
+        <text x="85" y="47" text-anchor="middle">SIEM olayı</text>
+        <path d="M162 42 L208 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/><rect x="212" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="287" y="47" text-anchor="middle">Taslak kayıt</text>
+        <path d="M364 42 L410 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/><rect x="414" y="20" width="160" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="494" y="47" text-anchor="middle">Aktif kayıt + süreler</text>
+        <path d="M576 42 L622 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/><rect x="626" y="20" width="124" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="688" y="47" text-anchor="middle">Raporlama</text>
+        
     <text x="10" y="95" fill="#93a3c4">4 saat ilk bildirim · 72 saat ara rapor · 1 ay nihai rapor (tespit anından)</text>
     <defs><marker id="b" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#5b9cff"/></marker></defs>
   </g>
@@ -144,4 +153,121 @@ node tools/restore.mjs --zip /var/backups/dora/2026-11-09.zip --target /opt/dora
 <hr>
 <h2 id="ek-terimler">Ek: Terimler</h2>
 <table><thead><tr><th>Terim</th><th>Anlam</th></tr></thead><tbody><tr><td>Tier</td><td>Kurum büyüklüğü sınıfı (tier1 büyük, tier3 küçük)</td></tr><tr><td>MTD</td><td>Azami tolere edilebilir kesinti süresi</td></tr><tr><td>RTO</td><td>Hedef toparlanma süresi</td></tr><tr><td>RPO</td><td>Hedef veri kaybı süresi</td></tr><tr><td>Kanıt paketi</td><td>İmzalı zip; manifest + hash zinciri</td></tr><tr><td>Dört göz</td><td>İki farklı yöneticinin onayı</td></tr><tr><td>Ara rapor</td><td>İlk bildirimden 72 saat sonraki rapor</td></tr></tbody></table>
-</div></body></html>
+</section>
+<section data-doc="en" lang="en" hidden>
+
+<figure>
+<svg viewBox="0 0 760 120" width="100%" height="120" role="img" aria-label="Setup flow">
+  <g font-family="Segoe UI, sans-serif" font-size="12" fill="#e9eefb">
+    <rect x="10" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="65" y="58" text-anchor="middle">Services</text>
+        <path d="M122 53 L132 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="135" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="190" y="58" text-anchor="middle">Tolerances</text>
+        <path d="M247 53 L257 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="260" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="315" y="58" text-anchor="middle">Assets/Owners</text>
+        <path d="M372 53 L382 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="385" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="440" y="58" text-anchor="middle">Scenarios</text>
+        <path d="M497 53 L507 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="510" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="565" y="58" text-anchor="middle">Self-assessment</text>
+        <path d="M622 53 L632 53" stroke="#5b9cff" stroke-width="2" marker-end="url(#a)"/><rect x="635" y="30" width="110" height="46" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="690" y="58" text-anchor="middle">Go-live</text>
+        
+    <defs><marker id="a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#5b9cff"/></marker></defs>
+    <text x="10" y="105" fill="#93a3c4">Step 1 to 6 - each step has a "check this step" button</text>
+  </g>
+</svg>
+</figure>
+<figure>
+<svg viewBox="0 0 760 130" width="100%" height="130" role="img" aria-label="Incident and reporting flow">
+  <g font-family="Segoe UI, sans-serif" font-size="12" fill="#e9eefb">
+    <rect x="10" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="85" y="47" text-anchor="middle">SIEM event</text>
+        <path d="M162 42 L208 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/><rect x="212" y="20" width="150" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="287" y="47" text-anchor="middle">Draft record</text>
+        <path d="M364 42 L410 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/><rect x="414" y="20" width="160" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="494" y="47" text-anchor="middle">Active record + deadlines</text>
+        <path d="M576 42 L622 42" stroke="#5b9cff" stroke-width="2" marker-end="url(#b)"/><rect x="626" y="20" width="124" height="44" rx="10" fill="#182343" stroke="#2a3a63"/>
+        <text x="688" y="47" text-anchor="middle">Reporting</text>
+        
+    <text x="10" y="95" fill="#93a3c4">4h initial notification · 72h intermediate report · 1 month final report (from detection)</text>
+    <defs><marker id="b" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#5b9cff"/></marker></defs>
+  </g>
+</svg>
+</figure>
+
+<div class="toc"><strong>Contents</strong><br><a class="t2" href="#part-1-user">Part 1 — User</a><a class="t2" href="#part-2-administrator">Part 2 — Administrator</a><a class="t2" href="#annex-terms">Annex: Terms</a><a class="t3" href="#1-1-first-sign-in">1.1 First sign-in</a><a class="t3" href="#1-2-two-factor-authentication-2fa">1.2 Two-factor authentication (2FA)</a><a class="t3" href="#1-3-status-page">1.3 Status page</a><a class="t3" href="#1-4-institution-details">1.4 Institution details</a><a class="t3" href="#1-5-setup-steps">1.5 Setup steps</a><a class="t3" href="#1-6-uploading-the-inventory-csv">1.6 Uploading the inventory (CSV)</a><a class="t3" href="#1-7-incident-records-and-reporting-deadlines">1.7 Incident records and reporting deadlines</a><a class="t3" href="#1-8-incident-history">1.8 Incident history</a><a class="t3" href="#1-9-documents-and-evidence-bundle">1.9 Documents and evidence bundle</a><a class="t3" href="#1-10-search">1.10 Search</a><a class="t3" href="#1-11-changing-your-password">1.11 Changing your password</a><a class="t3" href="#1-12-troubleshooting">1.12 Troubleshooting</a><a class="t3" href="#2-1-user-management">2.1 User management</a><a class="t3" href="#2-2-e-mail-smtp">2.2 E-mail (SMTP)</a><a class="t3" href="#2-3-notifications">2.3 Notifications</a><a class="t3" href="#2-4-four-eyes-approval">2.4 Four-eyes approval</a><a class="t3" href="#2-5-integrations">2.5 Integrations</a><a class="t3" href="#2-6-siem-event-rules-and-scheduled-fetching">2.6 SIEM event rules and scheduled fetching</a><a class="t3" href="#2-7-sso-corporate-sign-in">2.7 SSO (corporate sign-in)</a><a class="t3" href="#2-8-backup">2.8 Backup</a><a class="t3" href="#2-9-activity-log">2.9 Activity log</a><a class="t3" href="#2-10-technical-panel">2.10 Technical panel</a></div>
+<h1 id="user-handbook">User Handbook</h1>
+<p>DORA Agent Package · Version 1.29.0 · This handbook has two parts: <strong>User</strong> and <strong>Administrator</strong>.</p>
+<hr>
+<h2 id="part-1-user">Part 1 — User</h2>
+<h3 id="1-1-first-sign-in">1.1 First sign-in</h3>
+<ol><li>Open <code>https://&lt;server&gt;/app/</code> in your browser.</li><li>Enter your username and password.</li><li>If an administrator sent you an <strong>invitation e-mail</strong>, click the link and set your password</li></ol>
+<p>   (the link is valid for 30 minutes and can be used once).</p>
+<ol><li>After signing in, open <strong>Security → Start setup</strong> to enable two-factor authentication.</li></ol>
+<blockquote>If you forget your password, ask your administrator for a <strong>reset link</strong>. If it arrives by e-mail, open the link and set a new password.</blockquote>
+<h3 id="1-2-two-factor-authentication-2fa">1.2 Two-factor authentication (2FA)</h3>
+<table><thead><tr><th>Step</th><th>What to do</th></tr></thead><tbody><tr><td>1</td><td>On the Security page press <strong>Start setup</strong></td></tr><tr><td>2</td><td>In Google/Microsoft Authenticator choose <strong>Enter a setup key</strong></td></tr><tr><td>3</td><td>Type the key shown on screen in groups of four</td></tr><tr><td>4</td><td>Enter the 6-digit code from the app → <strong>Enable</strong></td></tr><tr><td>5</td><td>Save the <strong>10 recovery codes</strong> (shown only once)</td></tr></tbody></table>
+<p>On later sign-ins you enter the 6-digit code after your password. If the code is not accepted, use one of your recovery codes — each code works <strong>once</strong>.</p>
+<h3 id="1-3-status-page">1.3 Status page</h3>
+<p>The <strong>Status</strong> page shows three things:</p>
+<ul><li>How many steps are complete (6 steps)</li><li>Institution size and supervisory authority</li><li>How many systems are connected (incident, service desk, compliance, inventory)</li></ul>
+<h3 id="1-4-institution-details">1.4 Institution details</h3>
+<p>On the <strong>Institution details</strong> page enter the institution name, size (tier), supervisory authority, country of operation and business lines. These details appear in reports and in the evidence bundle.</p>
+<h3 id="1-5-setup-steps">1.5 Setup steps</h3>
+<table><thead><tr><th>Step</th><th>What you enter</th></tr></thead><tbody><tr><td>1</td><td><strong>Your services</strong> — critical services, owners, criticality</td></tr><tr><td>2</td><td><strong>Outage tolerances</strong> — MTD / RTO / RPO (hours) per service</td></tr><tr><td>3</td><td><strong>My assets</strong> — servers/systems (CSV upload or paste) + <strong>Owners</strong></td></tr><tr><td>4</td><td><strong>Scenario tests</strong> — accuracy, SLA violations, hash chain for three scenarios</td></tr><tr><td>5</td><td><strong>Self-assessment</strong> — coverage for 28 DORA articles and the independent reviewer</td></tr><tr><td>6</td><td><strong>Go-live</strong> — agent autonomy levels, shadow/semi-automatic days</td></tr></tbody></table>
+<p>Every step has a <strong>"check this step"</strong> button: anything missing is listed with a red cross.</p>
+<h3 id="1-6-uploading-the-inventory-csv">1.6 Uploading the inventory (CSV)</h3>
+<ol><li><strong>My assets</strong> → <strong>Download template</strong></li><li>Fill it in Excel: <code>id, name, criticality, vendor</code></li><li>Pick the file → it is uploaded automatically</li></ol>
+<p>Criticality: <code>critical</code>, <code>important</code>, <code>standard</code> (Turkish equivalents are also accepted).</p>
+<h3 id="1-7-incident-records-and-reporting-deadlines">1.7 Incident records and reporting deadlines</h3>
+<p>If a SIEM is connected, events arrive automatically; otherwise an administrator presses <strong>SIEM events → Fetch events</strong>.</p>
+<ol><li>Find the event row in the <strong>Incident records</strong> table.</li><li>Fill in customer count, outage minutes and economic impact.</li><li><strong>save</strong> → <strong>activate</strong> (with four-eyes enabled this goes to a second administrator).</li><li>The <strong>Reporting deadlines</strong> card shows three counters:</li></ol>
+<table><thead><tr><th>Step</th><th>Duration</th><th>Colour</th></tr></thead><tbody><tr><td>Initial notification</td><td>4 hours</td><td>green = sent, orange = approaching, red = overdue</td></tr><tr><td>Intermediate report</td><td>72 hours</td><td>same</td></tr><tr><td>Final report</td><td>1 month</td><td>same</td></tr></tbody></table>
+<ol><li>After reporting outside the system, press <strong>"… sent"</strong>; you may enter a reference number.</li></ol>
+<h3 id="1-8-incident-history">1.8 Incident history</h3>
+<p>The <strong>history</strong> button on an incident row shows who did what and when (creation, update, reporting, approval).</p>
+<h3 id="1-9-documents-and-evidence-bundle">1.9 Documents and evidence bundle</h3>
+<ul><li><strong>Documents</strong> lists the records produced in the session.</li><li><strong>Create evidence bundle</strong> → all records in one signed zip.</li><li><strong>Management report (PDF)</strong> → institution, phases, incidents, deadlines, approvals, coverage.</li></ul>
+<h3 id="1-10-search">1.10 Search</h3>
+<p>The <strong>Search</strong> page searches processes, controls, agents, terms and DORA articles. Turkish characters are folded (<code>siniflandirma</code> = <code>sınıflandırma</code>).</p>
+<h3 id="1-11-changing-your-password">1.11 Changing your password</h3>
+<p><strong>Change my password</strong> → current password + new password (at least 8 characters). Changing it signs you out on other devices.</p>
+<h3 id="1-12-troubleshooting">1.12 Troubleshooting</h3>
+<table><thead><tr><th>Symptom</th><th>Fix</th></tr></thead><tbody><tr><td>Cannot sign in</td><td>Ask an administrator for a reset link</td></tr><tr><td>6-digit code rejected</td><td>Is the phone clock correct? Try a recovery code</td></tr><tr><td>"no permission for this account"</td><td>An administrator must add you as a user</td></tr><tr><td>File upload fails</td><td>Use the template; the <code>name</code> column must not be empty</td></tr><tr><td>Cannot download the evidence bundle</td><td>Press <strong>Create bundle</strong> first, then <strong>Download</strong></td></tr><tr><td>Page looks empty</td><td>Refresh the browser; the session may have expired</td></tr></tbody></table>
+<hr>
+<h2 id="part-2-administrator">Part 2 — Administrator</h2>
+<h3 id="2-1-user-management">2.1 User management</h3>
+<p><strong>Administration → Users</strong></p>
+<table><thead><tr><th>Action</th><th>Note</th></tr></thead><tbody><tr><td>Add user</td><td>username + password + role; <strong>send invitation e-mail</strong> optional</td></tr><tr><td>Change role</td><td>user ↔ administrator</td></tr><tr><td>Reset password</td><td>set a temporary password</td></tr><tr><td>Reset link</td><td>30 min, single use; copied to clipboard</td></tr><tr><td>Send invitation</td><td>e-mail with a reset link</td></tr><tr><td>Delete</td><td>the last administrator cannot be deleted</td></tr></tbody></table>
+<h3 id="2-2-e-mail-smtp">2.2 E-mail (SMTP)</h3>
+<p><strong>Administration → E-mail (SMTP)</strong>: server, port, sender, user, password, SSL options. Verify with <strong>Send test</strong>. Undeliverable messages go to the <strong>queue</strong>; <strong>Send queue</strong> retries.</p>
+<h3 id="2-3-notifications">2.3 Notifications</h3>
+<p><strong>Administration → Notifications</strong>: enable, recipients (comma-separated). When enabled, e-mails are sent for:</p>
+<ul><li>incidents whose reporting deadline is approaching or overdue</li><li>pending approval requests</li></ul>
+<p>Use <strong>Scan now</strong> to test manually. The same alert is never sent twice.</p>
+<h3 id="2-4-four-eyes-approval">2.4 Four-eyes approval</h3>
+<p><strong>Administration → Approval flow</strong> → <strong>Enabled</strong>. When on, incident classification and go-live go to a second administrator; <strong>the requester cannot approve their own request</strong>.</p>
+<blockquote>With a single administrator do not enable it — the request cannot be approved. Create a second administrator first.</blockquote>
+<h3 id="2-5-integrations">2.5 Integrations</h3>
+<p><strong>Integrations</strong>: product, endpoint, authentication and key for SIEM / ITSM / GRC / CMDB. <strong>Test connection</strong> checks reachability; the <strong>SIEM events</strong> page fetches events.</p>
+<h3 id="2-6-siem-event-rules-and-scheduled-fetching">2.6 SIEM event rules and scheduled fetching</h3>
+<ul><li><strong>Event rules</strong>: which keywords open a record, plus data-loss / unauthorised-access flags.</li><li><strong>Scheduled fetching</strong>: enabled + interval (minutes) → the server pulls by itself and creates</li></ul>
+<p>  draft records.</p>
+<h3 id="2-7-sso-corporate-sign-in">2.7 SSO (corporate sign-in)</h3>
+<p><strong>Administration → Corporate sign-in (SSO / OIDC)</strong>: issuer, client ID, redirect URI, secret. Details: <code>docs/SSO-KURULUM.md</code>. It does not work without TLS.</p>
+<h3 id="2-8-backup">2.8 Backup</h3>
+<pre><code class="lang-bash">node tools/backup.mjs --out /var/backups/dora/$(date +%F).zip --keep 8
+node tools/backup.mjs --verify /var/backups/dora/2026-11-09.zip
+node tools/restore.mjs --zip /var/backups/dora/2026-11-09.zip --target /opt/dora-restore</code></pre>
+<p>Details: <code>docs/YEDEKLEME.md</code>.</p>
+<h3 id="2-9-activity-log">2.9 Activity log</h3>
+<p><strong>Administration → Activity log</strong> shows the last 150 actions; <strong>Download as CSV</strong> returns everything.</p>
+<h3 id="2-10-technical-panel">2.10 Technical panel</h3>
+<p><strong>Technical panel</strong> in the sidebar opens the static report dashboard (processes, controls, agents, glossary, DORA mapping). <strong>Live dashboard</strong> shows live data instead.</p>
+<hr>
+<h2 id="annex-terms">Annex: Terms</h2>
+<table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody><tr><td>Tier</td><td>Institution size class (tier1 large, tier3 small)</td></tr><tr><td>MTD</td><td>Maximum tolerable downtime</td></tr><tr><td>RTO</td><td>Recovery time objective</td></tr><tr><td>RPO</td><td>Recovery point objective</td></tr><tr><td>Evidence bundle</td><td>Signed zip; manifest + hash chain</td></tr><tr><td>Four eyes</td><td>Approval by two different administrators</td></tr><tr><td>Intermediate report</td><td>Report due 72 hours after the initial notification</td></tr></tbody></table>
+</section>
+</div>
+<script src="/app/el-kitabi.js"></script>
+</body></html>
