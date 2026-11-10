@@ -1,0 +1,4818 @@
+[
+ {
+  "s": "+ e.message,",
+  "n": 46
+ },
+ {
+  "s": ", { method:",
+  "n": 26
+ },
+ {
+  "s": "> <button class=",
+  "n": 17
+ },
+ {
+  "s": "></div> <div class=",
+  "n": 17
+ },
+ {
+  "s": "></div> </div> <div class=",
+  "n": 15
+ },
+ {
+  "s": "><button class=",
+  "n": 15
+ },
+ {
+  "s": "></div> <div><label class=",
+  "n": 14
+ },
+ {
+  "s": "><input type=",
+  "n": 13
+ },
+ {
+  "s": "> <div><label class=",
+  "n": 11
+ },
+ {
+  "s": ", body:",
+  "n": 10
+ },
+ {
+  "s": ", async () => { try { const r = await api(",
+  "n": 8
+ },
+ {
+  "s": "); } catch (e) { toast(",
+  "n": 8
+ },
+ {
+  "s": ").textContent =",
+  "n": 8
+ },
+ {
+  "s": ", async () => { try { await api(",
+  "n": 7
+ },
+ {
+  "s": "; if ($(",
+  "n": 7
+ },
+ {
+  "s": "> <label class=",
+  "n": 6
+ },
+ {
+  "s": ", ) .join('')} </tbody></table>",
+  "n": 5
+ },
+ {
+  "s": ", body: JSON.stringify({ enabled: $(",
+  "n": 5
+ },
+ {
+  "s": ").forEach((b) => b.addEventListener(",
+  "n": 5
+ },
+ {
+  "s": "<option value=\"",
+  "n": 5
+ },
+ {
+  "s": "></td> <td><input class=",
+  "n": 5
+ },
+ {
+  "s": "></td><td><input class=",
+  "n": 5
+ },
+ {
+  "s": ">Kaydet</button> <button class=",
+  "n": 5
+ },
+ {
+  "s": ": st?.status ===",
+  "n": 4
+ },
+ {
+  "s": "); await loadState(); render(); } catch (e) { toast(",
+  "n": 4
+ },
+ {
+  "s": "); loadAudit(); } catch (e) { toast(",
+  "n": 4
+ },
+ {
+  "s": ").className =",
+  "n": 4
+ },
+ {
+  "s": ").value = $(",
+  "n": 4
+ },
+ {
+  "s": "> <a class=",
+  "n": 4
+ },
+ {
+  "s": "></td> <td><input type=",
+  "n": 4
+ },
+ {
+  "s": "><div class=",
+  "n": 4
+ },
+ {
+  "s": ">yükleniyor…</div> <div class=",
+  "n": 4
+ },
+ {
+  "s": ", (e) => { if (e.key ===",
+  "n": 3
+ },
+ {
+  "s": ": state ===",
+  "n": 3
+ },
+ {
+  "s": "); const box = $(",
+  "n": 3
+ },
+ {
+  "s": "); if ($(",
+  "n": 3
+ },
+ {
+  "s": "); if (box) box.textContent =",
+  "n": 3
+ },
+ {
+  "s": ").forEach((b) => (b.onclick = () => b.closest(",
+  "n": 3
+ },
+ {
+  "s": ").value, password: $(",
+  "n": 3
+ },
+ {
+  "s": ")} </tbody></table>` :",
+  "n": 3
+ },
+ {
+  "s": "+ err.message,",
+  "n": 3
+ },
+ {
+  "s": "> <option value=",
+  "n": 3
+ },
+ {
+  "s": "></span> </div> </div> <div class=",
+  "n": 3
+ },
+ {
+  "s": "></td><td><input type=",
+  "n": 3
+ },
+ {
+  "s": "><span class=",
+  "n": 3
+ },
+ {
+  "s": "Ara",
+  "n": 3
+ },
+ {
+  "s": "Güvenlik",
+  "n": 3
+ },
+ {
+  "s": "Kurulum",
+  "n": 3
+ },
+ {
+  "s": "uyarı ·",
+  "n": 3
+ },
+ {
+  "s": ", () => decide(",
+  "n": 2
+ },
+ {
+  "s": ", async () => { const rows = [...document.querySelectorAll(",
+  "n": 2
+ },
+ {
+  "s": ", async () => { try { const recipients = ($(",
+  "n": 2
+ },
+ {
+  "s": ", go); $(",
+  "n": 2
+ },
+ {
+  "s": ", headers: {",
+  "n": 2
+ },
+ {
+  "s": "; render(); } catch (e) { $(",
+  "n": 2
+ },
+ {
+  "s": "; renderLogin(",
+  "n": 2
+ },
+ {
+  "s": "; try { const r = await api(",
+  "n": 2
+ },
+ {
+  "s": ": i.status ===",
+  "n": 2
+ },
+ {
+  "s": ") .map((x) => x.trim()) .filter(Boolean); await api(",
+  "n": 2
+ },
+ {
+  "s": ") .split(",
+  "n": 2
+ },
+ {
+  "s": ") location.hash = isAdmin() ?",
+  "n": 2
+ },
+ {
+  "s": "); } }), ); document.querySelectorAll(",
+  "n": 2
+ },
+ {
+  "s": "); } }); tr.querySelector(",
+  "n": 2
+ },
+ {
+  "s": "); } catch { toast(",
+  "n": 2
+ },
+ {
+  "s": "); dl.href = r.download; dl.style.display =",
+  "n": 2
+ },
+ {
+  "s": "); loadNotifications(); loadAudit(); } catch (e) { toast(",
+  "n": 2
+ },
+ {
+  "s": "); loadUsers(); loadAudit(); } catch (e) { toast(",
+  "n": 2
+ },
+ {
+  "s": "); renderInvTable(r); } catch (e) { toast(",
+  "n": 2
+ },
+ {
+  "s": "); toast(",
+  "n": 2
+ },
+ {
+  "s": ").checked = Boolean(s.enabled); if ($(",
+  "n": 2
+ },
+ {
+  "s": ").checked, }), }); toast(",
+  "n": 2
+ },
+ {
+  "s": ").checked, recipients }), }); toast(",
+  "n": 2
+ },
+ {
+  "s": ").innerHTML =",
+  "n": 2
+ },
+ {
+  "s": ").join('')} </tbody></table>",
+  "n": 2
+ },
+ {
+  "s": ").textContent = bootstrap ?",
+  "n": 2
+ },
+ {
+  "s": ").textContent = t(state.lang,",
+  "n": 2
+ },
+ {
+  "s": ").value =",
+  "n": 2
+ },
+ {
+  "s": ").value ||",
+  "n": 2
+ },
+ {
+  "s": ").value, name: $(",
+  "n": 2
+ },
+ {
+  "s": ")); toast(",
+  "n": 2
+ },
+ {
+  "s": ")} </select></td></tr>`, ) .join(",
+  "n": 2
+ },
+ {
+  "s": ")} </tbody></table>`; box.querySelectorAll(",
+  "n": 2
+ },
+ {
+  "s": ")}</div>`; } catch (e) { toast(",
+  "n": 2
+ },
+ {
+  "s": ")}</td></tr>`) .join(",
+  "n": 2
+ },
+ {
+  "s": "}); const dl = $(",
+  "n": 2
+ },
+ {
+  "s": "}); toast(",
+  "n": 2
+ },
+ {
+  "s": "}); toast(`Tarama: ${r.events ?? 0} uyarı · ${r.sent ?? 0} e-posta`, (r.problems ?? []).length ?",
+  "n": 2
+ },
+ {
+  "s": "}</div>`; } catch (e) { toast(",
+  "n": 2
+ },
+ {
+  "s": "+ b.dataset.id, { method:",
+  "n": 2
+ },
+ {
+  "s": "+ r.session_hours +",
+  "n": 2
+ },
+ {
+  "s": "</h2> <p class=\"sub\">",
+  "n": 2
+ },
+ {
+  "s": "<div class=\"card\" style=\"background:#0f1626\"> <h2>",
+  "n": 2
+ },
+ {
+  "s": "<div class=\"grid k4\">",
+  "n": 2
+ },
+ {
+  "s": "<tr><td class=\"mono\">",
+  "n": 2
+ },
+ {
+  "s": "> <input class=",
+  "n": 2
+ },
+ {
+  "s": "> <input type=",
+  "n": 2
+ },
+ {
+  "s": "> <td class=",
+  "n": 2
+ },
+ {
+  "s": "> Etkin</label> <button class=",
+  "n": 2
+ },
+ {
+  "s": "> Etkin</label></div> <div><label class=",
+  "n": 2
+ },
+ {
+  "s": "></div> <div id=",
+  "n": 2
+ },
+ {
+  "s": "></textarea> <div class=",
+  "n": 2
+ },
+ {
+  "s": "><label class=",
+  "n": 2
+ },
+ {
+  "s": "><label>Parola</label><input id=",
+  "n": 2
+ },
+ {
+  "s": "><label>Yeni parola</label><input id=",
+  "n": 2
+ },
+ {
+  "s": "><option value=",
+  "n": 2
+ },
+ {
+  "s": "><tr><td colspan=",
+  "n": 2
+ },
+ {
+  "s": ">${esc(i.incident_id)}<br><span class=",
+  "n": 2
+ },
+ {
+  "s": ">${esc(p.id)}</div><div class=",
+  "n": 2
+ },
+ {
+  "s": ">En düşük önem</label> <select id=",
+  "n": 2
+ },
+ {
+  "s": ">Parola</label><input id=",
+  "n": 2
+ },
+ {
+  "s": ">yükleniyor…</div> </div> <div class=",
+  "n": 2
+ },
+ {
+  "s": "Belgeler",
+  "n": 2
+ },
+ {
+  "s": "Canlı pano",
+  "n": 2
+ },
+ {
+  "s": "checked></td><td><button class=",
+  "n": 2
+ },
+ {
+  "s": "Genel bakış",
+  "n": 2
+ },
+ {
+  "s": "Kanıtlar",
+  "n": 2
+ },
+ {
+  "s": "kayıt",
+  "n": 2
+ },
+ {
+  "s": "Kurum bilgileri",
+  "n": 2
+ },
+ {
+  "s": "Kurum profili",
+  "n": 2
+ },
+ {
+  "s": "olay ·",
+  "n": 2
+ },
+ {
+  "s": "önemli",
+  "n": 2
+ },
+ {
+  "s": "SIEM olayları",
+  "n": 2
+ },
+ {
+  "s": "Sistem bağlantıları",
+  "n": 2
+ },
+ {
+  "s": "Sorumlular",
+  "n": 2
+ },
+ {
+  "s": "Varlıklarım",
+  "n": 2
+ },
+ {
+  "s": "Yardım",
+  "n": 2
+ },
+ {
+  "s": "Yönetim",
+  "n": 2
+ },
+ {
+  "s": ", ...options, }); let data = {}; try { data = await res.json(); } catch { /* boş */ } if (res.status === 401) { if (state.user) toast(",
+  "n": 1
+ },
+ {
+  "s": ", () => { if (c.checked) done.add(c.dataset.id); else done.delete(c.dataset.id); saveHelpDone(done); render(); }), ); $(",
+  "n": 1
+ },
+ {
+  "s": ", () => { saveHelpDone(new Set()); render(); }); } /* ── router ───────────────────────────────────────────── */ const ROUTES = { durum: { title:",
+  "n": 1
+ },
+ {
+  "s": ", () => {}); } async function loadArtifacts() { const body = $(",
+  "n": 1
+ },
+ {
+  "s": ", () => addRuleRow({ keys: [], reason:",
+  "n": 1
+ },
+ {
+  "s": ", (e) => { const b = e.target.closest(",
+  "n": 1
+ },
+ {
+  "s": ", (e) => { state.lang = normalizeLang(e.target.value); try { localStorage.setItem(",
+  "n": 1
+ },
+ {
+  "s": ", ) .join('') : '<tr><td colspan=\"6\" class=\"sub\">Oturum yok.</td></tr>'}</tbody></table> ${ state.sessions.length > 1 ?",
+  "n": 1
+ },
+ {
+  "s": ", ) .join('')}",
+  "n": 1
+ },
+ {
+  "s": ", ) .join('')} </tbody></table> </div>",
+  "n": 1
+ },
+ {
+  "s": ", ) .join('')} </tbody></table> <p class=\"sub\" style=\"margin-top:10px\">",
+  "n": 1
+ },
+ {
+  "s": ", ) .join('')}</tbody></table>",
+  "n": 1
+ },
+ {
+  "s": ", }; const INT_LABELS = { siem: { title:",
+  "n": 1
+ },
+ {
+  "s": ", })); try { await api(`/api/sessions/${sid}/autonomy`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", a.dataset.tab === tab)); $(",
+  "n": 1
+ },
+ {
+  "s": ", article:",
+  "n": 1
+ },
+ {
+  "s": ", async () => { b.disabled = true; try { const r = await api(`/api/sessions/${sid}/gate/${b.dataset.gate}`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const activated = [...document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const articles = [...document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const assets = parseCsv($(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const box = $(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const btn = $(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const cur = $(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const file = fileInput.files?.[0]; if (!file) return; const text = await file.text(); $(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const grants = [...document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const rules = [...document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const services = [...document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const to = $(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const token = $(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { const yeni = prompt(`${b.dataset.name} için yeni parola (en az 8 karakter):`); if (!yeni) return; try { await api(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { if ($(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { await api(`/api/sessions/${sid}/reporting/${btn.dataset.step}`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { await api(`/api/sessions/${state.activeSession.session_id}/incidents/${id}`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { await navigator.clipboard.writeText(e.recovery_codes.join(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { const e = await api(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { const payload = { name: $(",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { const r = await api(`/api/sessions/${sid}/export`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { const r = await api(`/api/sessions/${sid}/incidents`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { const r = await api(`/api/sessions/${sid}/mapping`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { const r = await api(`/api/sessions/${state.activeSession.session_id}/incidents/${id}`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", async () => { try { const r2 = await api(`/api/sessions/${state.activeSession.session_id}/artifacts/${b.dataset.name}`); const blob = new Blob([JSON.stringify(r2.value, null, 2)], { type:",
+  "n": 1
+ },
+ {
+  "s": ", async (e) => { e.preventDefault(); try { await fetch(",
+  "n": 1
+ },
+ {
+  "s": ", async (e) => { e.preventDefault(); try { const r = await api(",
+  "n": 1
+ },
+ {
+  "s": ", async (e) => { try { await api(",
+  "n": 1
+ },
+ {
+  "s": ", async (ev) => { const btn = ev.currentTarget; btn.disabled = true; btn.textContent =",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ ...collect(), promote: true }), }); if (r.pending) { toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ challenge, code: $(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ code: $(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ csv: text }), }); toast(`${r.count} varlık dosyadan yüklendi`,",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ decision }), }); toast(decision ===",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ grants }) }); const r = await api(`/api/sessions/${sid}/golive`, { method:",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ incident_id: tr.dataset.id }), }); toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ min_severity: $(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ password: $(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ password: yeni }) }); toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ role: sel.value }) }); toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ rules }) }); toast(`${r.rules.length} kural kaydedildi`,",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ runs }) }); toast(`Kaydedildi: doğruluk %${r.classification_accuracy}`,",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ send_email: true }), }); if (r.email?.sent) toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ session_hours: Number($(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ session_id: e.target.value }) }); toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ shadow_days: Number($(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ tier, regulator, jurisdiction }) }); toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ two_person: $(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ username: $(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify({ vendor: card.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify(collect()) }); toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify(payload) }); toast(",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify(payload) }); toast(`Değerlendirme kaydedildi: ${r.high_severity} boşluk`,",
+  "n": 1
+ },
+ {
+  "s": ", body: JSON.stringify(payload), }); if (res.otp_required) { renderOtp(res.challenge); return; } state.needsBootstrap = false; navKey = null; await loadState(); if (!location.hash || location.hash ===",
+  "n": 1
+ },
+ {
+  "s": ", C2:",
+  "n": 1
+ },
+ {
+  "s": ", C3:",
+  "n": 1
+ },
+ {
+  "s": ", C4:",
+  "n": 1
+ },
+ {
+  "s": ", C5:",
+  "n": 1
+ },
+ {
+  "s": ", C6:",
+  "n": 1
+ },
+ {
+  "s": ", control:",
+  "n": 1
+ },
+ {
+  "s": ", createSession); }); } // Tüm sayfalarda geçerli: \"kurulumu başlat\" düğmesi document.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": ", criticality: map[(criticality ||",
+  "n": 1
+ },
+ {
+  "s": ", dataLoss: false, unauthorized: false })); $(",
+  "n": 1
+ },
+ {
+  "s": ", gap:",
+  "n": 1
+ },
+ {
+  "s": ", go); view.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ", hint:",
+  "n": 1
+ },
+ {
+  "s": ", label)}</a>` : `<a href=\"#${id}\" data-tab=\"${id}\">${t(state.lang,",
+  "n": 1
+ },
+ {
+  "s": ", loadAgents); } async function loadAgents() { try { const r = await api(`/api/sessions/${state.activeSession.session_id}/artifacts/agent-activation.json`); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ", loadApprovals); api(",
+  "n": 1
+ },
+ {
+  "s": ", loadDeadlines); loadRules(); loadSchedule(); $(",
+  "n": 1
+ },
+ {
+  "s": ", loadInv); } async function loadInv() { try { const r = await api(`/api/sessions/${state.activeSession.session_id}/artifacts/ict-inventory.json`); renderInvTable(r.value); } catch { toast(",
+  "n": 1
+ },
+ {
+  "s": ", loadPano); loadPano(); } function helpDone() { try { return new Set(JSON.parse(localStorage.getItem(",
+  "n": 1
+ },
+ {
+  "s": ", loadTolerances); $(",
+  "n": 1
+ },
+ {
+  "s": ", owner =",
+  "n": 1
+ },
+ {
+  "s": ", partial:",
+  "n": 1
+ },
+ {
+  "s": ", provider: provider ||",
+  "n": 1
+ },
+ {
+  "s": ", render: viewDurum, bind: bindCommon, roles: [",
+  "n": 1
+ },
+ {
+  "s": ", risk_acceptance: ($(",
+  "n": 1
+ },
+ {
+  "s": ", role:",
+  "n": 1
+ },
+ {
+  "s": ", rowHtml()); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ", ruleRowHtml(r)); const last = box.lastElementChild; last.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ", state.lang); } catch { /* gizli mod */ } navKey = null; render(); }); } $(",
+  "n": 1
+ },
+ {
+  "s": ", sub:",
+  "n": 1
+ },
+ {
+  "s": ", term:",
+  "n": 1
+ },
+ {
+  "s": ", token: card.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ", user: null, role: null, needsBootstrap: false, settings: { institution: {}, integrations: [] }, sessions: [], activeSession: null, counts: {}, roles: [], phases: [], }; const PHASE_LABELS = { C1:",
+  "n": 1
+ },
+ {
+  "s": ", vendors: [",
+  "n": 1
+ },
+ {
+  "s": ", vendors: [] }; const ok = i.status ===",
+  "n": 1
+ },
+ {
+  "s": "; } } catch { /* yönetici değilse */ } } async function loadApprovals() { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "; } } function viewGuvenlik() { const enabled = Boolean(state.user?.totp_enabled); return ` <div class=\"card\"> <h2>İki adımlı doğrulama</h2> <p class=\"sub\">Durum: ${enabled ?",
+  "n": 1
+ },
+ {
+  "s": "; } }; const ssoErr = location.hash.match(/[#&]giris=([^&]*)/); if (ssoErr) { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "; } }) .catch(() => {}); $(",
+  "n": 1
+ },
+ {
+  "s": "; } }); loadSiem(); loadIncidents(); loadDeadlines(); $(",
+  "n": 1
+ },
+ {
+  "s": "; } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "; } catch { /* yönetici değilse */ } } function viewKurulum() { const s = state.activeSession; if (!s) return noSession(",
+  "n": 1
+ },
+ {
+  "s": "; } catch { box.innerHTML =",
+  "n": 1
+ },
+ {
+  "s": "; } function bindKurulumSteps(sid) { $(",
+  "n": 1
+ },
+ {
+  "s": "; } function renderShell() { const key = `${state.user?.id ??",
+  "n": 1
+ },
+ {
+  "s": "; }) .join('')} </div>",
+  "n": 1
+ },
+ {
+  "s": "; }) .join('')} </div> </div>",
+  "n": 1
+ },
+ {
+  "s": "; }) .join('')} </div> <div class=\"actions\">",
+  "n": 1
+ },
+ {
+  "s": "; }) .join('')} </tbody></table>",
+  "n": 1
+ },
+ {
+  "s": "; /* ── ortak parçalar ───────────────────────────────────── */ const stat = (n, label, hint) => `<div class=\"stat\"><div class=\"l\">${label}</div><div class=\"n\">${n ??",
+  "n": 1
+ },
+ {
+  "s": "; b.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": "; box.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "; btn.href =",
+  "n": 1
+ },
+ {
+  "s": "; const abs = Math.abs(ms); const h = Math.floor(abs / 3600000); const d = Math.floor(h / 24); return (ms < 0 ?",
+  "n": 1
+ },
+ {
+  "s": "; const cls = st?.status ===",
+  "n": 1
+ },
+ {
+  "s": "; const ext = $(",
+  "n": 1
+ },
+ {
+  "s": "; const jurisdiction = state.settings.institution?.jurisdiction ||",
+  "n": 1
+ },
+ {
+  "s": "; const left = Math.max(0, Math.round((state.exp - Date.now()) / 60000)); return left > 0 ? `${left} dk` :",
+  "n": 1
+ },
+ {
+  "s": "; const ok = i.status === 'verified'; return",
+  "n": 1
+ },
+ {
+  "s": "; const regulator = state.settings.institution?.regulator ||",
+  "n": 1
+ },
+ {
+  "s": "; const text = state ===",
+  "n": 1
+ },
+ {
+  "s": "; document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "; loadUsers(); loadAudit(); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "; renderSchedLast(s.last_run); } catch { /* yönetici değilse */ } } function renderSchedLast(lr) { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "; return ` <div class=\"int\" data-id=\"${esc(i.id)}\"> <header><div><b>${esc(meta.title)}</b><div class=\"sub\">${esc(meta.hint)}</div></div> ${ok ?",
+  "n": 1
+ },
+ {
+  "s": "; return `<div class=\"phase\"><div class=\"id\">${esc(p.id)}</div><div class=\"nm\">${esc(p.name?.tr ??",
+  "n": 1
+ },
+ {
+  "s": "; return `<div class=\"phase\"><div class=\"id\">${esc(p.id)}</div><div class=\"st\"><span class=\"pill ${cls}\">${esc(p.status)}</span></div></div>`; }) .join(",
+  "n": 1
+ },
+ {
+  "s": "; return `<div class=\"phase\"><div class=\"id\">Adım ${i + 1}</div> <div class=\"nm\">${PHASE_LABELS[id]}</div> <div class=\"st\"><span class=\"pill ${cls}\">${label}</span></div></div>`; }) .join(",
+  "n": 1
+ },
+ {
+  "s": "; return tab; } let navKey = null; function sessionLabel() { if (!state.exp) return",
+  "n": 1
+ },
+ {
+  "s": "; return; } const human = (ms) => { if (ms === null || ms === undefined) return",
+  "n": 1
+ },
+ {
+  "s": "; return; } const route = ROUTES[tab]; renderShell(); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "; return; } try { const r = await fetch(",
+  "n": 1
+ },
+ {
+  "s": "; toast(`Kanıt paketi hazır: ${r.files} dosya`,",
+  "n": 1
+ },
+ {
+  "s": "; try { const payload = bootstrap ? { username: $(",
+  "n": 1
+ },
+ {
+  "s": "; view.innerHTML = ` <div class=\"card\" style=\"max-width:430px\"> <h2>${bootstrap ?",
+  "n": 1
+ },
+ {
+  "s": ": '' } </div>",
+  "n": 1
+ },
+ {
+  "s": ": ''} <h2 style=\"margin-top:18px\">Son işlemler</h2> <table><thead><tr><th>Zaman</th><th>Kullanıcı</th><th>İşlem</th></tr></thead><tbody>",
+  "n": 1
+ },
+ {
+  "s": ": '<span class=\"sub\">Kayıt yok.</span>'} </div>",
+  "n": 1
+ },
+ {
+  "s": ": e.severity ===",
+  "n": 1
+ },
+ {
+  "s": ": i.severity ===",
+  "n": 1
+ },
+ {
+  "s": ": p.status ===",
+  "n": 1
+ },
+ {
+  "s": "? `<a href=\"/app/el-kitabi.html\" data-tab=\"kitap\">${t(state.lang,",
+  "n": 1
+ },
+ {
+  "s": "? null : Number(i.value))); tr.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "…</span> · imza",
+  "n": 1
+ },
+ {
+  "s": "· geçerlilik:",
+  "n": 1
+ },
+ {
+  "s": "· geçmiş</h2> ${tl.length ?",
+  "n": 1
+ },
+ {
+  "s": "· hash zinciri",
+  "n": 1
+ },
+ {
+  "s": "· kabul edilen risk:",
+  "n": 1
+ },
+ {
+  "s": "· kısmi:",
+  "n": 1
+ },
+ {
+  "s": "· SLA ihlali",
+  "n": 1
+ },
+ {
+  "s": "']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '",
+  "n": 1
+ },
+ {
+  "s": "\" data-tab=\"",
+  "n": 1
+ },
+ {
+  "s": "\" placeholder=\"açıklama\"> <label class=\"sub\"><input type=\"checkbox\" class=\"rule-dl\" style=\"width:auto\"",
+  "n": 1
+ },
+ {
+  "s": "\" placeholder=\"en az 8 karakter\"></div> <div class=\"actions\"> <button class=\"primary\" id=\"bGo\">",
+  "n": 1
+ },
+ {
+  "s": "\" placeholder=\"Hizmet adı\"></td> <td><input class=\"svc-owner\" value=\"",
+  "n": 1
+ },
+ {
+  "s": "\" placeholder=\"mevduat, sigorta, ödeme\"></div> <div class=\"actions\"><button class=\"primary\" id=\"saveInst\">Kaydet</button></div> </div>",
+  "n": 1
+ },
+ {
+  "s": "\" placeholder=\"Örnek Bankası A.Ş.\"></div> <div class=\"row\"><label>Kurum büyüklüğü</label> <select id=\"fTier\"> <option value=\"\">seçilmedi</option> <option value=\"tier1\"",
+  "n": 1
+ },
+ {
+  "s": "\" placeholder=\"ransomware, fidye\"> <input class=\"rule-reason\" value=\"",
+  "n": 1
+ },
+ {
+  "s": "\" placeholder=\"Sahibi\"></td> <td><input type=\"checkbox\" class=\"svc-crit\"",
+  "n": 1
+ },
+ {
+  "s": "\" title=\"",
+  "n": 1
+ },
+ {
+  "s": ") .then((c) => { if ($(",
+  "n": 1
+ },
+ {
+  "s": ") .then((r) => r.json()) .then((s) => { const btn = $(",
+  "n": 1
+ },
+ {
+  "s": ") .then((s) => { if ($(",
+  "n": 1
+ },
+ {
+  "s": ") { const bootstrap = mode ===",
+  "n": 1
+ },
+ {
+  "s": ") { const el = $(",
+  "n": 1
+ },
+ {
+  "s": ") + (isAdmin() ? `<a href=\"/dashboard/\" data-tab=\"panel\">Teknik panel</a>` :",
+  "n": 1
+ },
+ {
+  "s": ") + `</div>`; } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": ") + `<a href=\"#\" id=\"logout\" data-tab=\"cikis\">Çıkış</a>`; $(",
+  "n": 1
+ },
+ {
+  "s": ") go(); }), ); } /* ── durum yükleme ────────────────────────────────────── */ async function loadState() { const st = await fetch(",
+  "n": 1
+ },
+ {
+  "s": ") go(); }); } function renderLogin(mode =",
+  "n": 1
+ },
+ {
+  "s": ") go(); }); } function viewPano() { return ` <div class=\"card\"> <h2>Canlı pano</h2> <p class=\"sub\">Veriler API",
+  "n": 1
+ },
+ {
+  "s": ") return null; const tab = hash || (isAdmin() ?",
+  "n": 1
+ },
+ {
+  "s": "); } } /* ── kullanıcı görünümleri (teknik detay yok) ─────────── */ function viewDurum() { const inst = state.settings.institution || {}; const s = state.activeSession; const phases = [",
+  "n": 1
+ },
+ {
+  "s": "); } } async function loadAudit() { try { const r = await api(",
+  "n": 1
+ },
+ {
+  "s": "); } }; tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": "); } }), ); } catch (e) { body.innerHTML = `<tr><td colspan=\"4\" class=\"sub\">${esc(e.message)}</td></tr>`; } } function bindYonetim() { loadUsers(); loadAudit(); loadApprovals(); loadNotifications(); $(",
+  "n": 1
+ },
+ {
+  "s": "); } }), ); } catch (e) { toast(e.message,",
+  "n": 1
+ },
+ {
+  "s": "); } }), ); }); } catch (e) { box.textContent =",
+  "n": 1
+ },
+ {
+  "s": "); } }); } } function render() { const rt = resetToken(); if (rt && !state.user) { renderReset(rt); return; } if (!state.user) { renderShell(); renderLogin(state.needsBootstrap ?",
+  "n": 1
+ },
+ {
+  "s": "); } }); } async function loadNotifications() { try { const n = await api(",
+  "n": 1
+ },
+ {
+  "s": "); } }); } async function loadTolerances() { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "); } }); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); } }); } const DL_STEPS = [ [",
+  "n": 1
+ },
+ {
+  "s": "); } }); } const parseCsv = (raw) => raw .split(/\\r?\\n/) .filter((l) => l.trim()) .map((l, i) => { const [name, criticality, provider] = l.split(",
+  "n": 1
+ },
+ {
+  "s": "); } }); } function bindBaglantilar() { document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "); } }); /* yeni oturum düğmesi: #newSession ve [data-action=newSession] */ document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "); } }); api(",
+  "n": 1
+ },
+ {
+  "s": "); } }); card.querySelector(",
+  "n": 1
+ },
+ {
+  "s": "); } }); const repLink = $(",
+  "n": 1
+ },
+ {
+  "s": "); } }); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "); } }); if ($(",
+  "n": 1
+ },
+ {
+  "s": "); } }); loadAudit(); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); } await loadState(); render(); }); }); } function bindVarliklar() { const fileInput = $(",
+  "n": 1
+ },
+ {
+  "s": "); } catch (e) { $(",
+  "n": 1
+ },
+ {
+  "s": "); } catch (err) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); } else { toast(",
+  "n": 1
+ },
+ {
+  "s": "); } finally { btn.disabled = false; } }); $(",
+  "n": 1
+ },
+ {
+  "s": "); } finally { btn.disabled = false; btn.textContent =",
+  "n": 1
+ },
+ {
+  "s": "); } loadIncidents(); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); }); } const langBox = $(",
+  "n": 1
+ },
+ {
+  "s": "); a.href = url; a.download = b.dataset.name; a.click(); URL.revokeObjectURL(url); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); await loadState(); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); await loadState(); } catch (err) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); await loadState(); render(); } catch (err) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); body.innerHTML = arts.length ? arts .map( (a) => `<tr><td>${esc(ART_LABELS[a.name] ?? a.name)}</td><td class=\"num\">${(a.size / 1024).toFixed(1)} KB</td> <td>${new Date(a.modified).toLocaleDateString(",
+  "n": 1
+ },
+ {
+  "s": "); box.innerHTML = ` <div class=\"grid k4\"> ${stat(d.counts?.processes,",
+  "n": 1
+ },
+ {
+  "s": "); box.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "); btn.disabled = true; btn.textContent =",
+  "n": 1
+ },
+ {
+  "s": "); btn.disabled = true; try { const r = await api(",
+  "n": 1
+ },
+ {
+  "s": "); const audit = (d.audit ?? []) .map((a) => `<tr><td>${new Date(a.at).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": "); const body = $(",
+  "n": 1
+ },
+ {
+  "s": "); const friendly = {",
+  "n": 1
+ },
+ {
+  "s": "); const missing = r.unowned_codes ?? []; $(",
+  "n": 1
+ },
+ {
+  "s": "); const open = DL_STEPS.filter(([k]) => st[k]?.state !==",
+  "n": 1
+ },
+ {
+  "s": "); const overdue = (d.incidents?.items ?? []) .map((o) => `<tr><td class=\"mono\">${esc(o.incident_id)}</td><td>${esc(o.step)}</td><td>${new Date(o.due_at).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": "); const route = ROUTES[tab]; if (!route || !route.roles.includes(state.role)) return isAdmin() ?",
+  "n": 1
+ },
+ {
+  "s": "); const sid = state.activeSession?.session_id; if (!box || !sid) return; try { const s = await api(",
+  "n": 1
+ },
+ {
+  "s": "); const siem = (state.settings.integrations || []).find((i) => i.id ===",
+  "n": 1
+ },
+ {
+  "s": "); const step = (s.current_phase ||",
+  "n": 1
+ },
+ {
+  "s": "); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "); el.textContent = msg; el.className =",
+  "n": 1
+ },
+ {
+  "s": "); else toast(",
+  "n": 1
+ },
+ {
+  "s": "); if (!body) return; body.innerHTML = r.users .map( (u) => `<tr><td class=\"mono\">${esc(u.username)}</td><td>${esc(u.name ??",
+  "n": 1
+ },
+ {
+  "s": "); if (!body) return; try { const r = await api(`/api/sessions/${state.activeSession.session_id}`); const arts = (r.artifacts || []).filter((a) => a.name !==",
+  "n": 1
+ },
+ {
+  "s": "); if (!box) return; box.innerHTML = (rules ?? []).map((r) => ruleRowHtml(r)).join(",
+  "n": 1
+ },
+ {
+  "s": "); if (!box) return; box.innerHTML = `<div class=\"card\" style=\"background:#0f1626\"> <h2>${esc(PHASE_LABELS[phase] || phase)} · ${ok ?",
+  "n": 1
+ },
+ {
+  "s": "); if (!box) return; box.innerHTML = r.entries.length ? `<table><thead><tr><th>Zaman</th><th>Kullanıcı</th><th>İşlem</th><th>Hedef</th></tr></thead><tbody> ${r.entries.map((e) => `<tr><td>${new Date(e.at).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": "); if (!box) return; box.insertAdjacentHTML(",
+  "n": 1
+ },
+ {
+  "s": "); if (!box) return; box.textContent = lr ? `son çalışma: ${new Date(lr.at).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": "); if (!box) return; if (!list.length) { box.innerHTML =",
+  "n": 1
+ },
+ {
+  "s": "); if (!r.count) { box.innerHTML =",
+  "n": 1
+ },
+ {
+  "s": "); if (b) { e.preventDefault(); createSession(); } }); function bindKurum() { $(",
+  "n": 1
+ },
+ {
+  "s": "); if (box) { box.textContent = n.last_run ? `son tarama: ${new Date(n.last_run.at).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": "); if (box) box.innerHTML = `<div class=\"actions\">${r.independence_checks.map((c) => `<span class=\"pill ok\">${esc(c.check)} uygun</span>`).join(",
+  "n": 1
+ },
+ {
+  "s": "); if (btn && s.enabled) { btn.style.display =",
+  "n": 1
+ },
+ {
+  "s": "); if (ext) { ext.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": "); if (fileInput) { fileInput.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": "); if (hash ===",
+  "n": 1
+ },
+ {
+  "s": "); if (langBox) { langBox.innerHTML = `<select id=\"lang\" style=\"width:auto;padding:5px 8px;font-size:12.5px\"> ${LANGS.map((l) => `<option value=\"${l.code}\" ${state.lang === l.code ?",
+  "n": 1
+ },
+ {
+  "s": "); if (repLink) repLink.href = `/api/sessions/${sid}/report.pdf`; $(",
+  "n": 1
+ },
+ {
+  "s": "); loadApprovals(); loadNotifications(); $(",
+  "n": 1
+ },
+ {
+  "s": "); loadDeadlines(); loadIncidents(); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); loadUsers(); } }), ); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "); location.hash =",
+  "n": 1
+ },
+ {
+  "s": "); renderIncidents(r.incidents.length ? r.incidents : await fetchIncidents()); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); renderRules(r.rules); } catch (e) { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "); renderRules(r.rules); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); renderSchedLast(r.last_run); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); renderSchedLast(r); loadIncidents(); loadSiem(); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); renderSiemTable(r); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "); return ` <div class=\"card\"> <h2>Kurulum sihirbazı</h2> <p class=\"sub\">Sıradaki adım: <b>${esc(s.current_phase ||",
+  "n": 1
+ },
+ {
+  "s": "); return ` <div class=\"card\"> <h2>SIEM olayları</h2> <p class=\"sub\">Bağlantı: ${siem?.vendor ? esc(siem.vendor) :",
+  "n": 1
+ },
+ {
+  "s": "); return `<tr data-id=\"${esc(i.incident_id)}\"> <td class=\"mono\">${esc(i.incident_id)}<br><span class=\"sub\">${esc((i.title ??",
+  "n": 1
+ },
+ {
+  "s": "); return; } const tab = currentTab(); if (!tab) { location.hash = isAdmin() ?",
+  "n": 1
+ },
+ {
+  "s": "); state.settings = s.settings; state.sessions = s.sessions || []; state.activeSession = s.activeSession; state.counts = s.counts || {}; const [roles, lifecycle] = await Promise.all([ api(",
+  "n": 1
+ },
+ {
+  "s": "); state.settings.session_hours = r.session_hours; } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": ")?.checked ?? false, }), }); toast(",
+  "n": 1
+ },
+ {
+  "s": ")?.value ??",
+  "n": 1
+ },
+ {
+  "s": ")?.value } : { username: $(",
+  "n": 1
+ },
+ {
+  "s": ")?.value.trim() ??",
+  "n": 1
+ },
+ {
+  "s": ").catch(() => ({ phases: [] })), ]); state.roles = roles.roles || []; state.phases = lifecycle.phases || []; } const isAdmin = () => state.role ===",
+  "n": 1
+ },
+ {
+  "s": ").catch(() => ({ roles: [] })), api(",
+  "n": 1
+ },
+ {
+  "s": ").checked }) }); toast(r.two_person ?",
+  "n": 1
+ },
+ {
+  "s": ").checked = Boolean(c.auto_provision); }) .catch(() => {}); $(",
+  "n": 1
+ },
+ {
+  "s": ").checked = Boolean(c.enabled); if ($(",
+  "n": 1
+ },
+ {
+  "s": ").checked = Boolean(g.value.mos_dashboard); if ($(",
+  "n": 1
+ },
+ {
+  "s": ").checked = Boolean(n.enabled); if ($(",
+  "n": 1
+ },
+ {
+  "s": ").checked = Boolean(s.allow_self_signed); }) .catch(() => {}); $(",
+  "n": 1
+ },
+ {
+  "s": ").checked = Boolean(s.secure); if ($(",
+  "n": 1
+ },
+ {
+  "s": ").checked, })) .filter((r) => r.keys.length); try { const r = await api(",
+  "n": 1
+ },
+ {
+  "s": ").checked, })) .filter((s) => s.name); if (!services.length) return toast(",
+  "n": 1
+ },
+ {
+  "s": ").checked, })); try { const r = await api(`/api/sessions/${sid}/scenarios`, { method:",
+  "n": 1
+ },
+ {
+  "s": ").checked, allow_self_signed: $(",
+  "n": 1
+ },
+ {
+  "s": ").checked, annual_review_date: $(",
+  "n": 1
+ },
+ {
+  "s": ").checked, host: $(",
+  "n": 1
+ },
+ {
+  "s": ").checked, interval_minutes: Number($(",
+  "n": 1
+ },
+ {
+  "s": ").checked, issuer: $(",
+  "n": 1
+ },
+ {
+  "s": ").checked, regwatch_agent: $(",
+  "n": 1
+ },
+ {
+  "s": ").checked, unauthorized: row.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((a) => a.classList.toggle(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((b) => { if (b.dataset.bound) return; b.dataset.bound =",
+  "n": 1
+ },
+ {
+  "s": ").forEach((btn) => btn.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((c) => (body[c.dataset.f] = c.checked)); return body; }; tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((c) => (c.checked = (r.value.activated || []).includes(c.dataset.id))); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((c) => c.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((card) => { const id = card.dataset.id; card.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((i) => (body[i.dataset.f] = i.value ===",
+  "n": 1
+ },
+ {
+  "s": ").forEach((i) => (i.value = r.value.human_mapping?.[i.dataset.id] ??",
+  "n": 1
+ },
+ {
+  "s": ").forEach((i) => { if (i.value.trim()) human_mapping[i.dataset.id] = i.value.trim(); }); if (!activated.length) return toast(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((i) => i.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((sel) => { if (map[sel.dataset.id]) sel.value = map[sel.dataset.id]; }); } catch { /* yok */ } } function viewSiem() { const s = state.activeSession; if (!s) return noSession(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((sel) => sel.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((tr) => { const decide = async (decision) => { try { await api(`/api/sessions/${sid}/approvals/${tr.dataset.id}`, { method:",
+  "n": 1
+ },
+ {
+  "s": ").forEach((tr) => { const id = tr.dataset.id; const collect = () => { const body = { classification: tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").forEach((tr) => { tr.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ").innerHTML = `<div class=\"sub\" style=\"margin-top:10px\"> ${r.files} dosya · ${(r.size / 1024).toFixed(1)} KB · zincir başı <span class=\"mono\">${esc(String(r.chain_head).slice(0, 16))}…</span> · imza ${r.signed ?",
+  "n": 1
+ },
+ {
+  "s": ").innerHTML = `<div class=\"sub\" style=\"margin-top:10px\">Boşluk: ${r.high_severity} · kısmi: ${r.partial} · kabul edilen risk: ${r.accepted}</div>`; } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": ").innerHTML = `<div class=\"sub\" style=\"margin-top:10px\">Doğruluk %${r.classification_accuracy} · SLA ihlali ${r.sla_violations} · hash zinciri ${r.audit_chain_verified ?",
+  "n": 1
+ },
+ {
+  "s": ").innerHTML = `<div class=\"sub\" style=\"margin-top:10px\">Gölge ${r.shadow_days}g · yarı-otomatik ${r.semi_auto_days}g · inceleme ${r.annual_review_date ||",
+  "n": 1
+ },
+ {
+  "s": ").innerHTML = `<div class=\"sub\" style=\"margin-top:10px\">Kaydedildi: ${r.count} hizmet</div>`; loadTolerances(); } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": ").innerHTML = `<div class=\"sub\" style=\"margin-top:10px\">Müşteri: ${esc(r.claims.customer ??",
+  "n": 1
+ },
+ {
+  "s": ").innerHTML = items .map(([id, label]) => id ===",
+  "n": 1
+ },
+ {
+  "s": ").innerHTML = state.user ? `<a href=\"#parola\" style=\"color:inherit;text-decoration:none\">parola</a> · <a href=\"#\" id=\"extend\" style=\"color:inherit;text-decoration:none\">oturumu uzat</a>` :",
+  "n": 1
+ },
+ {
+  "s": ").insertAdjacentHTML(",
+  "n": 1
+ },
+ {
+  "s": ").join('')} </select>",
+  "n": 1
+ },
+ {
+  "s": ").join('')} </select> </div> <div class=\"row\"><label>Faaliyet alanları</label><input id=\"fLic\" value=\"",
+  "n": 1
+ },
+ {
+  "s": ").join('')} </select> </div> <div class=\"row\"><label>Faaliyet ülkesi</label> <select id=\"fJur\"> ${['TR', 'DE', 'FR', 'NL', 'IE', 'EU'].map((j) =>",
+  "n": 1
+ },
+ {
+  "s": ").length; return ` <div class=\"card\"> <h2>Hoş geldiniz${inst.name ?",
+  "n": 1
+ },
+ {
+  "s": ").map((s) => s.trim()).filter(Boolean), }; await api(",
+  "n": 1
+ },
+ {
+  "s": ").map((x) => (x ??",
+  "n": 1
+ },
+ {
+  "s": ").map((x) => x.trim()).filter(Boolean), }; try { const r = await api(`/api/sessions/${sid}/assessment`, { method:",
+  "n": 1
+ },
+ {
+  "s": ").map((x) => x.trim()).filter(Boolean), reason: row.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").onclick = () => last.remove(); } async function loadSchedule() { try { const s = await api(",
+  "n": 1
+ },
+ {
+  "s": ").remove())); }); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ").remove())); $(",
+  "n": 1
+ },
+ {
+  "s": ").slice(0, 36))}</span></td> <td><span class=\"pill ${i.status ===",
+  "n": 1
+ },
+ {
+  "s": ").slice(0, 40))}</span></td> <td><span class=\"pill ${i.severity ===",
+  "n": 1
+ },
+ {
+  "s": ").textContent = `${r.count} sonuç`; const box = $(",
+  "n": 1
+ },
+ {
+  "s": ").textContent = e.message; } }; $(",
+  "n": 1
+ },
+ {
+  "s": ").textContent = e.message; } }); } function renderOtp(challenge) { $(",
+  "n": 1
+ },
+ {
+  "s": ").textContent = e.message; btn.disabled = false; btn.textContent = bootstrap ?",
+  "n": 1
+ },
+ {
+  "s": ").textContent = state.user ? `${state.user.name || state.user.username} · ${isAdmin() ?",
+  "n": 1
+ },
+ {
+  "s": ").then((r) => r.json()); state.version = st.version; state.needsBootstrap = Boolean(st.needsBootstrap); $(",
+  "n": 1
+ },
+ {
+  "s": ").toLowerCase()] ||",
+  "n": 1
+ },
+ {
+  "s": ").trim()); const map = { kritik:",
+  "n": 1
+ },
+ {
+  "s": ").value !== $(",
+  "n": 1
+ },
+ {
+  "s": ").value }; const res = await api(bootstrap ?",
+  "n": 1
+ },
+ {
+  "s": ").value }; tr.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ").value }) }); $(",
+  "n": 1
+ },
+ {
+  "s": ").value }) }); state.needsBootstrap = false; navKey = null; await loadState(); if (!location.hash || location.hash ===",
+  "n": 1
+ },
+ {
+  "s": ").value }) }); toast(",
+  "n": 1
+ },
+ {
+  "s": ").value }), }); const body = await r.json().catch(() => ({})); if (!r.ok) throw new Error(body.error ||",
+  "n": 1
+ },
+ {
+  "s": ").value }), }); toast(`${r.added} taslak kayıt (${r.total} toplam)`,",
+  "n": 1
+ },
+ {
+  "s": ").value = (n.recipients ?? []).join(",
+  "n": 1
+ },
+ {
+  "s": ").value = c.client_id ??",
+  "n": 1
+ },
+ {
+  "s": ").value = c.issuer ??",
+  "n": 1
+ },
+ {
+  "s": ").value = c.redirect_uri ??",
+  "n": 1
+ },
+ {
+  "s": ").value = g.value.annual_review_date ??",
+  "n": 1
+ },
+ {
+  "s": ").value = g.value.semi_auto_days ?? 30; if ($(",
+  "n": 1
+ },
+ {
+  "s": ").value = g.value.shadow_days ?? 14; if ($(",
+  "n": 1
+ },
+ {
+  "s": ").value = s.from ??",
+  "n": 1
+ },
+ {
+  "s": ").value = s.host ??",
+  "n": 1
+ },
+ {
+  "s": ").value = s.interval_minutes ?? 60; if ($(",
+  "n": 1
+ },
+ {
+  "s": ").value = s.min_severity ??",
+  "n": 1
+ },
+ {
+  "s": ").value = s.port ?? 587; if ($(",
+  "n": 1
+ },
+ {
+  "s": ").value = s.user ??",
+  "n": 1
+ },
+ {
+  "s": ").value = text.trim(); try { const r = await api(`/api/sessions/${state.activeSession.session_id}/inventory/csv`, { method:",
+  "n": 1
+ },
+ {
+  "s": ").value || undefined, secure: $(",
+  "n": 1
+ },
+ {
+  "s": ").value, }), }); toast(",
+  "n": 1
+ },
+ {
+  "s": ").value, }), }); toast(r.enabled ? `Zamanlanmış çekme açık (${r.interval_minutes} dk)` :",
+  "n": 1
+ },
+ {
+  "s": ").value, jurisdiction: $(",
+  "n": 1
+ },
+ {
+  "s": ").value, licenses: $(",
+  "n": 1
+ },
+ {
+  "s": ").value, regulator: $(",
+  "n": 1
+ },
+ {
+  "s": ").value, role: $(",
+  "n": 1
+ },
+ {
+  "s": ").value, send_invite: $(",
+  "n": 1
+ },
+ {
+  "s": ").value; const nw = $(",
+  "n": 1
+ },
+ {
+  "s": ").value; if (nw !== $(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim() || undefined, }), }); toast(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim() || undefined, auto_provision: $(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), auth_type:",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), client_id: $(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), client_secret: $(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), critical: tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), dataLoss: row.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), endpoint: card.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), owner: tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), password: $(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), port: Number($(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), redirect_uri: $(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), tier: $(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(), user: $(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(); if (!q) return; try { const r = await api(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(); if (!to) return toast(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim(); if (!token) return toast(",
+  "n": 1
+ },
+ {
+  "s": ").value.trim()); if (!assets.length) return toast(",
+  "n": 1
+ },
+ {
+  "s": ").value) { $(",
+  "n": 1
+ },
+ {
+  "s": ").value) }) }); toast(",
+  "n": 1
+ },
+ {
+  "s": ").value) || 0, })); if (!rows.length) return toast(",
+  "n": 1
+ },
+ {
+  "s": ").value) || 0, rpo_hours: Number(tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").value) || 0, rto_hours: Number(tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").value) return toast(",
+  "n": 1
+ },
+ {
+  "s": ").value), audit_chain: tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ").value), from: $(",
+  "n": 1
+ },
+ {
+  "s": ").value), min_severity: $(",
+  "n": 1
+ },
+ {
+  "s": ").value), mos_dashboard: $(",
+  "n": 1
+ },
+ {
+  "s": ").value), semi_auto_days: Number($(",
+  "n": 1
+ },
+ {
+  "s": ").value), sla_violations: Number(tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ")), version:",
+  "n": 1
+ },
+ {
+  "s": ")); } catch { return new Set(); } } function saveHelpDone(set) { try { localStorage.setItem(",
+  "n": 1
+ },
+ {
+  "s": ")); }); } catch (e) { box.textContent =",
+  "n": 1
+ },
+ {
+  "s": ")); tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": "))}\" placeholder=\"ransomware, fidye\"> <input class=\"rule-reason\" value=\"${esc(r.reason ??",
+  "n": 1
+ },
+ {
+  "s": ")] .map((row) => ({ keys: row.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ")] .map((tr) => ({ name: tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ")]; const runs = rows.map((tr, i) => ({ scenario: SCENARIO_NAMES[i], accuracy: Number(tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ")].map((c) => c.dataset.id); const human_mapping = {}; document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ")].map((s) => ({ id: s.dataset.id, status: s.value })); const payload = { articles, reviewer: $(",
+  "n": 1
+ },
+ {
+  "s": ")].map((s) => ({ role: s.dataset.id, level: s.value, approved_by: state.user?.name ??",
+  "n": 1
+ },
+ {
+  "s": ")].map((tr) => ({ service: tr.dataset.service, mtd_hours: Number(tr.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ")} · ${lr.fetched ?? 0} olay · ${lr.created ?? 0} kayıt${lr.error ?",
+  "n": 1
+ },
+ {
+  "s": ")} · ${n.last_run.events ?? 0} uyarı · ${n.last_run.sent ?? 0} e-posta` :",
+  "n": 1
+ },
+ {
+  "s": ")} · geçerlilik: ${esc(r.claims.expires_at ??",
+  "n": 1
+ },
+ {
+  "s": ")} →</a> </div>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": ")} </div> <div class=\"actions\">${session ?",
+  "n": 1
+ },
+ {
+  "s": ")} </div> <h2 style=\"margin-top:18px\">Fazlar</h2> <div class=\"phases\">",
+  "n": 1
+ },
+ {
+  "s": ")} </div>`; } function viewVarliklar() { const s = state.activeSession; if (!s) return noSession(",
+  "n": 1
+ },
+ {
+  "s": ")} </select> </div> <div class=\"row\"><label>Faaliyet alanları</label><input id=\"fLic\" value=\"${esc((i.licenses || []).join(",
+  "n": 1
+ },
+ {
+  "s": ")} </select> </div> <div class=\"row\"><label>Faaliyet ülkesi</label> <select id=\"fJur\"> ${[",
+  "n": 1
+ },
+ {
+  "s": ")} </select>`; langBox.querySelector(",
+  "n": 1
+ },
+ {
+  "s": ")} </select></td> <td><button class=\"ghost-btn inc-save\">kaydet</button> <button class=\"ghost-btn inc-promote\">aktif yap</button> <button class=\"ghost-btn inc-hist\">geçmiş</button></td> </tr>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": ")} </tbody></table> </div>`; } const SCENARIO_NAMES = [",
+  "n": 1
+ },
+ {
+  "s": ")} </tbody></table> <p class=\"sub\" style=\"margin-top:10px\">${payload.count} olay · ${new Date(payload.fetched_at ?? Date.now()).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": ")} </tbody></table>`; } async function loadStep6Values() { const sid = state.activeSession?.session_id; if (!sid) return; try { const g = await api(`/api/sessions/${sid}/artifacts/go-live.json`); if ($(",
+  "n": 1
+ },
+ {
+  "s": ")} </tbody></table>`; } catch (e) { box.textContent =",
+  "n": 1
+ },
+ {
+  "s": ")} </tbody></table>`; } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": ")} </tbody></table>`; } function bindSorumlular() { $(",
+  "n": 1
+ },
+ {
+  "s": ")}: ${pct}%</span> <button class=\"ghost-btn\" id=\"helpReset\">${t(state.lang,",
+  "n": 1
+ },
+ {
+  "s": ")}\" placeholder=\"açıklama\"> <label class=\"sub\"><input type=\"checkbox\" class=\"rule-dl\" style=\"width:auto\" ${r.dataLoss ?",
+  "n": 1
+ },
+ {
+  "s": ")}`, name: name ||",
+  "n": 1
+ },
+ {
+  "s": ")}`; } function bindYardim() { const done = helpDone(); document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": ")}</b> · ${esc(PHASE_LABELS[s.current_phase] ||",
+  "n": 1
+ },
+ {
+  "s": ")}</button> <span class=\"sub\">${t(state.lang,",
+  "n": 1
+ },
+ {
+  "s": ")}</div> <div class=\"st\"><span class=\"pill ${st?.status ===",
+  "n": 1
+ },
+ {
+  "s": ")}</h2> <p class=\"sub\">${t(state.lang,",
+  "n": 1
+ },
+ {
+  "s": ")}</p> <div class=\"actions\"> <span class=\"pill ${pct === 100 ?",
+  "n": 1
+ },
+ {
+  "s": ")}</pre> <div class=\"actions\"><button class=\"ghost-btn\" id=\"recCopy\">Kodları kopyala</button> <span class=\"sub\">Yazdırın veya parola yöneticinize kaydedin — bir daha gösterilmez.</span></div>`; document.getElementById(",
+  "n": 1
+ },
+ {
+  "s": ")}</select></div>` :",
+  "n": 1
+ },
+ {
+  "s": ")}</span>` :",
+  "n": 1
+ },
+ {
+  "s": ")}</span></td> <td>${chips}</td> <td>${open .map(([k, label]) => `<button class=\"ghost-btn dl-mark\" data-step=\"${k}\">${esc(label)} gönderildi</button>`) .join(",
+  "n": 1
+ },
+ {
+  "s": ")}</span>${missing.length > 8 ?",
+  "n": 1
+ },
+ {
+  "s": ")}</tbody></table>` :",
+  "n": 1
+ },
+ {
+  "s": ")}</td> </tr>`; }) .join(",
+  "n": 1
+ },
+ {
+  "s": ")}</td> <td><button class=\"ghost-btn apr-ok\">onayla</button> <button class=\"ghost-btn apr-no\">reddet</button></td> </tr>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": ")}</td> <td><button class=\"ghost-btn art-open\" data-name=\"${esc(a.name)}\">indir</button></td></tr>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": ")}</td> <td><select class=\"u-role\" data-id=\"${esc(u.id)}\" ${u.username === state.user.username ?",
+  "n": 1
+ },
+ {
+  "s": ")}</td> <td><span class=\"pill ${e.severity ===",
+  "n": 1
+ },
+ {
+  "s": ")}</td> <td>${esc(s.current_phase ??",
+  "n": 1
+ },
+ {
+  "s": ")}</td></tr>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": ")}</td><td class=\"num\">${s.artifacts ?? 0}</td> <td>${s.created_at ? new Date(s.created_at).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": ")}</td><td>${esc(a.user)}</td><td>${esc(a.action)}</td></tr>`) .join(",
+  "n": 1
+ },
+ {
+  "s": ")}</td><td>${esc(e.by)}</td> <td class=\"mono\">${esc(e.action)}</td><td>${esc(e.detail ??",
+  "n": 1
+ },
+ {
+  "s": ")}</td><td>${esc(e.user)}</td><td>${esc(e.action)}</td><td class=\"mono\">${esc(e.target ??",
+  "n": 1
+ },
+ {
+  "s": ")}</td><td>${esc(s.regulator ??",
+  "n": 1
+ },
+ {
+  "s": ")}${payload.truncated ?",
+  "n": 1
+ },
+ {
+  "s": "]; const done = phases.filter((p) => s?.phases?.[p]?.status ===",
+  "n": 1
+ },
+ {
+  "s": "].map((id) => ({ id, name: { tr: PHASE_LABELS[id] } })); return ` <div class=\"grid k4\"> ${stat(counts.processes,",
+  "n": 1
+ },
+ {
+  "s": "].map((j) => `<option value=\"${j}\" ${i.jurisdiction === j ?",
+  "n": 1
+ },
+ {
+  "s": "]').forEach((b) => { if (b.dataset.bound) return; b.dataset.bound = '1'; b.addEventListener('click', createSession); }); } // Tüm sayfalarda geçerli:",
+  "n": 1
+ },
+ {
+  "s": "} · ${sessionLabel()}` :",
+  "n": 1
+ },
+ {
+  "s": "} · ${siem?.endpoint ? esc(siem.endpoint) :",
+  "n": 1
+ },
+ {
+  "s": "} }); } catch { /* çıkışta ağ hatası önemsiz */ } state.user = null; state.role = null; state.exp = null; navKey = null; location.hash =",
+  "n": 1
+ },
+ {
+  "s": "} </div>",
+  "n": 1
+ },
+ {
+  "s": "} </div> </div>`; }) .join(",
+  "n": 1
+ },
+ {
+  "s": "} </div>`; } catch (e) { toast(",
+  "n": 1
+ },
+ {
+  "s": "} <div class=\"row\"><label>Kullanıcı adı</label><input id=\"bUser\" autocomplete=\"username\" placeholder=\"admin\"></div> <div class=\"row\"><label>Parola</label><input id=\"bPass\" type=\"password\" autocomplete=\"${bootstrap ?",
+  "n": 1
+ },
+ {
+  "s": "} <div class=\"sub\" id=\"ssoErr\" style=\"margin-top:8px\"></div> </div>`; const go = async () => { const btn = $(",
+  "n": 1
+ },
+ {
+  "s": "} <h2 style=\"margin-top:18px\">Son işlemler</h2> <table><thead><tr><th>Zaman</th><th>Kullanıcı</th><th>İşlem</th></tr></thead><tbody>${audit}</tbody></table>`; } catch (e) { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "}, body: JSON.stringify({ token, password: $(",
+  "n": 1
+ },
+ {
+  "s": "}, credentials:",
+  "n": 1
+ },
+ {
+  "s": "}; function bindAra() { const go = async () => { const q = $(",
+  "n": 1
+ },
+ {
+  "s": "}:${state.role ??",
+  "n": 1
+ },
+ {
+  "s": "}\" placeholder=\"en az 8 karakter\"></div> <div class=\"actions\"> <button class=\"primary\" id=\"bGo\">${bootstrap ?",
+  "n": 1
+ },
+ {
+  "s": "}\" style=\"width:110px\"></td> <td><input class=\"inc-num\" data-f=\"outage_minutes\" type=\"number\" value=\"${i.outage_minutes ??",
+  "n": 1
+ },
+ {
+  "s": "}\" style=\"width:120px\"></td> <td><input type=\"checkbox\" class=\"inc-chk\" data-f=\"data_loss\" ${i.data_loss ?",
+  "n": 1
+ },
+ {
+  "s": "}\" style=\"width:90px\"></td> <td><input class=\"inc-num\" data-f=\"economic_impact_eur\" type=\"number\" value=\"${i.economic_impact_eur ??",
+  "n": 1
+ },
+ {
+  "s": "}\"></div> <div class=\"actions\"> <button class=\"primary isave\">Kaydet</button> <button class=\"ghost-btn itest\" ${i.endpoint ?",
+  "n": 1
+ },
+ {
+  "s": "}\">${esc(e.severity)}</span></td> <td>${esc(e.source)}</td><td>${esc(e.title)}</td></tr>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": "}\">${esc(i.severity)}</span></td> <td><input class=\"inc-num\" data-f=\"affected_customers\" type=\"number\" value=\"${i.affected_customers ??",
+  "n": 1
+ },
+ {
+  "s": "}\">${esc(i.status ??",
+  "n": 1
+ },
+ {
+  "s": "}\">${label[a.criticality] ?? esc(a.criticality)}</span></td><td>${esc(a.provider ??",
+  "n": 1
+ },
+ {
+  "s": "}\">${label}</span></div></div>`; }) .join(",
+  "n": 1
+ },
+ {
+  "s": "}); const body = await raw.json(); showGate(b.dataset.gate, body.results ?? [], Boolean(body.ok)); } catch { showGate(b.dataset.gate, [{ id:",
+  "n": 1
+ },
+ {
+  "s": "}); const url = URL.createObjectURL(blob); const a = document.createElement(",
+  "n": 1
+ },
+ {
+  "s": "}); showGate(b.dataset.gate, r.results, true); } catch (e) { // 422 gövdesinde sonuçlar var const msg = String(e.message ||",
+  "n": 1
+ },
+ {
+  "s": "}); state.exp = r.exp; renderShell(); toast(",
+  "n": 1
+ },
+ {
+  "s": "}); toast(`Çalıştı: ${r.fetched} olay, ${r.created} kayıt`,",
+  "n": 1
+ },
+ {
+  "s": "}); toast(`Eşleme oluşturuldu: ${r.owned_codes.length}/${r.all_codes.length} kod`,",
+  "n": 1
+ },
+ {
+  "s": "}); toast(`Kuyruk: ${r.sent} gönderildi · ${r.failed} başarısız`, r.failed ?",
+  "n": 1
+ },
+ {
+  "s": "})[c]); function toast(msg, kind =",
+  "n": 1
+ },
+ {
+  "s": "}[s]}</option>`) .join(",
+  "n": 1
+ },
+ {
+  "s": "}` + `<br><a href=\"#ajanlar\" style=\"color:var(--accent)\">Sorumlular sayfasından eksik ajanları aktive edin</a>` :",
+  "n": 1
+ },
+ {
+  "s": "}`; const items = navItems(); if (key !== navKey) { navKey = key; $(",
+  "n": 1
+ },
+ {
+  "s": "}</button> <span class=\"sub\" id=\"bErr\"></span> </div> ${bootstrap ?",
+  "n": 1
+ },
+ {
+  "s": "}</div>`; toast(",
+  "n": 1
+ },
+ {
+  "s": "}</h2> <p class=\"sub\">${bootstrap ?",
+  "n": 1
+ },
+ {
+  "s": "}</h2> <p class=\"sub\">Kurulumunuzun neresinde olduğunuzu aşağıda görebilirsiniz.</p> <div class=\"grid k3\"> ${stat(done +",
+  "n": 1
+ },
+ {
+  "s": "}</h2> <table><tbody> ${(results || []) .map( (r) => `<tr><td style=\"width:30px\">${r.passed ?",
+  "n": 1
+ },
+ {
+  "s": "}</label><input class=\"it\" type=\"password\" placeholder=\"${i.has_token ?",
+  "n": 1
+ },
+ {
+  "s": "}</p> <div class=\"phases\"> ${phases .map((p) => { const st = session?.phases?.[p.id]; const label = st?.status ===",
+  "n": 1
+ },
+ {
+  "s": "}</p> ${bootstrap ?",
+  "n": 1
+ },
+ {
+  "s": "}</p>` :",
+  "n": 1
+ },
+ {
+  "s": "}</td> <td>${esc(r.detail)}</td>${isAdmin() ? `<td class=\"mono\" style=\"width:70px\">${esc(r.id)}</td>` :",
+  "n": 1
+ },
+ {
+  "s": "}</td> <td>${u.username === state.user.username ?",
+  "n": 1
+ },
+ {
+  "s": "}</td></tr>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": "}</tr>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": "}> <option value=\"user\" ${u.role ===",
+  "n": 1
+ },
+ {
+  "s": "}> veri</label> <label class=\"sub\"><input type=\"checkbox\" class=\"rule-un\" style=\"width:auto\" ${r.unauthorized ?",
+  "n": 1
+ },
+ {
+  "s": "}> yetki</label> <button class=\"ghost-btn rule-del\">sil</button> </div>`; } function addRuleRow(r) { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "}></td> <td><button class=\"ghost-btn svc-del\">sil</button></td></tr>`; $(",
+  "n": 1
+ },
+ {
+  "s": "}></td> <td><input type=\"checkbox\" class=\"inc-chk\" data-f=\"unauthorized_access\" ${i.unauthorized_access ?",
+  "n": 1
+ },
+ {
+  "s": "}></td> <td><select class=\"inc-cls\" style=\"width:110px\"> ${[",
+  "n": 1
+ },
+ {
+  "s": "}></td> <td>${esc(r.name?.tr ?? r.id)}</td> <td><input class=\"hm\" data-id=\"${esc(r.id)}\" placeholder=\"ad soyad\"></td> </tr>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": "}>${{ covered:",
+  "n": 1
+ },
+ {
+  "s": "}>${c}</option>`) .join(",
+  "n": 1
+ },
+ {
+  "s": "}>${esc(s.session_id)}</option>`) .join(",
+  "n": 1
+ },
+ {
+  "s": "}>${l}</option>`) .join(",
+  "n": 1
+ },
+ {
+  "s": "}>Bağlantıyı dene</button> ${i.last_test ? `<span class=\"sub\">son deneme: ${new Date(i.last_test.at).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": "}>Büyük / sistemik</option> <option value=\"tier2\" ${i.tier ===",
+  "n": 1
+ },
+ {
+  "s": "}>kullanıcı</option> <option value=\"admin\" ${u.role ===",
+  "n": 1
+ },
+ {
+  "s": "}>Küçük / kamu</option> </select> </div> <div class=\"row\"><label>Denetleyici kurum</label> <select id=\"fReg\"> <option value=\"\">seçilmedi</option> ${[",
+  "n": 1
+ },
+ {
+  "s": "}>Orta ölçek</option> <option value=\"tier3\" ${i.tier ===",
+  "n": 1
+ },
+ {
+  "s": "}>yönetici</option> </select></td> <td>${u.last_login ? new Date(u.last_login).toLocaleString(",
+  "n": 1
+ },
+ {
+  "s": "\\n\\nPanoya kopyalandı (izin varsa).",
+  "n": 1
+ },
+ {
+  "s": "%;background:linear-gradient(90deg,#5b9cff,#3ddc97)\"></div> </div> </div> ${steps .map( (s, i) =>",
+  "n": 1
+ },
+ {
+  "s": "%</span> <button class=\"ghost-btn\" id=\"helpReset\">",
+  "n": 1
+ },
+ {
+  "s": "+ (isAdmin() ?",
+  "n": 1
+ },
+ {
+  "s": "+ (r.email?.error ??",
+  "n": 1
+ },
+ {
+  "s": "+ b.dataset.id +",
+  "n": 1
+ },
+ {
+  "s": "+ decodeURIComponent(ssoErr[1]); } fetch(",
+  "n": 1
+ },
+ {
+  "s": "+ e.message; } } async function loadRules() { try { const r = await api(",
+  "n": 1
+ },
+ {
+  "s": "+ e.message; } } async function loadUsers() { try { const r = await api(",
+  "n": 1
+ },
+ {
+  "s": "+ e.message; } } function bindPano() { $(",
+  "n": 1
+ },
+ {
+  "s": "+ e.message; } } function loadAutonomy() { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "+ e.message; } } function renderRules(rules) { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "+ encodeURIComponent(q)); $(",
+  "n": 1
+ },
+ {
+  "s": "+ esc(inst.name) :",
+  "n": 1
+ },
+ {
+  "s": "+ esc(session.session_id) :",
+  "n": 1
+ },
+ {
+  "s": "+ id +",
+  "n": 1
+ },
+ {
+  "s": "+ id, { method:",
+  "n": 1
+ },
+ {
+  "s": "+ id, label)}</a>`, ) .join(",
+  "n": 1
+ },
+ {
+  "s": "+ kind; clearTimeout(toast._t); toast._t = setTimeout(() => (el.className =",
+  "n": 1
+ },
+ {
+  "s": "+ kind), 3600); } async function api(path, options = {}) { const res = await fetch(path, { headers: {",
+  "n": 1
+ },
+ {
+  "s": "+ lr.error :",
+  "n": 1
+ },
+ {
+  "s": "+ r.detail,",
+  "n": 1
+ },
+ {
+  "s": "+ remaining : remaining; return `<span class=\"pill ${cls}\" title=\"${esc(label)}\">${esc(label)}: ${esc(text)}</span>`; } async function loadDeadlines() { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "+ sel.dataset.id, { method:",
+  "n": 1
+ },
+ {
+  "s": "+ st.version; if (state.needsBootstrap) return; const me = await fetch(",
+  "n": 1
+ },
+ {
+  "s": "+ tab, route.sub); view.innerHTML = route.render(); route.bind(); } window.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": "+ tab, route.title); $(",
+  "n": 1
+ },
+ {
+  "s": "</b> ·",
+  "n": 1
+ },
+ {
+  "s": "</b> / <b>",
+  "n": 1
+ },
+ {
+  "s": "</b> kod",
+  "n": 1
+ },
+ {
+  "s": "</b> sorumlu ajan tanımlı",
+  "n": 1
+ },
+ {
+  "s": "</b> varlık · <b>",
+  "n": 1
+ },
+ {
+  "s": "</button> <span class=\"sub\" id=\"bErr\"></span> </div>",
+  "n": 1
+ },
+ {
+  "s": "</button> <span class=\"sub\">",
+  "n": 1
+ },
+ {
+  "s": "</div> <div class=\"actions\">",
+  "n": 1
+ },
+ {
+  "s": "</div> <div class=\"card\"> <h2>Kurum</h2> <p class=\"sub\">",
+  "n": 1
+ },
+ {
+  "s": "</div> <div class=\"grid k3\" style=\"margin-top:18px\"> ${stat(d.incidents?.total ?? 0, 'Olay kaydı',",
+  "n": 1
+ },
+ {
+  "s": "</div> ${overdue ?",
+  "n": 1
+ },
+ {
+  "s": "</div><div class=\"h\">",
+  "n": 1
+ },
+ {
+  "s": "</div><div class=\"n\">",
+  "n": 1
+ },
+ {
+  "s": "</div><div class=\"st\"><span class=\"pill",
+  "n": 1
+ },
+ {
+  "s": "</h2> <p class=\"sub\">Kurulumunuzun neresinde olduğunuzu aşağıda görebilirsiniz.</p> <div class=\"grid k3\">",
+  "n": 1
+ },
+ {
+  "s": "</h2> <table><tbody> ${(results || []) .map( (r) =>",
+  "n": 1
+ },
+ {
+  "s": "</p> <div class=\"actions\"> <span class=\"pill",
+  "n": 1
+ },
+ {
+  "s": "</p> <div class=\"actions\"><button class=\"primary\" id=\"newSession\">Kurulumu başlat</button></div> </div>",
+  "n": 1
+ },
+ {
+  "s": "</p> <div class=\"phases\"> ${phases .map((p) => { const st = session?.phases?.[p.id]; const label = st?.status === 'completed' ? 'tamamlandı' : st?.status === 'blocked' ? 'kapı kapalı' : 'başlanmadı'; return",
+  "n": 1
+ },
+ {
+  "s": "</p> ${ enabled ?",
+  "n": 1
+ },
+ {
+  "s": "</pre> <div class=\"actions\"><button class=\"ghost-btn\" id=\"recCopy\">Kodları kopyala</button> <span class=\"sub\">Yazdırın veya parola yöneticinize kaydedin — bir daha gösterilmez.</span></div>",
+  "n": 1
+ },
+ {
+  "s": "</span> </div> <div style=\"height:6px;background:#0c1322;border-radius:4px;margin-top:12px;overflow:hidden\"> <div style=\"height:100%;width:",
+  "n": 1
+ },
+ {
+  "s": "</td> <td class=\"mono\">",
+  "n": 1
+ },
+ {
+  "s": "</td> <td><button class=\"ghost-btn art-open\" data-name=\"",
+  "n": 1
+ },
+ {
+  "s": "</td> <td><select class=\"u-role\" data-id=\"",
+  "n": 1
+ },
+ {
+  "s": "</td> <td>${u.username === state.user.username ? '<span class=\"sub\">siz</span>' :",
+  "n": 1
+ },
+ {
+  "s": "</td><td class=\"num\">",
+  "n": 1
+ },
+ {
+  "s": "<a href=\"/app/el-kitabi.html\" data-tab=\"kitap\">",
+  "n": 1
+ },
+ {
+  "s": "<a href=\"/dashboard/\" data-tab=\"panel\">Teknik panel</a>",
+  "n": 1
+ },
+ {
+  "s": "<a href=\"#",
+  "n": 1
+ },
+ {
+  "s": "<a href=\"#\" id=\"logout\" data-tab=\"cikis\">Çıkış</a>",
+  "n": 1
+ },
+ {
+  "s": "<a href=\"#parola\" style=\"color:inherit;text-decoration:none\">parola</a> · <a href=\"#\" id=\"extend\" style=\"color:inherit;text-decoration:none\">oturumu uzat</a>",
+  "n": 1
+ },
+ {
+  "s": "<br><a href=\"#ajanlar\" style=\"color:var(--accent)\">Sorumlular sayfasından eksik ajanları aktive edin</a>",
+  "n": 1
+ },
+ {
+  "s": "<button class=\"ghost-btn dl-mark\" data-step=\"",
+  "n": 1
+ },
+ {
+  "s": "<button class=\"primary\" data-action=\"newSession\">Kurulumu başlat</button>",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"actions\">${r.independence_checks.map((c) =>",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\" style=\"max-width:430px\"> <h2>",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"> <h2>",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"> <h2>Henüz kurulum başlamadı</h2> <p class=\"sub\">",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"> <h2>Hoş geldiniz",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"> <h2>İki adımlı doğrulama</h2> <p class=\"sub\">Durum:",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"> <h2>Kurulum sihirbazı</h2> <p class=\"sub\">Sıradaki adım: <b>",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"> <h2>Kurum bilgileri</h2> <p class=\"sub\">Bu bilgiler kurulum ve raporlarda kullanılır.</p> <div class=\"row\"><label>Kurum adı</label><input id=\"fName\" value=\"",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"> <h2>SIEM olayları</h2> <p class=\"sub\">Bağlantı:",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"> <h2>Sistem bağlantıları</h2> <p class=\"sub\">Kurumunuzun kullandığı sistemleri bağlayın. Parola ve anahtarlar şifreli olarak saklanır, ekranda gösterilmez.</p>",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"card\"><h2>Sunucuya ulaşılamadı</h2><p class=\"sub\">",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"phase\"><div class=\"id\">",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"row\"><label>Kullanıcı adı</label><input id=\"bUser\" autocomplete=\"username\" placeholder=\"admin\"></div> <div class=\"row\"><label>Parola</label><input id=\"bPass\" type=\"password\" autocomplete=\"",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"rule-row\" style=\"display:grid;grid-template-columns:2fr 2fr auto auto auto;gap:8px;margin:8px 0;align-items:center\"> <input class=\"rule-keys\" value=\"",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"stat\"><div class=\"l\">",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"sub\" id=\"ssoErr\" style=\"margin-top:8px\"></div> </div>",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"sub\" style=\"margin-top:10px\">",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"sub\" style=\"margin-top:10px\">Boşluk:",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"sub\" style=\"margin-top:10px\">Doğruluk %",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"sub\" style=\"margin-top:10px\">Gölge",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"sub\" style=\"margin-top:10px\">Kaydedildi:",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"sub\" style=\"margin-top:10px\">Müşteri:",
+  "n": 1
+ },
+ {
+  "s": "<div class=\"sub\" style=\"margin-top:10px\">Sahipli <b>",
+  "n": 1
+ },
+ {
+  "s": "<select id=\"lang\" style=\"width:auto;padding:5px 8px;font-size:12.5px\"> ${LANGS.map((l) =>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"pill",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"sub\">son deneme:",
+  "n": 1
+ },
+ {
+  "s": "<table style=\"margin-top:14px\"><thead><tr> <th>Kayıt</th><th>Önem</th><th>Müşteri</th><th>Kesinti (dk)</th><th>Etki (EUR)</th> <th>Veri</th><th>Yetkisiz</th><th>Sınıf</th><th></th></tr></thead><tbody> ${list .map( (i) =>",
+  "n": 1
+ },
+ {
+  "s": "<table style=\"margin-top:14px\"><thead><tr><th>Ad</th><th>Kritiklik</th><th>Tedarikçi</th></tr></thead><tbody> ${assets.map((a) =>",
+  "n": 1
+ },
+ {
+  "s": "<table style=\"margin-top:14px\"><thead><tr><th>Zaman</th><th>Önem</th><th>Kaynak</th><th>Başlık</th></tr></thead><tbody> ${events .map( (e) =>",
+  "n": 1
+ },
+ {
+  "s": "<table><thead><tr><th>Görev</th><th>Otonomi seviyesi</th></tr></thead><tbody> ${state.roles .map( (r) =>",
+  "n": 1
+ },
+ {
+  "s": "<table><thead><tr><th>Hizmet</th><th>MTD (saat)</th><th>RTO (saat)</th><th>RPO (saat)</th></tr></thead><tbody> ${services .map( (s) =>",
+  "n": 1
+ },
+ {
+  "s": "<table><thead><tr><th>Madde</th><th>Başlık</th><th>Durum</th></tr></thead><tbody> ${r.articles .map( (a) =>",
+  "n": 1
+ },
+ {
+  "s": "<table><thead><tr><th>Talep</th><th>Hedef</th><th>Talep eden</th><th>Zaman</th><th></th></tr></thead><tbody> ${pending .map( (a) =>",
+  "n": 1
+ },
+ {
+  "s": "<table><thead><tr><th>Tür</th><th>Kimlik</th><th>Başlık</th><th>Bağlam</th></tr></thead><tbody> ${r.results .map( (x) =>",
+  "n": 1
+ },
+ {
+  "s": "<table><thead><tr><th>Zaman</th><th>Kullanıcı</th><th>İşlem</th><th>Hedef</th></tr></thead><tbody> ${r.entries.map((e) =>",
+  "n": 1
+ },
+ {
+  "s": "<td class=\"mono\" style=\"width:70px\">",
+  "n": 1
+ },
+ {
+  "s": "<tr><td colspan=\"4\" class=\"sub\">",
+  "n": 1
+ },
+ {
+  "s": "<tr><td><input class=\"svc-name\" value=\"",
+  "n": 1
+ },
+ {
+  "s": "> <div style=",
+  "n": 1
+ },
+ {
+  "s": "> <div> <h2 style=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>${bootstrap ? 'Yönetici hesabı oluştur' : 'Giriş'}</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>${esc(PHASE_LABELS[phase] || phase)} · ${ok ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>${t(state.lang, 'title.yardim')}</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>1) Uygulamaya ekleyin</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Adım 1 · Hizmetleriniz</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Adım 2 · Kesinti toleransları</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Adım 3 · Varlık ve sorumlu eşlemesi</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Adım 4 · Senaryo testleri</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Adım 5 · Öz değerlendirme</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Adım 6 · Canlıya geçiş</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Ara</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Belgeler</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Bildirimler</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Canlı pano</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Doğrulama kodu</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>E-posta (SMTP)</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Henüz kurulum başlamadı</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Hoş geldiniz${inst.name ? ', ' + esc(inst.name) : ''}</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>İki adımlı doğrulama</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>İşlem kaydı</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Kanıt paketi</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Kullanıcılar</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Kurulum adımları</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Kurulum fazları</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Kurulum sihirbazı</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Kurum bilgileri</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Kurum</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Kurumsal giriş (SSO / OIDC)</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Olay kayıtları</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Olay kuralları</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Onay akışı (dört göz)</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Oturum süresi</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Oturumlar</h2> <table><thead><tr><th>Oturum</th><th>Tier</th><th>Regülatör</th><th>Faz</th><th class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Parolamı değiştir</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Raporlama süreleri</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>SIEM olayları</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Sistem bağlantıları</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Sorumlular</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Varlıklarım</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Yeni parola belirle</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <h2>Zamanlanmış çekme</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": "> <header><div><b>${esc(meta.title)}</b><div class=",
+  "n": 1
+ },
+ {
+  "s": "> <input id=",
+  "n": 1
+ },
+ {
+  "s": "> <option value=\"user\"",
+  "n": 1
+ },
+ {
+  "s": "> <span class=",
+  "n": 1
+ },
+ {
+  "s": "> <td>${esc(a.type)}</td> <td class=",
+  "n": 1
+ },
+ {
+  "s": "> <td>${esc(s.name)}</td> <td><input class=",
+  "n": 1
+ },
+ {
+  "s": "> <thead><tr><th>Hizmet adı</th><th>Sahibi</th><th>Kritik mi</th><th></th></tr></thead> <tbody> <tr><td><input class=",
+  "n": 1
+ },
+ {
+  "s": "> <thead><tr><th>Senaryo</th><th>Doğruluk %</th><th>SLA ihlali</th><th>Hash zinciri</th></tr></thead> <tbody> <tr><td>Büyük olay</td><td><input class=",
+  "n": 1
+ },
+ {
+  "s": "> ${['covered', 'partial', 'gap'] .map((s) => `<option value=",
+  "n": 1
+ },
+ {
+  "s": "> ${['TR', 'DE', 'FR', 'NL', 'IE', 'EU'].map((j) => `<option value=",
+  "n": 1
+ },
+ {
+  "s": "> ${['unclassified', 'major', 'not_major'] .map((c) => `<option value=",
+  "n": 1
+ },
+ {
+  "s": "> ${done === 0 ? '<button class=",
+  "n": 1
+ },
+ {
+  "s": "> ${LANGS.map((l) => `<option value=",
+  "n": 1
+ },
+ {
+  "s": "> ${Object.entries(AUTONOMY_LABELS) .map(([v, l]) => `<option value=",
+  "n": 1
+ },
+ {
+  "s": "> ${phases .map((p) => { const st = session?.phases?.[p.id]; const label = st?.status === 'completed' ? 'tamamlandı' : st?.status === 'blocked' ? 'kapı kapalı' : 'başlanmadı'; return `<div class=",
+  "n": 1
+ },
+ {
+  "s": "> ${r.files} dosya · ${(r.size / 1024).toFixed(1)} KB · zincir başı <span class=",
+  "n": 1
+ },
+ {
+  "s": "> ${stat(counts.processes, 'Süreç', '5 sütun')} ${stat(counts.controls, 'Kontrol', 'kanıt şartnameli')} ${stat(counts.roles, 'Ajan', 'üç savunma hattı')} ${stat(counts.terms, 'Terim', 'DORA sözlüğü')} </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": "> Bilinmeyen kullanıcıyı otomatik aç (rol: kullanıcı)</label> <button class=",
+  "n": 1
+ },
+ {
+  "s": "> davet e-postası gönder</label> </div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": "> Düzenleme izleme ajanı aktif</label> <button class=",
+  "n": 1
+ },
+ {
+  "s": "> Etkin</label> <label class=",
+  "n": 1
+ },
+ {
+  "s": "> MOS panosu hazır</label> <label class=",
+  "n": 1
+ },
+ {
+  "s": "> self-signed kabul</label> </div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": "> SSL (465)</label> <label class=",
+  "n": 1
+ },
+ {
+  "s": "> veri</label> <label class=\"sub\"><input type=\"checkbox\" class=\"rule-un\" style=\"width:auto\"",
+  "n": 1
+ },
+ {
+  "s": "> yetki</label> <button class=\"ghost-btn rule-del\">sil</button> </div>",
+  "n": 1
+ },
+ {
+  "s": ">`).join('')}</datalist></div> <div><label class=",
+  "n": 1
+ },
+ {
+  "s": ">+ kural ekle</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">+ satır ekle</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": "></div> </div> </div> ${steps .map( (s, i) => ` <div class=",
+  "n": 1
+ },
+ {
+  "s": "></div> </div> <div style=",
+  "n": 1
+ },
+ {
+  "s": "></div> </div>`; } function viewBelgeler() { const s = state.activeSession; if (!s) return noSession('Belgeler kurulum başladığında oluşur.'); return ` <div class=",
+  "n": 1
+ },
+ {
+  "s": "></div> <div style=",
+  "n": 1
+ },
+ {
+  "s": "></div> <h2 style=",
+  "n": 1
+ },
+ {
+  "s": "></div>' : ''} <div class=",
+  "n": 1
+ },
+ {
+  "s": "></span> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": "></span> </div> ${bootstrap ? '' : '<div class=",
+  "n": 1
+ },
+ {
+  "s": "></span></div> <div id=",
+  "n": 1
+ },
+ {
+  "s": "></td> </tr>`, ) .join('')} </tbody> </table> <div class=",
+  "n": 1
+ },
+ {
+  "s": "></td> </tr>`, ) .join('')}</tbody></table>` : '<div class=",
+  "n": 1
+ },
+ {
+  "s": "></td> <td><button class=\"ghost-btn svc-del\">sil</button></td></tr>",
+  "n": 1
+ },
+ {
+  "s": "><a class=",
+  "n": 1
+ },
+ {
+  "s": "><datalist id=",
+  "n": 1
+ },
+ {
+  "s": "><h2>Sunucuya ulaşılamadı</h2><p class=",
+  "n": 1
+ },
+ {
+  "s": "><label>6 haneli kod</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Ad soyad</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Bağımsız doğrulayan</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Denetleyici kurum</label> <select id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Faaliyet alanları</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Faaliyet ülkesi</label> <select id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Kabul edilen riskler</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Kod</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Kullanıcı adı</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Kurum adı</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Kurum büyüklüğü</label> <select id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Mevcut parola</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Tekrar</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Yeni parola (tekrar)</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><label>Yıllık kesinti sınırı (dakika)</label><input id=",
+  "n": 1
+ },
+ {
+  "s": "><thead><tr> <th>Kayıt</th><th>Önem</th><th>Müşteri</th><th>Kesinti (dk)</th><th>Etki (EUR)</th> <th>Veri</th><th>Yetkisiz</th><th>Sınıf</th><th></th></tr></thead><tbody> ${list .map( (i) => `<tr data-id=",
+  "n": 1
+ },
+ {
+  "s": "><thead><tr><th>Ad</th><th>Kritiklik</th><th>Tedarikçi</th></tr></thead><tbody> ${assets.map((a) => `<tr><td>${esc(a.name)}</td><td><span class=",
+  "n": 1
+ },
+ {
+  "s": "><thead><tr><th>Zaman</th><th>Önem</th><th>Kaynak</th><th>Başlık</th></tr></thead><tbody> ${events .map( (e) => `<tr><td>${new Date(e.ts).toLocaleString('tr-TR')}</td> <td><span class=",
+  "n": 1
+ },
+ {
+  "s": ">✔</span>' : '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">✘</span>'}</td> <td>${esc(r.detail)}</td>${isAdmin() ? `<td class=",
+  "n": 1
+ },
+ {
+  "s": ">💡 ${esc(s.tip)}</p> </div> <a class=",
+  "n": 1
+ },
+ {
+  "s": ">${(a.size / 1024).toFixed(1)} KB</td> <td>${new Date(a.modified).toLocaleDateString('tr-TR')}</td> <td><button class=",
+  "n": 1
+ },
+ {
+  "s": ">${(meta.vendors || []).map((v) => `<option value=",
+  "n": 1
+ },
+ {
+  "s": ">${bootstrap ? 'Bu kurulumda henüz kullanıcı yok. İlk hesap yönetici olarak oluşturulur.' : 'Kullanıcı adı ve parolanızı girin.'}</p> ${bootstrap ? '<div class=",
+  "n": 1
+ },
+ {
+  "s": ">${bootstrap ? 'Hesabı oluştur' : 'Giriş yap'}</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">${e.recovery_codes.join('\\n')}</pre> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc((i.title ?? '').slice(0, 36))}</span></td> <td><span class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc((i.title ?? '').slice(0, 40))}</span></td> <td><span class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc((r.secret.match(/.{1,4}/g) ?? [r.secret]).join(' '))}</p> <p class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(a.id)}</td><td>${esc(a.title)}</td> <td><select class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(a.target)}</td> <td>${esc(a.requested_by)}</td> <td>${new Date(a.requested_at).toLocaleString('tr-TR')}</td> <td><button class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(e.action)}</td><td>${esc(e.detail ?? '')}</td></tr>`) .join('')} </tbody></table>` : '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(e.severity)}</span></td> <td>${esc(e.source)}</td><td>${esc(e.title)}</td></tr>`, ) .join('')} </tbody></table> <p class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(e.target ?? '')}</td></tr>`).join('')} </tbody></table>` : '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(i.severity)}</span></td> <td><input class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(i.status ?? 'draft')}</span></td> <td>${chips}</td> <td>${open .map(([k, label]) => `<button class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(meta.hint)}</div></div> ${ok ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(msg)}</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(p.name?.tr ?? '')}</div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(p.status)}</span></div></div>`; }) .join(''); const overdue = (d.incidents?.items ?? []) .map((o) => `<tr><td class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(r.otpauth)}</span></p> <h2>2) Kodu doğrulayın</h2> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(s.body)}</p> <p class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(s.session_id)}</td><td>${esc(s.tier ?? '—')}</td><td>${esc(s.regulator ?? '—')}</td> <td>${esc(s.current_phase ?? '—')}</td><td class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(s.title)}</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(String(r.chain_head).slice(0, 16))}…</span> · imza ${r.signed ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(TYPE_LABEL_TR[x.type] ?? x.type)}</span></td> <td class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(u.username)}</td><td>${esc(u.name ?? '')}</td> <td><select class=",
+  "n": 1
+ },
+ {
+  "s": ">${esc(x.id)}</td><td>${esc(x.title)}</td> <td class=",
+  "n": 1
+ },
+ {
+  "s": ">${hint}</div></div>`; const noSession = (msg) => ` <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${inst.name ? esc(inst.name) : 'Kurum adı girilmedi'} · ${esc(inst.tier || 'tier yok')} · ${esc(inst.regulator || 'regülatör yok')} · ${esc(inst.jurisdiction || 'TR')}</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${label}</div><div class=",
+  "n": 1
+ },
+ {
+  "s": ">${label}</span></div></div>`; }) .join('')} </div> </div>`; } function viewKurum() { const i = state.settings.institution || {}; return ` <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${label}</span></div></div>`; }) .join('')} </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${missing.slice(0, 8).join(', ')}</span>${missing.length > 8 ? '…' : ''}` + `<br><a href=",
+  "n": 1
+ },
+ {
+  "s": ">${n ?? '—'}</div><div class=",
+  "n": 1
+ },
+ {
+  "s": ">${payload.count} olay · ${new Date(payload.fetched_at ?? Date.now()).toLocaleString('tr-TR')}${payload.truncated ? ' · sınır nedeniyle kesildi' : ''}</p>` : '<p class=",
+  "n": 1
+ },
+ {
+  "s": ">${PHASE_LABELS[id]}</div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${phaseCells}</div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${r.independence_checks.map((c) => `<span class=",
+  "n": 1
+ },
+ {
+  "s": ">${r.passed ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">${s.artifacts ?? 0}</td> <td>${s.created_at ? new Date(s.created_at).toLocaleString('tr-TR') : '—'}</td></tr>`, ) .join('') : '<tr><td colspan=",
+  "n": 1
+ },
+ {
+  "s": ">${session ? '<button class=",
+  "n": 1
+ },
+ {
+  "s": ">${session ? 'Aktif oturum: ' + esc(session.session_id) : 'Oturum yok'}</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${state.sessions .map((s) => `<option value=",
+  "n": 1
+ },
+ {
+  "s": ">${t(state.lang, 'help.intro')}</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">${t(state.lang, 'help.lang_note')}</span> </div> <div style=",
+  "n": 1
+ },
+ {
+  "s": ">${t(state.lang, 'help.progress')}: ${pct}%</span> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">${t(state.lang, 'help.reset')}</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">${t(state.lang, 'nav.' + id, label)}</a>`, ) .join('') + (isAdmin() ? `<a href=",
+  "n": 1
+ },
+ {
+  "s": ">${t(state.lang, 'nav.kitap', label)}</a>` : `<a href=",
+  "n": 1
+ },
+ {
+  "s": ">1. adımı denetle</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">2. adımı denetle</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">3. adımı denetle</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">4. adımı denetle</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">5. adımı denetle</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">6. adımı denetle</button> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">açık</span>' : '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">Açıkken olay sınıflandırması ve canlıya geçiş <b>ikinci bir yöneticinin</b> onayına gider. Talebi oluşturan kişi kendi talebini onaylayamaz.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Açıkken sunucu belirli aralıkla SIEM'i çeker ve taslak kayıt üretir.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Ad soyad</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Adım ${i + 1}</div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Ajan otonomi seviyeleri ve geçiş ölçütleri. Üretim için ticari lisans gerekir.</p> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Aktif oturum</label> <select id=",
+  "n": 1
+ },
+ {
+  "s": ">aktif yap</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">Alıcılar (virgülle; boşsa yönetici e-postaları)</label> <input id=",
+  "n": 1
+ },
+ {
+  "s": ">Altı adımın tüm kayıtlarını tek zip dosyasında toplar; her dosyanın sha256 özeti ve hash zinciri manifestte yer alır, paket kurumun kanıt anahtarıyla imzalanır.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Ara</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Aralık (dakika)</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Artefakt</th><th>Oluşturma</th></tr></thead> <tbody>${state.sessions.length ? state.sessions .map( (s) => `<tr><td class=",
+  "n": 1
+ },
+ {
+  "s": ">bağlanamadı</span>' : i.status === 'configured' ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">bağlandı</span>' : i.status === 'error' ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">Bağlantı adresi</label><input class=",
+  "n": 1
+ },
+ {
+  "s": ">Bağlantı: ${siem?.vendor ? esc(siem.vendor) : 'ürün seçilmedi'} · ${siem?.endpoint ? esc(siem.endpoint) : 'adres yok'}</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Bağlantıyı düzenle</a> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Bazı uygulamalar bağlantıyı doğrudan kabul eder: <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Boyut</th><th>Tarih</th><th></th></tr></thead> <tbody id=",
+  "n": 1
+ },
+ {
+  "s": ">Bu bilgiler kurulum ve raporlarda kullanılır.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Bu kodları güvenli bir yerde saklayın; her biri bir kez kullanılabilir.</p> <pre class=",
+  "n": 1
+ },
+ {
+  "s": ">Büyük / sistemik</option> <option value=\"tier2\"",
+  "n": 1
+ },
+ {
+  "s": ">Client ID</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Client secret</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">davet gönder</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">Davet, parola bağlantısı ve bildirim gönderimi. Parola <code>web-data/secrets.json</code> içinde tutulur.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Değerlendirmeyi kaydet</button></div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Değiştir</button><span class=",
+  "n": 1
+ },
+ {
+  "s": ">Doğrula</button><span class=",
+  "n": 1
+ },
+ {
+  "s": ">Doğrulama uygulamanızla giriş yapıyorsunuz. Kapatmak için parolanızı girin.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">DORA: ilk bildirim 4 saat, ara rapor 72 saat, nihai rapor 1 ay (tespit anından itibaren). Geçen süreler kırmızı, son %25 turuncu gösterilir.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Durum: ${enabled ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">düşük</option> </select> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">düşük</option></select> </div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Ed25519</span>' : '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">eksik var</span>'}</h2> <table><tbody> ${(results || []) .map( (r) => `<tr><td style=",
+  "n": 1
+ },
+ {
+  "s": ">En az 8 karakter kullanın.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">En az 8 karakter. Bağlantı 30 dakika geçerlidir ve tek kullanımlıktır.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">En fazla olay</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Envanter ve sorumlular tamamsa görev eşlemesini oluşturun.</p> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Envanter</a> <a class=",
+  "n": 1
+ },
+ {
+  "s": ">Erişim anahtarı ${i.has_token ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">Etkinleştir</button></div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Fazlar</h2> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Gecikmiş raporlama</h2><table><thead><tr><th>Olay</th><th>Adım</th><th>Son tarih</th></tr></thead><tbody>${overdue}</tbody></table>` : ''} <h2 style=",
+  "n": 1
+ },
+ {
+  "s": ">Geçiş kaydını kaydet</button> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">geçti</span>' : '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">Giriş yaptıktan sonra oturumun kaç saat açık kalacağı (1-168).</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Gölge mod (gün)</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Gönderen</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Görev eşlemesini oluştur</button> <a class=",
+  "n": 1
+ },
+ {
+  "s": ">Hangi olayların kayıt açacağını belirleyen anahtar kelimeler. Virgülle birden fazla yazılabilir.</p> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Henüz olay kaydı yok.</p>'; return; } box.innerHTML = `<table style=",
+  "n": 1
+ },
+ {
+  "s": ">Her adım tamamlandığında bir sonrakine geçilir.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Her DORA maddesi için kapsama durumunu işaretleyin, bağımsız doğrulayanı yazın.</p> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Her görev için kurumunuzda kimin sorumlu olacağını yazın.</p> <table> <thead><tr><th></th><th>Görev</th><th>Sorumlu kişi</th></tr></thead> <tbody> ${state.roles .map( (r) => `<tr> <td><input type=",
+  "n": 1
+ },
+ {
+  "s": ">Her hizmet için kabul edilebilir kesinti süreleri (saat).</p> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Her senaryo için ölçüm sonucunu girin. Üç senaryo tamamlanınca adım kapanır.</p> <table id=",
+  "n": 1
+ },
+ {
+  "s": ">Hizmetleri getir</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">Hizmetleri kaydet</button> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Issuer</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">İndir</a> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">indir</button></td></tr>`, ) .join('') : '<tr><td colspan=",
+  "n": 1
+ },
+ {
+  "s": ">İşlem kaydını CSV indir</a> </div> <h2 style=",
+  "n": 1
+ },
+ {
+  "s": ">Kanıt paketi oluştur</button> <a class=",
+  "n": 1
+ },
+ {
+  "s": ">Kanıt paketini indir</a> </div> <table> <thead><tr><th>Belge</th><th class=",
+  "n": 1
+ },
+ {
+  "s": ">kapalı</span>'}</p> ${ enabled ? `<p class=",
+  "n": 1
+ },
+ {
+  "s": ">Kapat</button></div>` : `<div class=",
+  "n": 1
+ },
+ {
+  "s": ">kaydedildi</span>' : '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">kaydet</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">Kaydet</button> <input id=",
+  "n": 1
+ },
+ {
+  "s": ">Kaydet</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Kaydet</button></div> </div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Kaydet</button></div> </div>`; } function viewBaglantilar() { const list = state.settings.integrations || []; return ` <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Kayıtlı atamaları göster</button> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Kayıtlı listeyi göster</button> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">kayıtlı</span>' : ''}</label><input class=",
+  "n": 1
+ },
+ {
+  "s": ">Kimlik sağlayıcınızın keşif belgesini kullanır. Anahtar <code>web-data/secrets.json</code> içinde tutulur.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Kodları kopyala</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Kodu kaybettiyseniz kurtarma kodlarınızdan birini kullanabilirsiniz.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Kritik hizmetlerinizi ve sahiplerini girin. En az bir hizmet gerekir.</p> <table id=",
+  "n": 1
+ },
+ {
+  "s": ">Kullanıcı adı</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Kullanıcı ekle</button> <label class=",
+  "n": 1
+ },
+ {
+  "s": ">Kullanıcı</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">kullanıcı</option> <option value=\"admin\"",
+  "n": 1
+ },
+ {
+  "s": ">Kullanıcı</option><option value=",
+  "n": 1
+ },
+ {
+  "s": ">Kuralları kaydet</button> </div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">kurulmadı</span>'} </header> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Kurulum sırasında üretilen kayıtlar. İndirip denetim dosyanıza ekleyebilirsiniz.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Kurulumu başlat</button>' : ''} <a class=",
+  "n": 1
+ },
+ {
+  "s": ">Kurulumu başlat</button></div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Kurulumunuzun neresinde olduğunuzu aşağıda görebilirsiniz.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Kurum bilgileri</a> <a class=",
+  "n": 1
+ },
+ {
+  "s": ">Kurum profili</a> <a class=",
+  "n": 1
+ },
+ {
+  "s": ">Kurumsal hesapla giriş (SSO)</a></div>'} <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Kuyruğu gönder</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Lisans</h2> <p class=",
+  "n": 1
+ },
+ {
+  "s": ">Lisansı etkinleştir</button></div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Listeyi kaydet</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">Manuel anahtar:</p> <p class=",
+  "n": 1
+ },
+ {
+  "s": ">Olayları çek</button> <a class=",
+  "n": 1
+ },
+ {
+  "s": ">onayla</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">Orta ölçek</option> <option value=\"tier3\"",
+  "n": 1
+ },
+ {
+  "s": ">orta</option> <option value=",
+  "n": 1
+ },
+ {
+  "s": ">orta</option><option value=",
+  "n": 1
+ },
+ {
+  "s": ">Oturum oluştur</button>'}</div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Oturum yok.</td></tr>'}</tbody></table> ${ state.sessions.length > 1 ? `<div class=",
+  "n": 1
+ },
+ {
+  "s": ">Önce 1. adımda hizmetleri kaydedin.</div>'; } } function viewGuvenlik() { const enabled = Boolean(state.user?.totp_enabled); return ` <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Önce 1. adımda hizmetleri kaydedin.</div>'; } catch { box.innerHTML = '<div class=",
+  "n": 1
+ },
+ {
+  "s": ">Paketi oluştur</button> <a class=",
+  "n": 1
+ },
+ {
+  "s": ">parola sıfırla</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">parola</a> · <a href=",
+  "n": 1
+ },
+ {
+  "s": ">Parolayı kaydet</button><span class=",
+  "n": 1
+ },
+ {
+  "s": ">Port</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Raporlama süresi yaklaşan/geçen olaylar ve bekleyen onay talepleri için e-posta. SMTP ayarları dolu olmalı; gönderilemezse kuyruğa düşer.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">reddet</button></td> </tr>`, ) .join('')} </tbody></table>` : '<span class=",
+  "n": 1
+ },
+ {
+  "s": ">Redirect URI</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Rol</label><select id=",
+  "n": 1
+ },
+ {
+  "s": ">Saat</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Sahipli <b>${r.owned_codes.length}</b> / <b>${r.all_codes.length}</b> kod` + (missing.length ? `<br>Sahipsiz ${missing.length} kod: <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Seçenekler</label> <label class=",
+  "n": 1
+ },
+ {
+  "s": ">seçilmedi</option> <option value=",
+  "n": 1
+ },
+ {
+  "s": ">seçilmedi</option> ${['BDDK', 'TCMB', 'SEDDK', 'SPK', 'EBA', 'ESMA', 'EIOPA', 'FCA', 'BaFin'].map((r) => `<option value=",
+  "n": 1
+ },
+ {
+  "s": ">sıfırlama bağlantısı</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">Sıradaki adım: <b>${esc(s.current_phase || 'C1')}</b> · ${esc(PHASE_LABELS[s.current_phase] || '')}</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">sil</button></td></tr> </tbody> </table> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">sil</button></td></tr> <tr><td><input class=",
+  "n": 1
+ },
+ {
+  "s": ">Sistem bağlantıları</a> </div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">siz</span>' : `<button class=",
+  "n": 1
+ },
+ {
+  "s": ">Son 150 işlem (giriş, kayıt, kullanıcı değişikliği).</p> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Son kaç dakika</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Sonuç yok.</span>'; return; } box.innerHTML = `<table><thead><tr><th>Tür</th><th>Kimlik</th><th>Başlık</th><th>Bağlam</th></tr></thead><tbody> ${r.results .map( (x) => `<tr><td><span class=",
+  "n": 1
+ },
+ {
+  "s": ">Sonuçları kaydet</button></div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Sorgu (ürün dilinde, isteğe bağlı)</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Sorumlular</a> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Sunucu ve sistemlerinizi satır satır girin: <b>ad, kritiklik, tedarikçi</b></p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Sunucu</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Süreç, kontrol, ajan, terim ve DORA maddeleri içinde metin arama. Türkçe karakterler duyarsızdır.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Şablon indir</a> </div> <textarea id=",
+  "n": 1
+ },
+ {
+  "s": ">Şimdi çalıştır</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Şimdi tara</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Taslak kayıt oluştur</button> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Teknik panel</a> </div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Teknik panel</a>` : '') + `<a href=",
+  "n": 1
+ },
+ {
+  "s": ">Telefonunuzda Google Authenticator, Microsoft Authenticator veya 1Password açın; <b>“Kurulum anahtarını gir”</b> seçeneğini kullanıp aşağıdaki anahtarı yazın (4’lü gruplar halinde, boşluklar önemsiz).</p> <p class=",
+  "n": 1
+ },
+ {
+  "s": ">Test gönder</button> <button class=",
+  "n": 1
+ },
+ {
+  "s": ">Ticari lisans anahtarını yapıştırın (DORA-LIC-v1…). Deneme modunda 6. adım kapanmaz.</p> <textarea id=",
+  "n": 1
+ },
+ {
+  "s": ">Toleransları kaydet</button> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Ürün</label><input class=",
+  "n": 1
+ },
+ {
+  "s": ">Veriler API'den anlık gelir; statik dashboard üretimi gerekmez.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Yarı-otomatik (gün)</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Yeni kullanıcı</h2> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Yeni oturum</button>' : '<button class=",
+  "n": 1
+ },
+ {
+  "s": ">Yenile</button> </div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Yenile</button> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">Yenile</button></div> <div id=",
+  "n": 1
+ },
+ {
+  "s": ">Yıllık gözden geçirme</label><input id=",
+  "n": 1
+ },
+ {
+  "s": ">Yonetim raporu (PDF)</a> <span class=",
+  "n": 1
+ },
+ {
+  "s": ">yönetici</option> </select></td> <td>",
+  "n": 1
+ },
+ {
+  "s": ">Yönetici</option></select></div> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Yöneticiler teknik paneli ve ayarları görür; kullanıcılar yalnız iş arayüzünü görür.</p> <table><thead><tr><th>Kullanıcı</th><th>Ad</th><th>Rol</th><th>Son giriş</th><th></th></tr></thead> <tbody id=",
+  "n": 1
+ },
+ {
+  "s": ">Yükleniyor…</td></tr></tbody></table> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">Yüksek önemli olaylardan taslak DORA kaydı üretin; eksik alanları doldurup aktif kayda yükseltin.</p> <div class=",
+  "n": 1
+ },
+ {
+  "s": ">yüksek</option><option value=",
+  "n": 1
+ },
+ {
+  "s": "|| state.needsBootstrap; $(",
+  "n": 1
+ },
+ {
+  "s": "${['ROL-INC-01', 'ROL-CIO-01', 'ROL-RSK-01', 'ROL-CMP-01'].includes(r.id) ? 'checked' : ''}></td> <td>${esc(r.name?.tr ?? r.id)}</td> <td><input class=",
+  "n": 1
+ },
+ {
+  "s": "${crit ? 'checked' : ''}></td> <td><button class=",
+  "n": 1
+ },
+ {
+  "s": "${done.has(s.id) ? 'checked' : ''} style=",
+  "n": 1
+ },
+ {
+  "s": "${i.classification === c ? 'selected' : ''}>${c}</option>`) .join('')} </select></td> <td><button class=",
+  "n": 1
+ },
+ {
+  "s": "${i.data_loss ? 'checked' : ''}></td> <td><input type=",
+  "n": 1
+ },
+ {
+  "s": "${i.endpoint ? '' : 'disabled'}>Bağlantıyı dene</button> ${i.last_test ? `<span class=",
+  "n": 1
+ },
+ {
+  "s": "${i.jurisdiction === j ? 'selected' : ''}>${j}</option>`).join('')} </select> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": "${i.regulator === r ? 'selected' : ''}>${r}</option>`).join('')} </select> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": "${i.tier === 'tier1' ? 'selected' : ''}>Büyük / sistemik</option> <option value=",
+  "n": 1
+ },
+ {
+  "s": "${i.tier === 'tier2' ? 'selected' : ''}>Orta ölçek</option> <option value=",
+  "n": 1
+ },
+ {
+  "s": "${i.tier === 'tier3' ? 'selected' : ''}>Küçük / kamu</option> </select> </div> <div class=",
+  "n": 1
+ },
+ {
+  "s": "${i.unauthorized_access ? 'checked' : ''}></td> <td><select class=",
+  "n": 1
+ },
+ {
+  "s": "${r.dataLoss ? 'checked' : ''}> veri</label> <label class=",
+  "n": 1
+ },
+ {
+  "s": "${r.unauthorized ? 'checked' : ''}> yetki</label> <button class=",
+  "n": 1
+ },
+ {
+  "s": "${s.session_id === state.activeSession?.session_id ? 'selected' : ''}>${esc(s.session_id)}</option>`) .join('')}</select></div>` : '' } </div>`; } function viewYonetim() { return ` <div class=",
+  "n": 1
+ },
+ {
+  "s": "${stat((d.coverage?.percent ?? 0) + '%', 'DORA kapsama',",
+  "n": 1
+ },
+ {
+  "s": "${u.role === 'admin' ? 'selected' : ''}>yönetici</option> </select></td> <td>${u.last_login ? new Date(u.last_login).toLocaleString('tr-TR') : '—'}</td> <td>${u.username === state.user.username ? '<span class=",
+  "n": 1
+ },
+ {
+  "s": "${u.role === 'user' ? 'selected' : ''}>kullanıcı</option> <option value=",
+  "n": 1
+ },
+ {
+  "s": "${u.username === state.user.username ? 'disabled' : ''}> <option value=",
+  "n": 1
+ },
+ {
+  "s": "5 sütun",
+  "n": 1
+ },
+ {
+  "s": "Adım adım kullanım rehberi",
+  "n": 1
+ },
+ {
+  "s": "Anlık durum",
+  "n": 1
+ },
+ {
+  "s": "Ara (72s)",
+  "n": 1
+ },
+ {
+  "s": "Atamalar kaydedildi",
+  "n": 1
+ },
+ {
+  "s": "Bağlı sistem",
+  "n": 1
+ },
+ {
+  "s": "başarısız",
+  "n": 1
+ },
+ {
+  "s": "Bekleyen onay",
+  "n": 1
+ },
+ {
+  "s": "Bildirim süreleri",
+  "n": 1
+ },
+ {
+  "s": "boşluk",
+  "n": 1
+ },
+ {
+  "s": "Canlıya geçiş kaydı",
+  "n": 1
+ },
+ {
+  "s": "checked></td></tr> </tbody> </table> <div class=",
+  "n": 1
+ },
+ {
+  "s": "checked></td></tr> <tr><td>Regülatör talebi</td><td><input class=",
+  "n": 1
+ },
+ {
+  "s": "checked></td></tr> <tr><td>Tedarikçi çıkışı</td><td><input class=",
+  "n": 1
+ },
+ {
+  "s": "Çalıştı:",
+  "n": 1
+ },
+ {
+  "s": "çekiliyor…",
+  "n": 1
+ },
+ {
+  "s": "Davet gönderilemedi:",
+  "n": 1
+ },
+ {
+  "s": "Değerlendirme kaydedildi:",
+  "n": 1
+ },
+ {
+  "s": "Denetleyici bilgisi",
+  "n": 1
+ },
+ {
+  "s": "Destek / talep sistemi",
+  "n": 1
+ },
+ {
+  "s": "devam ediyor",
+  "n": 1
+ },
+ {
+  "s": "DORA kapsama",
+  "n": 1
+ },
+ {
+  "s": "DORA sözlüğü",
+  "n": 1
+ },
+ {
+  "s": "dosya ·",
+  "n": 1
+ },
+ {
+  "s": "dört göz",
+  "n": 1
+ },
+ {
+  "s": "Durum",
+  "n": 1
+ },
+ {
+  "s": "düğmesi document.addEventListener('click', (e) => { const b = e.target.closest('[data-action=",
+  "n": 1
+ },
+ {
+  "s": "Eksik analizi",
+  "n": 1
+ },
+ {
+  "s": "El kitabı",
+  "n": 1
+ },
+ {
+  "s": "Envanterde <b>",
+  "n": 1
+ },
+ {
+  "s": "Eşleme oluşturuldu:",
+  "n": 1
+ },
+ {
+  "s": "g · inceleme",
+  "n": 1
+ },
+ {
+  "s": "g · yarı-otomatik",
+  "n": 1
+ },
+ {
+  "s": "Gecikmiş adım",
+  "n": 1
+ },
+ {
+  "s": "Gerçek olay çekme",
+  "n": 1
+ },
+ {
+  "s": "giriş gerekli",
+  "n": 1
+ },
+ {
+  "s": "gönderildi ·",
+  "n": 1
+ },
+ {
+  "s": "gönderildi</button>",
+  "n": 1
+ },
+ {
+  "s": "Görev atamaları",
+  "n": 1
+ },
+ {
+  "s": "Görev eşlemesi",
+  "n": 1
+ },
+ {
+  "s": "güncellendi:",
+  "n": 1
+ },
+ {
+  "s": "henüz başlanmadı",
+  "n": 1
+ },
+ {
+  "s": "Hesap güvenliği",
+  "n": 1
+ },
+ {
+  "s": "hizmet kaydedildi",
+  "n": 1
+ },
+ {
+  "s": "Hizmet listesi",
+  "n": 1
+ },
+ {
+  "s": "Hizmetler, toleranslar ve adım denetimi",
+  "n": 1
+ },
+ {
+  "s": "için tek kullanımlık bağlantı (30 dk):\\n\\n",
+  "n": 1
+ },
+ {
+  "s": "için yeni parola (en az 8 karakter):",
+  "n": 1
+ },
+ {
+  "s": "İki adımlı doğrulama",
+  "n": 1
+ },
+ {
+  "s": "İki adımlı doğrulama açıldı",
+  "n": 1
+ },
+ {
+  "s": "İlk (4s)",
+  "n": 1
+ },
+ {
+  "s": "Kanıt paketi hazır:",
+  "n": 1
+ },
+ {
+  "s": "kanıt şartnameli",
+  "n": 1
+ },
+ {
+  "s": "Kapsam tablosu",
+  "n": 1
+ },
+ {
+  "s": "Kataloglarda metin arama",
+  "n": 1
+ },
+ {
+  "s": "Kaydedildi: doğruluk %",
+  "n": 1
+ },
+ {
+  "s": "KB · zincir başı <span class=\"mono\">",
+  "n": 1
+ },
+ {
+  "s": "KB</td> <td>",
+  "n": 1
+ },
+ {
+  "s": "Kesinti toleransları",
+  "n": 1
+ },
+ {
+  "s": "Kontroller ve risk kayıtları (GRC)",
+  "n": 1
+ },
+ {
+  "s": "Kullanıcılar ve işlem kaydı",
+  "n": 1
+ },
+ {
+  "s": "kural kaydedildi",
+  "n": 1
+ },
+ {
+  "s": "Kurulum kayıtları",
+  "n": 1
+ },
+ {
+  "s": "kurulum tamam",
+  "n": 1
+ },
+ {
+  "s": "Kurum adı girilmedi",
+  "n": 1
+ },
+ {
+  "s": "Kurum seviyesi",
+  "n": 1
+ },
+ {
+  "s": "Kuyruğa alındı:",
+  "n": 1
+ },
+ {
+  "s": "Lisans etkinleştirildi",
+  "n": 1
+ },
+ {
+  "s": "Nihai (1 ay)",
+  "n": 1
+ },
+ {
+  "s": "olay çekildi (",
+  "n": 1
+ },
+ {
+  "s": "Olay kaydı",
+  "n": 1
+ },
+ {
+  "s": "Olay kayıtlarının açıldığı sistem (ITSM)",
+  "n": 1
+ },
+ {
+  "s": "Olay, destek, uyum ve envanter sistemleri",
+  "n": 1
+ },
+ {
+  "s": "olay, destek, uyum, envanter",
+  "n": 1
+ },
+ {
+  "s": "Onayla uygular",
+  "n": 1
+ },
+ {
+  "s": "otorite seçilmedi",
+  "n": 1
+ },
+ {
+  "s": "Oturum artefaktları",
+  "n": 1
+ },
+ {
+  "s": "Önerir",
+  "n": 1
+ },
+ {
+  "s": "Parola değiştirildi",
+  "n": 1
+ },
+ {
+  "s": "Parolamı değiştir",
+  "n": 1
+ },
+ {
+  "s": "Regülatör talebi",
+  "n": 1
+ },
+ {
+  "s": "regülatör yok",
+  "n": 1
+ },
+ {
+  "s": "Risk eşikleri",
+  "n": 1
+ },
+ {
+  "s": "selected>yüksek</option> <option value=",
+  "n": 1
+ },
+ {
+  "s": "son çalışma:",
+  "n": 1
+ },
+ {
+  "s": "son tarama:",
+  "n": 1
+ },
+ {
+  "s": "sonuç",
+  "n": 1
+ },
+ {
+  "s": "Sorumlu atamaları",
+  "n": 1
+ },
+ {
+  "s": "Sunucu ve sistem listesi",
+  "n": 1
+ },
+ {
+  "s": "Sunucu ve sistem listesi (CMDB)",
+  "n": 1
+ },
+ {
+  "s": "Tamamlanan adım",
+  "n": 1
+ },
+ {
+  "s": "taslak kayıt (",
+  "n": 1
+ },
+ {
+  "s": "Tedarikçi çıkışı",
+  "n": 1
+ },
+ {
+  "s": "Teknik bağlantı ayarları",
+  "n": 1
+ },
+ {
+  "s": "Teknik özet",
+  "n": 1
+ },
+ {
+  "s": "Temel bilgiler",
+  "n": 1
+ },
+ {
+  "s": "Test iletisi gönderildi",
+  "n": 1
+ },
+ {
+  "s": "tier yok",
+  "n": 1
+ },
+ {
+  "s": "Toleranslar kaydedildi",
+  "n": 1
+ },
+ {
+  "s": "Uyum yönetimi",
+  "n": 1
+ },
+ {
+  "s": "üç savunma hattı",
+  "n": 1
+ },
+ {
+  "s": "varlık dosyadan yüklendi",
+  "n": 1
+ },
+ {
+  "s": "Varlık envanteri",
+  "n": 1
+ },
+ {
+  "s": "varlık kaydedildi",
+  "n": 1
+ },
+ {
+  "s": "Varlık listesi",
+  "n": 1
+ },
+ {
+  "s": "Yalnız izler",
+  "n": 1
+ },
+ {
+  "s": "Yetki tanımları",
+  "n": 1
+ },
+ {
+  "s": "Zamanlanmış çekme açık (",
+  "n": 1
+ }
+]

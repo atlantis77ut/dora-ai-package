@@ -2,6 +2,7 @@
 // Roller: admin (teknik her şey) · user (iş arayüzü, teknik detay yok)
 
 import { t, LANGS, normalizeLang, helpSteps } from './i18n.js';
+import { translateUi } from './i18n-ui.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const view = $('#view');
@@ -2398,6 +2399,77 @@ function bindYardim() {
   });
 }
 
+
+// ── DOM çevirisi ──────────────────────────────────────────
+// Arayüz metinleri Türkçe yazılır; İngilizce seçildiğinde çalışma anında çevrilir.
+// Özgün metinler WeakMap'te saklanır, dil değişince geri döner.
+
+const TR_TEXT = new WeakMap();
+const TR_ATTR = new WeakMap();
+let applying = false;
+
+function translateTextNode(node) {
+  const src = TR_TEXT.has(node) ? TR_TEXT.get(node) : node.nodeValue;
+  if (!TR_TEXT.has(node)) TR_TEXT.set(node, src);
+  const out = state.lang === 'en' ? translateUi(src, 'en') : src;
+  if (node.nodeValue !== out) node.nodeValue = out;
+}
+
+function translateAttrs(el) {
+  for (const attr of ['placeholder', 'title', 'aria-label']) {
+    if (!el.hasAttribute || !el.hasAttribute(attr)) continue;
+    let map = TR_ATTR.get(el);
+    if (!map) {
+      map = new Map();
+      TR_ATTR.set(el, map);
+    }
+    const src = map.has(attr) ? map.get(attr) : el.getAttribute(attr);
+    if (!map.has(attr)) map.set(attr, src);
+    const out = state.lang === 'en' ? translateUi(src, 'en') : src;
+    if (el.getAttribute(attr) !== out) el.setAttribute(attr, out);
+  }
+}
+
+function translateDom(root = document.body) {
+  if (!root) return;
+  applying = true;
+  try {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+    let node = walker.currentNode;
+    while ((node = walker.nextNode())) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const parent = node.parentElement;
+        if (parent && /^(SCRIPT|STYLE|CODE|PRE|TEXTAREA)$/.test(parent.tagName)) continue;
+        translateTextNode(node);
+      } else {
+        translateAttrs(node);
+      }
+    }
+  } finally {
+    applying = false;
+  }
+}
+
+let translateQueued = false;
+const domObserver = new MutationObserver(() => {
+  if (applying || translateQueued) return;
+  translateQueued = true;
+  queueMicrotask(() => {
+    translateQueued = false;
+    if (!applying) translateDom(document.body);
+  });
+});
+
+function startTranslator() {
+  domObserver.observe(document.body, {
+    subtree: true,
+    childList: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['placeholder', 'title', 'aria-label'],
+  });
+}
+
 /* ── router ───────────────────────────────────────────── */
 
 const ROUTES = {
@@ -2514,6 +2586,7 @@ function renderShell() {
       }
       navKey = null;
       render();
+      translateDom(document.body);
     });
   }
 
@@ -2564,9 +2637,12 @@ function render() {
   $('#subtitle').textContent = t(state.lang, 'sub.' + tab, route.sub);
   view.innerHTML = route.render();
   route.bind();
+  translateDom(view);
+  translateDom($('#nav'));
 }
 
 window.addEventListener('hashchange', render);
+startTranslator();
 
 (async () => {
   try {

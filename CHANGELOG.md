@@ -5,6 +5,26 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.28.0] — 2026-11-10
+
+### Eklendi — tam dil değişimi (formlar dahil)
+
+- `app/i18n-ui.js`: **353 metin** + 16 sayı kalıbı Türkçe → İngilizce
+- `app.js` içinde `translateDom()`: form etiketleri, düğmeler, tablo başlıkları, seçenekler,
+  placeholder ve title metinleri çalışma anında çevrilir
+- `MutationObserver` ile sonradan gelen içerik (tablo satırları, toast'lar) de çevrilir
+- Özgün metinler `WeakMap`'te saklanır: dil değişince **geri döner**, veri kaybı olmaz
+- Kullanıcı girdileri (`input.value`, `textarea`) ve `code/pre` içerikleri çevrilmez
+
+### Doğrulama
+
+```
+8 test: sözlük bütünlüğü, tam eşleşme, kalıp çevirisi, boşluk koruma, form etiketleri
+/app/i18n-ui.js 200 (19.6 KB) · /app/app.js 200 (111 KB)
+```
+
+---
+
 ## [1.27.0] — 2026-11-10
 
 ### Eklendi — dil değiştirici (TR/EN)

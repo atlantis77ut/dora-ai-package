@@ -1500,3 +1500,39 @@ CI: build-manual --check
 - **Kısmi çeviri**: EN seçildiğinde form/düğme metinleri Türkçe kalır
 - Yardım ilerlemesi **tarayıcıya** bağlı (kullanıcı hesabına değil); cihaz değişince sıfırlanır
 - Statik `/dashboard/` sayfaları yalnız Türkçe
+
+---
+
+## 50. Tam dil değişimi — 1.28.0 (2026-11-10)
+
+| Parça | Dosya |
+|---|---|
+| Sözlük (353 metin + 16 kalıp) | `app/i18n-ui.js` |
+| DOM çevirisi | `app.js` → `translateDom()`, `MutationObserver` |
+| Dil seçici | üst çubuk, `localStorage.dora_lang` |
+
+### Nasıl çalışıyor
+
+Arayüz metinleri kaynakta **Türkçe** yazılı; İngilizce seçildiğinde `translateDom` metin düğümlerini
+ve `placeholder/title/aria-label` niteliklerini sözlükten çevirir. Özgün değerler `WeakMap`'te
+tutulduğu için TR'ye dönüş kayıpsızdır. Sayı içeren metinler (ör. `3 sonuç`) regex kalıplarıyla çevrilir.
+
+### Kapsam
+
+- Çevrilen: menü, başlıklar, form etiketleri, düğmeler, tablo başlıkları, seçenekler, boş durumlar,
+  yardım sayfası, giriş/2FA ekranları
+- Çevrilmeyen: kullanıcı verisi (kurum adı, olay başlığı), teknik kimlikler (`PRC-…`), `code` blokları,
+  bazı dinamik toast cümleleri (sayı kalıbı dışında)
+
+### Doğrulama
+
+```
+8 test: sözlük bütünlüğü, tam eşleşme, kalıplar, boşluk koruma, form etiketleri
+i18n-ui.js 200 · 353 kayıt · 16 kalıp · app.js 111 KB
+```
+
+### Sınırlar
+
+- Çeviri **çalışma anında** yapılır; sunucu HTML'i Türkçe kalır (SEO/statik çıktı etkilenmez)
+- Kalıp dışı dinamik cümleler (ör. "3 varlık dosyadan yüklendi") Türkçe görünebilir
+- Çeviriler geliştirici tarafından yapıldı; ana dili İngilizce biri gözden geçirmeli
