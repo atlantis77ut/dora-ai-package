@@ -5,6 +5,25 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.30.1] — 2026-11-10
+
+### Düzeltildi
+
+- **Dosya seçici**: yerel `<input type=file>` Türkçe "Dosya seç / Dosya seçilmedi" gösteriyordu;
+  gizli girdi + kendi düğmemiz ("Dosya seç" → "Choose file") ve seçilen dosya adı göstergesi eklendi
+- **Türkçe büyük İ sorunu**: `<html lang>` her zaman `tr` kaldığı için `text-transform: uppercase`
+  Türkçe kuralla i→İ yapıyordu; dil değişince ve her render'da `document.documentElement.lang`
+  seçilen dile eşitleniyor (EN'de "Institution" → "INSTITUTION")
+
+### Doğrulama
+
+```
+169 test (4 yeni: EN metinlerde Türkçe karakter yok, html lang ataması, dosya seçici, çeviri anahtarları)
+çevrilmemiş görünür metin: 185 → 30 (kalanlar kod parçası/örnek veri)
+```
+
+---
+
 ## [1.30.0] — 2026-11-10
 
 ### Düzeltildi — form alt başlıkları çevrilmiyordu

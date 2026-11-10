@@ -399,7 +399,9 @@ function viewVarliklar() {
       <h2>Varlıklarım</h2>
       <p class="sub">Sunucu ve sistemlerinizi satır satır girin: <b>ad, kritiklik, tedarikçi</b></p>
       <div class="actions" style="margin-bottom:10px">
-        <input type="file" id="csvFile" accept=".csv,text/csv" style="max-width:320px">
+        <input type="file" id="csvFile" accept=".csv,text/csv" style="display:none">
+        <label class="ghost" for="csvFile" id="csvPick" style="padding:8px 14px;cursor:pointer">Dosya seç</label>
+        <span class="sub" id="csvName">Dosya seçilmedi</span>
         <a class="ghost" href="/api/templates/inventory.csv" style="padding:8px 14px">Şablon indir</a>
       </div>
       <textarea id="csv" placeholder="Core Banking, kritik, Vendor X
@@ -725,6 +727,8 @@ function bindVarliklar() {
     fileInput.addEventListener('change', async () => {
       const file = fileInput.files?.[0];
       if (!file) return;
+      const nameEl = $('#csvName');
+      if (nameEl) nameEl.textContent = file.name;
       const text = await file.text();
       $('#csv').value = text.trim();
       try {
@@ -2579,6 +2583,7 @@ function renderShell() {
     </select>`;
     langBox.querySelector('#lang').addEventListener('change', (e) => {
       state.lang = normalizeLang(e.target.value);
+      document.documentElement.lang = state.lang;
       try {
         localStorage.setItem('dora_lang', state.lang);
       } catch {
@@ -2633,6 +2638,7 @@ function render() {
   const route = ROUTES[tab];
   renderShell();
   document.querySelectorAll('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.tab === tab));
+  document.documentElement.lang = state.lang;
   $('#title').textContent = t(state.lang, 'title.' + tab, route.title);
   $('#subtitle').textContent = t(state.lang, 'sub.' + tab, route.sub);
   view.innerHTML = route.render();

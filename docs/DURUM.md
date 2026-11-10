@@ -1597,3 +1597,19 @@ Kullanıcı geri bildirimi: EN seçiliyken **form alt başlıkları Türkçe** k
 
 - `code` blokları ve örnek veriler (Core Banking, e-posta örnekleri) çevrilmez
 - Kullanıcı verisi (kurum adı, olay başlığı) doğal olarak Türkçe kalır
+
+---
+
+## 53. Dosya seçici ve büyük İ — 1.30.1 (2026-11-10)
+
+| Bulgu | Neden | Düzeltme |
+|---|---|---|
+| "Dosya seç / Dosya seçilmedi" Türkçe | Tarayıcının yerel dosya girdisi | Gizli girdi + özel düğme ve dosya adı göstergesi |
+| EN metinde "İ" | `<html lang>` `tr` kaldığı için CSS uppercase Türkçe kuralı uyguluyordu | `documentElement.lang = state.lang` (dil değişimi + her render) |
+
+### Doğrulama
+
+```
+169 test · 4 yeni test (EN metinlerde Türkçe karakter, lang ataması, dosya seçici, anahtarlar)
+/app/app.js ve /app/i18n-ui.js güncel
+```

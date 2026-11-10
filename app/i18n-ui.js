@@ -574,6 +574,11 @@ export const UI_EN = {
   "seçeneğini kullanıp aşağıdaki anahtarı yazın (4’lü gruplar halinde, boşluklar önemsiz).": "option and type the key below (groups of four, spaces do not matter).",
   "varlık ·": "assets ·",
   "Açık": "On",
+
+  // ── dosya seçici ──────────────────────────────────────
+  'Dosya seç': 'Choose file',
+  'Dosya seçilmedi': 'No file selected',
+  'Dosya seçildi': 'File selected',
 };
 
 // Sayı içeren kalıplar (dinamik metinler)
