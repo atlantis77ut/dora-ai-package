@@ -1,0 +1,162 @@
+[
+ {
+  "s": "`, ) .join('') : '",
+  "n": 2
+ },
+ {
+  "s": "içinde tutulur.",
+  "n": 2
+ },
+ {
+  "s": "kullanıcı",
+  "n": 2
+ },
+ {
+  "s": "yönetici",
+  "n": 2
+ },
+ {
+  "s": ", createSession); }); } // Tüm sayfalarda geçerli: \"kurulumu başlat\" düğmesi document.addEventListener(",
+  "n": 1
+ },
+ {
+  "s": "; } } catch { /* yönetici değilse */ } } async function loadApprovals() { const box = $(",
+  "n": 1
+ },
+ {
+  "s": "· sınır nedeniyle kesildi",
+  "n": 1
+ },
+ {
+  "s": "· tüm kodlar sahipli",
+  "n": 1
+ },
+ {
+  "s": "' : i.status === 'configured' ? '",
+  "n": 1
+ },
+ {
+  "s": "' : i.status === 'error' ? '",
+  "n": 1
+ },
+ {
+  "s": "“Kurulum anahtarını gir”",
+  "n": 1
+ },
+ {
+  "s": ") + `<a href=\"#\" id=\"logout\" data-tab=\"cikis\">Çıkış</a>`; $(",
+  "n": 1
+ },
+ {
+  "s": "); } }); /* yeni oturum düğmesi: #newSession ve [data-action=newSession] */ document.querySelectorAll(",
+  "n": 1
+ },
+ {
+  "s": "` : ' · tüm kodlar sahipli') + `",
+  "n": 1
+ },
+ {
+  "s": "`, ) .join('') + (isAdmin() ? `",
+  "n": 1
+ },
+ {
+  "s": "`) .join(''); box.innerHTML = `",
+  "n": 1
+ },
+ {
+  "s": "<button class=\"primary\" data-action=\"newSession\">Kurulumu başlat</button>",
+  "n": 1
+ },
+ {
+  "s": "<p class=\"sub\" style=\"margin-top:12px\">Henüz olay kaydı yok.</p>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"ok\">geçti</span>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"pill bad\">bağlanamadı</span>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"pill ok\">açık</span>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"pill ok\">bağlandı</span>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"pill ok\">kayıtlı</span>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"pill\">kapalı</span>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"pill\">kurulmadı</span>",
+  "n": 1
+ },
+ {
+  "s": "<span class=\"sub\">Raporlama takibi olan olay yok (önce taslak kayıt oluşturun).</span>",
+  "n": 1
+ },
+ {
+  "s": "Açıkken olay sınıflandırması ve canlıya geçiş",
+  "n": 1
+ },
+ {
+  "s": "done.has(s.id)).length / steps.length) * 100); return `",
+  "n": 1
+ },
+ {
+  "s": "i.id === 'siem'); return `",
+  "n": 1
+ },
+ {
+  "s": "id === '__kitap' ? `",
+  "n": 1
+ },
+ {
+  "s": "index=security severity=high",
+  "n": 1
+ },
+ {
+  "s": "kod` + (missing.length ? `",
+  "n": 1
+ },
+ {
+  "s": "Redirect URI",
+  "n": 1
+ },
+ {
+  "s": "s?.phases?.[p]?.status === 'completed').length; return `",
+  "n": 1
+ },
+ {
+  "s": "seçeneğini kullanıp aşağıdaki anahtarı yazın (4’lü gruplar halinde, boşluklar önemsiz).",
+  "n": 1
+ },
+ {
+  "s": "st[k]?.state !== 'done'); return `",
+  "n": 1
+ },
+ {
+  "s": "String(v ?? '').replace(/[&",
+  "n": 1
+ },
+ {
+  "s": "varlık ·",
+  "n": 1
+ },
+ {
+  "s": "x.incident_id === id); const tl = inc?.timeline ?? []; box.innerHTML = `",
+  "n": 1
+ },
+ {
+  "s": "yonetim@ornek.local, risk@ornek.local",
+  "n": 1
+ }
+]

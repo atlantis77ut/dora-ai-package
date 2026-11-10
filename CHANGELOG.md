@@ -5,6 +5,26 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.30.0] — 2026-11-10
+
+### Düzeltildi — form alt başlıkları çevrilmiyordu
+
+- Sözlüğe **160 metin** daha eklendi (toplam **502**): form etiketleri, alt başlıklar, ipuçları,
+  seçenek etiketleri, rozet durumları ve toast mesajları
+- Örnek: `Kurum büyüklüğü → Institution size`, `MTD (saat) → MTD (hours)`,
+  `Bağımsız doğrulayan → Independent reviewer`, `Yalnız izler → Observes only`
+- `tools/missing-ui.mjs`: çevrilmemiş metinleri listeleyen denetim aracı
+
+### Doğrulama
+
+```
+çevrilmemiş metin: 185 → 30 (kalanlar kod parçaları ve örnek veriler)
+31 örnek etiketin 31'i çevrildi
+165 birim testi geçti
+```
+
+---
+
 ## [1.29.0] — 2026-11-10
 
 ### Eklendi — iki dilli el kitabı

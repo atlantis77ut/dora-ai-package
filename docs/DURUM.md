@@ -1566,3 +1566,34 @@ el-kitabi.html 200 · 32.4 KB · 12 tablo · 4 SVG · TR 203 / EN 205 satır
 
 - İngilizce metin geliştirici çevirisi; kurumsal terim tercihleri gözden geçirilmeli
 - İç bağlantılar (ör. `docs/YEDEKLEME.md`) TR dosyalarına gider; EN karşılıkları yok
+
+---
+
+## 52. Form alt başlıkları — 1.30.0 (2026-11-10)
+
+Kullanıcı geri bildirimi: EN seçiliyken **form alt başlıkları Türkçe** kalıyordu.
+
+| Neden | Çözüm |
+|---|---|
+| Sözlükte yalnız ana etiketler vardı | 160 metin daha eklendi (toplam 502) |
+| Kod bloklarıyla bölünen cümleler | Parça metinler ayrıca eklendi (`içinde tutulur.` gibi) |
+| Eksikleri görmek elle zordu | `tools/missing-ui.mjs` denetim aracı |
+
+### Kapsam
+
+- Form etiketleri: `MTD (saat)`, `RPO (saat)`, `Seçenekler`, `Ad Soyad`, `Ürün`, `Bağlantı adresi`
+- Seçenekler: `kullanıcı/yönetici`, `Yalnız izler / Önerir / Onayla uygular`
+- Rozetler: `geçti`, `eksik var`, `kapı kapalı`, `doğrulandı`
+- Toast'lar: `Kayıt güncellendi`, `Talep onaylandı ve uygulandı`, `Parola sıfırlandı`
+
+### Ölçüm
+
+```
+çevrilmemiş: 185 → 30 (kalanlar kod parçası/örnek veri)
+31/31 örnek çevrildi · 165 test geçti
+```
+
+### Sınırlar
+
+- `code` blokları ve örnek veriler (Core Banking, e-posta örnekleri) çevrilmez
+- Kullanıcı verisi (kurum adı, olay başlığı) doğal olarak Türkçe kalır
