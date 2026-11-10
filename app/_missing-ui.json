@@ -4,18 +4,6 @@
   "n": 2
  },
  {
-  "s": "içinde tutulur.",
-  "n": 2
- },
- {
-  "s": "kullanıcı",
-  "n": 2
- },
- {
-  "s": "yönetici",
-  "n": 2
- },
- {
   "s": ", createSession); }); } // Tüm sayfalarda geçerli: \"kurulumu başlat\" düğmesi document.addEventListener(",
   "n": 1
  },
@@ -24,23 +12,11 @@
   "n": 1
  },
  {
-  "s": "· sınır nedeniyle kesildi",
-  "n": 1
- },
- {
-  "s": "· tüm kodlar sahipli",
-  "n": 1
- },
- {
   "s": "' : i.status === 'configured' ? '",
   "n": 1
  },
  {
   "s": "' : i.status === 'error' ? '",
-  "n": 1
- },
- {
-  "s": "“Kurulum anahtarını gir”",
   "n": 1
  },
  {
@@ -104,10 +80,6 @@
   "n": 1
  },
  {
-  "s": "Açıkken olay sınıflandırması ve canlıya geçiş",
-  "n": 1
- },
- {
   "s": "done.has(s.id)).length / steps.length) * 100); return `",
   "n": 1
  },
@@ -136,19 +108,11 @@
   "n": 1
  },
  {
-  "s": "seçeneğini kullanıp aşağıdaki anahtarı yazın (4’lü gruplar halinde, boşluklar önemsiz).",
-  "n": 1
- },
- {
   "s": "st[k]?.state !== 'done'); return `",
   "n": 1
  },
  {
   "s": "String(v ?? '').replace(/[&",
-  "n": 1
- },
- {
-  "s": "varlık ·",
   "n": 1
  },
  {
