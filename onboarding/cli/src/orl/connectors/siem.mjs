@@ -10,6 +10,35 @@ const TIMEOUT_MS = 15_000;
 
 export const SIEM_VENDORS = ['splunk', 'elastic', 'sentinel', 'qradar', 'generic'];
 
+/**
+ * Sunucunun kendi ağına (döngü), bağlantı-yerel veya bulut meta veri adresine istek
+ * asla meşru değildir; SSRF'i engellemek için reddedilir. RFC1918 (10.x, 172.16-31,
+ * 192.168) BİLİNÇLİ OLARAK serbesttir: kurum içi SIEM genelde bu aralıktadır ve ucu
+ * zaten yalnız yönetici yapılandırabilir.
+ */
+export function isBlockedEndpointHost(hostname) {
+  const h = String(hostname ?? '').trim().toLowerCase().replace(/^\[|\]$/g, '');
+  if (!h) return true;
+  // Test/mock: yerel sahte SIEM döngü adresinde çalıştığında açıkça izin verir.
+  const allowLoopback = process.env.DORA_ALLOW_LOOPBACK_SIEM === '1';
+  const loop = h === 'localhost' || h.endsWith('.localhost') || h === '::1' || /^127\./.test(h);
+  if (loop) return allowLoopback ? false : true;
+  // Bulut meta veri ve "belirtilmemiş" adresler hiçbir koşulda istenmez.
+  if (['metadata.google.internal', 'metadata', '0.0.0.0', '::'].includes(h)) return true;
+  const v4 = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (v4) {
+    const a = Number(v4[1]);
+    const b = Number(v4[2]);
+    if (a === 169 && b === 254) return true;   // bağlantı-yerel + bulut meta veri
+    return false;
+  }
+  if (h.includes(':')) {
+    if (/^fe[89ab]/i.test(h)) return true;      // link-local fe80::/10
+    return false;
+  }
+  return false;
+}
+
 function assertEndpoint(endpoint) {
   let u;
   try {
@@ -18,9 +47,9 @@ function assertEndpoint(endpoint) {
     throw new Error('endpoint geçerli bir URL değil');
   }
   if (!/^https?:$/.test(u.protocol)) throw new Error('yalnız http/https desteklenir');
-  // bulut meta veri ucu: kimlik bilgisi sızdırma riski
-  if (['169.254.169.254', 'metadata.google.internal'].includes(u.hostname)) {
-    throw new Error('bulut meta veri adresine istek yasak');
+  // bulut meta veri / döngü / bağlantı-yerel uç: kimlik bilgisi sızdırma ve SSRF riski
+  if (isBlockedEndpointHost(u.hostname)) {
+    throw new Error('yerel/bağlantı-yerel adrese istek yasak');
   }
   return u;
 }

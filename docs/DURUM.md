@@ -1680,3 +1680,48 @@ Gerçek `nginx -t`, gerçek `certbot` sertifika alımı ve systemd birimlerinin 
 **bu ortamda çalıştırılamadı** (Windows sandbox, bash/nginx yok). Şablon üretimi, birim testleri
 ve proxy davranışı gerçek sunucuyla doğrulandı; ilk gerçek kurulumda adımlar betiğin içinde
 otomatik kontrol edilir (`nginx -t`, `curl`). Hata çıkarsa çıktıyla birlikte bildirilecek.
+
+---
+
+## 56. İnceleme bulguları — 1.33.0 (2026-11-18)
+
+İki paralel kod incelemesi (app.js 2672 satır + server.mjs 2285 satır) ve izole sunucuda uçtan
+uca doğrulama yapıldı. **15 gerçek bulgu** kapatıldı; 1 şüphe (kurum profili `isAdmin`) yanlış
+pozitif çıktı — kurum profili kullanıcı rolünün meşru iş alanı (`roles: ['user','admin']`).
+
+### Güvenlik (P1)
+
+| Bulgu | Etki | Düzeltme |
+|---|---|---|
+| Rol token'a gömülü (`me.role`), rütbe alınması 168 saate kadar sürüyordu | eski yönetici yetkisini sürdürüyor | `isAdmin = me.user.role` (taze DB) |
+| Entegrasyon ucu + SIEM çekme `isAdmin`'sizdi | kullanıcı uç yazıp sunucuya SSRF yaptırabilir | yöneticiye özel + SSRF bloğu |
+| SSRF bloğu yalnız 2 meta veri adı | 127.0.0.1/localhost/RFC1918 erişilebilir | döngü + bağlantı-yerel + meta veri yasak |
+| Raporlama adımı atlanabilir, geri tarihlenebilir | uyum raporu sahte "tamam" görünebilir | sıra + `sent_at` doğrulaması |
+
+### Veri bütünlüğü (P2)
+
+- `artifacts` ucu `session.json` (lisans anahtarı) ve `incidents.json`/`siem-events.json`/
+  `approvals.json` dosyalarını okuyup yazabiliyordu → yapısal dosyalar engellendi.
+- Dört göz onayında `approval_applied` zaman çizgisi diske yazılmıyordu → düzeltildi.
+- Dört göz kapısı yalnız `promote`/`classification` içindi; etki/veri/durum alanları tek taraflı
+  değişiyordu → alan listesi genişletildi.
+- `Boolean("false")` → `true` oluyordu → `=== true` yapıldı.
+- Negatif MTD/RTO/RPO ve eşikler kaydediliyordu → sıfıra kırpıldı.
+
+### Arayüz (veri kaybı / takılma)
+
+| Bulgu | Etki | Düzeltme |
+|---|---|---|
+| "Yeni oturum" çift bağlı | tek tık iki oturum | tek delegated dinleyici |
+| Kapı hatası detayı CSRF'siz yeniden isteniyor | "eksik var" boş kart | CSRF başlığı eklendi |
+| Sihirbaz 1/2/4/5. adımlar ve yıllık sınır prefillsiz | geri açınca veri "kayboluyor", tekrar kaydedince eziliyor | 5 load işlevi eklendi |
+| Onay kararı bildirim dinleyicilerini yeniden bağlıyor | tekrar e-posta / çoklu PUT | kopyala-yapıştır blok silindi |
+| Dört gözde go-live `Gölge undefinedg` | yanıltıcı + yanlış "kaydedildi" | `r.pending` dalı |
+
+### Doğrulama
+
+```
+195 test (1 yeni: SSRF engeli) · 0 başarısız
+canlı (izole sunucu): 8/8 sunucu düzeltmesi + 7/7 rol güncellemesi + SSRF/artifacts/tolerans/4-göz
+ana sunucu 1.33.0 · /healthz sağlıklı
+```

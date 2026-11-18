@@ -5,6 +5,53 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.33.0] — 2026-11-18
+
+### Düzeltildi — inceleme bulguları (güvenlik + veri kaybı)
+
+Sistematik kod incelemesi + izole sunucuda uçtan uca doğrulama. 15 gerçek bulgu kapatıldı.
+
+**Güvenlik (P1):**
+
+- **Rol güncellemesi anında uygulanıyor.** `isAdmin` artık token'a gömülü `me.role` yerine
+  taze DB değeri `me.user.role` kullanıyor — yönetici rütbesi alındığında eski oturumla
+  yetki sürmüyor (önceden 168 saate kadar sürüyordu). 7/7 canlı doğrulama.
+- **Entegrasyon yapılandırma + SIEM çekme artık yöneticiye özel.** Kullanıcı rolü bağlantı
+  durumunu görür ama uç adresi/token yazamaz, sunucu dışarıya istek gönderemez (SSRF).
+- **SSRF bloğu genişletildi:** döngü (127/8, ::1, localhost), bağlantı-yerel (169.254/16,
+  fe80::/10), bulut meta veri ve "belirtilmemiş" adresler reddediliyor. RFC1918 bilinçli
+  olarak serbest (kurum içi SIEM). `src/orl/connectors/siem.mjs::isBlockedEndpointHost`.
+- **Raporlama sırası zorunlu:** initial → intermediate → final; önceki adım gönderilmeden
+  sonraki işaretlenemez, `sent_at` tespit zamanından önceye geri tarihlenemez.
+
+**Güvenlik / veri bütünlüğü (P2):**
+
+- `artifacts` ucu yapısal dosyaları (`session.json` lisans anahtarı dahil, `incidents.json`,
+  `siem-events.json`, `approvals.json`) okuyamaz/yazamaz.
+- Dört göz onayında `approval_applied` zaman çizgisi artık diske yazılıyor (önceden düşüyordu).
+- Dört göz kapısı etki/veri/durum alanlarını da kapsıyor (yalnız `promote`/`classification` değil).
+- `Boolean("false")` artık `true` olmuyor (sıkı `=== true`).
+- Negatif MTD/RTO/RPO ve eşik değerleri sıfıra kırpılıyor.
+
+**Arayüz (veri kaybı / takılma):**
+
+- "Yeni oturum" çift bağlanması giderildi — bir tıklama iki oturum oluşturuyordu.
+- Kapı denetimi başarısız olduğunda CSRF başlığı eklenerek hata detayları artık gösteriliyor.
+- Sihirbazda geri açılınca kaybolan alanlar dolduruluyor: 1. adım hizmetler, 4. adım senaryo
+  sonuçları, 5. adım bağımsız doğrulayan + kabul edilen riskler, yıllık kesinti sınırı,
+  2. adım toleranslar (MTD/RTO/RPO).
+- Onay kararı verirken bildirim ayarları dinleyicileri üst üste binmiyor (tekrar e-posta yok).
+- Dört göz açıkken canlıya geçiş "Gölge undefinedg" yerine "onay bekleniyor" gösteriyor.
+
+### Doğrulama
+
+```
+195 test (1 yeni: SSRF engeli) · canlı doğrulama: 8/8 sunucu + 7/7 rol + 4/4 önceki süitler
+izole sunucu (8090) + ana sunucu (8080) 1.33.0 sağlıklı
+```
+
+---
+
 ## [1.32.0] — 2026-11-18
 
 ### Eklendi — üretim kurulumu (TLS + ters vekil + yedek timer'ı)

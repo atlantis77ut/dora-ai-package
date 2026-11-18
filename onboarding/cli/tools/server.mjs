@@ -19,7 +19,7 @@ import { parse } from '../src/orl/yaml.mjs';
 import { createAuthStore, COOKIE } from '../src/orl/auth.mjs';
 import { evaluatePhase } from '../src/orl/checks.mjs';
 import { verify as verifyLicense, loadPublicKey } from '../src/orl/license.mjs';
-import { fetchSiemEvents } from '../src/orl/connectors/siem.mjs';
+import { fetchSiemEvents, isBlockedEndpointHost } from '../src/orl/connectors/siem.mjs';
 import { incidentFromEvent, shouldCreateIncident, mergeIncidents, nextSeq, normalizeRules, DEFAULT_KEYWORD_RULES } from '../src/orl/incident.mjs';
 import { buildBundle } from '../src/orl/evidence.mjs';
 import { createResetStore } from '../src/orl/reset.mjs';
@@ -477,8 +477,8 @@ function applyIncidentUpdate(dir, payload) {
   for (const k of ['affected_customers', 'outage_minutes', 'economic_impact_eur']) {
     if (k in payload) inc[k] = num(payload[k]);
   }
-  if ('data_loss' in payload) inc.data_loss = Boolean(payload.data_loss);
-  if ('unauthorized_access' in payload) inc.unauthorized_access = Boolean(payload.unauthorized_access);
+  if ('data_loss' in payload) inc.data_loss = payload.data_loss === true;
+  if ('unauthorized_access' in payload) inc.unauthorized_access = payload.unauthorized_access === true;
   if (['unclassified', 'major', 'not_major'].includes(payload.classification)) inc.classification = payload.classification;
   inc.updated_at = new Date().toISOString();
   if (payload.promote === true) {
@@ -1055,7 +1055,9 @@ async function api(req, res, urlPathRaw, method) {
   }
 
   if (!me) return sendJson(res, 401, { ok: false, error: 'giriş gerekli' });
-  const isAdmin = me.role === 'admin';
+  // `me.role` token'a gömülü (eski) rolü taşır; yetki her zaman taze DB değerinden
+  // okunmalı — yönetici rütbesi alındığında eski oturumla yetki sürmesin.
+  const isAdmin = me.user.role === 'admin';
 
   // ── yönetici uçları ────────────────────────────────────
   if (urlPath.startsWith('/api/users') || urlPath === '/api/audit' || urlPath === '/api/audit.csv') {
@@ -1140,7 +1142,7 @@ async function api(req, res, urlPathRaw, method) {
     return sendJson(res, 200, {
       version,
       user: me.user,
-      role: me.role,
+      role: me.user.role,
       settings: publicSettings(),
       sessions,
       activeSession: sessions.find((x) => x.session_id === loadSettings().active_session) ?? sessions[0] ?? null,
@@ -1425,6 +1427,9 @@ async function api(req, res, urlPathRaw, method) {
 
   const intMatch = urlPath.match(/^\/api\/integrations\/([a-z0-9_-]+)(\/test)?$/);
   if (intMatch) {
+    // Teknik bağlantı ayarı (uç adresi + token) yalnız yöneticiye — kullanıcı rolü
+    // yalnız bağlantı DURUMUNU görür, uç yapılandıramaz (SSRF riski).
+    if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
     const id = intMatch[1];
     const isTest = Boolean(intMatch[2]);
     if (method === 'PUT') {
@@ -1492,6 +1497,13 @@ async function api(req, res, urlPathRaw, method) {
     }
 
     if (kind === 'artifacts') {
+      // Yapısal/operasyonel dosyalar artefakt değil; kendi uçlarıyla yönetilir.
+      // session.json lisans anahtarını taşır — buradan okunup/yazılması hem sızıntı hem
+      // oturum bozulması riski (bkz. listArtifacts aynı kuralı uygular).
+      const STRUCTURAL = new Set(['session.json', 'incidents.json', 'incident-record.json', 'siem-events.json', 'approvals.json']);
+      if (artifact && STRUCTURAL.has(path.basename(artifact))) {
+        return sendJson(res, 403, { ok: false, error: 'bu dosya artefakt değil; ayrı uçtan yönetilir' });
+      }
       if (method === 'GET' && artifact) {
         const file = path.join(dir, path.basename(artifact));
         if (!fs.existsSync(file)) return sendJson(res, 404, { ok: false, error: 'artefakt yok' });
@@ -1582,8 +1594,25 @@ async function api(req, res, urlPathRaw, method) {
       const list = stored.incidents ?? [];
       const inc = list.find((x) => x.incident_id === targetId);
       if (!inc) return sendJson(res, 404, { ok: false, error: 'olay kaydı yok' });
-      inc.reporting = markSent(inc.reporting ?? createReporting(inc.detected_at), step, {
-        at: body.sent_at,
+      const reporting = inc.reporting ?? createReporting(inc.detected_at);
+      // Sıra: initial → intermediate → final; önceki adım gönderilmeden sonraki işaretlenemez.
+      const ORDER = ['initial', 'intermediate', 'final'];
+      const stepIdx = ORDER.indexOf(step);
+      if (stepIdx > 0 && !reporting[ORDER[stepIdx - 1]]?.sent_at) {
+        return sendJson(res, 400, { ok: false, error: `önce ${ORDER[stepIdx - 1]} adımı işaretlenmeli` });
+      }
+      // Gönderim zamanı: boşsa şimdi; geçersiz ya da tespit öncesine geri tarihli değer reddedilir.
+      let sentAt = new Date().toISOString();
+      if (body.sent_at !== undefined && body.sent_at !== null && body.sent_at !== '') {
+        const t = new Date(String(body.sent_at)).getTime();
+        if (Number.isNaN(t)) return sendJson(res, 400, { ok: false, error: 'sent_at geçerli bir tarih değil' });
+        if (t < new Date(reporting.detected_at).getTime()) {
+          return sendJson(res, 400, { ok: false, error: 'sent_at tespit zamanından önce olamaz' });
+        }
+        sentAt = new Date(t).toISOString();
+      }
+      inc.reporting = markSent(reporting, step, {
+        at: sentAt,
         reference: body.reference,
       });
       addTimeline(inc, { by: me.user.username, action: 'reporting:' + step, detail: body.reference ? 'ref ' + body.reference : '' });
@@ -1639,9 +1668,14 @@ async function api(req, res, urlPathRaw, method) {
         if (r.approval.type === 'incident_update') {
           applied = applyIncidentUpdate(dir, r.approval.payload);
           if (applied?.incident) {
-            addTimeline(applied.incident, { by: me.user.username, action: 'approval_applied', detail: r.approval.id });
+            // Diskteki kaydı yeniden okuyup oraya yaz — `applied.incident` bellek kopyası,
+            // addTimeline yalnız onu değiştirir; yeniden okumadan yazılırsa zaman çizgisi kaybolur.
             const st2 = readJson(path.join(dir, 'incidents.json'), { incidents: [] });
-            writeJson(path.join(dir, 'incidents.json'), st2);
+            const inc2 = (st2.incidents ?? []).find((x) => x.incident_id === r.approval.payload.incident_id);
+            if (inc2) {
+              addTimeline(inc2, { by: me.user.username, action: 'approval_applied', detail: r.approval.id });
+              writeJson(path.join(dir, 'incidents.json'), st2);
+            }
           }
         }
         else if (r.approval.type === 'go_live') applied = applyGoLive(dir, r.approval.payload);
@@ -1696,7 +1730,10 @@ async function api(req, res, urlPathRaw, method) {
 
     if (kind === 'incidents' && method === 'PATCH' && artifact) {
       const body = await readBody(req);
-      if (twoPersonEnabled() && (body.promote === true || 'classification' in body)) {
+      // Dört göz: sınıflandırma ve resmî kaydı etkileyen her alan onaya gider; yalnızca
+      // "promote" değil — aksi hâlde etki/veri/durum alanları tek taraflı düzenlenirdi.
+      const SENSITIVE = ['classification', 'affected_customers', 'outage_minutes', 'economic_impact_eur', 'data_loss', 'unauthorized_access', 'affected_member_states', 'status'];
+      if (twoPersonEnabled() && (body.promote === true || SENSITIVE.some((f) => f in body))) {
         const st = approvalStore(dir);
         const r = st.request({
           type: 'incident_update',
@@ -1719,8 +1756,8 @@ async function api(req, res, urlPathRaw, method) {
       if ('affected_customers' in body) inc.affected_customers = num(body.affected_customers);
       if ('outage_minutes' in body) inc.outage_minutes = num(body.outage_minutes);
       if ('economic_impact_eur' in body) inc.economic_impact_eur = num(body.economic_impact_eur);
-      if ('data_loss' in body) inc.data_loss = Boolean(body.data_loss);
-      if ('unauthorized_access' in body) inc.unauthorized_access = Boolean(body.unauthorized_access);
+      if ('data_loss' in body) inc.data_loss = body.data_loss === true;
+      if ('unauthorized_access' in body) inc.unauthorized_access = body.unauthorized_access === true;
       if (Array.isArray(body.affected_member_states)) {
         inc.affected_member_states = body.affected_member_states.map((x) => String(x).slice(0, 4)).slice(0, 30);
       }
@@ -1756,6 +1793,8 @@ async function api(req, res, urlPathRaw, method) {
     }
 
     if (kind === 'siem' && artifact === 'fetch' && method === 'POST') {
+      // Sunucu dışarıya istek gönderir; yalnız yönetici tetikleyebilir.
+      if (!isAdmin) return sendJson(res, 403, { ok: false, error: 'yönetici yetkisi gerekli' });
       const body = await readBody(req);
       const cfg = loadSettings().integrations.find((i) => i.id === 'siem') ?? {};
       const token = loadSecrets().siem;
@@ -1959,15 +1998,15 @@ async function api(req, res, urlPathRaw, method) {
       if (!rows.length) return sendJson(res, 400, { ok: false, error: 'en az bir tolerans satırı gerekli' });
       const clean = rows.slice(0, 200).map((r) => ({
         service: String(r.service ?? '').slice(0, 40),
-        mtd_hours: Number(r.mtd_hours) || 0,
-        rto_hours: Number(r.rto_hours) || 0,
-        rpo_hours: Number(r.rpo_hours) || 0,
+        mtd_hours: Math.max(0, Number(r.mtd_hours) || 0),
+        rto_hours: Math.max(0, Number(r.rto_hours) || 0),
+        rpo_hours: Math.max(0, Number(r.rpo_hours) || 0),
       }));
       writeJson(path.join(dir, 'impact-tolerances.json'), { tolerances: clean });
       const thresholds = Array.isArray(body.thresholds) ? body.thresholds : [];
       if (thresholds.length) {
         writeJson(path.join(dir, 'risk-appetite.json'), {
-          thresholds: thresholds.map((t) => ({ metric: String(t.metric ?? 'esik').slice(0, 60), max: Number(t.max) || 0 })),
+          thresholds: thresholds.map((t) => ({ metric: String(t.metric ?? 'esik').slice(0, 60), max: Math.max(0, Number(t.max) || 0) })),
         });
       }
       return sendJson(res, 200, { ok: true, count: clean.length });
@@ -2050,8 +2089,8 @@ async function testIntegration(item, token) {
     return { ok: false, detail: 'endpoint geçerli bir URL değil' };
   }
   if (!/^https?:$/.test(url.protocol)) return { ok: false, detail: 'yalnız http/https desteklenir' };
-  if (['169.254.169.254', 'metadata.google.internal'].includes(url.hostname)) {
-    return { ok: false, detail: 'bulut meta veri adresine istek yasak' };
+  if (isBlockedEndpointHost(url.hostname)) {
+    return { ok: false, detail: 'yerel/bağlantı-yerel adrese istek yasak' };
   }
 
   const headers = { 'User-Agent': 'dora-ai-package/' + version };
@@ -2251,7 +2290,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   const me = getUser(req);
-      if (!me || me.role !== 'admin') {
+      if (!me || me.user.role !== 'admin') {
         res.writeHead(302, { Location: '/app/#giris' });
         return res.end();
       }

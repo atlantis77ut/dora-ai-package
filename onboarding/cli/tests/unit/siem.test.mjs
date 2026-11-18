@@ -1,7 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { fetchSiemEvents, normalizeEvent, SIEM_VENDORS } from '../../src/orl/connectors/siem.mjs';
+import { fetchSiemEvents, normalizeEvent, SIEM_VENDORS, isBlockedEndpointHost } from '../../src/orl/connectors/siem.mjs';
+
+// Yerel sahte SIEM 127.0.0.1'de dinler; üretim SSRF kuralı döngüyü yasaklar, test ise
+// bu anahtarla açıkça izin verir (yalnızca döngü için; meta veri her zaman yasak kalır).
+process.env.DORA_ALLOW_LOOPBACK_SIEM = '1';
 
 // Yerel sahte SIEM: her ürün için ayrı uç
 const server = http.createServer((req, res) => {
@@ -78,7 +82,24 @@ test('siem: desteklenmeyen ürün reddedilir', async () => {
 
 test('siem: dosya ve meta veri ucu reddedilir', async () => {
   await assert.rejects(() => fetchSiemEvents({ vendor: 'generic', endpoint: 'file:///etc/passwd' }), /http/);
-  await assert.rejects(() => fetchSiemEvents({ vendor: 'generic', endpoint: 'http://169.254.169.254/latest/meta-data' }), /meta veri/);
+  await assert.rejects(() => fetchSiemEvents({ vendor: 'generic', endpoint: 'http://169.254.169.254/latest/meta-data' }), /yasak/);
+});
+
+test('siem: SSRF engeli — döngü ve bağlantı-yerel adresler', () => {
+  delete process.env.DORA_ALLOW_LOOPBACK_SIEM;
+  for (const h of ['127.0.0.1', '127.8.8.8', 'localhost', 'foo.localhost', '::1', '169.254.169.254', 'metadata.google.internal', '0.0.0.0']) {
+    assert.equal(isBlockedEndpointHost(h), true, `${h} engellenmeli`);
+  }
+  // Kurum içi SIEM (RFC1918) ve genel adresler serbest
+  for (const h of ['10.0.0.5', '192.168.1.10', '172.16.0.2', 'splunk.ornek.local', 'siem.example.com', '100.64.0.1']) {
+    assert.equal(isBlockedEndpointHost(h), false, `${h} serbest olmalı`);
+  }
+  // döngü yalnız açık test anahtarıyla serbest
+  process.env.DORA_ALLOW_LOOPBACK_SIEM = '1';
+  assert.equal(isBlockedEndpointHost('127.0.0.1'), false);
+  assert.equal(isBlockedEndpointHost('localhost'), false);
+  assert.equal(isBlockedEndpointHost('169.254.169.254'), true); // meta veri her zaman yasak
+  process.env.DORA_ALLOW_LOOPBACK_SIEM = '1'; // sonraki fetch testleri döngü mock'unu kullanıyor
 });
 
 test('siem: HTTP hatası hata olarak döner', async () => {

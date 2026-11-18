@@ -648,12 +648,8 @@ function bindCommon() {
       toast('Değiştirilemedi: ' + err.message, 'bad');
     }
   });
-  /* yeni oturum düğmesi: #newSession ve [data-action=newSession] */
-  document.querySelectorAll('#newSession, [data-action="newSession"]').forEach((b) => {
-    if (b.dataset.bound) return;
-    b.dataset.bound = '1';
-    b.addEventListener('click', createSession);
-  });
+  // "yeni oturum" düğmesi aşağıdaki global delegated listener ile bağlanır (661. satır);
+  // burada ayrıca bağlanmaz — çift dinleyici her tıklamada iki oturum oluşturuyordu.
 }
 
 // Tüm sayfalarda geçerli: "kurulumu başlat" düğmesi
@@ -1100,34 +1096,6 @@ async function loadApprovals() {
           });
           toast(decision === 'approved' ? 'Talep onaylandı ve uygulandı' : 'Talep reddedildi', 'ok');
           loadApprovals();
-  loadNotifications();
-
-  $('#notifSave')?.addEventListener('click', async () => {
-    try {
-      const recipients = ($('#notifTo').value || '')
-        .split(',')
-        .map((x) => x.trim())
-        .filter(Boolean);
-      await api('/api/settings/notifications', {
-        method: 'PUT',
-        body: JSON.stringify({ enabled: $('#notifOn').checked, recipients }),
-      });
-      toast('Bildirim ayarları kaydedildi', 'ok');
-    } catch (e) {
-      toast('Kaydedilemedi: ' + e.message, 'bad');
-    }
-  });
-
-  $('#notifScan')?.addEventListener('click', async () => {
-    try {
-      const r = await api('/api/settings/notifications/scan', { method: 'POST', body: '{}' });
-      toast(`Tarama: ${r.events ?? 0} uyarı · ${r.sent ?? 0} e-posta`, (r.problems ?? []).length ? 'bad' : 'ok');
-      loadNotifications();
-      loadAudit();
-    } catch (e) {
-      toast('Taranamadı: ' + e.message, 'bad');
-    }
-  });
           loadAudit();
         } catch (e) {
           toast('Karar verilemedi: ' + e.message, 'bad');
@@ -1444,7 +1412,7 @@ function bindKurulum() {
         const msg = String(e.message || '');
         toast('Kapı geçilmedi', 'bad');
         try {
-          const raw = await fetch(`/api/sessions/${sid}/gate/${b.dataset.gate}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+          const raw = await fetch(`/api/sessions/${sid}/gate/${b.dataset.gate}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Dora-CSRF': '1' }, body: '{}' });
           const body = await raw.json();
           showGate(b.dataset.gate, body.results ?? [], Boolean(body.ok));
         } catch {
@@ -1455,9 +1423,12 @@ function bindKurulum() {
       }
     }),
   );
+  loadServices();
   loadTolerances();
   loadStep3();
+  loadScenarios();
   loadArticles();
+  loadAssessment();
   loadAutonomy();
   loadStep6Values();
   bindKurulumSteps(sid);
@@ -2085,7 +2056,12 @@ function bindKurulumSteps(sid) {
         }),
       });
       toast('Geçiş kaydı kaydedildi', 'ok');
-      $('#liveResult').innerHTML = `<div class="sub" style="margin-top:10px">Gölge ${r.shadow_days}g · yarı-otomatik ${r.semi_auto_days}g · inceleme ${r.annual_review_date || '—'}</div>`;
+      if (r.pending) {
+        toast('Geçiş kaydı dört göz onayına gönderildi', 'ok');
+        $('#liveResult').innerHTML = `<div class="sub" style="margin-top:10px">Onay bekleniyor (Yönetim → Onay akışı)</div>`;
+      } else {
+        $('#liveResult').innerHTML = `<div class="sub" style="margin-top:10px">Gölge ${r.shadow_days}g · yarı-otomatik ${r.semi_auto_days}g · inceleme ${r.annual_review_date || '—'}</div>`;
+      }
     } catch (e) {
       toast('Kaydedilemedi: ' + e.message, 'bad');
     }
@@ -2108,24 +2084,94 @@ async function loadTolerances() {
   const box = $('#tolRows');
   if (!box) return;
   try {
-    const r = await api(`/api/sessions/${state.activeSession.session_id}/artifacts/business-service-catalogue.json`);
-    const services = r.value.services || [];
+    const sid = state.activeSession.session_id;
+    const [cat, tol, risk] = await Promise.all([
+      api(`/api/sessions/${sid}/artifacts/business-service-catalogue.json`),
+      api(`/api/sessions/${sid}/artifacts/impact-tolerances.json`).catch(() => null),
+      api(`/api/sessions/${sid}/artifacts/risk-appetite.json`).catch(() => null),
+    ]);
+    const services = cat.value.services || [];
+    // Kaydedilmiş toleransları hizmet id'sine göre geri doldur (arayüz her açılışta
+    // varsayılana dönmesin — aksi hâlde kullanıcı değerlerini "kaybolmuş" sanar).
+    const saved = new Map((tol?.value?.tolerances ?? []).map((t) => [t.service, t]));
+    // Yıllık kesinti sınırı da kaydedilen eşikten gelsin (sessizce 240'a dönmesin).
+    const annual = (risk?.value?.thresholds ?? []).find((t) => t.metric === 'yillik_kesinti_dk');
+    if ($('#tolRisk') && annual) $('#tolRisk').value = Number(annual.max) || 240;
     box.innerHTML = services.length
       ? `<table><thead><tr><th>Hizmet</th><th>MTD (saat)</th><th>RTO (saat)</th><th>RPO (saat)</th></tr></thead><tbody>
         ${services
-          .map(
-            (s) => `<tr class="tol-row" data-service="${esc(s.id)}">
+          .map((s) => {
+            const v = saved.get(s.id) ?? {};
+            const mtd = Number(v.mtd_hours) || 24;
+            const rto = Number(v.rto_hours) || 4;
+            const rpo = Number(v.rpo_hours) || 0;
+            return `<tr class="tol-row" data-service="${esc(s.id)}">
           <td>${esc(s.name)}</td>
-          <td><input class="tol-mtd" type="number" value="24" min="1"></td>
-          <td><input class="tol-rto" type="number" value="4" min="1"></td>
-          <td><input class="tol-rpo" type="number" value="0" min="0"></td>
-        </tr>`,
-          )
+          <td><input class="tol-mtd" type="number" value="${mtd}" min="1"></td>
+          <td><input class="tol-rto" type="number" value="${rto}" min="1"></td>
+          <td><input class="tol-rpo" type="number" value="${rpo}" min="0"></td>
+        </tr>`;
+          })
           .join('')}</tbody></table>`
       : '<div class="sub">Önce 1. adımda hizmetleri kaydedin.</div>';
   } catch {
     box.innerHTML = '<div class="sub">Önce 1. adımda hizmetleri kaydedin.</div>';
   }
+}
+
+// Adım 1: kaydedilmiş hizmetleri tabloya geri doldur.
+async function loadServices() {
+  const sid = state.activeSession?.session_id;
+  if (!sid) return;
+  try {
+    const c = await api(`/api/sessions/${sid}/artifacts/business-service-catalogue.json`);
+    const services = c.value.services ?? [];
+    const tbody = $('#svcTable tbody');
+    if (!services.length || !tbody) return;
+    tbody.innerHTML = services
+      .map(
+        (s) => `<tr><td><input class="svc-name" value="${esc(s.name)}" placeholder="Hizmet adı"></td>
+        <td><input class="svc-owner" value="${esc(s.owner ?? '')}" placeholder="Sahibi"></td>
+        <td><input type="checkbox" class="svc-crit" ${s.critical ? 'checked' : ''}></td>
+        <td><button class="ghost-btn svc-del">sil</button></td></tr>`,
+      )
+      .join('');
+    document.querySelectorAll('.svc-del').forEach((b) => (b.onclick = () => b.closest('tr').remove()));
+  } catch { /* yok */ }
+}
+
+// Adım 4: kaydedilmiş senaryo sonuçlarını geri doldur.
+async function loadScenarios() {
+  const sid = state.activeSession?.session_id;
+  if (!sid) return;
+  try {
+    const r = await api(`/api/sessions/${sid}/artifacts/scenario-results.json`);
+    const runs = r.value.runs ?? [];
+    if (!runs.length) return;
+    const byName = new Map(runs.map((x) => [x.scenario, x]));
+    document.querySelectorAll('#scnTable tbody tr').forEach((tr, i) => {
+      const v = byName.get(SCENARIO_NAMES[i]);
+      if (!v) return;
+      tr.querySelector('.scn-acc').value = v.accuracy ?? 100;
+      tr.querySelector('.scn-sla').value = v.sla_violations ?? 0;
+      tr.querySelector('.scn-chain').checked = Boolean(v.audit_chain);
+    });
+  } catch { /* yok */ }
+}
+
+// Adım 5: bağımsız doğrulayan ve kabul edilen riskleri geri doldur.
+async function loadAssessment() {
+  const sid = state.activeSession?.session_id;
+  if (!sid) return;
+  try {
+    const g = await api(`/api/sessions/${sid}/artifacts/gap-analysis.json`);
+    if ($('#revName') && g.value.independent_review_signed_by) {
+      $('#revName').value = g.value.independent_review_signed_by;
+    }
+    if ($('#riskAcc') && Array.isArray(g.value.risk_acceptance)) {
+      $('#riskAcc').value = g.value.risk_acceptance.join(', ');
+    }
+  } catch { /* yok */ }
 }
 
 function viewGuvenlik() {
