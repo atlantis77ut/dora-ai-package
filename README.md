@@ -1,5 +1,9 @@
 # DORA AI Package
 
+[![GitHub release](https://img.shields.io/github/v/release/atlantis77ut/dora-ai-package)](https://github.com/atlantis77ut/dora-ai-package/releases)
+[![Lisans](https://img.shields.io/badge/lisans-AGPL--3.0%20veya%20Ticari-blue)](LICENSE)
+[![CI](https://img.shields.io/badge/ci-validate%20%2B%20deploy--artifacts-brightgreen)](https://github.com/atlantis77ut/dora-ai-package/actions)
+
 Finansal kuruluşlar için DORA (Digital Operational Resilience Act) uyumunu **yapay zeka
 ajanlarıyla yürüten**, her adımı **geçiş kapılarıyla doğrulayan** modüler referans çerçevesi.
 
@@ -214,8 +218,8 @@ Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı:
 
 ## Durum
 
-Sürüm **1.32.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
-Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
+Sürüm **1.0.0** — ilk kararlı sürüm. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md) · Sürümler: [GitHub Releases](https://github.com/atlantis77ut/dora-ai-package/releases).
 
 ## Lisans — çift lisans
 

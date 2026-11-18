@@ -1756,3 +1756,24 @@ tarihleri. Hukukçu incelemesi ajan tarafından kapatılamaz.
 
 Bu belgeler **taslaktır** ve "hukuki danışmanlık değildir" ibaresini korur. Ajan, hukuki metni
 avukat yerine onaylayamaz; yalnızca teknik gerçeklerle tutarlı ve boşluksuz hâle getirdi.
+
+---
+
+## 58. İlk kararlı sürüm — 1.0.0 (2026-11-18)
+
+Geliştirme sırasında sayaç olarak kullanılan `1.x.x` numaraları (`1.29.0`–`1.34.0`) iç iterasyondu;
+ilk resmî yayın **`1.0.0`** olarak etiketlendi (`v1.0.0`).
+
+| Kalem | Değer |
+|---|---|
+| Git etiketi | `v1.0.0` (açıklamalı) |
+| GitHub sürümü | [`releases`](https://github.com/atlantis77ut/dora-ai-package/releases) |
+| README rozetleri | sürüm + lisans + CI |
+| CHANGELOG | `[1.0.0]` başlığı + sürüm normalizasyon notu |
+| `package.json` | `1.0.0` (healthz bunu raporlar) |
+
+### Yayına kalan (sürümü engellemez)
+
+- Kurucunun kimlik/fiyat bilgileri (bkz. §57, `docs/hukuk/DOLDURULACAK-ALANLAR.md`)
+- Hukukçu incelemesi (taslak belgeler)
+- Gerçek Ubuntu sunucusunda ilk TLS + yedek timer kurulumu (§55'teki iki komut)

@@ -3,6 +3,31 @@
 Bu dosya, paketin sürüm geçmişini tutar. Biçim: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/),
 sürümleme: [SemVer](https://semver.org/lang/tr/).
 
+> **Sürüm normalizasyonu:** geliştirme sırasında sayaç olarak kullanılan `1.x.x` numaraları
+> (`1.29.0`–`1.34.0`) iç iterasyondu; **ilk resmî kararlı sürüm `1.0.0`** olarak etiketlendi
+> (2026-11-18). Aşağıdaki `1.x.x` başlıkları yayın öncesi geliştirme günlüğüdür.
+
+---
+
+## [1.0.0] — 2026-11-18 · İLK KARARLI SÜRÜM
+
+Paketin ilk resmî yayını. Bu sürüm, `1.29.0`–`1.34.0` geliştirme iterasyonlarının tümünü
+içerir ve aşağıdakileri ilk kez bir arada sunar:
+
+- **Ürün**: 60 terim, 11 ajan rolü, 24 süreç, 36 kontrol, 28 DORA maddesi eşlemesi, 6 fazlı ORL
+  onboarding (C1–C6), 4 kabul senaryosu (27 assertion)
+- **Uygulama**: kimlik + rol + 2FA (TOTP) + OIDC/SSO, olaylar (SIEM → incident), dört göz onayı,
+  raporlama süreleri (4s/72s/1ay), bildirim + e-posta, CSV içe aktarma, arama + canlı pano,
+  TR/EN arayüz, PDF yönetim raporu, iki dilli el kitabı
+- **Güvenlik**: scrypt parola, HMAC çerez + CSRF, Ed25519 lisans anahtarı, SSRF/yol-dışı engeli,
+  rol değişiminin anında uygulanması, sertleştirilmiş systemd
+- **İşletme**: TLS + ters vekil (nginx + Let's Encrypt), günlük doğrulamalı yedek timer'ı,
+  yedek/geri yükleme, güvenlik taraması, çevrimdışı kurulum
+- **Ticari/hukuk**: çift lisans (AGPL-3.0 / ticari), CLA, KVKK aydınlatma + DPA taslakları,
+  fiyatlandırma çerçevesi
+
+**Doğrulama:** 195 birim testi · CI (validate + deploy-artifacts) · uçtan uca HTTP senaryoları.
+
 ---
 
 ## [1.34.0] — 2026-11-18
