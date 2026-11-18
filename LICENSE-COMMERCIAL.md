@@ -3,9 +3,9 @@
 > **Bu bir şablondur, hukuki görüş değildir.** İmzadan önce avukat incelemesi gerekir.
 > **Fiyat ve destek değerleri ÖNERİDİR** — onaylanmadan müşteriye gönderilmemelidir.
 
-**Ürün:** DORA AI Ajan Paketi (`dora-ai-package`) · sürüm 1.1.0
+**Ürün:** DORA AI Ajan Paketi (`dora-ai-package`) · sürüm 1.33.0
 **Lisans veren:** ustauretim (adres ve vergi no sözleşme ekine işlenir)
-**Sürüm:** 2.0 — 2026-11-09
+**Sürüm:** 2.1 — 2026-11-18
 
 ---
 

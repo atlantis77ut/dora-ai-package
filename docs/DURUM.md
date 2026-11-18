@@ -1725,3 +1725,34 @@ pozitif çıktı — kurum profili kullanıcı rolünün meşru iş alanı (`rol
 canlı (izole sunucu): 8/8 sunucu düzeltmesi + 7/7 rol güncellemesi + SSRF/artifacts/tolerans/4-göz
 ana sunucu 1.33.0 · /healthz sağlıklı
 ```
+
+---
+
+## 57. Ticari metinler — 1.34.0 (2026-11-18)
+
+`docs/pricing.md`, `LICENSE-COMMERCIAL.md`, `CLA.md` ve `docs/hukuk/*` belgelerindeki boş
+alanlar ikiye ayrıldı:
+
+### Doldurulan (teknik olarak belirlenebilen)
+
+- **Yargı yetkisi:** CLA §8 ve DPA §9 → Türkiye Cumhuriyeti / İstanbul mahkemeleri
+  (`LICENSE-COMMERCIAL.md` §11 ile tutarlı).
+- **Saklama süreleri:** denetim `audit.log` 2 yıl, kanıt paketleri 5 yıl, hesap görev+3 ay
+  (`SAKLAMA-SILME-PROSEDURU.md` §1 ile eşleşti).
+- **Doğruluk düzeltmeleri:** IP adresinin **tutulmadığı** (kodda `audit.log` IP içermez);
+  DPA Ek-1'de depolama şifrelemesi dürüstçe "uygulama katmanında yok — OS/disk düzeyinde",
+  yedek şifreleme "yok (zip açık metin)" olarak işlendi — müşteriye yanlış güvence verilmemesi
+  için bilinçli.
+- Sürüm/tarih güncellemeleri (1.18.0 → 1.33.0; `LICENSE-COMMERCIAL.md` ürün sürümü 1.1.0 → 1.33.0).
+
+### Doldurulmayan (iş kararı / olgu — kurucunun bilgisi)
+
+`docs/hukuk/DOLDURULACAK-ALANLAR.md` tek listeye toplandı: şirket unvanı/adres/vergi no,
+iletişim e-postaları, **nihai katman fiyatları** (pricing.md'de aralık öneri olarak duruyor),
+SaaS-vs-on-prem kararı (DPA'yı belirler), alt işleyen listesi, sızma/eğitim/geri-yükleme testi
+tarihleri. Hukukçu incelemesi ajan tarafından kapatılamaz.
+
+### Dürüst sınır
+
+Bu belgeler **taslaktır** ve "hukuki danışmanlık değildir" ibaresini korur. Ajan, hukuki metni
+avukat yerine onaylayamaz; yalnızca teknik gerçeklerle tutarlı ve boşluksuz hâle getirdi.

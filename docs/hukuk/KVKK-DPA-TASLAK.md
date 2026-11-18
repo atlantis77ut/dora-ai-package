@@ -3,7 +3,7 @@
 > **Taslaktır, hukuki danışmanlık değildir.** KVKK m.9 ve GDPR Art. 28 ile uyumlu olacak şekilde
 > hazırlanmış bir iskelettir; imzadan önce hukukçu incelemesi şarttır.
 
-Sürüm 1.18.0 · 2026-11-09
+Sürüm 1.33.0 · 2026-11-18
 
 ---
 
@@ -64,12 +64,12 @@ Teknik envanter: `docs/hukuk/VERI-ENVANTERI.md` (sözleşme eki).
 | Tedbir | Uygulama |
 |---|---|
 | Şifreleme (aktarım) | TLS 1.2+ (ters vekil) |
-| Şifreleme (depolama) | `[ ]` — disk şifreleme / KMS `[durum]` |
+| Şifreleme (depolama) | Uygulama katmanında yok — işletim sistemi/disk şifrelemesi (LUKS/BitLocker) zorunlu tutulur |
 | Erişim kontrolü | rol bazlı (yönetici/kullanıcı), 2FA desteği |
 | Parola saklama | scrypt + kullanıcı başına tuz |
 | Denetim izi | `audit.log`, `0600`, silinemez politika |
-| Yedekleme | `[frekans]`, `[saklama]`, geri yükleme testi `[tarih]` |
-| Yedek şifreleme | `[ ]` |
+| Yedekleme | günlük 02:30 (systemd timer), son 8 yedek, manifest + sha256 doğrulamalı; geri yükleme testi `[tarih]` |
+| Yedek şifreleme | YOK (zip açık metin) — yedekler şifreli diskte / kilitli ortamda tutulmalı |
 | Sızma testi | `[tarih]` / `[planlanan]` |
 | Personel eğitimi | `[ ]` |
 
@@ -87,12 +87,12 @@ sözleşmedeki sorumluluk sınırına tabidir; ağır ihmal ve kasıt hâlinde b
 ## 8. Fesih sonrası
 
 1. Veri işleyen, **30 gün** içinde tüm kişisel verileri makine okunur formatta (zip) iade eder.
-2. İadenin ardından `[30]` gün içinde siler ve **silme belgesi** düzenler.
+2. İadenin ardından **30** gün içinde siler ve **silme belgesi** düzenler.
 3. Yasal saklama yükümlülüğü varsa, yalnız o kapsamda saklar ve korur.
 
 ## 9. Uygulanacak hukuk
 
-`[Türkiye Cumhuriyeti]` hukuku; `[İstanbul]` mahkemeleri yetkilidir.
+Türkiye Cumhuriyeti hukuku; İstanbul mahkemeleri ve icra daireleri yetkilidir.
 
 ---
 

@@ -58,7 +58,7 @@ Bir şirket adına katkı gönderiyorsanız, yetkili bir temsilciniz ayrıca şu
 > ustauretim, çalışanlarının projeye gönderdiği katkılar için bu CLA'nın §2 ve §3'teki
 > izinleri vermeye yetkilidir.
 
-Kurumsal onay için: [e-posta adresi] adresine yetkili imzalı e-posta gönderin.
+Kurumsal onay için: `[CLA E-POSTA ADRESİ — örn. cla@sirketadi.com]` adresine yetkili imzalı e-posta gönderin.
 
 ## 7. Yürürlük
 
@@ -70,7 +70,7 @@ Kurumsal onay için: [e-posta adresi] adresine yetkili imzalı e-posta gönderin
 
 ## 8. Uygulanacak hukuk
 
-[Ülke/şehir] hukuku. Uyuşmazlıkta [mahkeme/tahkim].
+Türkiye Cumhuriyeti hukuku. Uyuşmazlıkta İstanbul mahkemeleri ve icra daireleri yetkilidir.
 
 ---
 

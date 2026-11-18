@@ -4,7 +4,7 @@
 > Bu metin, uygulamanın **kendi kullanıcılarına** (çalışanlarınıza) yöneliktir.
 > Kurumunuzun müşterilerine yönelik aydınlatma ayrı bir metredir.
 
-Son güncelleme: 2026-11-09 · Sürüm 1.18.0
+Son güncelleme: 2026-11-18 · Sürüm 1.33.0
 
 ---
 
@@ -25,7 +25,7 @@ Son güncelleme: 2026-11-09 · Sürüm 1.18.0
 |---|---|---|
 | Kimlik | ad soyad | kullanıcı girişi |
 | İletişim | kullanıcı adı / e-posta | kullanıcı girişi |
-| İşlem güvenliği | giriş/çıkış zamanı, IP `[tutuluyorsa]`, işlem kayıtları | sistem |
+| İşlem güvenliği | giriş/çıkış zamanı, işlem kayıtları (IP adresi **tutulmaz**) | sistem |
 | Kimlik doğrulama | parola özeti (geri döndürülemez), TOTP sırrı, kurtarma kodu özetleri | kullanıcı + sistem |
 | Görev bilgisi | hizmet sahibi, ajan insan muadili | kurulum sırasında girilen |
 
@@ -48,7 +48,7 @@ Ayrıntılı teknik envanter: `docs/hukuk/VERI-ENVANTERI.md`.
 | Amaç | KVKK m.5 dayanağı |
 |---|---|
 | Hesap yönetimi, kimlik doğrulama | **sözleşmenin kurulması/ifası** (m.5/2-c) |
-| Bilgi güvenliği, denetim izi | **meşru menfaat** (m.5/2-f) — `[denge testi yapıldı]` |
+| Bilgi güvenliği, denetim izi | **meşru menfaat** (m.5/2-f) — denge testi kaydı tutulur |
 | Yasal yükümlülük (DORA) | **hukuki yükümlülük** (m.5/2-ç) |
 | 2FA | sözleşme + meşru menfaat (hesap güvenliği) |
 
@@ -74,10 +74,10 @@ Yurt dışına aktarım **yoktur** / `[varsa: ülke + mekanizma (SCC, açık rı
 
 | Veri | Süre | Dayanak |
 |---|---|---|
-| Kullanıcı hesabı | görev süresi + `[X]` ay | `[politika]` |
-| İşlem kaydı (`audit.log`) | `[2 yıl]` önerilir | DORA denetim izi |
+| Kullanıcı hesabı | görev süresi + 3 ay | erişim temizliği |
+| İşlem kaydı (`audit.log`) | 2 yıl (sonra arşivlenerek döndürülür) | DORA denetim izi |
 | Kimlik doğrulama sırları | hesap silinene kadar | — |
-| Kanıt paketleri | `[5 yıl]` önerilir | denetim |
+| Kanıt paketleri | 5 yıl | denetim |
 | Parola sıfırlama token'ı | 30 dakika | teknik |
 
 Süre sonunda silme adımları: `docs/SAKLAMA-SILME-PROSEDURU.md`.
@@ -95,7 +95,7 @@ Süre sonunda silme adımları: `docs/SAKLAMA-SILME-PROSEDURU.md`.
 - Otomatik sistemlerle analiz sonucu aleyhinize çıkan sonuca itiraz etme
 - Zararın giderilmesini talep etme
 
-**Başvuru kanalı:** `[E-POSTA]` / `[YAZIŞMA ADRESİ]` · Yanıt süresi: **30 gün** (KVKK m.13).
+**Başvuru kanalı:** `[KVKK BAŞVURU E-POSTASI]` / `[YAZIŞMA ADRESİ]` · Yanıt süresi: **30 gün** (KVKK m.13).
 
 ---
 
@@ -124,4 +124,4 @@ Analitik/pazarlama çerezi **kullanılmaz**; bu nedenle çerez onay bandı gerek
 
 | Sürüm | Tarih | Değişiklik |
 |---|---|---|
-| 1.0 | `[tarih]` | İlk yayın |
+| 1.0 | 2026-11-18 | İlk yayın (taslak — hukukçu onayı bekleniyor) |

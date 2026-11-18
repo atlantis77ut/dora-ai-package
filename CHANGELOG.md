@@ -5,6 +5,34 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.34.0] — 2026-11-18
+
+### Tamamlandı — ticari metinler (fiyat/SLA, CLA, KVKK)
+
+Belgelerdeki **teknik olarak belirlenebilen** boş alanlar kodla eşleşecek şekilde dolduruldu;
+yalnızca kurucunun bildiği iş bilgileri tek listeye toplandı.
+
+- `CLA.md`: uygulanacak hukuk → Türkiye / İstanbul mahkemeleri; kurumsal onay e-postası
+  alanı netleştirildi
+- `KVKK-AYDINLATMA.md`: saklama süreleri (denetim 2 yıl, kanıt 5 yıl, hesap görev+3 ay),
+  IP adresinin **tutulmadığı** (kod: `audit.log` IP içermez), meşru menfaat denge testi,
+  sürüm/ilk yayın tarihi
+- `KVKK-DPA-TASLAK.md`: teknik ek (Ek-1) dolduruldu — depolama şifrelemesi **dürüstçe**
+  "uygulama katmanında yok, OS/disk düzeyinde", yedekleme "günlük 02:30 + doğrulamalı",
+  yedek şifreleme "yok (açık metin zip)", hukuk → Türkiye / İstanbul
+- `LICENSE-COMMERCIAL.md`: ürün sürümü 1.1.0 → 1.33.0, belge sürümü 2.1
+- `docs/hukuk/README.md`: durum tablosu güncellendi, kalan alanlar işaretlendi
+- **Yeni:** `docs/hukuk/DOLDURULACAK-ALANLAR.md` — kalan boş alanların tek listesi
+  (kimlik, nihai fiyat, SaaS/on-prem kararı, alt işleyenler, sızma/eğitim/geri-yükleme tarihleri)
+
+### Kasıtlı olarak doldurulmayan (iş kararı / olgu)
+
+Kurucunun bildiği alanlar doldurulmadı: şirket unvanı/adres/vergi no, iletişim e-postaları,
+nihai katman fiyatları, SaaS-vs-on-prem kararı, alt işleyen listesi, sızma/eğitim/geri-yükleme
+testi tarihleri. Hukukçu incelemesi de ajan tarafından kapatılamaz.
+
+---
+
 ## [1.33.0] — 2026-11-18
 
 ### Düzeltildi — inceleme bulguları (güvenlik + veri kaybı)

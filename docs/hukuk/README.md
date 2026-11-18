@@ -9,6 +9,7 @@ hukukçu incelemesi gerekir.
 | [KVKK-AYDINLATMA.md](KVKK-AYDINLATMA.md) | kullanıcılara aydınlatma metni (taslak) | son kullanıcı |
 | [KVKK-DPA-TASLAK.md](KVKK-DPA-TASLAK.md) | veri işleyen sözleşmesi (KVKK m.9 / GDPR Art. 28) | kurumsal müşteri |
 | [VERI-ENVANTERI.md](VERI-ENVANTERI.md) | **hangi veri nerede**, teknik envanter (kodla eşleşir) | DPO / denetçi |
+| [DOLDURULACAK-ALANLAR.md](DOLDURULACAK-ALANLAR.md) | kalan boş alanların tek listesi (kimlik, fiyat, SaaS modeli, tarihler) | kurucu |
 | [../SAKLAMA-SILME-PROSEDURU.md](../SAKLAMA-SILME-PROSEDURU.md) | saklama süreleri, silme, geri yükleme, DSAR | operasyon |
 
 ## Durum tablosu
@@ -17,16 +18,16 @@ hukukçu incelemesi gerekir.
 |---|---|
 | AGPL yükümlülükleri haritalandı | ✔ yazıldı |
 | Kaynak teklifi metni | ✔ hazır (şablon) |
-| Ticari lisans maddeleri | ⚠ fiyat/SLA alanları boş (`LICENSE-COMMERCIAL.md`) |
-| KVKK aydınlatma | ⚠ taslak, `[ ]` alanlar dolu değil |
-| DPA | ⚠ taslak |
+| Ticari lisans maddeleri | ✔ fiyat/SLA/destek **öneri** olarak dolu (`LICENSE-COMMERCIAL.md` §2, §6) |
+| KVKK aydınlatma | ⚠ teknik alanlar dolu; kimlik/iletişim alanları kaldı |
+| DPA | ⚠ teknik ek dolu; taraflar + alt işleyenler kaldı |
 | Veri envanteri | ✔ kodla eşleşiyor |
-| Saklama/silme | ✔ prosedür yazıldı, **test edilmedi** |
+| Saklama/silme | ✔ prosedür yazıldı, **silme/geri yükleme testi yapılmadı** |
 | Hukukçu incelemesi | ✖ **yapılmadı** |
 
 ## Sıradaki adımlar
 
-1. `[ ]` alanları doldur (şirket unvanı, adres, e-posta, saklama süreleri)
-2. Hukukçuya ver: AGPL-SAAS-UYUM + DPA + aydınlatma
-3. Ticari lisans fiyat/SLA alanlarını doldur (`LICENSE-COMMERCIAL.md`)
+1. [`DOLDURULACAK-ALANLAR.md`](DOLDURULACAK-ALANLAR.md) listesindeki kimlik/fiyat/SaaS alanlarını doldur
+2. Hukukçuya ver: AGPL-SAAS-UYUM + DPA + aydınlatma + ticari lisans
+3. Nihai fiyatı `pricing.md` §3'ten seç, `LICENSE-COMMERCIAL.md` §2 ile eşitle
 4. Silme ve geri yükleme adımlarını bir test kurulumunda **çalıştır** ve tarihini kaydet
