@@ -1,12 +1,19 @@
 # Doldurulacak Alanlar — Ticari ve Hukuk Belgeleri
 
-Son güncelleme: 2026-11-18 · Sürüm 1.33.0
+Son güncelleme: 2026-11-18 · Sürüm 1.34.0
 
 Bu liste, ticari ve hukuk belgelerindeki **iş kararı/olgu** niteliğindeki boş alanları tek yerde
 toplar. Teknik olarak belirlenebilen her alan (yargı yetkisi, saklama süreleri, güvenlik önlemleri,
 yedek sıklığı, TLS sürümü) zaten dolduruldu; buradakiler yalnız **senin bildiğin** bilgiler.
 
 > Hepsini doldurmadan müşteriye/avukata gönderme. Dolduruldukça bu dosyadan sil.
+
+## Kararlar (2026-11-18)
+
+| Konu | Karar | Sonuç |
+|---|---|---|
+| Barındırma modeli | **İkisi de hazırlansın** | `LICENSE-COMMERCIAL.md` §10'a koşullu veri-işleme maddesi eklendi; DPA yalnız SaaS'ta geçerli (başlığında belirtildi) |
+| Katman fiyatları | **Kurucu sayı verecek** | `pricing.md` aralıkları olduğu gibi duruyor; sayılar gelince §2 eşitlenir |
 
 ---
 
@@ -22,6 +29,8 @@ yedek sıklığı, TLS sürümü) zaten dolduruldu; buradakiler yalnız **senin 
 
 ## 2. Fiyat ve ticari koşullar
 
+> **Karar:** sayıları kurucu verecek. Aşağıdakiler hazır olduğunda doldurulur.
+
 | Alan | Nerede | Durum |
 |---|---|---|
 | Katman fiyatları (Starter/Professional/Enterprise/Public) | `docs/pricing.md` §3 | aralık öneri olarak yazılı; **tek sayıya indir** |
@@ -31,6 +40,9 @@ yedek sıklığı, TLS sürümü) zaten dolduruldu; buradakiler yalnız **senin 
 | `LICENSE-COMMERCIAL.md` §2 fiyat tablosu | satır 27–32 | `pricing.md` kararlarıyla eşitle |
 
 ## 3. SaaS / barındırma modeli (DPA'yı etkiler)
+
+> **Karar:** ikisi de hazır. `LICENSE-COMMERCIAL.md` §10 koşullu maddeyi taşıyor; DPA başlığı
+> "yalnız SaaS'ta geçerli" notunu aldı. SaaS'a geçilirse aşağıdakiler doldurulur.
 
 Kritik karar: **müşteri kendi sunucusunda mı çalıştıracak, sen mi barındıracaksın?**
 

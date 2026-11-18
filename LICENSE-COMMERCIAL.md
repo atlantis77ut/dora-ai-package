@@ -88,6 +88,13 @@ Destek, paketin **kendisini** kapsar; kurumun mevzuat uyumunu veya regülatör i
 Karşılıklı NDA **3 yıl** süreyle geçerlidir (ayrı belge veya bu sözleşmenin eki).
 Kurum verisi Lisans Veren’e **aktarılmaz**; destek için paylaşılan örnekler anonimleştirilir.
 
+**Veri işleme rolü** kurulum modeline göre değişir:
+
+- **On-prem** (müşteri kendi sunucusunda çalıştırır): Lisans Veren veri işleyen **değildir**;
+  paket bir araçtır, kişisel veri Lisans Veren'e ulaşmaz. DPA gerekmez.
+- **SaaS** (Lisans Veren barındırır): Lisans Veren **veri işleyendir**; taraflar bu
+  sözleşmenin eki olarak `docs/hukuk/KVKK-DPA-TASLAK.md` veri işleyen sözleşmesini imzalar.
+
 ## 11. Uygulanacak hukuk
 
 **Türkiye** hukuku; uyuşmazlıkta **İstanbul** mahkemeleri yetkilidir.

@@ -2,6 +2,9 @@
 
 > **Taslaktır, hukuki danışmanlık değildir.** KVKK m.9 ve GDPR Art. 28 ile uyumlu olacak şekilde
 > hazırlanmış bir iskelettir; imzadan önce hukukçu incelemesi şarttır.
+>
+> Bu sözleşme yalnız **SaaS/barındırma** modelinde geçerlidir. On-prem (müşterinin kendi sunucusu)
+> kurulumda Lisans Veren veri işleyen değildir; DPA imzalanmaz (bkz. `LICENSE-COMMERCIAL.md` §10).
 
 Sürüm 1.33.0 · 2026-11-18
 
