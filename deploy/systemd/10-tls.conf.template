@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (c) 2026 ustauretim
+#
+# TLS modu drop-in'i — /etc/systemd/system/dora-ai-package.service.d/10-tls.conf
+# Kaynak: deploy/systemd/10-tls.conf.template
+#
+# install-tls.mjs yazar. Neden: TLS'i nginx sonlandırdığında uygulama dışarıya
+# açılmamalı ve X-Forwarded-Proto başlığına güvenmesi gerekir (Secure çerez,
+# HSTS). Taban unit dosyası 0.0.0.0'da dinler; bu drop-in onu 127.0.0.1'e çeker.
+#
+# Yer tutucular: TARGET (kurulum dizini), PORT (uygulama portu)
+
+[Service]
+ExecStart=
+ExecStart=/usr/bin/node __TARGET__/onboarding/cli/tools/server.mjs --port __PORT__ --host 127.0.0.1 --trust-proxy
+Environment=HOST=127.0.0.1
+Environment=DORA_TRUST_PROXY=1

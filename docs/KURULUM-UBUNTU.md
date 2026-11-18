@@ -3,7 +3,7 @@
 Bu belge, paketi bir Ubuntu sunucusuna kurup tarayıcıdan görmek ve tüm doğrulamaları
 çalıştırmak için gereken adımları verir.
 
-Son güncelleme: 2026-11-09 · Sürüm 1.4.0
+Son güncelleme: 2026-11-18 · Sürüm 1.32.0
 
 ---
 
@@ -128,31 +128,36 @@ Varlıklarım, Sorumlular, Belgeler — süreç kodu, JSON veya teknik sayaç yo
 ## 4c. SSO (kurumsal giriş)
 
 Entra ID veya Keycloak bağlamak için: [`SSO-KURULUM.md`](SSO-KURULUM.md).
-TLS olmadan SSO çalışmaz; önce §5'teki ters vekil kurulumunu tamamlayın.
+TLS olmadan SSO çalışmaz; önce §5'teki HTTPS kurulumunu tamamlayın.
 
 ## 4d. Yedekleme
 
-`node tools/backup.mjs --out /var/backups/dora/$(date +%F).zip --keep 8` — systemd timer ve
-geri yükleme adımları: [`YEDEKLEME.md`](YEDEKLEME.md).
-
-## 5. Nginx arkasına alma (opsiyonel)
-
-Doğrudan 8080 yerine 80/443 üzerinden yayınlamak isterseniz:
-
-```nginx
-server {
-    listen 80;
-    server_name dora.ornek.local;
-
-    location / {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
+```bash
+sudo node /opt/dora-ai-package/scripts/install-backup-timer.mjs
+# her gün 02:30 · /var/backups/dora · son 8 yedek · kurulumda bir kez doğrulama
 ```
 
-Bu durumda servisi `--host 127.0.0.1` ile çalıştırın (dışarı açmasın).
+Yedek `web-data/` + `.dora-onboarding/` dizinlerini tek zip'te toplar; her çalıştırmada
+manifest + sha256 doğrulanır, doğrulama geçmezse budama yapılmaz. Ayrıntı, geri yükleme ve
+tatbikat: [`YEDEKLEME.md`](YEDEKLEME.md).
+
+## 5. HTTPS (üretim için gerekli)
+
+Paket TLS'i kendisi sonlandırmaz; nginx sonlandırır, uygulama `127.0.0.1` üzerinde dinler.
+
+```bash
+sudo node /opt/dora-ai-package/scripts/install-tls.mjs --domain dora.ornek.local --email admin@ornek.local
+```
+
+Betik nginx + certbot kurar, Let's Encrypt sertifikası alır, 80 → 301 yönlendirmesini yazar,
+giriş uçlarına hız sınırı koyar ve uygulamayı yerel arayüze çeker.
+
+- Ayrıntı, doğrulama komutları, yenileme ve geri alma: [`URETIM-TLS.md`](URETIM-TLS.md)
+- Kendinden imzalı sertifikayla lab denemesi: `--self-signed`
+- Hiçbir şey yazmadan plan görmek: `--dry-run`
+
+Düz HTTP ile devam ederseniz servisi `--host 127.0.0.1` ile çalıştırıp yalnız iç ağa açın
+(§4'teki ufw örneği).
 
 ---
 

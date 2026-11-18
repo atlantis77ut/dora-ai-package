@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (c) 2026 ustauretim
+#
+# Ara adım: sertifika henüz yokken nginx'in açılabilmesi için HTTP-only site.
+# install-tls.mjs önce bunu yazar, certbot ile sertifikayı alır, sonra kalıcı
+# TLS şablonuyla (dora-ai-package.conf.template) değiştirir.
+#
+# Yer tutucular: __DOMAIN__, __ACME_ROOT__, __BACKEND_PORT__
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name __DOMAIN__;
+
+    location /.well-known/acme-challenge/ {
+        root __ACME_ROOT__;
+        default_type "text/plain";
+        try_files $uri =404;
+    }
+
+    location / {
+        include /etc/nginx/snippets/dora-proxy.conf;
+    }
+}

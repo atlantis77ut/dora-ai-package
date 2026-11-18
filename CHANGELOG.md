@@ -5,6 +5,50 @@ sürümleme: [SemVer](https://semver.org/lang/tr/).
 
 ---
 
+## [1.32.0] — 2026-11-18
+
+### Eklendi — üretim kurulumu (TLS + ters vekil + yedek timer'ı)
+
+- `scripts/install-tls.mjs` — tek komutla HTTPS: nginx + certbot, Let's Encrypt (webroot) veya
+  `--self-signed`, 80 → 301, 443 → `127.0.0.1:PORT`, giriş uçlarına IP başına hız sınırı,
+  systemd drop-in ile uygulamayı yerel arayüze çekme, 3 kontrollü doğrulama, `--dry-run`
+- `scripts/install-backup-timer.mjs` — `dora-backup.service` + `dora-backup.timer`
+  (her gün 02:30, `Persistent=true`, hedef/saklama/saat parametreli, `--now` ile anında prova)
+- `scripts/backup-run.mjs` — yedek → **doğrula** → buda → `son-yedek.json`; doğrulama geçmezse
+  budama yapılmaz (çıkış 1)
+- `deploy/render.mjs` + `deploy/nginx/*.template` + `deploy/systemd/10-tls.conf.template` —
+  şablonlar saf işlevlerle doldurulur; kurulan dosya ile test edilen dosya aynı
+- `deploy/dora-backup.service` / `.timer`, taban unit sertleştirildi (`UMask=0077`,
+  `ProtectProc`, `MemoryDenyWriteExecute`, `RestrictAddressFamilies`, `EnvironmentFile=/etc/dora/dora.env`)
+- `docs/URETIM-TLS.md` — kurulum, doğrulama, yenileme, geri alma, sorun giderme
+- `install-ubuntu.sh --backup-timer`
+
+### Düzeltildi — güvenlik
+
+- **`X-Forwarded-Proto` artık koşulsuz güvenilmiyor.** Uzak bir istemci başlığı taklit ederek
+  `Secure` çerez yazdırabiliyordu (tarayıcı HTTP'de saklamaz → giriş döngüsü) veya HSTS'i
+  kandırabiliyordu. Yeni kural: doğrudan TLS, ya da loopback vekil, ya da `--trust-proxy`.
+  Kod `src/orl/proxy.mjs`, 6 birim testi + 8 uçtan uca kontrol
+- OIDC `state` çerezi de HTTPS'te `Secure` alıyor
+- HTTPS yanıtlarında `Strict-Transport-Security: max-age=15552000` (tek kaynak: uygulama)
+
+### Düzeltildi
+
+- `tools/backup.mjs` başka bir betikten içe aktarıldığında `Unknown option` ile çöküyordu
+  (argüman ayrıştırma modül yüklenirken çalışıyordu) — artık CLI bloğunun içinde
+
+### Doğrulama
+
+```
+193 test (20 yeni: 14 deploy şablonu/systemd, 6 proxy)
+uçtan uca: loopback+başlık → Secure çerez ✓ · uzak istemci+başlık → çerez ✓ engellendi
+           --trust-proxy + uzak → Secure ✓ · HSTS yalnız https'te ✓ (8/8)
+yedek hattı: üret → doğrula → buda (keep=1, 2. çalıştırma 1 eskiyi sildi) ✓
+install-tls.mjs --dry-run: 7 adım, 9 komut, dosya boyutları listelendi ✓
+```
+
+---
+
 ## [1.31.0] — 2026-11-10
 
 ### Düzeltildi / eklendi

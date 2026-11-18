@@ -16,6 +16,9 @@ coverage/
 .DS_Store
 *.swp
 
+# yedekler (scripts/backup-run.mjs varsayılan hedefi)
+yedek/
+
 web-data/
 onboarding/license/dev-private.pem
 *.key

@@ -23,15 +23,9 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../..');
 const FORMAT = 'dora-backup-v1';
 
-const { values } = parseArgs({
-  options: {
-    out: { type: 'string' },
-    dir: { type: 'string', default: path.join(ROOT, 'yedek') },
-    root: { type: 'string', default: ROOT },
-    keep: { type: 'string' },
-    verify: { type: 'string' },
-  },
-});
+// NOT: argüman ayrıştırma CLI bloğunun içinde. Bu dosya başka bir betikten
+// (scripts/backup-run.mjs) içe aktarıldığında o betiğin argümanları burada
+// okunmamalı — aksi hâlde "Unknown option" ile çöker.
 
 /** Verilen köklerdeki dosyaları toplar; yedek ve manifest üretir. */
 export function collectBackup({ root = ROOT, includeSessions = true } = {}) {
@@ -122,6 +116,16 @@ export function pruneBackups(dir, keep = 8) {
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
 if (isMain) {
+  const { values } = parseArgs({
+    options: {
+      out: { type: 'string' },
+      dir: { type: 'string', default: path.join(ROOT, 'yedek') },
+      root: { type: 'string', default: ROOT },
+      keep: { type: 'string' },
+      verify: { type: 'string' },
+    },
+  });
+
   if (values.verify) {
     const r = verifyBackup(values.verify);
     console.log(`yedek doğrulama: ${values.verify}`);

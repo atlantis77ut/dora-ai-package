@@ -185,11 +185,18 @@ Hukuk ve uyum (AGPL/SaaS, KVKK aydınlatma, DPA, veri envanteri): [`docs/hukuk/`
 git clone https://github.com/atlantis77ut/dora-ai-package.git /opt/dora-ai-package
 bash /opt/dora-ai-package/scripts/smoke-test.sh            # genel test
 sudo bash /opt/dora-ai-package/scripts/install-ubuntu.sh --service --port 8080
+
+# üretim: HTTPS + ters vekil (nginx + Let's Encrypt)
+sudo node /opt/dora-ai-package/scripts/install-tls.mjs --domain dora.ornek.local --email admin@ornek.local
+
+# üretim: günlük yedek (02:30, son 8 yedek, her çalıştırmada doğrulama)
+sudo node /opt/dora-ai-package/scripts/install-backup-timer.mjs
 ```
 
 Windows'ta tek makinede denemek için: `scripts\serve.cmd` (çift tıkla) → http://127.0.0.1:8080/dashboard/
 
-Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı: [`docs/KURULUM-UBUNTU.md`](docs/KURULUM-UBUNTU.md).
+Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı:
+[`docs/KURULUM-UBUNTU.md`](docs/KURULUM-UBUNTU.md) · [`docs/URETIM-TLS.md`](docs/URETIM-TLS.md) · [`docs/YEDEKLEME.md`](docs/YEDEKLEME.md)
 
 ## Dizin Yapısı
 
@@ -202,12 +209,12 @@ Node.js 18+ yeterli; **npm install ve GPU gerekmez**. Ayrıntı: [`docs/KURULUM-
 | `pilots/` | Pilot seçim, sözleşme, başarı kriterleri, vaka şablonu |
 | `docs/` | Mimari, DORA eşlemesi, TR mevzuatı, lisanslama, fiyatlandırma, kararlar |
 | `dashboard/` | Üretilen site: `index.html` · `processes.html` · `controls.html` · `data.json` · `dashboard.png` |
-| `scripts/` | Başlatıcılar: `dashboard.cmd`, `demo.cmd`, `validate.cmd`, `install-ubuntu.sh`, `smoke-test.sh` |
-| `deploy/` | systemd unit (`dora-ai-package.service`) |
+| `scripts/` | Başlatıcılar ve kurulum: `install-ubuntu.sh`, `install-tls.mjs`, `install-backup-timer.mjs`, `backup-run.mjs`, `smoke-test.sh` |
+| `deploy/` | systemd unit'leri (uygulama + yedek), nginx TLS şablonları, `render.mjs` |
 
 ## Durum
 
-Sürüm **1.9.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
+Sürüm **1.32.0**. Neyin hazır, neyin eksik olduğu: [`docs/DURUM.md`](docs/DURUM.md).
 Değişiklik geçmişi: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Lisans — çift lisans

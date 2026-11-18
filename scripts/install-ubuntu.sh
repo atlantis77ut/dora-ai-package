@@ -9,6 +9,7 @@
 #   sudo bash scripts/install-ubuntu.sh --port 8081
 #   sudo bash scripts/install-ubuntu.sh --dir /srv/dora
 #   sudo bash scripts/install-ubuntu.sh --service           # systemd servisi kur ve başlat
+#   sudo bash scripts/install-ubuntu.sh --service --backup-timer   # + günlük yedek timer'ı
 #   bash scripts/install-ubuntu.sh --offline                # yalnızca mevcut dizinden kur (git yok)
 #
 # Gereksinim: Node.js 18+ (kurulu değilse betik kurmaz, komut gösterir), git (klon için).
@@ -21,6 +22,7 @@ PORT="8080"
 SERVICE=0
 OFFLINE=0
 RUN_TESTS=1
+BACKUP_TIMER=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -29,6 +31,7 @@ while [ $# -gt 0 ]; do
     --service) SERVICE=1; shift ;;
     --offline) OFFLINE=1; shift ;;
     --no-tests) RUN_TESTS=0; shift ;;
+    --backup-timer) BACKUP_TIMER=1; shift ;;
     -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
     *) echo "bilinmeyen seçenek: $1"; exit 1 ;;
   esac
@@ -106,7 +109,19 @@ if [ "$SERVICE" -eq 1 ]; then
   fi
 fi
 
-# ── 6) özet ──────────────────────────────────────────────
+# ── 6) günlük yedek timer'ı ──────────────────────────────
+if [ "$BACKUP_TIMER" -eq 1 ]; then
+  say "6) Günlük yedek zamanlayıcısı"
+  if [ "$SERVICE" -ne 1 ]; then
+    warn "--backup-timer için --service de gerekli; atlandı"
+  elif node "$TARGET/scripts/install-backup-timer.mjs" --dir "$TARGET"; then
+    ok "dora-backup.timer kuruldu (her gün 02:30)"
+  else
+    warn "yedek timer'ı kurulamadı — elle: sudo node $TARGET/scripts/install-backup-timer.mjs"
+  fi
+fi
+
+# ── 7) özet ──────────────────────────────────────────────
 IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
 say "Kurulum tamam"
 cat <<EOF
@@ -121,4 +136,11 @@ cat <<EOF
   systemd:
     sudo systemctl status dora-ai-package
     sudo journalctl -u dora-ai-package -f
+
+  HTTPS (önerilir, üretim için zorunlu):
+    sudo node $TARGET/scripts/install-tls.mjs --domain dora.ornek.local --email admin@ornek.local
+    (ayrıntı: docs/URETIM-TLS.md)
+
+  Günlük yedek:
+    sudo node $TARGET/scripts/install-backup-timer.mjs --dir $TARGET
 EOF

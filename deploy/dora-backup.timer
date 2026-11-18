@@ -1,0 +1,15 @@
+[Unit]
+Description=DORA AI Ajan Paketi — günlük yedek zamanlayıcısı
+Documentation=file:///opt/dora-ai-package/docs/YEDEKLEME.md
+
+[Timer]
+# Her gün 02:30 (sunucu yerel saati). Persistent=true: makine kapalıysa kaçırılan
+# çalıştırma açılışta telafi edilir. Gecikme, disk I/O'sunu mesai dışına yayar.
+OnCalendar=*-*-* 02:30:00
+Persistent=true
+RandomizedDelaySec=15m
+AccuracySec=1min
+Unit=dora-backup.service
+
+[Install]
+WantedBy=timers.target

@@ -32,6 +32,7 @@ import { sendMail, createOutbox } from '../src/orl/mailer.mjs';
 import { generateSecret, otpauthUrl, generateRecoveryCodes } from '../src/orl/totp.mjs';
 import { discover, buildAuthUrl, exchangeCode, fetchJwks, verifyIdToken, makeState, verifyState } from '../src/orl/oidc.mjs';
 import { parseInventoryCsv, INVENTORY_CSV_TEMPLATE } from '../src/orl/csv.mjs';
+import { isHttpsRequest } from '../src/orl/proxy.mjs';
 import crypto from 'node:crypto';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -48,6 +49,9 @@ const { values } = parseArgs({
     host: { type: 'string', default: process.env.HOST ?? '127.0.0.1' },
     'data-dir': { type: 'string', default: process.env.DORA_DATA_DIR ?? '' },
     'sessions-dir': { type: 'string', default: process.env.DORA_SESSIONS_DIR ?? '' },
+    // Ters vekil (nginx) arkasında X-Forwarded-Proto'ya güven. Ayrıca yerel
+    // bağlantılar için otomatik olarak güvenilir; bu bayrak uzak vekil içindir.
+    'trust-proxy': { type: 'boolean', default: process.env.DORA_TRUST_PROXY === '1' },
   },
 });
 if (values['data-dir']) DATA = path.resolve(values['data-dir']);
@@ -59,6 +63,23 @@ outbox = createOutbox(path.join(DATA, 'outbox.json'));
 
 const PORT = Number(values.port);
 const HOST = values.host;
+
+const TRUST_PROXY = Boolean(values['trust-proxy']);
+
+/**
+ * İstek HTTPS üzerinden mi geldi? Mantık `src/orl/proxy.mjs` içinde (saf işlev,
+ * birim testli): doğrudan TLS yoksa X-Forwarded-Proto'ya yalnızca güvenilir
+ * vekilde bakılır; aksi hâlde istemci başlığı taklit edip Secure çerez
+ * yazdırabilir (giriş döngüsü) veya HSTS'i kandırabilirdi.
+ */
+function isHttps(req) {
+  return isHttpsRequest({
+    remoteAddress: req.socket?.remoteAddress,
+    encrypted: Boolean(req.socket?.encrypted),
+    headers: req.headers ?? {},
+    trustProxy: TRUST_PROXY,
+  });
+}
 
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
@@ -676,13 +697,13 @@ function getUser(req) {
 }
 
 function setCookie(res, req, token, maxAge = 8 * 3600) {
-  const secure = String(req.headers['x-forwarded-proto'] ?? '').includes('https') ? '; Secure' : '';
+  const secure = isHttps(req) ? '; Secure' : '';
   const c = `${COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`;
   res.setHeader('Set-Cookie', c);
 }
 
 function clearCookie(res, req = {}) {
-  const secure = String((req.headers ?? {})['x-forwarded-proto'] ?? '').includes('https') ? '; Secure' : '';
+  const secure = isHttps(req) ? '; Secure' : '';
   res.setHeader('Set-Cookie', `${COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`);
 }
 
@@ -773,7 +794,7 @@ async function api(req, res, urlPathRaw, method) {
       const url = buildAuthUrl(cfg, { state: st.state, nonce: st.nonce, discovery: disc });
       res.writeHead(302, {
         Location: url,
-        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
+        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600${isHttps(req) ? '; Secure' : ''}`,
       });
       return res.end();
     } catch (e) {
@@ -888,7 +909,7 @@ async function api(req, res, urlPathRaw, method) {
       const url = buildAuthUrl(cfg, { state: st.state, nonce: st.nonce, discovery: disc });
       res.writeHead(302, {
         Location: url,
-        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
+        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600${isHttps(req) ? '; Secure' : ''}`,
       });
       return res.end();
     } catch (e) {
@@ -2101,8 +2122,17 @@ ensureDirs();
 const server = http.createServer(async (req, res) => {
   const urlPath = decodeURIComponent(new URL(req.url, `http://${HOST}`).pathname);
   for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.setHeader(k, v);
+  // HSTS yalnızca gerçekten HTTPS üzerinden gelen yanıtlarda verilir; ters vekil
+  // X-Forwarded-Proto: https gönderiyorsa devreye girer (bkz. isHttps).
+  if (isHttps(req)) res.setHeader('Strict-Transport-Security', 'max-age=15552000');
   const method = req.method ?? 'GET';
   try {
+    // Sağlık kontrolü: kimlik doğrulaması istemez, yan etkisi yok. systemd/nginx/
+    // izleme ve install-tls.mjs doğrulaması buraya bakar (statik sunucuyla aynı yol).
+    if (urlPath === '/healthz') {
+      res.setHeader('Cache-Control', 'no-store');
+      return sendJson(res, 200, { ok: true, version });
+    }
     if (urlPath.startsWith('/api/')) return await api(req, res, urlPath, method);
 
     // teknik panel ve tanıtım sitesi yalnız yöneticiye
@@ -2132,7 +2162,7 @@ const server = http.createServer(async (req, res) => {
       const url = buildAuthUrl(cfg, { state: st.state, nonce: st.nonce, discovery: disc });
       res.writeHead(302, {
         Location: url,
-        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600`,
+        'Set-Cookie': `dora_oidc=${encodeURIComponent(st.state)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=600${isHttps(req) ? '; Secure' : ''}`,
       });
       return res.end();
     } catch (e) {

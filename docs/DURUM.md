@@ -1629,3 +1629,54 @@ Kullanıcı geri bildirimi: EN seçiliyken **form alt başlıkları Türkçe** k
 
 - Panonun EN ikizinde **etiketler ve adlar** çevrili; süreç/kontrol/terim **açıklamaları** Türkçe kalır
   (veri katmanı, YAML'da yalnız `name` için `en` var)
+
+---
+
+## 55. Üretim kurulumu: TLS + ters vekil + yedek timer'ı — 1.32.0 (2026-11-18)
+
+Paket bugüne kadar "bir portta açılan uygulama" olarak çalışıyordu. Üretim için eksik olan üç
+parça tamamlandı: **HTTPS**, **sertleştirilmiş servis** ve **otomatik yedek**.
+
+### Ne eklendi
+
+| Dosya | İş |
+|---|---|
+| `scripts/install-tls.mjs` | nginx + certbot, Let's Encrypt veya kendinden imzalı, 80 → 301, hız sınırı, drop-in, doğrulama |
+| `scripts/install-backup-timer.mjs` | `dora-backup.service` + `.timer` (02:30, `Persistent=true`) |
+| `scripts/backup-run.mjs` | yedek → doğrula → buda → `son-yedek.json` |
+| `deploy/render.mjs` | şablonları dolduran saf işlevler (kurulan = test edilen dosya) |
+| `deploy/nginx/*.template`, `deploy/systemd/10-tls.conf.template` | nginx sitesi, ACME ara yapılandırması, vekil snippet'i, hız sınırı, systemd drop-in |
+| `deploy/dora-backup.service` / `.timer` | yedek birimleri |
+| `docs/URETIM-TLS.md` | kurulum, doğrulama, yenileme, geri alma, sorun giderme |
+
+### Bulunan gerçek güvenlik açığı (düzeltildi)
+
+`X-Forwarded-Proto` başlığına **koşulsuz** güveniliyordu. Sunucu doğrudan (vekil olmadan)
+yayınlanıyorsa uzak bir istemci bu başlığı taklit ederek:
+
+- tarayıcısına `Secure` çerez yazdırabiliyordu — çerez düz HTTP'de saklanmadığı için giriş
+  döngüsü (kullanıcı adı/parola sürekli reddedilmiş gibi görünür) veya
+- HSTS'i kandırabiliyordu.
+
+Yeni kural (`onboarding/cli/src/orl/proxy.mjs`): doğrudan TLS **veya** loopback'ten gelen istek
+**veya** `--trust-proxy` bayrağı. Aksi hâlde başlık yok sayılır. OIDC `state` çerezi de artık
+HTTPS'te `Secure` alıyor; HSTS başlığı tek kaynaktan (uygulama) veriliyor.
+
+### Doğrulama
+
+```
+193 test (20 yeni) · uçtan uca 8/8:
+  loopback + XFP:https        → giriş 200, çerez Secure ✓
+  uzak istemci + XFP:https    → çerez Secure DEĞİL (taklit engellendi) ✓
+  --trust-proxy + uzak        → çerez Secure ✓
+  HSTS: loopback+https var · düz http yok · uzak+başlık yok ✓
+yedek hattı: iki çalıştırma, keep=1 → 2. çalıştırma 1 eskiyi sildi, son-yedek.json yazıldı ✓
+install-tls.mjs --dry-run: 7 adım, 9 komut, dosya boyutları ✓
+```
+
+### Dürüst sınır
+
+Gerçek `nginx -t`, gerçek `certbot` sertifika alımı ve systemd birimlerinin Ubuntu'da yüklenmesi
+**bu ortamda çalıştırılamadı** (Windows sandbox, bash/nginx yok). Şablon üretimi, birim testleri
+ve proxy davranışı gerçek sunucuyla doğrulandı; ilk gerçek kurulumda adımlar betiğin içinde
+otomatik kontrol edilir (`nginx -t`, `curl`). Hata çıkarsa çıktıyla birlikte bildirilecek.

@@ -1,0 +1,40 @@
+[Unit]
+Description=DORA AI Ajan Paketi — günlük yedek (web-data + oturumlar)
+Documentation=file:///opt/dora-ai-package/docs/YEDEKLEME.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=dora
+Group=dora
+WorkingDirectory=/opt/dora-ai-package
+Environment=DORA_ROOT=/opt/dora-ai-package
+Environment=DORA_BACKUP_DIR=/var/backups/dora
+Environment=DORA_BACKUP_KEEP=8
+ExecStart=/usr/bin/node /opt/dora-ai-package/scripts/backup-run.mjs
+UMask=0077
+TimeoutStartSec=10min
+Nice=10
+IOSchedulingClass=idle
+
+# Sertleştirme: yalnızca okuma (paket) + yazma (yedek dizini)
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectProc=invisible
+ReadOnlyPaths=/opt/dora-ai-package
+ReadWritePaths=/var/backups/dora
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target

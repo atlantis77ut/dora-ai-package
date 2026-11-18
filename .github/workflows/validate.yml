@@ -64,3 +64,44 @@ jobs:
 
       - name: Kullanici el kitabi (1.26)
         run: node docs/tools/build-manual.mjs --check
+
+  # Üretim artefaktları: şablonlar, kurulum betikleri ve yedek hattı.
+  # Bu iş Linux'ta koşar; böylece `bash -n` ve gerçek yedek zinciri doğrulanır
+  # (geliştirme makinesi Windows olduğunda shell betikleri yerelde denenemiyor).
+  deploy-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Kabuk betikleri soz dizimi (bash -n)
+        run: |
+          set -euo pipefail
+          for f in scripts/*.sh; do echo "— $f"; bash -n "$f"; done
+
+      - name: Node betikleri soz dizimi
+        run: |
+          set -euo pipefail
+          for f in scripts/*.mjs deploy/render.mjs; do node --check "$f"; done
+
+      - name: TLS kurulum plani (dry-run)
+        run: node scripts/install-tls.mjs --domain dora.ornek.local --email admin@ornek.local --dry-run --no-apt --skip-verify
+
+      - name: Yedek timer plani (dry-run)
+        run: node scripts/install-backup-timer.mjs --dry-run
+
+      - name: Yedek hatti (uret -> dogrula -> buda)
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          mkdir -p "$tmp/root/web-data" "$tmp/root/.dora-onboarding"
+          echo '{"users":[]}' > "$tmp/root/web-data/users.json"
+          echo 'satir' > "$tmp/root/web-data/audit.log"
+          node scripts/backup-run.mjs --root "$tmp/root" --dest "$tmp/dest" --keep 1
+          node scripts/backup-run.mjs --root "$tmp/root" --dest "$tmp/dest" --keep 1
+          test "$(ls -1 "$tmp"/dest/dora-yedek-*.zip | wc -l)" -eq 1
+          node scripts/backup-run.mjs --verify-only "$tmp"/dest/dora-yedek-*.zip
+          test -f "$tmp/dest/son-yedek.json"

@@ -1,6 +1,7 @@
 # Yedekleme ve Geri Yükleme
 
-Son güncelleme: 2026-11-09 · Sürüm 1.19.0 · **Test edildi:** evet (gerçek veriyle uçtan uca)
+Son güncelleme: 2026-11-18 · Sürüm 1.32.0 · **Test edildi:** evet (gerçek veriyle uçtan uca +
+timer hattı `backup-run.mjs` ile iki kez çalıştırıldı)
 
 ---
 
@@ -97,35 +98,40 @@ curl -s http://127.0.0.1:8080/api/health
 
 ### systemd timer (önerilen)
 
-`/etc/systemd/system/dora-backup.service`:
-
-```ini
-[Unit]
-Description=DORA yedek
-[Service]
-Type=oneshot
-User=dora
-WorkingDirectory=/opt/dora-ai-package/onboarding/cli
-ExecStart=/usr/bin/node tools/backup.mjs --out /var/backups/dora/%Y-%m-%d.zip --keep 8
-```
-
-`/etc/systemd/system/dora-backup.timer`:
-
-```ini
-[Unit]
-Description=Günlük DORA yedeği
-[Timer]
-OnCalendar=*-*-* 02:30:00
-Persistent=true
-[Install]
-WantedBy=timers.target
-```
+Tek komut:
 
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now dora-backup.timer
-systemctl list-timers dora-backup.timer
+sudo node /opt/dora-ai-package/scripts/install-backup-timer.mjs
 ```
+
+Varsayılan: her gün **02:30**, hedef **/var/backups/dora**, son **8** yedek, ilk çalıştırma
+doğrulamalı. Seçenekler:
+
+```bash
+sudo node scripts/install-backup-timer.mjs --dest /mnt/yedek/dora --keep 14 --time 03:10
+sudo node scripts/install-backup-timer.mjs --now      # kur + hemen bir kez çalıştır
+node scripts/install-backup-timer.mjs --dry-run       # yalnız plan
+```
+
+Ne kurulur:
+
+| Dosya | İş |
+|---|---|
+| `/etc/systemd/system/dora-backup.service` | `scripts/backup-run.mjs` çalıştırır (oneshot, `User=dora`, `UMask=0077`) |
+| `/etc/systemd/system/dora-backup.timer` | `OnCalendar=*-*-* 02:30:00`, `Persistent=true` (kaçırılan çalıştırma açılışta telafi) |
+
+`backup-run.mjs` sırası: **yedek al → manifest/sha256 doğrula → eskileri buda → durum yaz**.
+Doğrulama başarısızsa çıkış kodu 1 olur ve **budama yapılmaz** (sağlam yedekler korunur).
+Son durum `son-yedek.json` dosyasına yazılır (dosya adı, boyut, sha256, zaman).
+
+```bash
+sudo systemctl list-timers dora-backup.timer
+sudo systemctl start dora-backup.service    # elle bir kez
+sudo journalctl -u dora-backup -n 40
+```
+
+Timer'ın tek başına kurulduğu durumda (taban unit dosyası elle düzenlenmişse) servis dosyası
+şablondan üretilir; dizin ve saklama sayısı `Environment=` satırlarından gelir.
 
 ### cron (alternatif)
 
